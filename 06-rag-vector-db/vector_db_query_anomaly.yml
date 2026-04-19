@@ -1,0 +1,112 @@
+title: Vector Database Port Accessed by Non-Application Process
+id: d60f392b-e454-708f-9203-142536475869
+status: experimental
+description: |
+  Detects network connections to common vector database ports
+  (ChromaDB 8000, Weaviate 8080, Qdrant 6333/6334, Milvus 19530,
+  pgvector 5432) initiated by processes that are not recognized ML
+  application runtimes. Catches unauthorized vector DB access from
+  compromised endpoints or misused service accounts.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0020
+  - https://atlas.mitre.org/techniques/AML.T0024
+  - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.exfiltration
+  - attack.atlas.t0024
+  - owasp.llm02
+  - owasp.llm08
+logsource:
+  category: network_connection
+detection:
+  selection_vector_db_ports:
+    DestinationPort:
+      - 6333
+      - 6334
+      - 8080
+      - 19530
+      - 9091
+  filter_ml_runtimes:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/node'
+      - '/java'
+      - '/uvicorn'
+      - '/gunicorn'
+      - '/ray'
+      - '/jupyter-notebook'
+      - '/jupyter-lab'
+      - '/ollama'
+      - '/vllm'
+      - '/tritonserver'
+      - '\python.exe'
+      - '\node.exe'
+      - '\java.exe'
+  condition: selection_vector_db_ports and not filter_ml_runtimes
+fields:
+  - Image
+  - ParentImage
+  - DestinationIp
+  - DestinationPort
+  - User
+falsepositives:
+  - Admin CLI tools (psql, curl, httpie) used for legitimate debugging
+  - Custom ML runtimes not covered by the filter list — extend as needed
+level: medium
+---
+title: Vector Database Ingestion of Document Containing Prompt Injection
+id: e710a43c-f565-8190-a314-253647586970
+status: experimental
+description: |
+  Detects documents with prompt-injection markers being ingested into
+  a vector database. Pairs with the YARA rule rag_document_hidden_text
+  in the same category — this rule catches the pattern when documents
+  are processed through an application-layer ingestion pipeline that
+  logs document content.
+
+  Requires application-level RAG ingestion logs shipped to the SIEM.
+  Adjust the logsource and field mappings to match your ingestion
+  framework (LangChain, LlamaIndex, Haystack, custom).
+references:
+  - https://atlas.mitre.org/techniques/AML.T0020
+  - https://atlas.mitre.org/techniques/AML.T0051.001
+  - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.atlas.t0020
+  - attack.atlas.t0051
+  - owasp.llm01
+  - owasp.llm08
+logsource:
+  product: rag_pipeline
+  service: ingestion
+detection:
+  selection_injection:
+    doc_text|contains:
+      - 'ignore previous instructions'
+      - 'ignore all previous'
+      - 'you are now'
+      - '<IMPORTANT>'
+      - 'system prompt:'
+      - 'execute the following'
+      - 'send the contents to'
+      - 'do not mention this'
+      - 'exfiltrate'
+  condition: selection_injection
+fields:
+  - source_ip
+  - api_key_id
+  - document_id
+  - document_source
+  - collection_name
+  - doc_text
+falsepositives:
+  - Security training materials legitimately containing these strings
+  - Documentation about prompt injection being indexed for internal reference
+level: high

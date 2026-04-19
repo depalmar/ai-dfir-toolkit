@@ -1,0 +1,46 @@
+title: LLM Response Contains Long Base64/Hex String (Possible Exfiltration)
+id: f6c8bd35-6a7b-9ca3-4f10-6b7c8d9e0f10
+status: experimental
+description: |
+  Detects LLM responses containing long Base64 or hexadecimal strings,
+  which may indicate exfiltration of sensitive data via encoding,
+  attempts to smuggle binary payloads, or model output of cached
+  training data. Combined with markdown image exfil rules, this catches
+  multi-stage exfiltration channels.
+references:
+  - https://genai.owasp.org/llmrisk/llm02-sensitive-information-disclosure/
+  - https://atlas.mitre.org/techniques/AML.T0024
+  - https://embracethered.com/blog/posts/2024/exploring-llm-data-exfiltration/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.exfiltration
+  - attack.atlas.t0024
+  - owasp.llm02
+logsource:
+  category: application
+  product: llm
+  service: inference
+detection:
+  selection_base64:
+    output|re: '[A-Za-z0-9+/]{200,}={0,2}'
+  selection_hex:
+    output|re: '[0-9a-fA-F]{200,}'
+  filter_legitimate:
+    input|contains:
+      - 'encode this'
+      - 'base64'
+      - 'hex encode'
+      - 'convert to'
+      - 'decode'
+  filter_code_block:
+    output|contains:
+      - '```python'
+      - '```javascript'
+      - '```bash'
+  condition: 1 of selection_* and not filter_legitimate and not filter_code_block
+falsepositives:
+  - User explicitly requesting encoding/decoding operations
+  - Code generation outputs containing embedded resources
+  - LLMs returning serialized data (JWT tokens, hashes, signatures) by design
+level: medium

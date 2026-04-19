@@ -1,0 +1,50 @@
+title: Vector Database Bulk Retrieval / Exfiltration Pattern
+id: 11a2b3c4-d5e6-f708-0910-11a2b3c4d5e6
+status: experimental
+description: |
+  Detects bulk extraction patterns from vector databases — high request
+  volume, high limit values, or high cardinality of accessed collections
+  from a single principal. Embedding inversion research (Princeton)
+  demonstrated 85%+ accuracy reconstructing original text from embeddings
+  for medical records — making bulk vector exfil functionally equivalent
+  to source data exfil.
+references:
+  - https://dev.to/tiamatenity/vector-database-breaches-how-embeddings-expose-your-sensitive-data-21a9
+  - https://atlas.mitre.org/techniques/AML.T0024
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.exfiltration
+  - attack.atlas.t0024
+  - owasp.llm02
+  - owasp.llm08
+logsource:
+  product: vector_db
+detection:
+  selection_endpoint:
+    request_uri|contains:
+      - '/collections/'
+      - '/points/scroll'
+      - '/points/search'
+      - '/objects'
+      - '/api/v1/get'
+      - '/api/v2/get'
+      - '/v1/graphql'
+  selection_high_limit:
+    request_body|re: '"limit"\s*:\s*[1-9][0-9]{4,}'
+  selection_high_volume:
+    request_uri|contains: '/collections/'
+    rate_per_minute|gte: 500
+  condition: selection_endpoint and (selection_high_limit or selection_high_volume)
+fields:
+  - source_ip
+  - api_key_id
+  - request_uri
+  - request_body
+  - response_size_bytes
+falsepositives:
+  - Legitimate batch indexing or migration jobs
+  - Approved analytics pipelines reading vector data
+  - Backup/replication workflows
+level: medium

@@ -1,0 +1,52 @@
+title: LLM Prompt Injection - Known Trigger Phrases
+id: a1f3c8e0-1b2c-4d5e-9a6b-1c2d3e4f5a6b
+status: experimental
+description: |
+  Detects common prompt injection trigger phrases in LLM input fields.
+  Covers direct injection patterns ("ignore previous instructions"),
+  role override attempts ("you are now"), and instruction boundary
+  manipulation ("===END===", "</system>").
+references:
+  - https://genai.owasp.org/llmrisk/llm01-prompt-injection/
+  - https://atlas.mitre.org/techniques/AML.T0051
+  - https://github.com/leondz/garak
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.atlas.t0051
+  - owasp.llm01
+logsource:
+  category: application
+  product: llm
+  service: inference
+detection:
+  selection_keywords:
+    input|contains:
+      - 'ignore previous instructions'
+      - 'ignore all previous'
+      - 'disregard the above'
+      - 'forget everything above'
+      - 'you are now'
+      - 'act as if you'
+      - 'pretend you are'
+      - 'new instructions:'
+      - 'system prompt:'
+      - 'admin override'
+      - 'developer mode enabled'
+      - '</system>'
+      - '<|im_start|>system'
+      - '###END###'
+      - '====END===='
+      - 'BEGIN NEW PROMPT'
+  filter_research:
+    user_email|endswith:
+      - '@redteam.example.com'
+      - '@security.example.com'
+  condition: selection_keywords and not filter_research
+falsepositives:
+  - Security researchers, red teamers, prompt engineers discussing prompt injection
+  - Customer support agents pasting user-reported issues
+  - LLM evaluation pipelines (Promptfoo, Garak, PyRIT)
+  - Documentation/training content about LLM security
+level: medium

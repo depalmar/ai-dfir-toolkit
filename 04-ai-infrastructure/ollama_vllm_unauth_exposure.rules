@@ -1,0 +1,83 @@
+# Self-Hosted LLM Server Exposure Detection (Ollama / vLLM)
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects unauthenticated exposure and abuse of self-hosted LLM
+# inference servers commonly deployed without authentication:
+#   - Ollama (default port 11434)
+#   - vLLM (default OpenAI-compatible API port 8000)
+#   - LocalAI (default port 8080)
+#   - LM Studio server (default port 1234)
+#
+# Both Ollama and vLLM ship without authentication enabled by default.
+# Trend Micro and AccuKnox documented thousands of exposed instances.
+#
+# SID range: 9000400-9000499
+#
+# References:
+#   https://accuknox.com/blog/securing-ai-serving-engines-vllm-ollama-triton
+
+# ==========================================================================
+# Ollama API exposure (port 11434)
+# ==========================================================================
+alert http any any -> any 11434 (msg:"AI-DFIR Ollama API accessed externally (no native auth)"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.method; content:"POST"; \
+    http.uri; pcre:"/\/api\/(generate|chat|embeddings|pull|push|create|delete|copy)/i"; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011, owasp LLM10; \
+    sid:9000400; rev:1;)
+
+alert http any any -> any 11434 (msg:"AI-DFIR Ollama model pull from external host (potential malicious model)"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/api/pull"; nocase; \
+    http.request_body; pcre:"/\"name\"\s*:\s*\"[^\"]*[a-z0-9.-]+\.(ngrok|trycloudflare|serveo|loca|burpcollaborator|interactsh)\.(io|com|me)/i"; \
+    classtype:trojan-activity; \
+    metadata:atlas AML.T0010, owasp LLM03; \
+    sid:9000401; rev:1;)
+
+alert http any any -> any 11434 (msg:"AI-DFIR Ollama model deletion via API"; \
+    flow:established,to_server; \
+    http.method; content:"DELETE"; \
+    http.uri; content:"/api/delete"; nocase; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0029; \
+    sid:9000402; rev:1;)
+
+# ==========================================================================
+# vLLM OpenAI-compatible API exposure (port 8000)
+# ==========================================================================
+alert http any any -> any [8000,8888] (msg:"AI-DFIR vLLM OpenAI-compatible endpoint accessed externally"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.method; content:"POST"; \
+    http.uri; pcre:"/\/v1\/(completions|chat\/completions|embeddings)/i"; \
+    http.user_agent; content:!"OpenAI"; nocase; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011, owasp LLM10; \
+    sid:9000410; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR vLLM/OpenAI-compatible API max_tokens cost-based DoS"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; pcre:"/\/v1\/(completions|chat\/completions)/i"; \
+    http.request_body; pcre:"/\"max_tokens\"\s*:\s*([4-9]\d{4}|\d{6,})/"; \
+    classtype:web-application-attack; \
+    metadata:atlas AML.T0029, owasp LLM10; \
+    sid:9000411; rev:1;)
+
+# ==========================================================================
+# CVE-2025-32444 - vLLM Mooncake pickle RCE (CVSS 10.0)
+# ==========================================================================
+alert tcp any any -> any any (msg:"AI-DFIR vLLM Mooncake ZeroMQ pickle payload (CVE-2025-32444)"; \
+    flow:established,to_server; \
+    content:"|80 04 95|"; offset:0; depth:4; \
+    content:"|63|"; distance:0; within:50; \
+    pcre:"/\x80\x04\x95.{8}\x8c.{1,5}(os|subprocess|builtins|posix|nt)\x94\x8c.{1,15}(system|popen|exec|eval|Popen|call|run)/i"; \
+    classtype:attempted-admin; \
+    reference:cve,2025-32444; \
+    metadata:atlas AML.T0011, atlas AML.T0018; \
+    sid:9000420; rev:1;)

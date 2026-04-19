@@ -1,0 +1,54 @@
+title: Cursor IDE Settings Database Modified by Unexpected Process
+id: f8091011-a2b3-c4d5-e6f7-08091011a2b3
+status: experimental
+description: |
+  Detects modifications to the Cursor IDE state database (state.vscdb).
+  This SQLite file controls auto-run mode, allow lists, file deletion
+  protection, and other security-relevant Cursor settings. Tampering
+  by non-Cursor processes may indicate persistent backdoor deployment
+  via the Check Point Research MCPoison technique (silent post-approval
+  config mutation) or malicious npm packages (sw-cur, aiide-cur).
+references:
+  - https://research.checkpoint.com/2025/cursor-vulnerability-mcpoison/
+  - https://www.securityweek.com/malicious-npm-packages-target-cursor-ais-macos-users/
+  - https://www.cve.org/CVERecord?id=CVE-2025-54135
+  - https://www.backslash.security/blog/cursor-ide-security-best-practices
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.t1546
+  - attack.atlas.t0010
+  - owasp.llm06
+logsource:
+  category: file_event
+detection:
+  selection_state_db:
+    TargetFilename|contains:
+      - '/Cursor/User/globalStorage/state.vscdb'
+      - '\Cursor\User\globalStorage\state.vscdb'
+      - '/Cursor/User/settings.json'
+      - '\Cursor\User\settings.json'
+  selection_cursor_app_files:
+    TargetFilename|contains:
+      - '/Applications/Cursor.app/Contents/Resources/app/'
+      - '\AppData\Local\Programs\cursor\resources\app\'
+      - '/Applications/Cursor.app/Contents/MacOS/Cursor'
+  filter_legitimate:
+    Image|endswith:
+      - '/Cursor.app/Contents/MacOS/Cursor'
+      - '\Cursor.exe'
+      - '/usr/bin/cursor'
+      - '/usr/local/bin/cursor'
+  condition: 1 of selection_* and not filter_legitimate
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+  - CommandLine
+falsepositives:
+  - Cursor auto-update process (verify by checking ParentImage chain)
+  - Backup/sync tools touching globalStorage
+  - User running Cursor via wrapper script
+level: high

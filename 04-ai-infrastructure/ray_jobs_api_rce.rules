@@ -1,0 +1,99 @@
+# Ray Cluster Network Detection Rules (ShadowRay)
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects exploitation of CVE-2023-48022 (Ray Jobs API unauthenticated RCE):
+#   - ShadowRay (Sept 2023, MITRE Campaign C0045)
+#   - ShadowRay 2.0 (Nov 2025, self-propagating botnet, ~200K exposed servers)
+#
+# Anyscale disputes this CVE as a "design feature" — it remains exploitable
+# in production. KEV-listed by CISA.
+#
+# SID range: 9000200-9000299 reserved for Ray rules
+#
+# References:
+#   https://www.cve.org/CVERecord?id=CVE-2023-48022
+#   https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+#   https://attack.mitre.org/campaigns/C0045/
+
+# ==========================================================================
+# CVE-2023-48022 - Ray Jobs API job submission with embedded code execution
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission with shell command (CVE-2023-48022)"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/api/jobs/"; nocase; \
+    http.request_body; content:"entrypoint"; nocase; \
+    http.request_body; pcre:"/entrypoint[\"']?\s*:\s*[\"']?[^\"']*(\bcurl\s|\bwget\s|\bbash\s+-c|\bsh\s+-c|\bpython\s+-c|\beval\s+|\bexec\s+|\b\/dev\/tcp\/|\bnc\s+-)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-48022; \
+    metadata:atlas AML.T0011, mitre-attack T1190; \
+    sid:9000200; rev:1;)
+
+alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard exposed (default port 8265)"; \
+    flow:established,to_server; \
+    http.method; content:"GET"; \
+    http.uri; content:"/"; \
+    http.header_names; content:!"authorization"; nocase; \
+    classtype:misc-activity; \
+    reference:cve,2023-48022; \
+    metadata:atlas AML.T0011; \
+    sid:9000201; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission downloading external script"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/api/jobs/"; nocase; \
+    http.request_body; pcre:"/(curl|wget)\s+(-[^\s]*\s+)*https?:\/\/(\d{1,3}\.){3}\d{1,3}/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-48022; \
+    metadata:atlas AML.T0011, atlas AML.T0019; \
+    sid:9000202; rev:1;)
+
+# ==========================================================================
+# Ray Logs API abuse for arbitrary file read
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR Ray Logs API path traversal for arbitrary file read"; \
+    flow:established,to_server; \
+    http.uri; content:"/api/v0/logs/file"; nocase; \
+    http.uri; pcre:"/(\.\.\/|%2e%2e%2f|\/etc\/|\/root\/|\.ssh\/|\.aws\/|\/proc\/self\/)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-48022; \
+    metadata:atlas AML.T0086; \
+    sid:9000203; rev:1;)
+
+# ==========================================================================
+# ShadowRay 2.0 - Self-propagation patterns
+# ==========================================================================
+alert http any any -> any 8265 (msg:"AI-DFIR Ray Job submission referencing NodeAffinitySchedulingStrategy (worm pattern)"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.request_body; content:"NodeAffinitySchedulingStrategy"; nocase; \
+    http.request_body; content:"soft"; nocase; \
+    classtype:trojan-activity; \
+    reference:cve,2023-48022; \
+    reference:url,oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet; \
+    metadata:atlas AML.T0011, atlas AML.T0019; \
+    sid:9000204; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR Ray Job entrypoint contains XMRig cryptominer indicator"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/api/jobs/"; nocase; \
+    http.request_body; pcre:"/(xmrig|monero|stratum\+tcp|cryptonight|--coin\s+|--pool\s+|gulf\.moneroocean|pool\.supportxmr|pool\.minexmr)/i"; \
+    classtype:trojan-activity; \
+    metadata:atlas AML.T0029; \
+    sid:9000205; rev:1;)
+
+# ==========================================================================
+# Generic suspicious Ray cluster behaviour
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.uri; content:"/api/"; nocase; \
+    http.host; pcre:"/:(8265|10001|6379)$/"; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011; \
+    sid:9000206; rev:1;)

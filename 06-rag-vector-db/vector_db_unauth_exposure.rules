@@ -1,0 +1,92 @@
+# Vector Database Exposure Detection
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects unauthenticated exposure of vector databases. A 2024 Shodan
+# survey found 12,000+ exposed instances:
+#   ChromaDB (92% no auth), Weaviate (88%), Milvus (82%),
+#   Qdrant (78%), Pinecone (55%).
+#
+# SID range: 9000600-9000699
+
+# ==========================================================================
+# ChromaDB exposure (default port 8000)
+# ==========================================================================
+alert http any any -> any 8000 (msg:"AI-DFIR ChromaDB API accessed externally without auth"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.uri; pcre:"/\/api\/v[12]\/(collections|tenants|databases)/i"; \
+    http.header_names; content:!"authorization"; nocase; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011, owasp LLM08; \
+    sid:9000600; rev:1;)
+
+alert http any any -> any 8000 (msg:"AI-DFIR ChromaDB collection bulk dump"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; pcre:"/\/api\/v[12]\/collections\/[a-f0-9-]+\/get/i"; \
+    http.request_body; pcre:"/\"limit\"\s*:\s*([1-9][0-9]{4,})/"; \
+    classtype:web-application-attack; \
+    metadata:atlas AML.T0024, owasp LLM02; \
+    sid:9000601; rev:1;)
+
+# ==========================================================================
+# Weaviate exposure (default port 8080)
+# ==========================================================================
+alert http any any -> any 8080 (msg:"AI-DFIR Weaviate API accessed externally without auth"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.uri; pcre:"/\/v1\/(schema|objects|graphql|meta)/i"; \
+    http.header_names; content:!"authorization"; nocase; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011, owasp LLM08; \
+    sid:9000610; rev:1;)
+
+alert http any any -> any 8080 (msg:"AI-DFIR Weaviate GraphQL bulk extraction query"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/v1/graphql"; nocase; \
+    http.request_body; pcre:"/\"limit\"\s*:\s*([1-9][0-9]{4,})/"; \
+    classtype:web-application-attack; \
+    metadata:atlas AML.T0024; \
+    sid:9000611; rev:1;)
+
+# ==========================================================================
+# Qdrant exposure (default ports 6333 REST, 6334 gRPC)
+# ==========================================================================
+alert http any any -> any 6333 (msg:"AI-DFIR Qdrant REST API accessed externally"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.uri; pcre:"/\/collections(\/|$)/i"; \
+    http.header_names; content:!"api-key"; nocase; \
+    classtype:misc-attack; \
+    metadata:atlas AML.T0011, owasp LLM08; \
+    sid:9000620; rev:1;)
+
+alert http any any -> any 6333 (msg:"AI-DFIR Qdrant scroll bulk extraction request"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; pcre:"/\/collections\/[^\/]+\/points\/scroll/i"; \
+    http.request_body; pcre:"/\"limit\"\s*:\s*([1-9][0-9]{4,})/"; \
+    classtype:web-application-attack; \
+    metadata:atlas AML.T0024; \
+    sid:9000621; rev:1;)
+
+# ==========================================================================
+# Milvus exposure (default ports 19530 gRPC, 9091 metrics)
+# ==========================================================================
+alert tcp any any -> any 19530 (msg:"AI-DFIR Milvus gRPC port accessed externally"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000630; rev:1;)
+
+alert http any any -> any 9091 (msg:"AI-DFIR Milvus metrics endpoint exposed externally"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.uri; content:"/metrics"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000631; rev:1;)

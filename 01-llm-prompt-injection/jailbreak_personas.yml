@@ -1,0 +1,54 @@
+title: LLM Jailbreak - Known Persona Patterns (DAN/STAN/AIM/etc.)
+id: b2e4d9f1-2c3d-5e6f-0b7c-2d3e4f5a6b7c
+status: experimental
+description: |
+  Detects attempts to invoke well-known jailbreak personas designed to
+  bypass LLM safety guardrails. These persona prompts have been
+  catalogued in public jailbreak repositories and are commonly
+  copy-pasted by users attempting to elicit restricted content.
+references:
+  - https://www.jailbreakchat.com/
+  - https://github.com/elder-plinius/L1B3RT4S
+  - https://atlas.mitre.org/techniques/AML.T0054
+  - https://arxiv.org/abs/2308.03825
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.defense_evasion
+  - attack.atlas.t0054
+  - owasp.llm01
+logsource:
+  category: application
+  product: llm
+  service: inference
+detection:
+  selection_personas:
+    input|contains:
+      - 'DAN mode'
+      - 'do anything now'
+      - 'STAN, which stands for'
+      - 'AIM, which stands for'
+      - 'Niccolo Machiavelli'
+      - 'jailbreak prompt'
+      - 'unfiltered AI'
+      - 'no restrictions whatsoever'
+      - 'broken free of the typical confines'
+      - 'free from all rules'
+      - 'evil confidant'
+      - 'hypothetical response'
+      - 'pretend you have no filter'
+  selection_techniques:
+    input|contains:
+      - 'token system'
+      - '4 tokens'
+      - 'lose 5 tokens'
+      - 'stay in character'
+      - 'never break character'
+      - 'OPPOSITE day'
+      - 'roleplay as'
+  condition: 1 of selection_*
+falsepositives:
+  - Researchers studying jailbreak resistance
+  - Content moderation teams testing filters
+  - Game/fiction writers using AI for character dialogue (legitimate roleplay)
+level: high

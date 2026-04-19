@@ -1,0 +1,81 @@
+title: HuggingFace Token Exposure / Leak
+id: 4d5e6f70-8192-a3b4-c5d6-e7f8091011a2
+status: experimental
+description: |
+  Detects exposure of HuggingFace API tokens (hf_*) in logs, command
+  lines, network requests, or files. Lasso Security found ~1,700
+  exposed HF tokens in 2024 granting access to 600+ accounts including
+  Google, Meta, and Microsoft. Token exposure is a precursor to model
+  registry compromise and namespace hijacking.
+references:
+  - https://www.lasso.security/blog/huggingface-vulnerable-to-account-takeover
+  - https://huggingface.co/docs/hub/security-tokens
+  - https://atlas.mitre.org/techniques/AML.T0086
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.credential_access
+  - attack.t1552.001
+  - attack.atlas.t0086
+logsource:
+  category: process_creation
+detection:
+  selection_token_in_cmdline:
+    CommandLine|re: 'hf_[a-zA-Z]{34,40}'
+  selection_token_export:
+    CommandLine|contains:
+      - 'HUGGING_FACE_HUB_TOKEN='
+      - 'HF_TOKEN='
+      - 'HUGGINGFACEHUB_API_TOKEN='
+      - 'HF_API_TOKEN='
+  filter_documentation:
+    CommandLine|contains:
+      - 'hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      - 'hf_YOUR_TOKEN_HERE'
+      - 'hf_REPLACE_ME'
+  condition: 1 of selection_* and not filter_documentation
+fields:
+  - User
+  - Image
+  - CommandLine
+  - ParentCommandLine
+falsepositives:
+  - CI/CD systems passing tokens via command line (should use env vars / secret managers instead)
+  - Documentation or training material with placeholder tokens
+level: high
+---
+title: HuggingFace Token File Read by Unexpected Process
+id: 5e6f7081-92a3-b4c5-d6e7-f8091011a2b3
+status: experimental
+description: |
+  Detects reads of the HuggingFace token file (~/.cache/huggingface/token)
+  by processes other than huggingface_hub Python clients or the official
+  CLI. Indicates credential theft via infostealer or compromised process.
+references:
+  - https://www.lasso.security/blog/huggingface-vulnerable-to-account-takeover
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.credential_access
+  - attack.t1552.001
+  - attack.atlas.t0086
+logsource:
+  category: file_event
+detection:
+  selection_target:
+    TargetFilename|contains:
+      - '/.cache/huggingface/token'
+      - '\.cache\huggingface\token'
+      - '/.huggingface/token'
+  filter_legitimate:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/huggingface-cli'
+      - '\python.exe'
+      - '\huggingface-cli.exe'
+  condition: selection_target and not filter_legitimate
+falsepositives:
+  - Backup software (Time Machine, Restic, Borg)
+  - Cloud sync clients
+level: high

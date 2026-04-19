@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+venv/
+.venv/
+
+# Generated test artifacts (regenerate via generate_test_pickles.py)
+tests/pickle_test_*.pkl
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build output from sigma convert
+*.spl
+*.lucene
+*.kql
+*.yaral
+dist/
+build/
+
+# Local testing
+*.log
+*.pcap
+scratch/

@@ -1,0 +1,196 @@
+# AI/ML DFIR Detection Pack
+
+**Open-source detection signatures for AI/ML attacks and breaches.**
+
+A vendor-neutral collection of Sigma, YARA, and Suricata rules for detecting compromise of LLM applications, MCP servers, ML supply chains, AI infrastructure, AI-powered insider threats, and RAG/vector database attacks.
+
+For the companion investigation guide with attack background, forensic artifacts, Mermaid attack-chain diagrams, and hands-on investigation procedures, see [`docs/ai-dfir-investigation-guide.md`](./docs/ai-dfir-investigation-guide.md).
+
+License: Apache 2.0.
+
+---
+
+## Disclaimer
+
+This is an independent personal project. It is not affiliated with, endorsed by, or produced on behalf of any employer. All research is based on public sources — published CVEs, vendor advisories, academic papers, and vendor-neutral security research. Contributions are welcome from the community.
+
+---
+
+## Why this exists
+
+Most existing detection content is either locked behind vendor SIEMs or scattered across blog posts. AI/ML attacks need detection coverage that spans:
+
+- **Endpoint** (Claude Desktop / Cursor / Copilot config tampering)
+- **Cloud SaaS logs** (Bedrock, Azure OpenAI, M365 Copilot)
+- **Network** (vector DB exfil, model exfil, ShadowRay C2)
+- **File artifacts** (poisoned pickle models, malicious MCP configs)
+
+This pack uses **open standards only** so the rules can be deployed in any modern detection stack: Splunk, Elastic, Sentinel, Chronicle, Panther, Wazuh, Suricata, OSSEC, SumoLogic, Exabeam, and others.
+
+---
+
+## Structure
+
+```
+ai-dfir-detections/
+├── 01-llm-prompt-injection/      # Prompt injection, jailbreaks, indirect injection
+├── 02-mcp-attacks/                # MCP tool poisoning, config tampering, rug pulls
+├── 03-model-supply-chain/         # Pickle exploits, HuggingFace, dependency confusion
+├── 04-ai-infrastructure/          # ShadowRay, Triton, MLflow, GPU abuse
+├── 05-copilot-assistant-abuse/    # M365 Copilot, GitHub Copilot, Claude, Cursor
+├── 06-rag-vector-db/              # Vector DB exposure, RAG poisoning
+├── tests/                         # Sample events / test files
+├── MAPPINGS.md                    # ATLAS + OWASP cross-reference
+└── README.md
+```
+
+Each category directory contains a `README.md` describing the threats covered and rule files in their native format (`.yml` for Sigma, `.yar` for YARA, `.rules` for Suricata).
+
+---
+
+## Rule formats
+
+| Format | Use Case | Where it Deploys |
+|--------|----------|------------------|
+| **Sigma** (`.yml`) | Generic log-based detection | Any SIEM via [pySigma](https://github.com/SigmaHQ/pySigma) backends — Splunk, Elastic, Sentinel, QRadar, Chronicle, Panther, SumoLogic, and others |
+| **YARA** (`.yar`) | File / memory artifacts | EDR platforms, malware analysis, file scanning pipelines |
+| **Suricata** (`.rules`) | Network traffic | Suricata, Snort (compatible subset), Zeek (via translation) |
+
+**All rules use open formats.** No vendor-specific query languages, no proprietary field schemas. Convert to your platform using pySigma backends.
+
+---
+
+## Quick start
+
+### Splunk
+
+```bash
+pip install pysigma pysigma-backend-splunk
+sigma convert -t splunk -p splunk_windows ai-dfir-detections/**/*.yml > ai-dfir-detections.spl
+```
+
+### Elastic / Kibana
+
+```bash
+pip install pysigma-backend-elasticsearch
+sigma convert -t lucene ai-dfir-detections/**/*.yml > ai-dfir-detections.lucene
+```
+
+### Microsoft Sentinel
+
+```bash
+pip install pysigma-backend-microsoft365defender
+sigma convert -t microsoft365defender ai-dfir-detections/**/*.yml > ai-dfir-detections-sentinel.kql
+```
+
+### Chronicle (Google SecOps)
+
+```bash
+pip install pysigma-backend-chronicle
+sigma convert -t chronicle_yaral ai-dfir-detections/**/*.yml > ai-dfir-detections.yaral
+```
+
+### YARA scanning
+
+```bash
+# Scan a model directory
+yara -r ai-dfir-detections/03-model-supply-chain/*.yar /path/to/models/
+
+# Scan an MCP config
+yara ai-dfir-detections/02-mcp-attacks/mcp_tool_poisoning.yar \
+  ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
+
+### Suricata
+
+```bash
+cp ai-dfir-detections/**/*.rules /etc/suricata/rules/
+echo 'rule-files: [ai-dfir.rules]' >> /etc/suricata/suricata.yaml
+suricata -T -c /etc/suricata/suricata.yaml  # validate
+systemctl reload suricata
+```
+
+---
+
+## Coverage overview
+
+43 rule files containing 114 individual signatures across six categories:
+
+| Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
+|----------|-------|-----------:|------------------|-----------|
+| LLM Prompt Injection | 8 | 10 | T0051, T0054, T0029 | LLM01, LLM07, LLM10 |
+| MCP Attacks | 5 | 14 | T0010, T0110, T0086 | LLM03, LLM06 |
+| Model Supply Chain | 8 | 23 | T0010, T0018, T0020 | LLM03, LLM04 |
+| AI Infrastructure | 9 | 31 | T0011, T0017, T0019 | LLM10 |
+| Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM06 |
+| RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
+| **Total** | **43** | **114** | | |
+
+*Signature count includes multi-document Sigma YAML, multiple `rule` blocks inside a single YARA file, and multiple `alert` lines inside a single Suricata `.rules` file. One file often covers several related variants.*
+
+See [MAPPINGS.md](./MAPPINGS.md) for per-rule mappings.
+
+---
+
+## Tuning notes
+
+These rules are written to err toward signal over noise, but every environment is different. Each rule includes:
+
+- `falsepositives:` section listing known FP scenarios
+- `level:` field (`low` / `medium` / `high` / `critical`) — start with `high`+ in production
+- Tunable selectors so you can scope to specific orgs/users/namespaces
+
+Recommended rollout:
+1. Deploy to a test index/workspace for 7 days
+2. Triage hits, tune `selection` and `filter` blocks
+3. Promote to production with appropriate severity
+
+---
+
+## Testing
+
+The `tests/` directory contains sample artifacts (malicious and benign) for validating rule correctness. Run:
+
+```bash
+cd tests/
+./validate.sh
+```
+
+Expected result: 7 passes, 0 failures.
+
+---
+
+## Contributing
+
+PRs welcome. Rule submission requirements:
+
+1. Reference an attack technique — ATLAS ID, CVE, or published research
+2. Include test data in `tests/` — sample log line, file, or PCAP
+3. Document false positives in the rule
+4. Use lowercase, snake_case filenames matching the threat
+5. Tag with `attack.atlas.txxxx` in Sigma rules
+
+Sigma format: follow the [Sigma specification](https://github.com/SigmaHQ/sigma-specification).
+
+---
+
+## References
+
+- [MITRE ATLAS](https://atlas.mitre.org/)
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
+- [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)
+- [Sigma HQ](https://github.com/SigmaHQ/sigma)
+- [AI Incident Database](https://incidentdatabase.ai/)
+
+---
+
+## License
+
+Apache License 2.0 — see [LICENSE](./LICENSE).
+
+You are free to use, modify, and redistribute these rules in commercial and non-commercial settings. Attribution appreciated but not required.
+
+---
+
+**Maintainer:** Raymond DePalma — independent security researcher.
+This is a personal project and is not affiliated with any employer.

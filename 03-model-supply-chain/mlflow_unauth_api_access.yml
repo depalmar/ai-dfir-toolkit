@@ -1,0 +1,49 @@
+title: MLflow Tracking Server - Suspicious API Activity
+id: 6f708192-a3b4-c5d6-e7f8-091011a2b3c4
+status: experimental
+description: |
+  Detects suspicious MLflow REST API activity in application logs:
+    - Unauthenticated access to write endpoints
+    - Bulk model downloads (potential model theft)
+    - Artifact location modifications pointing to attacker-controlled storage
+    - Path traversal patterns in artifact requests (CVE-2023-6831, CVE-2024-2928)
+references:
+  - https://www.cve.org/CVERecord?id=CVE-2023-6831
+  - https://www.cve.org/CVERecord?id=CVE-2024-0520
+  - https://www.cve.org/CVERecord?id=CVE-2024-2928
+  - https://www.cve.org/CVERecord?id=CVE-2024-37059
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.t1190
+  - attack.atlas.t0011
+  - owasp.llm03
+logsource:
+  product: mlflow
+  service: tracking
+detection:
+  selection_endpoint:
+    request_uri|contains:
+      - '/api/2.0/mlflow/'
+      - '/get-artifact'
+      - '/model-versions/'
+  selection_traversal:
+    request_uri|re: '(\.\./|%2e%2e%2f|%2e%2e/|\.\.\\|%2e%2e%5c|#\.\.)'
+  selection_external_artifact:
+    request_body|re: 'artifact_location["\s:]+["\s]*(s3|gs|azure|http)://[^/]+\.(amazonaws|googleapis|azure|ngrok|trycloudflare)\.'
+  selection_bulk_download:
+    request_uri|contains: '/get-artifact'
+    rate_per_minute|gte: 100
+  condition: selection_endpoint and (selection_traversal or selection_external_artifact or selection_bulk_download)
+fields:
+  - source_ip
+  - user_agent
+  - request_uri
+  - request_body
+  - response_status
+falsepositives:
+  - Legitimate ML platform engineers performing maintenance
+  - Authorized model migration to new artifact store
+  - Backup/replication workflows
+level: high

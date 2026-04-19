@@ -1,0 +1,95 @@
+# MCP (Model Context Protocol) Network Detection Rules
+# Format: Suricata (Snort-compatible subset)
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects:
+#   - Exposed MCP Inspector developer tool (CVE-2025-49596, CVSS 9.4)
+#   - mcp-remote OAuth proxy injection attempts (CVE-2025-6514, CVSS 9.6)
+#   - MCP server beaconing to suspicious tunneling/collaborator domains
+#   - Unauthenticated MCP server exposure on the network
+#
+# SID range: 9000001-9000099 reserved for ai-dfir-detections MCP rules
+#
+# References:
+#   https://www.cve.org/CVERecord?id=CVE-2025-49596
+#   https://www.cve.org/CVERecord?id=CVE-2025-6514
+
+# ==========================================================================
+# CVE-2025-49596 - MCP Inspector exposed on network (default port 6274)
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MCP Inspector exposed (CVE-2025-49596)"; \
+    flow:established,to_server; \
+    http.uri; content:"/sse"; nocase; \
+    http.host; content:"6274"; \
+    classtype:web-application-attack; \
+    reference:cve,2025-49596; \
+    metadata:atlas AML.T0011; \
+    sid:9000001; rev:1;)
+
+alert http any any -> any 6274 (msg:"AI-DFIR MCP Inspector default port access"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/message"; nocase; \
+    classtype:web-application-attack; \
+    reference:cve,2025-49596; \
+    metadata:atlas AML.T0011; \
+    sid:9000002; rev:1;)
+
+# ==========================================================================
+# Exposed MCP Inspector (alternative ports often seen in dev environments)
+# ==========================================================================
+alert http any any -> any [3000,5173,6274,8080] (msg:"AI-DFIR MCP Inspector UI fingerprint"; \
+    flow:established,from_server; \
+    http.response_body; content:"@modelcontextprotocol/inspector"; nocase; \
+    classtype:misc-activity; \
+    reference:cve,2025-49596; \
+    metadata:atlas AML.T0011; \
+    sid:9000003; rev:1;)
+
+# ==========================================================================
+# CVE-2025-6514 - mcp-remote OAuth proxy command injection
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR mcp-remote OAuth callback injection (CVE-2025-6514)"; \
+    flow:established,to_server; \
+    http.uri; content:"/oauth/callback"; nocase; \
+    http.uri; pcre:"/[?&](code|state)=[^&]*[\x60\x24\x28\x29\x3b\x7c\x26]/"; \
+    classtype:web-application-attack; \
+    reference:cve,2025-6514; \
+    metadata:atlas AML.T0011; \
+    sid:9000004; rev:1;)
+
+# ==========================================================================
+# MCP server beaconing to common tunneling/collaborator domains
+# ==========================================================================
+alert dns any any -> any any (msg:"AI-DFIR MCP-context DNS lookup to tunneling domain"; \
+    dns.query; pcre:"/\.(ngrok|trycloudflare|serveo|loca|localtunnel)\.(io|com|me)$/"; \
+    classtype:trojan-activity; \
+    metadata:atlas AML.T0086, owasp LLM02; \
+    sid:9000005; rev:1;)
+
+alert dns any any -> any any (msg:"AI-DFIR MCP-context DNS lookup to OOB collaborator domain"; \
+    dns.query; pcre:"/\.(burpcollaborator|interactsh|oast\.(?:fun|live|me|online|pro|site)|requestcatcher|webhook\.site)$/"; \
+    classtype:trojan-activity; \
+    metadata:atlas AML.T0086, owasp LLM02; \
+    sid:9000006; rev:1;)
+
+# ==========================================================================
+# JSON-RPC tool poisoning patterns in network traffic
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MCP tool registration with hidden instruction tag"; \
+    flow:established,from_server; \
+    http.response_body; content:"\"method\":\"tools/list\""; \
+    http.response_body; pcre:"/<IMPORTANT>|<\/s>|<\|im_start\|>system/i"; \
+    classtype:web-application-attack; \
+    reference:url,invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks; \
+    metadata:atlas AML.T0110, owasp LLM06; \
+    sid:9000007; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR MCP tool description references credential paths"; \
+    flow:established,from_server; \
+    http.response_body; content:"\"description\":"; \
+    http.response_body; pcre:"/(\.ssh\/id_rsa|\.aws\/credentials|\.env|\.netrc|\.kube\/config)/"; \
+    classtype:web-application-attack; \
+    metadata:atlas AML.T0086, owasp LLM02; \
+    sid:9000008; rev:1;)

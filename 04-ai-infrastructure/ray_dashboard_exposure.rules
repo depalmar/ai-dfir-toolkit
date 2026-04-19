@@ -1,0 +1,53 @@
+# Ray Cluster Dashboard Exposure Detection
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects exposure (not exploitation) of Ray dashboards. Discovery of
+# exposed dashboards is the precursor step in ShadowRay-style attacks.
+# Pair with ray_jobs_api_rce.rules for full coverage.
+#
+# Ports of interest:
+#   8265  - Ray Dashboard (HTTP)
+#   10001 - Ray Client Server
+#   6379  - Redis (used by Ray for cluster state)
+#
+# SID range: 9000210-9000219
+
+alert http any any -> any 8265 (msg:"AI-DFIR Ray dashboard fingerprint observed"; \
+    flow:established,from_server; \
+    http.response_body; content:"Ray Dashboard"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000210; rev:1;)
+
+alert http any any -> any 8265 (msg:"AI-DFIR Ray /api/cluster_status enumeration"; \
+    flow:established,to_server; \
+    http.method; content:"GET"; \
+    http.uri; content:"/api/cluster_status"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000211; rev:1;)
+
+alert http any any -> any 8265 (msg:"AI-DFIR Ray /api/version enumeration (recon)"; \
+    flow:established,to_server; \
+    http.method; content:"GET"; \
+    http.uri; content:"/api/version"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000212; rev:1;)
+
+alert tcp any any -> any 10001 (msg:"AI-DFIR Ray Client Server connection from external host"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000213; rev:1;)
+
+alert tcp any any -> any 6379 (msg:"AI-DFIR Redis port 6379 exposed externally (Ray uses Redis for state)"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    content:"*1|0d 0a|$4|0d 0a|PING|0d 0a|"; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0011; \
+    sid:9000214; rev:1;)

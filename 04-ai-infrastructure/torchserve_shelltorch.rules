@@ -1,0 +1,61 @@
+# TorchServe ShellTorch Detection Rules
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects exploitation of TorchServe vulnerability chain (ShellTorch):
+#   CVE-2023-43654 (CVSS 9.8) - SSRF-to-RCE via malicious model URL
+#   CVE-2022-1471  (CVSS 9.9) - SnakeYAML deserialization
+#
+# Default TorchServe ports: 8080 (inference), 8081 (management), 8082 (metrics)
+#
+# SID range: 9000310-9000319
+#
+# Reference:
+#   https://www.oligo.security/blog/shelltorch-explained-multiple-vulnerabilities-in-pytorch-model-server
+
+# ==========================================================================
+# CVE-2023-43654 - Model registration with attacker-controlled URL
+# ==========================================================================
+alert http any any -> any 8081 (msg:"AI-DFIR TorchServe model registration from external URL (CVE-2023-43654)"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/models"; nocase; \
+    http.uri; pcre:"/[?&]url=https?:\/\/(?!(?:127\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.|192\.168\.|localhost))/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-43654; \
+    metadata:atlas AML.T0010, atlas AML.T0011; \
+    sid:9000310; rev:1;)
+
+# ==========================================================================
+# Management API exposed (default install runs management on all interfaces)
+# ==========================================================================
+alert http any any -> any 8081 (msg:"AI-DFIR TorchServe management API accessed externally"; \
+    flow:established,to_server; \
+    ip_src: !$HOME_NET; \
+    http.method; content:"POST"; \
+    http.uri; content:"/models"; nocase; \
+    classtype:misc-attack; \
+    reference:cve,2023-43654; \
+    metadata:atlas AML.T0011; \
+    sid:9000311; rev:1;)
+
+# ==========================================================================
+# CVE-2022-1471 - SnakeYAML deserialization in MAR file
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR TorchServe MAR file containing YAML deserialization gadget (CVE-2022-1471)"; \
+    flow:established,from_server; \
+    file.name; pcre:"/\.mar$/"; \
+    file.data; content:"!!javax.script.ScriptEngineManager"; nocase; \
+    classtype:web-application-attack; \
+    reference:cve,2022-1471; \
+    metadata:atlas AML.T0018; \
+    sid:9000312; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR YAML payload with SnakeYAML RCE gadget"; \
+    flow:established; \
+    file.data; pcre:"/!!(javax\.script\.ScriptEngineManager|java\.net\.URLClassLoader|com\.sun\.rowset\.JdbcRowSetImpl)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2022-1471; \
+    metadata:atlas AML.T0018; \
+    sid:9000313; rev:1;)

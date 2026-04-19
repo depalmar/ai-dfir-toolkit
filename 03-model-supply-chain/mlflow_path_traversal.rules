@@ -1,0 +1,107 @@
+# MLflow Tracking Server Network Detection Rules
+# Format: Suricata
+# Author: Raymond DePalma (ai-dfir-detections)
+# Date: 2026-04-15
+#
+# Detects:
+#   - CVE-2023-6831 (CVSS 10.0) - Path traversal arbitrary file overwrite
+#   - CVE-2024-0520 (CVSS 10.0) - Path traversal arbitrary file read/write
+#   - CVE-2024-2928 (EPSS 90.4%) - Local file inclusion via URI fragment
+#   - CVE-2023-43472 - Cross-origin model theft via artifact store redirect
+#   - Generic unauthenticated MLflow tracking server access
+#
+# SID range: 9000100-9000199 reserved for MLflow rules
+#
+# References:
+#   https://www.cve.org/CVERecord?id=CVE-2023-6831
+#   https://www.cve.org/CVERecord?id=CVE-2024-0520
+#   https://www.cve.org/CVERecord?id=CVE-2024-2928
+
+# ==========================================================================
+# CVE-2023-6831 / CVE-2024-0520 - Path traversal patterns
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MLflow path traversal in artifact request (CVE-2023-6831)"; \
+    flow:established,to_server; \
+    http.uri; content:"/api/2.0/mlflow"; nocase; \
+    http.uri; pcre:"/(\.\.\/|%2e%2e%2f|%2e%2e\/|\.\.\\\\|%2e%2e%5c)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-6831; \
+    reference:cve,2024-0520; \
+    metadata:atlas AML.T0011, owasp LLM03; \
+    sid:9000100; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR MLflow create-experiment with path traversal in artifact_location"; \
+    flow:established,to_server; \
+    http.method; content:"POST"; \
+    http.uri; content:"/api/2.0/mlflow/experiments/create"; nocase; \
+    http.request_body; content:"artifact_location"; nocase; \
+    http.request_body; pcre:"/artifact_location[\"']?\s*:\s*[\"']?[^\"']*(\.\.\/|file:\/\/\/)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-6831; \
+    metadata:atlas AML.T0011; \
+    sid:9000101; rev:1;)
+
+# ==========================================================================
+# CVE-2024-2928 - Local file inclusion via URI fragment
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MLflow LFI via URI fragment (CVE-2024-2928)"; \
+    flow:established,to_server; \
+    http.uri; pcre:"/\/get-artifact\?path=[^&]*#\.\.\//i"; \
+    classtype:web-application-attack; \
+    reference:cve,2024-2928; \
+    metadata:atlas AML.T0011; \
+    sid:9000102; rev:1;)
+
+alert http any any -> any any (msg:"AI-DFIR MLflow LFI sensitive file request (etc/passwd, ssh keys)"; \
+    flow:established,to_server; \
+    http.uri; content:"/get-artifact"; nocase; \
+    http.uri; pcre:"/(etc%2fpasswd|etc\/passwd|\.ssh%2fid_|\.ssh\/id_|\.aws%2fcredentials|\.aws\/credentials)/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2024-2928; \
+    metadata:atlas AML.T0086; \
+    sid:9000103; rev:1;)
+
+# ==========================================================================
+# CVE-2023-43472 - Cross-origin model theft via artifact store redirect
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MLflow artifact store update to external S3 bucket"; \
+    flow:established,to_server; \
+    http.uri; content:"/api/2.0/mlflow/registered-models/update"; nocase; \
+    http.request_body; pcre:"/source[\"']?\s*:\s*[\"']?s3:\/\/[^\/]+\.s3[.-]/i"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-43472; \
+    metadata:atlas AML.T0010, owasp LLM03; \
+    sid:9000104; rev:1;)
+
+# ==========================================================================
+# Unauthenticated MLflow Tracking Server Exposure (default port 5000)
+# ==========================================================================
+alert http any any -> any 5000 (msg:"AI-DFIR Unauthenticated MLflow tracking API access"; \
+    flow:established,to_server; \
+    http.uri; content:"/api/2.0/mlflow"; nocase; \
+    http.method; content:"POST"; \
+    http.header_names; content:!"authorization"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0010; \
+    sid:9000105; rev:1;)
+
+alert http any any -> any 5000 (msg:"AI-DFIR MLflow UI default deployment exposed"; \
+    flow:established,from_server; \
+    http.response_body; content:"MLflow"; nocase; \
+    http.response_body; content:"<title>MLflow</title>"; nocase; \
+    classtype:misc-activity; \
+    metadata:atlas AML.T0010; \
+    sid:9000106; rev:1;)
+
+# ==========================================================================
+# Generic deserialization-triggering content type on MLflow endpoint
+# ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR MLflow text/plain content-type on artifact endpoint (CVE-2023-43472 pattern)"; \
+    flow:established,to_server; \
+    http.uri; content:"/api/2.0/mlflow"; nocase; \
+    http.content_type; content:"text/plain"; nocase; \
+    http.method; content:"POST"; \
+    classtype:web-application-attack; \
+    reference:cve,2023-43472; \
+    metadata:atlas AML.T0011; \
+    sid:9000107; rev:1;)

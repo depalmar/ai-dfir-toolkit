@@ -1,0 +1,124 @@
+title: M365 Copilot - First-Time User Activity Burst
+id: a3cd0698-b121-4d5e-6f70-819203142536
+status: experimental
+description: |
+  Detects previously-inactive users suddenly generating high-volume
+  Copilot activity. Catches account takeover scenarios and new
+  insider-threat patterns.
+
+  Implementation: compare last 24h activity against a 30-day baseline
+  per user. This rule provides the detection logic; backend-specific
+  baseline correlation is handled via lookups (Splunk), watchlists
+  (Sentinel), or enrich processors (Elastic).
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  product: m365
+  service: audit
+detection:
+  selection_operation:
+    Operation:
+      - 'CopilotInteraction'
+      - 'AIAppInteraction'
+  condition: selection_operation
+  timeframe: 24h
+fields:
+  - UserId
+  - ClientIP
+  - AppHost
+falsepositives:
+  - New employees onboarding to Copilot
+  - Copilot rollout to a user cohort
+level: low
+---
+title: M365 Copilot - Cross-Site Aggregation in Short Window
+id: b4de1709-c232-5e6f-7081-920314253647
+status: experimental
+description: |
+  Detects Copilot sessions touching 5+ distinct SharePoint/OneDrive
+  sites within a 15-minute window by the same user. Pattern of bulk
+  information aggregation — what Microsoft Purview calls the "Copilot
+  as privilege multiplier" risk.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+  - https://atlas.mitre.org/techniques/AML.T0024
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.atlas.t0024
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  product: m365
+  service: audit
+detection:
+  selection_operation:
+    Operation:
+      - 'CopilotInteraction'
+      - 'AIAppInteraction'
+  selection_has_url:
+    AccessedResources|contains: '/sites/'
+  condition: all of selection_*
+  timeframe: 15m
+fields:
+  - UserId
+  - ClientIP
+  - AccessedResources
+falsepositives:
+  - Legitimate cross-site research tasks (M&A due diligence, audit prep)
+  - Executive assistants genuinely summarizing content across sites
+level: medium
+---
+title: M365 Copilot - Bulk-Extraction Prompt Keywords
+id: c5ef281a-d343-6f70-8192-031425364758
+status: experimental
+description: |
+  Detects Copilot prompts containing bulk-extraction keywords such as
+  "list all", "summarize all", "export everything", "all emails
+  containing". These patterns indicate intent to aggregate large volumes
+  of organizational content — the Copilot-as-exfiltration-tool pattern.
+
+  Prompt content is only available in DSPM for AI activity-explorer
+  events (not the standard Unified Audit Log). Requires E5 Compliance
+  licensing and DSPM for AI enabled.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  product: m365
+  service: dspm_ai
+detection:
+  selection_activity:
+    ActivityType: 'CopilotInteraction'
+  selection_prompt:
+    Prompt|contains:
+      - 'list all'
+      - 'summarize all'
+      - 'export everything'
+      - 'all emails containing'
+      - 'all files about'
+      - 'all conversations with'
+      - 'every document'
+      - 'compile a report of all'
+      - 'give me everything'
+  condition: all of selection_*
+fields:
+  - AccountObjectId
+  - IPAddress
+  - Prompt
+falsepositives:
+  - Legitimate research / audit queries
+  - Compliance teams genuinely collecting cross-tenant information
+level: medium

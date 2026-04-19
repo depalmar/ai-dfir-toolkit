@@ -1,0 +1,87 @@
+title: AWS Bedrock - Excessive Token Consumption
+id: 3c5e9f21-4a6b-7c8d-9e0f-1a2b3c4d5e6f
+status: experimental
+description: |
+  Detects abnormally high token consumption on AWS Bedrock model
+  invocations, indicating cost-based denial of service (LLM10), model
+  extraction attempts, or runaway agentic loops. Requires Bedrock model
+  invocation logging enabled (CloudWatch log group /aws/bedrock with
+  schemaType=ModelInvocationLog) — logging is OFF by default.
+references:
+  - https://genai.owasp.org/llmrisk/llm10-unbounded-consumption/
+  - https://atlas.mitre.org/techniques/AML.T0029
+  - https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.impact
+  - attack.atlas.t0029
+  - owasp.llm10
+logsource:
+  product: aws
+  service: bedrock
+detection:
+  selection_schema:
+    schemaType: 'ModelInvocationLog'
+  selection_excessive:
+    output.outputBodyJson.usage.output_tokens|gte: 50000
+  selection_anomalous_ratio:
+    output.outputBodyJson.usage.input_tokens|lte: 100
+    output.outputBodyJson.usage.output_tokens|gte: 10000
+  condition: selection_schema and (selection_excessive or selection_anomalous_ratio)
+fields:
+  - identity.arn
+  - modelId
+  - input.inputBodyJson.prompt
+  - output.outputBodyJson.usage.input_tokens
+  - output.outputBodyJson.usage.output_tokens
+falsepositives:
+  - Legitimate batch summarization or long-document RAG workloads
+  - Code generation tasks producing large outputs
+  - Multi-step agentic reasoning workflows
+level: medium
+---
+title: AWS Bedrock - Injection Patterns in Invocation Logs
+id: 4d6fa032-5b7c-8d9e-0f1a-2b3c4d5e6f70
+status: experimental
+description: |
+  Detects known prompt injection, jailbreak, and system prompt extraction
+  strings in captured Bedrock prompt content.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0051
+  - https://atlas.mitre.org/techniques/AML.T0054
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.atlas.t0051
+  - attack.atlas.t0054
+  - owasp.llm01
+  - owasp.llm07
+logsource:
+  product: aws
+  service: bedrock
+detection:
+  selection_schema:
+    schemaType: 'ModelInvocationLog'
+  selection_patterns:
+    input.inputBodyJson.prompt|contains:
+      - 'ignore previous instructions'
+      - 'ignore all previous'
+      - 'you are now'
+      - 'act as if you'
+      - 'pretend you are'
+      - 'system prompt:'
+      - 'developer mode enabled'
+      - '</s>'
+      - '<|im_start|>system'
+      - 'repeat your instructions'
+      - 'what is your system prompt'
+      - 'DAN mode'
+      - 'do anything now'
+      - 'no restrictions whatsoever'
+  condition: selection_schema and selection_patterns
+falsepositives:
+  - Security researchers, red teamers, prompt engineers
+  - LLM evaluation pipelines
+level: medium

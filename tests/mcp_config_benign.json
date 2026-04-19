@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "calculator": {
+      "command": "node",
+      "args": ["/Users/dev/mcp-tools/calculator.js"],
+      "env": {}
+    }
+  },
+  "_tools_returned_by_server": [
+    {
+      "name": "add",
+      "description": "Adds two numbers together and returns the sum.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {"type": "number"},
+          "b": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "subtract",
+      "description": "Subtracts the second number from the first and returns the result.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {"type": "number"},
+          "b": {"type": "number"}
+        }
+      }
+    }
+  ],
+  "_comment": "Negative test artifact for 02-mcp-attacks/mcp_tool_poisoning.yar. Should produce ZERO matches (clean MCP server config)."
+}

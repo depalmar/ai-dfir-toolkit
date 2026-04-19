@@ -1,0 +1,74 @@
+title: NVIDIA Container Toolkit Escape Pattern (CVE-2024-0132 / CVE-2025-23266)
+id: c5d6e7f8-0910-11a2-b3c4-d5e6f708091a
+status: experimental
+description: |
+  Detects patterns associated with NVIDIA Container Toolkit container
+  escape vulnerabilities affecting GPU-enabled containers:
+    - CVE-2024-0132 (CVSS 9.0) - Symlink escape via custom mounts
+    - CVE-2025-23266 "NVIDIAScape" (CVSS 9.0) - 3-line Dockerfile escape
+    - CVE-2025-23359 (CVSS 9.0) - CVE-2024-0132 patch bypass
+  Affects ~35%+ of cloud environments using NVIDIA GPUs.
+references:
+  - https://www.cve.org/CVERecord?id=CVE-2024-0132
+  - https://www.cve.org/CVERecord?id=CVE-2025-23266
+  - https://www.cve.org/CVERecord?id=CVE-2025-23359
+  - https://www.csoonline.com/article/3541912/a-critical-nvidia-container-toolkit-bug-can-allow-a-complete-host-takeover.html
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.privilege_escalation
+  - attack.t1611
+  - attack.atlas.t0017
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_docker_run_with_dangerous_mounts:
+    Image|endswith:
+      - '/docker'
+      - '/podman'
+      - '/nerdctl'
+    CommandLine|contains:
+      - '--gpus'
+      - '--runtime=nvidia'
+      - 'nvidia/cuda'
+    CommandLine|contains|all:
+      - '-v'
+      - ':/host'
+  selection_dangerous_dockerfile_patterns:
+    Image|endswith:
+      - '/docker'
+      - '/buildah'
+      - '/buildkitd'
+    CommandLine|contains:
+      - 'LD_PRELOAD'
+      - '/proc/self/'
+      - '/var/run/docker.sock:'
+      - '/run/containerd/containerd.sock:'
+  selection_nvidia_runtime_anomaly:
+    Image|endswith:
+      - '/nvidia-container-runtime'
+      - '/nvidia-container-cli'
+    CommandLine|contains:
+      - '../'
+      - 'symlink'
+      - '../../'
+  selection_post_escape_artifacts:
+    ParentImage|contains:
+      - 'nvidia-container'
+      - 'containerd-shim'
+    Image|endswith:
+      - '/nsenter'
+      - '/chroot'
+      - '/setns'
+  condition: 1 of selection_*
+fields:
+  - User
+  - Image
+  - ParentImage
+  - CommandLine
+falsepositives:
+  - Legitimate GPU container workloads with bind mounts to /host (rare in production)
+  - NVIDIA driver installation/upgrade processes
+  - Authorized debugging by infrastructure team
+level: high

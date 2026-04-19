@@ -1,0 +1,87 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  yara-validation:
+    name: YARA compile + smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install YARA
+        run: sudo apt-get update && sudo apt-get install -y yara
+
+      - name: Compile all YARA rules (syntax check)
+        run: |
+          for f in $(find . -name '*.yar'); do
+            echo "Compiling $f"
+            yara -w "$f" /dev/null
+          done
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate pickle fixtures and run smoke tests
+        run: |
+          cd tests
+          python3 generate_test_pickles.py
+          chmod +x validate.sh
+          ./validate.sh
+
+  sigma-validation:
+    name: Sigma rule validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pySigma and Splunk backend
+        run: |
+          pip install pysigma pysigma-backend-splunk pyyaml
+
+      - name: Validate every Sigma rule parses and converts
+        run: |
+          failed=0
+          for f in $(find . -name '*.yml' -not -path './.github/*'); do
+            echo "=== $f ==="
+            if ! sigma convert -t splunk "$f" > /dev/null 2>&1; then
+              echo "FAILED: $f"
+              sigma convert -t splunk "$f" 2>&1 | head -5
+              failed=$((failed + 1))
+            fi
+          done
+          if [ "$failed" -gt 0 ]; then
+            echo "$failed Sigma rules failed validation"
+            exit 1
+          fi
+          echo "All Sigma rules validated successfully"
+
+  suricata-validation:
+    name: Suricata syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Suricata
+        run: |
+          sudo add-apt-repository -y ppa:oisf/suricata-stable
+          sudo apt-get update
+          sudo apt-get install -y suricata
+
+      - name: Validate all Suricata rules
+        run: |
+          mkdir -p /tmp/suricata-rules
+          cp $(find . -name '*.rules') /tmp/suricata-rules/
+          cat /tmp/suricata-rules/*.rules > /tmp/combined.rules
+          suricata -T -S /tmp/combined.rules -l /tmp/

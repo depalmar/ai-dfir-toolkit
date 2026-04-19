@@ -1,0 +1,56 @@
+title: ChromaDB SQLite Modified by Unexpected Process
+id: 12b3c4d5-e6f7-0809-1011-a2b3c4d5e6f7
+status: experimental
+description: |
+  Detects modifications to ChromaDB persistent SQLite store by processes
+  other than the ChromaDB server or its expected client libraries.
+  Direct SQLite manipulation can:
+    - Inject poisoned vectors / documents into the RAG corpus
+    - Modify embedding-to-source mappings (silent corpus poisoning)
+    - Tamper with collection-level metadata
+references:
+  - https://docs.trychroma.com/docs/cli/db
+  - https://atlas.mitre.org/techniques/AML.T0020
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.atlas.t0020
+  - owasp.llm08
+logsource:
+  category: file_event
+detection:
+  selection_target:
+    TargetFilename|contains:
+      - '/chroma_data/'
+      - '\chroma_data\'
+    TargetFilename|endswith:
+      - '/chroma.sqlite3'
+      - '\chroma.sqlite3'
+      - '/chroma.sqlite3-journal'
+      - '/chroma.sqlite3-wal'
+      - '/chroma.sqlite3-shm'
+  filter_legitimate:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/chroma'
+      - '\python.exe'
+      - '\chroma.exe'
+    ParentImage|contains:
+      - 'chroma'
+      - 'jupyter'
+      - 'uvicorn'
+      - 'gunicorn'
+      - 'fastapi'
+  condition: selection_target and not filter_legitimate
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+falsepositives:
+  - SQLite tooling used by DBAs for legitimate inspection (sqlite3 CLI, DB Browser)
+  - Backup/sync tools
+  - Migration scripts during upgrades
+level: high

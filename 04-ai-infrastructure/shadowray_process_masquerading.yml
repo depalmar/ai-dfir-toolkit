@@ -1,0 +1,72 @@
+title: ShadowRay Process Masquerading - Cryptominer as Kernel Worker
+id: 92a3b4c5-d6e7-f809-1011-a2b3c4d5e6f7
+status: experimental
+description: |
+  Detects process masquerading patterns documented in the ShadowRay 2.0
+  campaign. Attackers rename XMRig cryptominer binaries to look like
+  kernel worker threads (kworker/X:Y), DNS filter daemons, or hidden
+  Python interpreters to evade casual review and Ray's own metrics.
+references:
+  - https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+  - https://attack.mitre.org/campaigns/C0045/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.defense_evasion
+  - attack.t1036.005
+  - attack.atlas.t0011
+  - attack.atlas.t0029
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_masqueraded_names:
+    Image|endswith:
+      - '/kworker/0:0'
+      - '/kworker/u:0'
+      - '/dns-filter'
+      - '/.python3.6'
+      - '/.python3.7'
+      - '/.python3.8'
+      - '/.python3.9'
+      - '/.python3.10'
+      - '/.systemd'
+      - '/.kthreadd'
+  selection_kthread_with_args:
+    Image|contains: 'kworker'
+    CommandLine|contains:
+      - '--coin'
+      - '--pool'
+      - '--user'
+      - 'stratum'
+      - '--cpu-priority'
+      - '--max-cpu-usage'
+      - '-o '
+      - '-u '
+  selection_xmrig_indicators:
+    CommandLine|contains:
+      - 'xmrig'
+      - 'cryptonight'
+      - 'monero'
+      - 'stratum+tcp'
+      - 'gulf.moneroocean.stream'
+      - 'pool.supportxmr.com'
+      - 'pool.minexmr.com'
+      - 'randomx'
+  selection_hidden_in_tmp:
+    Image|startswith:
+      - '/tmp/.'
+      - '/dev/shm/.'
+      - '/var/tmp/.'
+    Image|contains: '/.'
+  condition: 1 of selection_*
+fields:
+  - User
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate kernel threads (no command-line arguments — true kthreads have empty cmdline)
+  - Custom-named Python virtual environments matching .pythonX.Y pattern (rare)
+level: critical

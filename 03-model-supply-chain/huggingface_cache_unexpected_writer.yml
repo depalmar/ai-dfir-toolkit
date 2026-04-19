@@ -1,0 +1,62 @@
+title: HuggingFace Cache Modified by Unexpected Process
+id: 8192a3b4-c5d6-e7f8-0910-11a2b3c4d5e6
+status: experimental
+description: |
+  Detects modifications to ~/.cache/huggingface/hub/ contents by
+  processes other than the huggingface_hub library or transformers.
+  Unauthorized modification could indicate model substitution, weight
+  tampering, or persistence by replacing trusted cached models with
+  poisoned versions.
+references:
+  - https://huggingface.co/docs/huggingface_hub/main/en/guides/manage-cache
+  - https://atlas.mitre.org/techniques/AML.T0010.003
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.atlas.t0010
+  - owasp.llm03
+logsource:
+  category: file_event
+detection:
+  selection_target:
+    TargetFilename|contains:
+      - '/.cache/huggingface/hub/models--'
+      - '\.cache\huggingface\hub\models--'
+      - '/.cache/huggingface/hub/datasets--'
+  selection_extensions:
+    TargetFilename|endswith:
+      - '.bin'
+      - '.pt'
+      - '.pth'
+      - '.safetensors'
+      - '.gguf'
+      - '.onnx'
+      - '.h5'
+      - '.keras'
+      - '.pkl'
+  filter_legitimate:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/huggingface-cli'
+      - '/hf'
+      - '\python.exe'
+      - '\huggingface-cli.exe'
+      - '\hf.exe'
+  filter_legitimate_parent:
+    ParentImage|endswith:
+      - '/jupyter-notebook'
+      - '/jupyter-lab'
+      - '/code-server'
+  condition: selection_target and selection_extensions and not (filter_legitimate or filter_legitimate_parent)
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+falsepositives:
+  - Backup tools (Time Machine, Restic, Borg)
+  - Cloud sync (Dropbox, OneDrive, iCloud Drive on Mac)
+  - Manual cache management by ML engineers
+level: medium

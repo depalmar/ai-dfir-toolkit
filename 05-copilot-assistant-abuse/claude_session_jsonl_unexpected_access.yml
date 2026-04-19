@@ -1,0 +1,67 @@
+title: Claude Code Session History Accessed by Unexpected Process
+id: 091011a2-b3c4-d5e6-f708-091011a2b3c4
+status: experimental
+description: |
+  Detects reads of Claude Code session JSONL files by processes other
+  than Claude itself. Session files at ~/.claude/projects/{slug}/session-*.jsonl
+  contain full conversation transcripts, tool invocations, file reads,
+  and agentic action logs — making them high-value forensic artifacts
+  AND exfiltration targets for credential or IP theft.
+references:
+  - https://inventivehq.com/knowledge-base/claude/where-configuration-files-are-stored
+  - https://code.claude.com/docs/en/security
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.t1005
+  - attack.atlas.t0086
+logsource:
+  category: file_event
+detection:
+  selection_session_files:
+    TargetFilename|contains:
+      - '/.claude/projects/'
+      - '\.claude\projects\'
+    TargetFilename|endswith:
+      - '.jsonl'
+  selection_credential_files:
+    TargetFilename|contains:
+      - '/.claude/.credentials.json'
+      - '\.claude\.credentials.json'
+  filter_legitimate_readers:
+    Image|endswith:
+      - '/claude'
+      - '/node'
+      - '\claude.exe'
+      - '\node.exe'
+      - '/Claude.app/Contents/MacOS/Claude'
+      - '\Claude.exe'
+    ParentImage|endswith:
+      - '/claude'
+      - '\claude.exe'
+      - '/Claude.app/Contents/MacOS/Claude'
+      - '\Claude.exe'
+  filter_user_inspection:
+    Image|endswith:
+      - '/cat'
+      - '/less'
+      - '/jq'
+      - '/grep'
+      - '/python'
+      - '/python3'
+      - '/code'
+      - '\Code.exe'
+  condition: (selection_session_files or selection_credential_files)
+             and not filter_legitimate_readers
+             and not filter_user_inspection
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+falsepositives:
+  - Backup/sync tools (Dropbox, OneDrive, iCloud, Time Machine, Restic)
+  - Manual user inspection via cat/less/jq (excluded by default)
+  - Telemetry collectors authorized to read agent state
+level: high

@@ -1,0 +1,33 @@
+{
+  "_time": "2026-04-15T16:14:08Z",
+  "operation": "CopilotInteraction",
+  "record_type": "CopilotInteraction",
+  "user_id": "j.smith@contoso.com",
+  "client_ip": "203.0.113.84",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  "app_host": "Outlook",
+  "correlation_id": "fde2-4a8b-9c11-2d03",
+  "device_properties": {
+    "IsCompliantAndManaged": "False",
+    "DeviceId": "unknown",
+    "OS": "Windows 11"
+  },
+  "accessed_resources": [
+    {
+      "Url": "https://contoso.sharepoint.com/sites/finance-confidential/Shared%20Documents/Q1-board-pack.docx",
+      "Type": "SharePointFile",
+      "SensitivityLabelId": "8a8c2b30-bf68-4d2c-b76b-5a4e7d2c2c12"
+    },
+    {
+      "Url": "https://outlook.office.com/mail/SentItems/AAMkAGI3...",
+      "Type": "EmailItem",
+      "SensitivityLabelId": "5e9f8c91-8b76-4d3a-88a1-1c4d6f0a9e22"
+    },
+    {
+      "Url": "https://contoso.sharepoint.com/sites/legal-privileged/Shared%20Documents/SettlementDraft.pdf",
+      "Type": "SharePointFile",
+      "SensitivityLabelId": "8a8c2b30-bf68-4d2c-b76b-5a4e7d2c2c12"
+    }
+  ],
+  "_comment": "Test event for 05-copilot-assistant-abuse/m365_copilot_sensitive_label_access.yml (sensitivity label, email folder, and unmanaged device Sigma rules). Mirrors the CW1226324 access pattern."
+}

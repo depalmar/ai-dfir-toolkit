@@ -1,0 +1,67 @@
+title: MCP Configuration File Modified by Unexpected Process
+id: 1a2b3c4d-5e6f-7081-92a3-b4c5d6e7f809
+status: experimental
+description: |
+  Detects modifications to MCP configuration files by processes other
+  than the expected AI client applications (Claude Desktop, Claude Code,
+  Cursor, VS Code). MCP configs are high-value attack surfaces because
+  they specify which servers and credentials the LLM can invoke.
+  Unauthorized writes may indicate tool poisoning, rug-pull updates,
+  or persistence via malicious MCP server registration.
+references:
+  - https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks
+  - https://www.cve.org/CVERecord?id=CVE-2025-59536
+  - https://research.checkpoint.com/2025/cursor-vulnerability-mcpoison/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.t1546
+  - attack.atlas.t0010
+  - owasp.llm03
+logsource:
+  category: file_event
+detection:
+  selection_target_files:
+    TargetFilename|contains:
+      - 'claude_desktop_config.json'
+      - '/.claude/settings.json'
+      - '/.claude/.mcp.json'
+      - '/.claude/.credentials.json'
+      - '/.cursor/mcp.json'
+      - '/.cursor/rules/mcp.json'
+      - '/.vscode/settings.json'
+      - '/Library/Application Support/Claude/'
+      - '\Claude\claude_desktop_config.json'
+      - '\Cursor\User\settings.json'
+  filter_legitimate_writers:
+    Image|endswith:
+      - '/Claude.app/Contents/MacOS/Claude'
+      - '/Cursor.app/Contents/MacOS/Cursor'
+      - '\Claude.exe'
+      - '\Cursor.exe'
+      - '\Code.exe'
+      - '/usr/bin/code'
+      - '/usr/local/bin/claude'
+      - '/usr/local/bin/cursor'
+      - '/bin/claude'
+      - '/bin/node'  # legitimate when invoked by the IDE
+  filter_user_text_editors:
+    Image|endswith:
+      - '/vim'
+      - '/nvim'
+      - '/nano'
+      - '\notepad.exe'
+      - '\notepad++.exe'
+  condition: selection_target_files and not (filter_legitimate_writers or filter_user_text_editors)
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+  - CommandLine
+falsepositives:
+  - Backup/sync tools (Dropbox, OneDrive, iCloud)
+  - Configuration management tools (Ansible, Chef, Puppet)
+  - Manual edits via uncommon text editors not in the filter list
+level: high

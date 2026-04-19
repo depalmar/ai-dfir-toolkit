@@ -1,0 +1,117 @@
+title: Model File Created with Hash Not in Approved Baseline
+id: 5e7fb143-6c8d-9e0f-1a2b-3c4d5e6f7081
+status: experimental
+description: |
+  Detects creation or modification of production model files whose
+  SHA-256 hash is not present in the organization's approved-model
+  baseline. Indicates unauthorized model substitution, supply-chain
+  tampering, or undeclared model updates that bypass review.
+
+  Prerequisites:
+    1. File integrity monitoring collects SHA-256 of every model file
+       (Sysmon EID 15 File Stream, auditd fanotify, Wazuh FIM,
+       OSQuery file_events table, or EDR equivalent).
+    2. Maintain an approved-hash allowlist in your SIEM as a lookup:
+       columns: model_name, sha256, version, approved_date.
+    3. This rule flags any HIGH-signal file event; tune the lookup
+       correlation in the backend (Splunk lookup, Elastic enrich
+       processor, Sentinel watchlist, etc.).
+references:
+  - https://atlas.mitre.org/techniques/AML.T0010
+  - https://atlas.mitre.org/techniques/AML.T0018
+  - https://genai.owasp.org/llmrisk/llm03-supply-chain/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.initial_access
+  - attack.atlas.t0010
+  - attack.atlas.t0018
+  - owasp.llm03
+logsource:
+  category: file_event
+detection:
+  selection_model_file:
+    TargetFilename|endswith:
+      - '.pt'
+      - '.pth'
+      - '.bin'
+      - '.safetensors'
+      - '.gguf'
+      - '.onnx'
+      - '.h5'
+      - '.keras'
+      - '.pkl'
+      - '.joblib'
+      - '.ckpt'
+  filter_trusted_writer:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/huggingface-cli'
+      - '\python.exe'
+  condition: selection_model_file and not filter_trusted_writer
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+  - Hashes
+  - CommandLine
+falsepositives:
+  - Legitimate model training or download by approved ML pipelines
+  - Package manager operations (pip/conda) on ML libraries
+  - Backup/sync tools (Dropbox, OneDrive, Time Machine)
+level: medium
+---
+title: Model File Appearing in Non-Standard Location
+id: 6f80c254-7d9e-0f1a-2b3c-4d5e6f708192
+status: experimental
+description: |
+  Detects model weight files created outside expected model-storage
+  locations. Attackers stage poisoned models in unusual paths
+  (home directories, /tmp, Downloads) before loading them into
+  inference pipelines.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0010.003
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.atlas.t0010
+  - owasp.llm03
+logsource:
+  category: file_event
+detection:
+  selection_extension:
+    TargetFilename|endswith:
+      - '.pt'
+      - '.pth'
+      - '.bin'
+      - '.safetensors'
+      - '.pkl'
+      - '.joblib'
+  filter_standard_locations:
+    TargetFilename|contains:
+      - '/models/'
+      - '/checkpoints/'
+      - '/.cache/huggingface/'
+      - '/mlruns/'
+      - '/mlartifacts/'
+      - '/wandb/'
+      - '/usr/share/'
+      - '/site-packages/'
+      - '/opt/'
+      - '\models\'
+      - '\checkpoints\'
+      - '\.cache\huggingface\'
+  condition: selection_extension and not filter_standard_locations
+fields:
+  - User
+  - Image
+  - TargetFilename
+  - Hashes
+falsepositives:
+  - ML engineers experimenting with models in working directories
+  - Jupyter notebooks downloading models to notebook-relative paths
+level: low

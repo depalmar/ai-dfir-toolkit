@@ -1,0 +1,120 @@
+title: M365 Copilot Accessing Sensitivity-Labeled Content
+id: 709ad365-8e0f-1a2b-3c4d-5e6f70819203
+status: experimental
+description: |
+  Detects Microsoft 365 Copilot or AIAppInteraction events where the
+  accessed resource has a sensitivity label. Independent defense-in-
+  depth against Copilot bypassing DLP / sensitivity-label enforcement
+  (Microsoft incident CW1226324, January-February 2026).
+
+  Log source: Microsoft Purview Unified Audit Log. Ingest via any SIEM
+  with an Office 365 Management Activity API connector. This rule is
+  log-source-agnostic — map the field names to your connector's schema.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+  - https://genai.owasp.org/llmrisk/llm02-sensitive-information-disclosure/
+  - https://learn.microsoft.com/en-us/purview/audit-copilot
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.exfiltration
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  product: m365
+  service: audit
+detection:
+  selection_operation:
+    Operation:
+      - 'CopilotInteraction'
+      - 'AIAppInteraction'
+  selection_labeled:
+    AccessedResources|contains: 'SensitivityLabelId'
+  condition: selection_operation and selection_labeled
+fields:
+  - UserId
+  - ClientIP
+  - AppHost
+  - AccessedResources
+  - RecordType
+falsepositives:
+  - Legitimate Copilot use on labeled content by authorized users —
+    tune with an allowlist of (UserId, LabelId) pairs
+level: high
+---
+title: M365 Copilot Accessing Email Sent Items / Drafts
+id: 81aae476-9f0f-2b3c-4d5e-6f7081920314
+status: experimental
+description: |
+  Detects Copilot interactions that access Sent Items, Drafts, or
+  Outbox folders. Mirrors the CW1226324 access pattern where Copilot
+  silently read emails protected by sensitivity labels.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.collection
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  product: m365
+  service: audit
+detection:
+  selection_operation:
+    Operation:
+      - 'CopilotInteraction'
+      - 'AIAppInteraction'
+  selection_app:
+    AppHost|contains: 'Outlook'
+  selection_sensitive_folder:
+    AccessedResources|contains:
+      - '/SentItems/'
+      - '/Drafts/'
+      - '/Outbox/'
+  condition: all of selection_*
+fields:
+  - UserId
+  - ClientIP
+  - AppHost
+  - AccessedResources
+falsepositives:
+  - Legitimate "help me finish this draft" or "summarize my sent mail" flows
+level: high
+---
+title: M365 Copilot Activity from Unmanaged Device
+id: 92bbf587-a010-3c4d-5e6f-708192031425
+status: experimental
+description: |
+  Detects Copilot interactions from devices flagged as non-compliant
+  or unmanaged. Catches BYOD or compromised-endpoint access to Copilot
+  after enterprise AI permissions have been granted.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0086
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.atlas.t0086
+logsource:
+  product: m365
+  service: audit
+detection:
+  selection_operation:
+    Operation:
+      - 'CopilotInteraction'
+      - 'AIAppInteraction'
+  selection_unmanaged:
+    DeviceProperties|contains: '"IsCompliantAndManaged":"False"'
+  condition: all of selection_*
+fields:
+  - UserId
+  - ClientIP
+  - AppHost
+  - DeviceProperties
+  - UserAgent
+falsepositives:
+  - Authorized BYOD scenarios
+  - Device compliance telemetry lag (fresh enrollments may register as unmanaged briefly)
+level: medium

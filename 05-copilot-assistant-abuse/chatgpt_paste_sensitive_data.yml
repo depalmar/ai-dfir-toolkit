@@ -1,0 +1,67 @@
+title: Large Browser POST to AI SaaS Endpoint (Possible Sensitive Data Paste)
+id: 1011a2b3-c4d5-e6f7-0809-1011a2b3c4d5
+status: experimental
+description: |
+  Detects browser-initiated POST requests to AI SaaS chat endpoints
+  (ChatGPT, Claude.ai, Gemini, Perplexity, Copilot consumer) carrying
+  unusually large payloads. Models the Samsung 2023 incident pattern
+  where engineers pasted proprietary source code and meeting transcripts
+  into ChatGPT — which became part of training data.
+
+  Pair with browser proxy/SSL-inspection or EDR network telemetry. If
+  no decryption is in place, alert on connection size + frequency rather
+  than payload content.
+references:
+  - https://www.darkreading.com/vulnerabilities-threats/samsung-engineers-sensitive-data-chatgpt-warnings-ai-use-workplace
+  - https://techcrunch.com/2023/05/02/samsung-bans-use-of-generative-ai-tools-like-chatgpt-after-april-internal-data-leak/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.exfiltration
+  - attack.t1567.002
+  - attack.atlas.t0086
+  - owasp.llm02
+logsource:
+  category: network_connection
+detection:
+  selection_browser:
+    Image|endswith:
+      - '/chrome'
+      - '/firefox'
+      - '/safari'
+      - '/edge'
+      - '\chrome.exe'
+      - '\firefox.exe'
+      - '\msedge.exe'
+      - '\Safari'
+      - '\brave.exe'
+      - '\opera.exe'
+  selection_ai_destination:
+    DestinationHostname|endswith:
+      - '.openai.com'
+      - 'chatgpt.com'
+      - '.anthropic.com'
+      - 'claude.ai'
+      - 'gemini.google.com'
+      - 'bard.google.com'
+      - 'perplexity.ai'
+      - 'copilot.microsoft.com'
+      - 'chat.deepseek.com'
+      - 'mistral.ai'
+      - 'huggingface.co'
+      - 'poe.com'
+  selection_large_payload:
+    BytesSent|gte: 1048576   # >=1 MB POST size
+  condition: selection_browser and selection_ai_destination and selection_large_payload
+fields:
+  - User
+  - Image
+  - DestinationHostname
+  - BytesSent
+  - DestinationPort
+falsepositives:
+  - Image / file uploads to AI assistants for legitimate analysis
+  - Paste of large logs for legitimate troubleshooting
+  - Power users with large context window usage
+  - File-attachment workflows in approved AI tools
+level: medium

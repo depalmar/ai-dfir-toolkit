@@ -1,0 +1,71 @@
+title: GPU Sustained High Utilization by Non-ML Process
+id: a3b4c5d6-e7f8-0910-11a2-b3c4d5e6f708
+status: experimental
+description: |
+  Detects GPU usage by processes that are not recognized ML training/
+  inference workloads. Pattern matches cryptominer behaviour (sustained
+  high utilization, often capped at 60-100% to avoid detection) and
+  unauthorized model exfiltration via long-running inference.
+
+  Requires GPU telemetry from DCGM exporter, nvidia-smi pmon output
+  shipped via Telegraf/Fluent Bit, or equivalent.
+references:
+  - https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+  - https://attack.mitre.org/campaigns/C0045/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.impact
+  - attack.t1496
+  - attack.atlas.t0029
+logsource:
+  product: nvidia
+  service: gpu_telemetry
+detection:
+  selection_high_util:
+    gpu_utilization_pct|gte: 60
+    duration_minutes|gte: 30
+  selection_suspicious_process:
+    process_name|contains:
+      - 'kworker'
+      - 'dns-filter'
+      - 'systemd-'
+      - '.python'
+      - 'xmrig'
+      - 'minerd'
+      - 'cpuminer'
+      - 'cgminer'
+      - 't-rex'
+      - 'lolminer'
+      - 'phoenixminer'
+  selection_unknown_process:
+    process_name|contains: '/tmp/'
+  filter_known_ml:
+    process_name|contains:
+      - 'python'
+      - 'pytorch'
+      - 'tensorflow'
+      - 'jax'
+      - 'jupyter'
+      - 'ray::'
+      - 'torchrun'
+      - 'accelerate'
+      - 'deepspeed'
+      - 'vllm'
+      - 'ollama'
+      - 'triton'
+      - 'tensorrt'
+  condition: selection_high_util and (selection_suspicious_process or selection_unknown_process) and not filter_known_ml
+fields:
+  - hostname
+  - gpu_id
+  - process_name
+  - process_pid
+  - gpu_utilization_pct
+  - duration_minutes
+  - gpu_memory_used_mb
+falsepositives:
+  - Legitimate non-Python ML workloads (Julia, R, custom C++ trainers)
+  - GPU passthrough VMs running approved games/rendering/scientific computing
+  - Adobe / Blender / DaVinci Resolve workstations
+level: high

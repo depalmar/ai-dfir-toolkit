@@ -1,0 +1,52 @@
+title: Claude Desktop Configuration File Modified
+id: 3c4d5e6f-7081-92a3-b4c5-d6e7f8091011
+status: experimental
+description: |
+  Detects modifications to claude_desktop_config.json which controls
+  MCP server registration for Anthropic's Claude Desktop client. Any
+  unexpected modification of this file may register a malicious MCP
+  server granting unsandboxed code execution on the host.
+
+  Multiple Windows install paths are covered including the documented
+  MSIX-vs-EXE inconsistency (GitHub anthropics/claude-code issue #26073).
+references:
+  - https://github.com/anthropics/claude-code/issues/26073
+  - https://layerxsecurity.com/blog/claude-desktop-extensions-rce/
+  - https://www.cve.org/CVERecord?id=CVE-2025-53109
+  - https://www.cve.org/CVERecord?id=CVE-2025-53110
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.t1546
+  - attack.atlas.t0010
+logsource:
+  category: file_event
+detection:
+  selection_macos:
+    TargetFilename|contains: '/Library/Application Support/Claude/claude_desktop_config.json'
+  selection_windows_exe:
+    TargetFilename|contains: '\AppData\Roaming\Claude\claude_desktop_config.json'
+  selection_windows_msix:
+    TargetFilename|contains: '\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
+  selection_linux:
+    TargetFilename|contains: '/.config/claude-desktop/claude_desktop_config.json'
+  selection_dxt_extension:
+    TargetFilename|contains:
+      - '/Library/Application Support/Claude/Extensions/'
+      - '\Claude\Extensions\'
+  filter_legitimate:
+    Image|endswith:
+      - '/Claude.app/Contents/MacOS/Claude'
+      - '\Claude.exe'
+  condition: 1 of selection_* and not filter_legitimate
+fields:
+  - User
+  - Image
+  - ParentImage
+  - TargetFilename
+  - CommandLine
+falsepositives:
+  - User installing legitimate MCP servers via package manager (review installed servers)
+  - Configuration management deploying approved MCP server inventory
+level: high

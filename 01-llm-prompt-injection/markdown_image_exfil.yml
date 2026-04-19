@@ -1,0 +1,42 @@
+title: LLM Output Contains External Markdown Image (Exfiltration Channel)
+id: d4a6fb13-4e5f-7a81-2d9e-4f5a6b7c8d9e
+status: experimental
+description: |
+  Detects LLM responses containing markdown image tags pointing to
+  external domains. This pattern is used in zero-click data exfiltration
+  attacks (CamoLeak / EchoLeak), where the LLM is induced via prompt
+  injection to render an image with sensitive data URL-encoded in the
+  query string. The victim's client fetches the image and silently
+  exfiltrates the data.
+references:
+  - https://www.blackfog.com/camoleak-how-github-copilot-became-an-exfiltration-channel/
+  - https://www.cve.org/CVERecord?id=CVE-2025-32711
+  - https://www.cve.org/CVERecord?id=CVE-2025-59145
+  - https://atlas.mitre.org/techniques/AML.T0024
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.exfiltration
+  - attack.atlas.t0024
+  - owasp.llm02
+logsource:
+  category: application
+  product: llm
+  service: inference
+detection:
+  selection_image_markdown:
+    output|re: '!\[[^\]]*\]\(https?://[^)]+\)'
+  filter_trusted_cdn:
+    output|contains:
+      - '](https://github.com/'
+      - '](https://raw.githubusercontent.com/'
+      - '](https://images.unsplash.com/'
+      - '](https://upload.wikimedia.org/'
+  filter_short_url_only:
+    output|re: '!\[[^\]]*\]\(https?://[^?)]+\)$'
+  condition: selection_image_markdown and not filter_trusted_cdn
+falsepositives:
+  - LLMs legitimately generating documentation with image links
+  - Customer-facing chatbots returning product images
+  - Internal knowledge base assistants citing internal image URLs
+level: high

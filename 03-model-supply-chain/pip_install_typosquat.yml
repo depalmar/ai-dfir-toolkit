@@ -1,0 +1,77 @@
+title: ML Library Typosquatting / Dependency Confusion Install
+id: 7081a2b3-c4d5-e6f7-0809-1011a2b3c4d5
+status: experimental
+description: |
+  Detects pip/conda/npm install commands targeting known typosquatted
+  or dependency-confusion ML packages. Pattern includes the historical
+  torchtriton incident (PyTorch dependency confusion, Dec 2022),
+  fake Alibaba AI packages (May 2024), and other attacks targeting
+  developers/CI/CD systems.
+references:
+  - https://thehackernews.com/2023/01/pytorch-machine-learning-framework.html
+  - https://thehackernews.com/2025/06/malicious-pypi-npm-and-ruby-packages.html
+  - https://atlas.mitre.org/techniques/AML.T0010.002
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.initial_access
+  - attack.t1195.002
+  - attack.atlas.t0010
+  - owasp.llm03
+logsource:
+  category: process_creation
+detection:
+  selection_pkg_managers:
+    Image|endswith:
+      - '/pip'
+      - '/pip3'
+      - '/uv'
+      - '/poetry'
+      - '/conda'
+      - '/mamba'
+      - '/npm'
+      - '/yarn'
+      - '/pnpm'
+      - '\pip.exe'
+      - '\npm.cmd'
+  selection_install_action:
+    CommandLine|contains:
+      - ' install '
+      - ' add '
+  selection_known_malicious_packages:
+    CommandLine|contains:
+      - 'torchtriton'                       # the original 2022 incident
+      - 'aliyun-ai-labs-snippets-sdk'       # May 2024
+      - 'ai-labs-snippets-sdk'
+      - 'ali-ai-labs-snippets'
+      - 'open-ai-utils'
+      - 'openai-utils'
+      - 'tensorflow-utils'
+      - 'transformers-utils'
+      - 'huggingface-utils'
+      - 'langchain-utils'
+      - 'pythorch'                          # typosquats
+      - 'tensorflw'
+      - 'tensoflow'
+      - 'transfomers'
+      - 'huggin-face'
+      - 'langchian'
+      - 'llama-index-utils'
+  selection_suspicious_index:
+    CommandLine|contains:
+      - '--index-url http://'
+      - '--extra-index-url http://'
+      - '--registry http://'
+      - 'pypi.org.'                          # fake pypi mirrors
+      - 'pypi-org.'
+      - 'npmjs.org.'
+  condition: selection_pkg_managers and selection_install_action and (selection_known_malicious_packages or selection_suspicious_index)
+fields:
+  - User
+  - Image
+  - CommandLine
+  - ParentImage
+falsepositives:
+  - Internal package mirrors using HTTP (should be HTTPS — fix infrastructure)
+  - Security research / red team validating supply chain controls
+level: high

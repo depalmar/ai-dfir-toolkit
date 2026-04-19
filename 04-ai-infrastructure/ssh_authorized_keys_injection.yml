@@ -1,0 +1,67 @@
+title: SSH authorized_keys File Modified by AI/ML Process
+id: b4c5d6e7-f809-1011-a2b3-c4d5e6f70809
+status: experimental
+description: |
+  Detects modifications to ~/.ssh/authorized_keys initiated by ML/AI
+  workload processes. ShadowRay attackers inject SSH keys for persistence
+  on compromised Ray clusters and AI inference hosts. Any modification
+  by a non-administrative process or by an LLM/agent process is
+  high-confidence malicious.
+references:
+  - https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+  - https://attack.mitre.org/techniques/T1098/004/
+author: Raymond DePalma (ai-dfir-detections)
+date: 2026-04-15
+tags:
+  - attack.persistence
+  - attack.t1098.004
+  - attack.atlas.t0011
+logsource:
+  category: file_event
+  product: linux
+detection:
+  selection_target:
+    TargetFilename|endswith:
+      - '/.ssh/authorized_keys'
+      - '/.ssh/authorized_keys2'
+  selection_suspicious_writer:
+    Image|endswith:
+      - '/python'
+      - '/python3'
+      - '/node'
+      - '/java'
+      - '/ray'
+      - '/jupyter'
+    ParentImage|contains:
+      - 'ray::'
+      - 'jupyter'
+      - 'mlflow'
+      - 'tritonserver'
+      - 'torchserve'
+      - 'vllm'
+      - 'ollama'
+      - 'mcp-server'
+  selection_curl_wget_writer:
+    Image|endswith:
+      - '/curl'
+      - '/wget'
+      - '/sh'
+      - '/bash'
+    ParentImage|contains:
+      - 'ray::'
+      - 'jupyter'
+      - 'tritonserver'
+      - 'torchserve'
+      - 'vllm'
+      - 'ollama'
+  condition: selection_target and 1 of selection_*_writer
+fields:
+  - User
+  - Image
+  - ParentImage
+  - ParentCommandLine
+  - TargetFilename
+falsepositives:
+  - Legitimate cloud-init / configuration management adding keys at boot
+  - Approved DevOps tooling for key rotation
+level: critical
