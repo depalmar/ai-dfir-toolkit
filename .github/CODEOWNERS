@@ -1,0 +1,6 @@
+# Code owners for ai-dfir-detections.
+# These owners are requested for review on pull requests that touch matching
+# paths, and are required reviewers when branch protection enforces it.
+
+# Default owner for everything in the repository.
+* @depalmar
