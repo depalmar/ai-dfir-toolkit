@@ -14,8 +14,8 @@ description: |
     2. Maintain an approved-hash allowlist in your SIEM as a lookup:
        columns: model_name, sha256, version, approved_date.
     3. This rule flags any HIGH-signal file event; tune the lookup
-       correlation in the backend (Splunk lookup, Elastic enrich
-       processor, Sentinel watchlist, etc.).
+       correlation in your backend (e.g. an Elastic enrich processor
+       or equivalent SIEM lookup).
 references:
   - https://atlas.mitre.org/techniques/AML.T0010
   - https://atlas.mitre.org/techniques/AML.T0018

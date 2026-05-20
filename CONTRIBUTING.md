@@ -24,11 +24,11 @@ Every new rule must:
 
 ## Sigma format
 
-Follow the [Sigma specification](https://github.com/SigmaHQ/sigma-specification). Rules should convert cleanly with pySigma using at least the Splunk or Elastic backend — run this before submitting:
+Follow the [Sigma specification](https://github.com/SigmaHQ/sigma-specification). Rules should convert cleanly with pySigma using the Elastic backend — run this before submitting:
 
 ```bash
-pip install pysigma pysigma-backend-splunk
-sigma convert -t splunk your-new-rule.yml
+pip install pysigma pysigma-backend-elasticsearch
+sigma convert -t lucene your-new-rule.yml
 ```
 
 ## YARA format

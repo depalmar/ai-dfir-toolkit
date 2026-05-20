@@ -25,7 +25,7 @@ Most existing detection content is either locked behind vendor SIEMs or scattere
 - **Network** (vector DB exfil, model exfil, ShadowRay C2)
 - **File artifacts** (poisoned pickle models, malicious MCP configs)
 
-This pack uses **open standards only** so the rules can be deployed in any modern detection stack: Splunk, Elastic, Sentinel, Chronicle, Panther, Wazuh, Suricata, OSSEC, SumoLogic, Exabeam, and others.
+This pack uses **open standards only** so the rules can be deployed in any modern detection stack via open Sigma/YARA/Suricata tooling.
 
 ---
 
@@ -52,7 +52,7 @@ Each category directory contains a `README.md` describing the threats covered an
 
 | Format | Use Case | Where it Deploys |
 |--------|----------|------------------|
-| **Sigma** (`.yml`) | Generic log-based detection | Any SIEM via [pySigma](https://github.com/SigmaHQ/pySigma) backends — Splunk, Elastic, Sentinel, QRadar, Chronicle, Panther, SumoLogic, and others |
+| **Sigma** (`.yml`) | Generic log-based detection | Any SIEM via [pySigma](https://github.com/SigmaHQ/pySigma) backends |
 | **YARA** (`.yar`) | File / memory artifacts | EDR platforms, malware analysis, file scanning pipelines |
 | **Suricata** (`.rules`) | Network traffic | Suricata, Snort (compatible subset), Zeek (via translation) |
 
@@ -62,13 +62,6 @@ Each category directory contains a `README.md` describing the threats covered an
 
 ## Quick start
 
-### Splunk
-
-```bash
-pip install pysigma pysigma-backend-splunk
-sigma convert -t splunk -p splunk_windows ai-dfir-detections/**/*.yml > ai-dfir-detections.spl
-```
-
 ### Elastic / Kibana
 
 ```bash
@@ -76,19 +69,7 @@ pip install pysigma-backend-elasticsearch
 sigma convert -t lucene ai-dfir-detections/**/*.yml > ai-dfir-detections.lucene
 ```
 
-### Microsoft Sentinel
-
-```bash
-pip install pysigma-backend-microsoft365defender
-sigma convert -t microsoft365defender ai-dfir-detections/**/*.yml > ai-dfir-detections-sentinel.kql
-```
-
-### Chronicle (Google SecOps)
-
-```bash
-pip install pysigma-backend-chronicle
-sigma convert -t chronicle_yaral ai-dfir-detections/**/*.yml > ai-dfir-detections.yaral
-```
+The rules are vendor-neutral Sigma — see the [pySigma backends](https://github.com/SigmaHQ/pySigma) list to convert to any other SIEM query language.
 
 ### YARA scanning
 

@@ -46,18 +46,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pySigma and Splunk backend
+      - name: Install pySigma and Elastic backend
         run: |
-          pip install pysigma pysigma-backend-splunk pyyaml
+          pip install pysigma pysigma-backend-elasticsearch pyyaml
 
       - name: Validate every Sigma rule parses and converts
         run: |
           failed=0
           for f in $(find . -name '*.yml' -not -path './.github/*'); do
             echo "=== $f ==="
-            if ! sigma convert -t splunk "$f" > /dev/null 2>&1; then
+            if ! sigma convert -t lucene "$f" > /dev/null 2>&1; then
               echo "FAILED: $f"
-              sigma convert -t splunk "$f" 2>&1 | head -5
+              sigma convert -t lucene "$f" 2>&1 | head -5
               failed=$((failed + 1))
             fi
           done

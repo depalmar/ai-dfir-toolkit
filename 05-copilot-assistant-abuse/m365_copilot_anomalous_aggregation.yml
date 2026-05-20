@@ -8,8 +8,8 @@ description: |
 
   Implementation: compare last 24h activity against a 30-day baseline
   per user. This rule provides the detection logic; backend-specific
-  baseline correlation is handled via lookups (Splunk), watchlists
-  (Sentinel), or enrich processors (Elastic).
+  baseline correlation is handled via your SIEM's lookup or enrich
+  mechanism (e.g. an Elastic enrich processor).
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
 author: Raymond DePalma (ai-dfir-detections)
