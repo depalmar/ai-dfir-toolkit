@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security or sensitive report
+    url: https://github.com/depalmar/ai-dfir-detections/blob/main/SECURITY.md
+    about: For a rule that could be weaponized, or any sensitive security concern, follow the security policy instead of opening a public issue.
+  - name: Contributing guide
+    url: https://github.com/depalmar/ai-dfir-detections/blob/main/CONTRIBUTING.md
+    about: How to submit new rules, run validation, and format Sigma / YARA / Suricata content.
