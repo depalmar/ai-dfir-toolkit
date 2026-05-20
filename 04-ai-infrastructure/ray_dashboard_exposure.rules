@@ -37,16 +37,14 @@ alert http any any -> any 8265 (msg:"AI-DFIR Ray /api/version enumeration (recon
     metadata:atlas AML.T0011; \
     sid:9000212; rev:1;)
 
-alert tcp any any -> any 10001 (msg:"AI-DFIR Ray Client Server connection from external host"; \
+alert tcp $EXTERNAL_NET any -> any 10001 (msg:"AI-DFIR Ray Client Server connection from external host"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     classtype:misc-activity; \
     metadata:atlas AML.T0011; \
     sid:9000213; rev:1;)
 
-alert tcp any any -> any 6379 (msg:"AI-DFIR Redis port 6379 exposed externally (Ray uses Redis for state)"; \
+alert tcp $EXTERNAL_NET any -> any 6379 (msg:"AI-DFIR Redis port 6379 exposed externally (Ray uses Redis for state)"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     content:"*1|0d 0a|$4|0d 0a|PING|0d 0a|"; \
     classtype:misc-activity; \
     metadata:atlas AML.T0011; \

@@ -65,8 +65,8 @@ Each category directory contains a `README.md` describing the threats covered an
 ### Elastic / Kibana
 
 ```bash
-pip install pysigma-backend-elasticsearch
-sigma convert -t lucene ai-dfir-detections/**/*.yml > ai-dfir-detections.lucene
+pip install sigma-cli pysigma-backend-elasticsearch
+sigma convert -t lucene --without-pipeline ai-dfir-detections/**/*.yml > ai-dfir-detections.lucene
 ```
 
 The rules are vendor-neutral Sigma — see the [pySigma backends](https://github.com/SigmaHQ/pySigma) list to convert to any other SIEM query language.

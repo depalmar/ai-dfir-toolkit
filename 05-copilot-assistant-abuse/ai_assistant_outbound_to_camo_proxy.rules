@@ -22,8 +22,8 @@
 # ==========================================================================
 alert http any any -> any any (msg:"AI-DFIR Suspicious sequential Camo image fetches (CamoLeak pattern)"; \
     flow:established,to_server; \
-    http.host; content:"camo.githubusercontent.com"; nocase; \
-    http.uri; pcre:"/\?[a-zA-Z0-9_-]{2,}=[A-Za-z0-9+/=%]{4,}/"; \
+    http.host; content:"camo.githubusercontent.com"; \
+    http.uri; pcre:"/\?[a-zA-Z0-9_-]{2,}=[A-Za-z0-9+\/=%]{4,}/"; \
     threshold:type both, track by_src, count 20, seconds 60; \
     classtype:trojan-activity; \
     reference:cve,2025-59145; \
@@ -56,10 +56,10 @@ alert http any any -> any any (msg:"AI-DFIR AI assistant output linking to OOB c
 # Burst pattern: many small (1x1 pixel-sized) fetches from one client
 # ==========================================================================
 alert http any any -> any any (msg:"AI-DFIR Burst of tiny image responses to AI assistant client (per-character exfil)"; \
-    flow:established,from_server; \
+    flow:established; \
     http.user_agent; pcre:"/(claude|chatgpt|copilot|cursor|perplexity|openai|gemini|anthropic|electron)/i"; \
     http.content_type; content:"image/"; nocase; \
-    http.content_len; byte_test:0,<,500,0,string,dec; \
+    file.data; bsize:<500; \
     threshold:type both, track by_src, count 30, seconds 60; \
     classtype:trojan-activity; \
     metadata:atlas AML.T0086, owasp LLM02; \

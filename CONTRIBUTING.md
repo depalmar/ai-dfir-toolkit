@@ -27,8 +27,8 @@ Every new rule must:
 Follow the [Sigma specification](https://github.com/SigmaHQ/sigma-specification). Rules should convert cleanly with pySigma using the Elastic backend — run this before submitting:
 
 ```bash
-pip install pysigma pysigma-backend-elasticsearch
-sigma convert -t lucene your-new-rule.yml
+pip install sigma-cli pysigma-backend-elasticsearch
+sigma convert -t lucene --without-pipeline your-new-rule.yml
 ```
 
 ## YARA format

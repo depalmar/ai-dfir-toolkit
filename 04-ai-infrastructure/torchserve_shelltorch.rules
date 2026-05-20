@@ -30,9 +30,8 @@ alert http any any -> any 8081 (msg:"AI-DFIR TorchServe model registration from 
 # ==========================================================================
 # Management API exposed (default install runs management on all interfaces)
 # ==========================================================================
-alert http any any -> any 8081 (msg:"AI-DFIR TorchServe management API accessed externally"; \
+alert http $EXTERNAL_NET any -> any 8081 (msg:"AI-DFIR TorchServe management API accessed externally"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.method; content:"POST"; \
     http.uri; content:"/models"; nocase; \
     classtype:misc-attack; \

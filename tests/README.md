@@ -38,7 +38,7 @@ yara -r ../03-model-supply-chain/pickle_malicious_opcodes.yar pickle_test_benign
 ### Sigma rules
 Convert to your target backend, then replay the sample event:
 ```bash
-sigma convert -t lucene ../02-mcp-attacks/mcp_config_tampering.yml
+sigma convert -t lucene --without-pipeline ../02-mcp-attacks/mcp_config_tampering.yml
 # Paste output query into your SIEM against an index containing the sample event
 ```
 

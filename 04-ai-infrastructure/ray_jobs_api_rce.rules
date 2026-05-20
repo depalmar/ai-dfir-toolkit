@@ -89,9 +89,8 @@ alert http any any -> any any (msg:"AI-DFIR Ray Job entrypoint contains XMRig cr
 # ==========================================================================
 # Generic suspicious Ray cluster behaviour
 # ==========================================================================
-alert http any any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
+alert http $EXTERNAL_NET any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.uri; content:"/api/"; nocase; \
     http.host; pcre:"/:(8265|10001|6379)$/"; \
     classtype:misc-attack; \

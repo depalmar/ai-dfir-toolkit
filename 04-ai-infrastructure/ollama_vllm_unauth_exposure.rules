@@ -21,9 +21,8 @@
 # ==========================================================================
 # Ollama API exposure (port 11434)
 # ==========================================================================
-alert http any any -> any 11434 (msg:"AI-DFIR Ollama API accessed externally (no native auth)"; \
+alert http $EXTERNAL_NET any -> any 11434 (msg:"AI-DFIR Ollama API accessed externally (no native auth)"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.method; content:"POST"; \
     http.uri; pcre:"/\/api\/(generate|chat|embeddings|pull|push|create|delete|copy)/i"; \
     classtype:misc-attack; \
@@ -50,9 +49,8 @@ alert http any any -> any 11434 (msg:"AI-DFIR Ollama model deletion via API"; \
 # ==========================================================================
 # vLLM OpenAI-compatible API exposure (port 8000)
 # ==========================================================================
-alert http any any -> any [8000,8888] (msg:"AI-DFIR vLLM OpenAI-compatible endpoint accessed externally"; \
+alert http $EXTERNAL_NET any -> any [8000,8888] (msg:"AI-DFIR vLLM OpenAI-compatible endpoint accessed externally"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.method; content:"POST"; \
     http.uri; pcre:"/\/v1\/(completions|chat\/completions|embeddings)/i"; \
     http.user_agent; content:!"OpenAI"; nocase; \
