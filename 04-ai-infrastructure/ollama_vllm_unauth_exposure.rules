@@ -1,6 +1,6 @@
 # Self-Hosted LLM Server Exposure Detection (Ollama / vLLM)
 # Format: Suricata
-# Author: Raymond DePalma (ai-dfir-detections)
+# Author: Raymond DePalma (ai-dfir-toolkit)
 # Date: 2026-04-15
 #
 # Detects unauthenticated exposure and abuse of self-hosted LLM

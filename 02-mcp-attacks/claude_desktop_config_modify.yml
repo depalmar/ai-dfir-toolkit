@@ -14,7 +14,7 @@ references:
   - https://layerxsecurity.com/blog/claude-desktop-extensions-rce/
   - https://www.cve.org/CVERecord?id=CVE-2025-53109
   - https://www.cve.org/CVERecord?id=CVE-2025-53110
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

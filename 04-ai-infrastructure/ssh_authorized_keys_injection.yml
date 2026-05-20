@@ -10,7 +10,7 @@ description: |
 references:
   - https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
   - https://attack.mitre.org/techniques/T1098/004/
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

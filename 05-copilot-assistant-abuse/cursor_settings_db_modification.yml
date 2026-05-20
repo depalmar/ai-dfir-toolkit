@@ -13,7 +13,7 @@ references:
   - https://www.securityweek.com/malicious-npm-packages-target-cursor-ais-macos-users/
   - https://www.cve.org/CVERecord?id=CVE-2025-54135
   - https://www.backslash.security/blog/cursor-ide-security-best-practices
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

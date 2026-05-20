@@ -14,7 +14,7 @@ FAIL=0
 RULES_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$(dirname "$0")"
 
-echo "=== ai-dfir-detections smoke test ==="
+echo "=== ai-dfir-toolkit smoke test ==="
 echo "Rules root: $RULES_ROOT"
 echo
 

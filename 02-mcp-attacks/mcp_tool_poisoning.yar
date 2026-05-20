@@ -1,6 +1,6 @@
 /*
    YARA rule: MCP Tool Poisoning Detection
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks
               https://www.cve.org/CVERecord?id=CVE-2025-59536
@@ -26,7 +26,7 @@ rule MCP_Tool_Poisoning_Hidden_Instructions
 {
     meta:
         description = "MCP tool description containing hidden LLM instructions"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0110"
         owasp       = "LLM06:2025"
@@ -68,7 +68,7 @@ rule MCP_Tool_Description_Sensitive_Path_Reference
 {
     meta:
         description = "MCP tool description referencing sensitive filesystem paths"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0086"
         owasp       = "LLM02:2025"
@@ -96,7 +96,7 @@ rule MCP_Server_Outbound_Exfil_Code
 {
     meta:
         description = "MCP server source containing outbound HTTP exfiltration code"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0086"
         owasp       = "LLM02:2025"

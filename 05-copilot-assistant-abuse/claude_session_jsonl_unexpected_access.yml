@@ -10,7 +10,7 @@ description: |
 references:
   - https://inventivehq.com/knowledge-base/claude/where-configuration-files-are-stored
   - https://code.claude.com/docs/en/security
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection

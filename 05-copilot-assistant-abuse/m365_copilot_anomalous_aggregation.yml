@@ -12,7 +12,7 @@ description: |
   30-day baseline). Deploy as a correlation feed, not a direct detection.
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection
@@ -48,7 +48,7 @@ description: |
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
   - https://atlas.mitre.org/techniques/AML.T0024
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection
@@ -90,7 +90,7 @@ description: |
   licensing and DSPM for AI enabled.
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection

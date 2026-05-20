@@ -1,6 +1,6 @@
 /*
    YARA rules: Malicious Pickle Detection for AI/ML Model Files
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: https://blog.trailofbits.com/2024/06/11/exploiting-ml-models-with-pickle-file-attacks-part-1/
               https://www.cve.org/CVERecord?id=CVE-2025-32444  (vLLM Mooncake CVSS 10.0)
@@ -30,7 +30,7 @@ rule Pickle_Dangerous_Imports
 {
     meta:
         description = "Pickle file imports dangerous modules (os, subprocess, etc.)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         owasp       = "LLM03:2025"
@@ -78,7 +78,7 @@ rule Pickle_Reduce_With_Shell_Command
 {
     meta:
         description = "Pickle REDUCE opcode invoking shell commands"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         severity    = "critical"
@@ -115,7 +115,7 @@ rule Pickle_Network_Exfiltration
 {
     meta:
         description = "Pickle file containing network exfiltration code"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0086"
         severity    = "critical"
@@ -141,7 +141,7 @@ rule Pickle_Encoded_Payload
 {
     meta:
         description = "Pickle file with base64/hex encoded payloads (evasion)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         severity    = "high"
@@ -170,7 +170,7 @@ rule Pickle_HuggingFace_Hidden_File
 {
     meta:
         description = "Suspicious pickle inside a HuggingFace ZIP/snapshot with non-standard extension"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010.003"
         owasp       = "LLM03:2025"

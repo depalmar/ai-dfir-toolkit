@@ -10,7 +10,7 @@ description: |
 references:
   - https://www.cve.org/CVERecord?id=CVE-2025-53773
   - https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.execution
@@ -55,7 +55,7 @@ description: |
   injection of dangerous defaults into a shared codebase.
 references:
   - https://www.cve.org/CVERecord?id=CVE-2025-53773
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.execution

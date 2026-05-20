@@ -1,6 +1,6 @@
 # Ray Cluster Dashboard Exposure Detection
 # Format: Suricata
-# Author: Raymond DePalma (ai-dfir-detections)
+# Author: Raymond DePalma (ai-dfir-toolkit)
 # Date: 2026-04-15
 #
 # Detects exposure (not exploitation) of Ray dashboards. Discovery of

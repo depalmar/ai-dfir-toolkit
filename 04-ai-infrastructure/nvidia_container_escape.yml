@@ -13,7 +13,7 @@ references:
   - https://www.cve.org/CVERecord?id=CVE-2025-23266
   - https://www.cve.org/CVERecord?id=CVE-2025-23359
   - https://www.csoonline.com/article/3541912/a-critical-nvidia-container-toolkit-bug-can-allow-a-complete-host-takeover.html
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.privilege_escalation

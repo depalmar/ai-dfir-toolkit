@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Pickle test file generator for ai-dfir-detections.
+Pickle test file generator for ai-dfir-toolkit.
 
 Generates a "malicious" pickle that triggers YARA rules in
 03-model-supply-chain/pickle_malicious_opcodes.yar but performs
@@ -29,7 +29,7 @@ class HarmlessPrint:
     def __reduce__(self):
         message = (
             "YARA test - if you see this, do not run untrusted pickles. "
-            "This is the ai-dfir-detections pickle malware test artifact."
+            "This is the ai-dfir-toolkit pickle malware test artifact."
         )
         return (builtins.print, (message,))
 

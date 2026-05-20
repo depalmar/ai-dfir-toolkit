@@ -32,7 +32,7 @@ This pack uses **open standards only** so the rules can be deployed in any moder
 ## Structure
 
 ```
-ai-dfir-detections/
+ai-dfir-toolkit/
 ├── 01-llm-prompt-injection/      # Prompt injection, jailbreaks, indirect injection
 ├── 02-mcp-attacks/                # MCP tool poisoning, config tampering, rug pulls
 ├── 03-model-supply-chain/         # Pickle exploits, HuggingFace, dependency confusion
@@ -66,7 +66,7 @@ Each category directory contains a `README.md` describing the threats covered an
 
 ```bash
 pip install sigma-cli pysigma-backend-elasticsearch
-sigma convert -t lucene --without-pipeline ai-dfir-detections/**/*.yml > ai-dfir-detections.lucene
+sigma convert -t lucene --without-pipeline ai-dfir-toolkit/**/*.yml > ai-dfir-toolkit.lucene
 ```
 
 The rules are vendor-neutral Sigma — see the [pySigma backends](https://github.com/SigmaHQ/pySigma) list to convert to any other SIEM query language.
@@ -85,17 +85,17 @@ The rules are vendor-neutral Sigma — see the [pySigma backends](https://github
 
 ```bash
 # Scan a model directory
-yara -r ai-dfir-detections/03-model-supply-chain/*.yar /path/to/models/
+yara -r ai-dfir-toolkit/03-model-supply-chain/*.yar /path/to/models/
 
 # Scan an MCP config
-yara ai-dfir-detections/02-mcp-attacks/mcp_tool_poisoning.yar \
+yara ai-dfir-toolkit/02-mcp-attacks/mcp_tool_poisoning.yar \
   ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
 ### Suricata
 
 ```bash
-cp ai-dfir-detections/**/*.rules /etc/suricata/rules/
+cp ai-dfir-toolkit/**/*.rules /etc/suricata/rules/
 echo 'rule-files: [ai-dfir.rules]' >> /etc/suricata/suricata.yaml
 suricata -T -c /etc/suricata/suricata.yaml  # validate
 systemctl reload suricata
