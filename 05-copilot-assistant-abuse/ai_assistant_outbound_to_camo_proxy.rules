@@ -22,8 +22,8 @@
 # ==========================================================================
 alert http any any -> any any (msg:"AI-DFIR Suspicious sequential Camo image fetches (CamoLeak pattern)"; \
     flow:established,to_server; \
-    http.host; content:"camo.githubusercontent.com"; nocase; \
-    http.uri; pcre:"/\?[a-zA-Z0-9_-]{2,}=[A-Za-z0-9+/=%]{4,}/"; \
+    http.host; content:"camo.githubusercontent.com"; \
+    http.uri; pcre:"/\?[a-zA-Z0-9_-]{2,}=[A-Za-z0-9+\/=%]{4,}/"; \
     threshold:type both, track by_src, count 20, seconds 60; \
     classtype:trojan-activity; \
     reference:cve,2025-59145; \
@@ -47,23 +47,33 @@ alert http any any -> any any (msg:"AI-DFIR AI assistant client fetched image wi
 alert http any any -> any any (msg:"AI-DFIR AI assistant output linking to OOB collaborator domain"; \
     flow:established,to_server; \
     http.host; pcre:"/\.(burpcollaborator|interactsh|oast\.(?:fun|live|me|online|pro|site)|requestcatcher|webhook\.site|ngrok|trycloudflare)\./i"; \
-    http.user_agent; pcre:"/(claude|chatgpt|copilot|cursor|perplexity|openai|gemini|anthropic|electron)/i"; \
+    http.user_agent; pcre:"/(claude|chatgpt|copilot|cursor|perplexity|openai|gemini|anthropic)/i"; \
     classtype:trojan-activity; \
     metadata:atlas AML.T0086; \
     sid:9000502; rev:1;)
 
 # ==========================================================================
-# Burst pattern: many small (1x1 pixel-sized) fetches from one client
+# Burst pattern: many small (1x1 pixel-sized) fetches from one client.
+# Split into a request-side flowbit setter and a response-side detector so a
+# single rule never mixes request and response buffers (rejected by Suricata 8).
 # ==========================================================================
+alert http any any -> any any (msg:"AI-DFIR (helper) flow originates from AI assistant client"; \
+    flow:established,to_server; \
+    http.user_agent; pcre:"/(claude|chatgpt|copilot|cursor|perplexity|openai|gemini|anthropic)/i"; \
+    flowbits:set,ai_dfir.assistant_client; \
+    flowbits:noalert; \
+    classtype:not-suspicious; \
+    sid:9000508; rev:1;)
+
 alert http any any -> any any (msg:"AI-DFIR Burst of tiny image responses to AI assistant client (per-character exfil)"; \
     flow:established,from_server; \
-    http.user_agent; pcre:"/(claude|chatgpt|copilot|cursor|perplexity|openai|gemini|anthropic|electron)/i"; \
+    flowbits:isset,ai_dfir.assistant_client; \
     http.content_type; content:"image/"; nocase; \
-    http.content_len; byte_test:0,<,500,0,string,dec; \
+    file.data; bsize:<500; \
     threshold:type both, track by_src, count 30, seconds 60; \
     classtype:trojan-activity; \
     metadata:atlas AML.T0086, owasp LLM02; \
-    sid:9000503; rev:1;)
+    sid:9000503; rev:2;)
 
 # ==========================================================================
 # CVE-2025-32711 EchoLeak — M365 Copilot client posting to external domain

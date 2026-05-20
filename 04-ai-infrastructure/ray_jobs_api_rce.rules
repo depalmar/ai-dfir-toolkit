@@ -25,16 +25,16 @@ alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission with shell c
     http.method; content:"POST"; \
     http.uri; content:"/api/jobs/"; nocase; \
     http.request_body; content:"entrypoint"; nocase; \
-    http.request_body; pcre:"/entrypoint[\"']?\s*:\s*[\"']?[^\"']*(\bcurl\s|\bwget\s|\bbash\s+-c|\bsh\s+-c|\bpython\s+-c|\beval\s+|\bexec\s+|\b\/dev\/tcp\/|\bnc\s+-)/i"; \
+    pcre:"/entrypoint[\"']?\s*:\s*[\"']?[^\"']*(\bcurl\s|\bwget\s|\bbash\s+-c|\bsh\s+-c|\bpython\s+-c|\beval\s+|\bexec\s+|\b\/dev\/tcp\/|\bnc\s+-)/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-48022; \
     metadata:atlas AML.T0011, mitre-attack T1190; \
     sid:9000200; rev:1;)
 
-alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard exposed (default port 8265)"; \
+alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard API accessed without auth (default port 8265)"; \
     flow:established,to_server; \
     http.method; content:"GET"; \
-    http.uri; content:"/"; \
+    http.uri; content:"/api/"; nocase; \
     http.header_names; content:!"authorization"; nocase; \
     classtype:misc-activity; \
     reference:cve,2023-48022; \
@@ -57,7 +57,7 @@ alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission downloading 
 alert http any any -> any any (msg:"AI-DFIR Ray Logs API path traversal for arbitrary file read"; \
     flow:established,to_server; \
     http.uri; content:"/api/v0/logs/file"; nocase; \
-    http.uri; pcre:"/(\.\.\/|%2e%2e%2f|\/etc\/|\/root\/|\.ssh\/|\.aws\/|\/proc\/self\/)/i"; \
+    pcre:"/(\.\.\/|%2e%2e%2f|\/etc\/|\/root\/|\.ssh\/|\.aws\/|\/proc\/self\/)/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-48022; \
     metadata:atlas AML.T0086; \
@@ -70,7 +70,7 @@ alert http any any -> any 8265 (msg:"AI-DFIR Ray Job submission referencing Node
     flow:established,to_server; \
     http.method; content:"POST"; \
     http.request_body; content:"NodeAffinitySchedulingStrategy"; nocase; \
-    http.request_body; content:"soft"; nocase; \
+    content:"soft"; nocase; \
     classtype:trojan-activity; \
     reference:cve,2023-48022; \
     reference:url,oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet; \
@@ -89,9 +89,8 @@ alert http any any -> any any (msg:"AI-DFIR Ray Job entrypoint contains XMRig cr
 # ==========================================================================
 # Generic suspicious Ray cluster behaviour
 # ==========================================================================
-alert http any any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
+alert http $EXTERNAL_NET any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.uri; content:"/api/"; nocase; \
     http.host; pcre:"/:(8265|10001|6379)$/"; \
     classtype:misc-attack; \

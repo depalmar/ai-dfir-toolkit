@@ -21,7 +21,7 @@ logsource:
   category: process_creation
 detection:
   selection_token_in_cmdline:
-    CommandLine|re: 'hf_[a-zA-Z]{34,40}'
+    CommandLine|re: 'hf_[a-zA-Z0-9]{34,40}'
   selection_token_export:
     CommandLine|contains:
       - 'HUGGING_FACE_HUB_TOKEN='

@@ -1,11 +1,13 @@
-title: Model File Created with Hash Not in Approved Baseline
+title: Model File Written by Untrusted Process (hash-baseline pre-filter)
 id: 5e7fb143-6c8d-9e0f-1a2b-3c4d5e6f7081
 status: experimental
 description: |
-  Detects creation or modification of production model files whose
-  SHA-256 hash is not present in the organization's approved-model
-  baseline. Indicates unauthorized model substitution, supply-chain
-  tampering, or undeclared model updates that bypass review.
+  Flags creation or modification of model files by processes outside the
+  trusted ML toolchain. Pure Sigma cannot compare a file's SHA-256 against
+  an approved-model baseline, so this rule is a pre-filter: pair it with a
+  backend lookup/enrich step that drops events whose hash IS already in the
+  baseline. What remains surfaces unauthorized model substitution,
+  supply-chain tampering, or undeclared model updates that bypass review.
 
   Prerequisites:
     1. File integrity monitoring collects SHA-256 of every model file
@@ -14,8 +16,8 @@ description: |
     2. Maintain an approved-hash allowlist in your SIEM as a lookup:
        columns: model_name, sha256, version, approved_date.
     3. This rule flags any HIGH-signal file event; tune the lookup
-       correlation in the backend (Splunk lookup, Elastic enrich
-       processor, Sentinel watchlist, etc.).
+       correlation in your backend (e.g. an Elastic enrich processor
+       or equivalent SIEM lookup).
 references:
   - https://atlas.mitre.org/techniques/AML.T0010
   - https://atlas.mitre.org/techniques/AML.T0018

@@ -1,15 +1,15 @@
-title: M365 Copilot - First-Time User Activity Burst
+title: M365 Copilot - User Activity (first-time-burst baseline pre-filter)
 id: a3cd0698-b121-4d5e-6f70-819203142536
 status: experimental
 description: |
-  Detects previously-inactive users suddenly generating high-volume
-  Copilot activity. Catches account takeover scenarios and new
-  insider-threat patterns.
+  Selects Copilot/AI-app interaction events so a backend can baseline
+  per-user volume and flag previously-inactive users who suddenly generate
+  high-volume activity (account takeover or new insider-threat patterns).
 
-  Implementation: compare last 24h activity against a 30-day baseline
-  per user. This rule provides the detection logic; backend-specific
-  baseline correlation is handled via lookups (Splunk), watchlists
-  (Sentinel), or enrich processors (Elastic).
+  NOT a standalone alert: on its own this matches every Copilot interaction.
+  Pure Sigma cannot compare against a 30-day per-user baseline, so pair it
+  with a backend aggregation/enrich step (e.g. count by UserId over 24h vs a
+  30-day baseline). Deploy as a correlation feed, not a direct detection.
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
 author: Raymond DePalma (ai-dfir-detections)

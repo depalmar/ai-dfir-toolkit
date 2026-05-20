@@ -11,7 +11,7 @@ labels: bug
 
 ## Detection platform
 
-<!-- Splunk / Elastic / Sentinel / Chronicle / Wazuh / Suricata / etc. + version -->
+<!-- e.g. Elastic / Wazuh / Suricata / etc. + version -->
 
 ## What fired
 

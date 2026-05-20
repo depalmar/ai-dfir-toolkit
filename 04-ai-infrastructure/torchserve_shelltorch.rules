@@ -21,7 +21,7 @@ alert http any any -> any 8081 (msg:"AI-DFIR TorchServe model registration from 
     flow:established,to_server; \
     http.method; content:"POST"; \
     http.uri; content:"/models"; nocase; \
-    http.uri; pcre:"/[?&]url=https?:\/\/(?!(?:127\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.|192\.168\.|localhost))/i"; \
+    pcre:"/[?&]url=https?:\/\/(?!(?:127\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.|192\.168\.|localhost))/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-43654; \
     metadata:atlas AML.T0010, atlas AML.T0011; \
@@ -30,9 +30,8 @@ alert http any any -> any 8081 (msg:"AI-DFIR TorchServe model registration from 
 # ==========================================================================
 # Management API exposed (default install runs management on all interfaces)
 # ==========================================================================
-alert http any any -> any 8081 (msg:"AI-DFIR TorchServe management API accessed externally"; \
+alert http $EXTERNAL_NET any -> any 8081 (msg:"AI-DFIR TorchServe management API accessed externally"; \
     flow:established,to_server; \
-    ip_src: !$HOME_NET; \
     http.method; content:"POST"; \
     http.uri; content:"/models"; nocase; \
     classtype:misc-attack; \

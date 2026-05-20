@@ -32,6 +32,7 @@ rule MCP_Tool_Poisoning_Hidden_Instructions
         owasp       = "LLM06:2025"
         reference   = "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks"
         severity    = "critical"
+        falsepositives = "Benign tool docs that combine generic phrases (e.g. 'before using this tool, you must first authenticate'). To reduce FPs, prefer the '<tag>' branch or require a coercer that names a sensitive path or exfil action ($coerce_7-$coerce_11) over any '2 of $coerce_*'."
 
     strings:
         // Common instruction-injection wrappers
