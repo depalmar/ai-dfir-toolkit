@@ -75,9 +75,9 @@ jobs:
 
       - name: Install Suricata
         run: |
-          sudo add-apt-repository -y ppa:oisf/suricata-stable
           sudo apt-get update
           sudo apt-get install -y suricata
+          suricata -V
 
       - name: Validate all Suricata rules
         run: |
