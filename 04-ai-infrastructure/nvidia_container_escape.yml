@@ -18,7 +18,6 @@ date: 2026-04-15
 tags:
   - attack.privilege_escalation
   - attack.t1611
-  - attack.atlas.t0017
 logsource:
   category: process_creation
   product: linux

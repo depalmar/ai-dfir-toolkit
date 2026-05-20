@@ -46,9 +46,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pySigma and Elastic backend
+      - name: Install sigma-cli and Elastic backend
         run: |
-          pip install pysigma pysigma-backend-elasticsearch pyyaml
+          pip install sigma-cli pysigma-backend-elasticsearch pyyaml
 
       - name: Validate every Sigma rule parses and converts
         run: |

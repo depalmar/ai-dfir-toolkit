@@ -23,7 +23,7 @@
 alert http any any -> any any (msg:"AI-DFIR MLflow path traversal in artifact request (CVE-2023-6831)"; \
     flow:established,to_server; \
     http.uri; content:"/api/2.0/mlflow"; nocase; \
-    http.uri; pcre:"/(\.\.\/|%2e%2e%2f|%2e%2e\/|\.\.\\\\|%2e%2e%5c)/i"; \
+    pcre:"/(\.\.\/|%2e%2e%2f|%2e%2e\/|\.\.\\\\|%2e%2e%5c)/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-6831; \
     reference:cve,2024-0520; \
@@ -35,7 +35,7 @@ alert http any any -> any any (msg:"AI-DFIR MLflow create-experiment with path t
     http.method; content:"POST"; \
     http.uri; content:"/api/2.0/mlflow/experiments/create"; nocase; \
     http.request_body; content:"artifact_location"; nocase; \
-    http.request_body; pcre:"/artifact_location[\"']?\s*:\s*[\"']?[^\"']*(\.\.\/|file:\/\/\/)/i"; \
+    pcre:"/artifact_location[\"']?\s*:\s*[\"']?[^\"']*(\.\.\/|file:\/\/\/)/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-6831; \
     metadata:atlas AML.T0011; \
@@ -55,7 +55,7 @@ alert http any any -> any any (msg:"AI-DFIR MLflow LFI via URI fragment (CVE-202
 alert http any any -> any any (msg:"AI-DFIR MLflow LFI sensitive file request (etc/passwd, ssh keys)"; \
     flow:established,to_server; \
     http.uri; content:"/get-artifact"; nocase; \
-    http.uri; pcre:"/(etc%2fpasswd|etc\/passwd|\.ssh%2fid_|\.ssh\/id_|\.aws%2fcredentials|\.aws\/credentials)/i"; \
+    pcre:"/(etc%2fpasswd|etc\/passwd|\.ssh%2fid_|\.ssh\/id_|\.aws%2fcredentials|\.aws\/credentials)/i"; \
     classtype:web-application-attack; \
     reference:cve,2024-2928; \
     metadata:atlas AML.T0086; \

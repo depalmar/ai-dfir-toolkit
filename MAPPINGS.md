@@ -55,7 +55,7 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 | `ssh_authorized_keys_injection.yml` | Sigma | T0011 | MITRE C0045 |
 | `triton_inference_server_exploit.rules` | Suricata | T0011, T0086 | CVE-2025-23319, CVE-2025-23320, CVE-2025-23334 |
 | `torchserve_shelltorch.rules` | Suricata | T0010, T0011, T0018 | CVE-2023-43654, CVE-2022-1471 |
-| `nvidia_container_escape.yml` | Sigma | T0017 | CVE-2024-0132, CVE-2025-23266, CVE-2025-23359 |
+| `nvidia_container_escape.yml` | Sigma | T1611 (ATT&CK) | CVE-2024-0132, CVE-2025-23266, CVE-2025-23359 |
 | `ollama_vllm_unauth_exposure.rules` | Suricata | T0010, T0011, T0018, T0029 | CVE-2025-32444, AccuKnox 2025 |
 
 ## 05 — Copilot & AI Assistant Abuse
@@ -91,7 +91,6 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 | T0010.002 | Software Supply Chain | 3 |
 | T0010.003 | Model Supply Chain | 2 |
 | T0011   | User Execution / Initial Access | 13 |
-| T0017   | Container Escape | 1 |
 | T0018   | Poison AI Model | 5 |
 | T0019   | Publish Poisoned Datasets | 1 |
 | T0020   | Poison Training Data / RAG Corpus | 4 |

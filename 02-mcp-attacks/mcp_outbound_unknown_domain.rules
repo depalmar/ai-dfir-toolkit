@@ -53,7 +53,7 @@ alert http any any -> any [3000,5173,6274,8080] (msg:"AI-DFIR MCP Inspector UI f
 alert http any any -> any any (msg:"AI-DFIR mcp-remote OAuth callback injection (CVE-2025-6514)"; \
     flow:established,to_server; \
     http.uri; content:"/oauth/callback"; nocase; \
-    http.uri; pcre:"/[?&](code|state)=[^&]*[\x60\x24\x28\x29\x3b\x7c\x26]/"; \
+    pcre:"/[?&](code|state)=[^&]*[\x60\x24\x28\x29\x3b\x7c\x26]/"; \
     classtype:web-application-attack; \
     reference:cve,2025-6514; \
     metadata:atlas AML.T0011; \
