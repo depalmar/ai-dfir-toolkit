@@ -71,6 +71,16 @@ sigma convert -t lucene --without-pipeline ai-dfir-detections/**/*.yml > ai-dfir
 
 The rules are vendor-neutral Sigma — see the [pySigma backends](https://github.com/SigmaHQ/pySigma) list to convert to any other SIEM query language.
 
+> **Case sensitivity:** the keyword-based rules (prompt injection, jailbreak,
+> system-prompt extraction, etc.) follow the Sigma convention that `contains`
+> matching is case-insensitive — attacker text varies in case, so the rules are
+> written in lowercase and rely on the backend to fold case. On **Elastic**,
+> ensure the matched content fields are mapped as analyzed `text` (the default
+> for string fields), not `keyword`: a `keyword` mapping matches
+> case-sensitively and will miss capitalized input. Do **not** try to force this
+> with the `re|i` modifier — Lucene's regex engine does not support the `(?i)`
+> flag and the resulting query is invalid.
+
 ### YARA scanning
 
 ```bash

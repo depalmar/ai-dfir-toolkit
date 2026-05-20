@@ -31,6 +31,12 @@ pip install sigma-cli pysigma-backend-elasticsearch
 sigma convert -t lucene --without-pipeline your-new-rule.yml
 ```
 
+Write keyword/content matches in lowercase and rely on case-insensitive
+`contains` (the Sigma convention) — do not use the `re|i` modifier to force
+case folding, as Lucene's regex engine rejects the `(?i)` flag. See the case
+sensitivity note in the README for the Elastic `text`-vs-`keyword` mapping
+requirement.
+
 ## YARA format
 
 - Test with YARA 4.x (not deprecated 3.x syntax)
