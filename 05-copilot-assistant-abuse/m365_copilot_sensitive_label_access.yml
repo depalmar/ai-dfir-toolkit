@@ -106,7 +106,7 @@ detection:
       - 'CopilotInteraction'
       - 'AIAppInteraction'
   selection_unmanaged:
-    DeviceProperties|contains: '"IsCompliantAndManaged":"False"'
+    DeviceProperties.IsCompliantAndManaged: 'False'
   condition: all of selection_*
 fields:
   - UserId

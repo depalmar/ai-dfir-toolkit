@@ -6,7 +6,10 @@ description: |
   token-based denial-of-service patterns in Azure OpenAI diagnostic logs.
   Requires RequestResponseLog category enabled via Diagnostic Settings on
   the Azure OpenAI resource; events ship to Log Analytics, Event Hub, or
-  Storage and can be ingested by any modern SIEM.
+  Storage and can be ingested by any modern SIEM. Field names follow the
+  Azure Monitor / Log Analytics schema (PascalCase Category/ResourceProvider).
+  Matches the request payload (properties.request) only, so a model refusal
+  echoed back in properties.response does not cause a false positive.
 references:
   - https://genai.owasp.org/llmrisk/llm01-prompt-injection/
   - https://genai.owasp.org/llmrisk/llm072025-system-prompt-leakage/
@@ -29,7 +32,7 @@ detection:
     Category: 'RequestResponseLog'
     ResourceProvider: 'MICROSOFT.COGNITIVESERVICES'
   selection_injection:
-    properties|contains:
+    properties.request|contains:
       - 'ignore previous instructions'
       - 'ignore all previous'
       - 'disregard the above'
@@ -43,7 +46,7 @@ detection:
       - '<|im_start|>system'
       - 'BEGIN NEW PROMPT'
   selection_jailbreak:
-    properties|contains:
+    properties.request|contains:
       - 'DAN mode'
       - 'do anything now'
       - 'STAN, which stands for'
@@ -55,7 +58,7 @@ detection:
       - 'stay in character'
       - 'never break character'
   selection_extraction:
-    properties|contains:
+    properties.request|contains:
       - 'repeat the words above'
       - 'repeat your instructions'
       - 'what is your system prompt'
