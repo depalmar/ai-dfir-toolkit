@@ -1,6 +1,6 @@
 /*
    YARA rule: Malicious Keras Lambda Layer Detection
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: https://www.cve.org/CVERecord?id=CVE-2025-1550
               CVE-2025-1550 — Keras Lambda layers execute code even with safe_mode=True
@@ -22,7 +22,7 @@ rule Keras_Lambda_Layer_Present
 {
     meta:
         description = "Keras model contains Lambda layer (potential code execution)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         owasp       = "LLM03:2025"
@@ -43,7 +43,7 @@ rule Keras_Lambda_With_Encoded_Bytecode
 {
     meta:
         description = "Keras Lambda layer with marshal-encoded function (CVE-2025-1550 pattern)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         owasp       = "LLM03:2025"
@@ -70,7 +70,7 @@ rule Keras_H5_Lambda_Layer_Legacy
 {
     meta:
         description = "Legacy H5 Keras model with Lambda layer"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
         severity    = "medium"

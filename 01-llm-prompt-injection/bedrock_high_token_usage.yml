@@ -11,7 +11,7 @@ references:
   - https://genai.owasp.org/llmrisk/llm10-unbounded-consumption/
   - https://atlas.mitre.org/techniques/AML.T0029
   - https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.impact
@@ -50,7 +50,7 @@ description: |
 references:
   - https://atlas.mitre.org/techniques/AML.T0051
   - https://atlas.mitre.org/techniques/AML.T0054
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access

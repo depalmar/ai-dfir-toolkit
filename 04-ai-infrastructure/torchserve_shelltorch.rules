@@ -1,6 +1,6 @@
 # TorchServe ShellTorch Detection Rules
 # Format: Suricata
-# Author: Raymond DePalma (ai-dfir-detections)
+# Author: Raymond DePalma (ai-dfir-toolkit)
 # Date: 2026-04-15
 #
 # Detects exploitation of TorchServe vulnerability chain (ShellTorch):

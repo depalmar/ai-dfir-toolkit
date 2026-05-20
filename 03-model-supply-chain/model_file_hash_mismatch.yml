@@ -22,7 +22,7 @@ references:
   - https://atlas.mitre.org/techniques/AML.T0010
   - https://atlas.mitre.org/techniques/AML.T0018
   - https://genai.owasp.org/llmrisk/llm03-supply-chain/
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence
@@ -76,7 +76,7 @@ description: |
   inference pipelines.
 references:
   - https://atlas.mitre.org/techniques/AML.T0010.003
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

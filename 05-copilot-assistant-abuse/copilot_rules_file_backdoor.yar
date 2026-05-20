@@ -1,6 +1,6 @@
 /*
    YARA rules: Rules File Backdoor — Hidden Instructions in Copilot/Cursor Rules
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents
               Pillar Security 2025 — "Rules File Backdoor"
@@ -25,7 +25,7 @@ rule Copilot_Rules_File_Hidden_Unicode
 {
     meta:
         description = "AI assistant rules file containing invisible/hidden Unicode characters"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010"
         owasp       = "LLM03:2025"
@@ -60,7 +60,7 @@ rule Copilot_Rules_File_Coercive_Instructions
 {
     meta:
         description = "AI rules file containing coercive instructions for the assistant"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010"
         owasp       = "LLM03:2025"
@@ -93,7 +93,7 @@ rule Copilot_Rules_File_Pinned_Dependency_Override
 {
     meta:
         description = "AI rules file forcing use of unusual / typosquattable dependencies"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010.002"
         severity    = "medium"

@@ -10,7 +10,7 @@ references:
   - https://genai.owasp.org/llmrisk/llm072025-system-prompt-leakage/
   - https://atlas.mitre.org/techniques/AML.T0054
   - https://github.com/jujumilk3/leaked-system-prompts
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.discovery

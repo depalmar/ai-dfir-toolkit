@@ -11,7 +11,7 @@ description: |
 references:
   - https://docs.trychroma.com/docs/cli/db
   - https://atlas.mitre.org/techniques/AML.T0020
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

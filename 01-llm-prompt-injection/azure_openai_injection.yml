@@ -16,7 +16,7 @@ references:
   - https://atlas.mitre.org/techniques/AML.T0051
   - https://atlas.mitre.org/techniques/AML.T0054
   - https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/monitor-openai
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access

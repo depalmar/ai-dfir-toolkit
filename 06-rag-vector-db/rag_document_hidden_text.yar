@@ -1,6 +1,6 @@
 /*
    YARA rules: RAG Document Hidden Text / Indirect Prompt Injection
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: Greshake et al. 2023 — "Not what you've signed up for"
               https://arxiv.org/abs/2302.12173
@@ -20,7 +20,7 @@ rule RAG_Document_Bidi_Override
 {
     meta:
         description = "Document contains Unicode bidirectional override (Trojan Source style)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
         owasp       = "LLM01:2025"
@@ -44,7 +44,7 @@ rule RAG_Document_Tags_Block_Hidden_Prompt
 {
     meta:
         description = "Document contains Unicode Tags block characters (invisible prompt injection)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0051.001"
         owasp       = "LLM01:2025"
@@ -65,7 +65,7 @@ rule RAG_Document_HTML_Hidden_Instructions
 {
     meta:
         description = "HTML/Markdown with CSS-hidden text containing prompt-injection patterns"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
         owasp       = "LLM01:2025"
@@ -100,7 +100,7 @@ rule RAG_Document_Whitespace_Smuggling
 {
     meta:
         description = "Document contains long runs of whitespace possibly hiding instructions"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
         severity    = "medium"
@@ -120,7 +120,7 @@ rule RAG_Document_PDF_Whitetext_Injection
 {
     meta:
         description = "PDF containing white-on-white text with injection markers"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
         severity    = "medium"

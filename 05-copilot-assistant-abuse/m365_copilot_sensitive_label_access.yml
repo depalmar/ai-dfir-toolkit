@@ -14,7 +14,7 @@ references:
   - https://atlas.mitre.org/techniques/AML.T0086
   - https://genai.owasp.org/llmrisk/llm02-sensitive-information-disclosure/
   - https://learn.microsoft.com/en-us/purview/audit-copilot
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection
@@ -52,7 +52,7 @@ description: |
   silently read emails protected by sensitivity labels.
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection
@@ -92,7 +92,7 @@ description: |
   after enterprise AI permissions have been granted.
 references:
   - https://atlas.mitre.org/techniques/AML.T0086
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access

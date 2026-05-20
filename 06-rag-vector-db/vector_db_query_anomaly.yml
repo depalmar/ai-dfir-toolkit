@@ -11,7 +11,7 @@ references:
   - https://atlas.mitre.org/techniques/AML.T0020
   - https://atlas.mitre.org/techniques/AML.T0024
   - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.collection
@@ -75,7 +75,7 @@ references:
   - https://atlas.mitre.org/techniques/AML.T0020
   - https://atlas.mitre.org/techniques/AML.T0051.001
   - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access

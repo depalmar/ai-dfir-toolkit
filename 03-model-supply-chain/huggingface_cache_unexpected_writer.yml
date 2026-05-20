@@ -10,7 +10,7 @@ description: |
 references:
   - https://huggingface.co/docs/huggingface_hub/main/en/guides/manage-cache
   - https://atlas.mitre.org/techniques/AML.T0010.003
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence

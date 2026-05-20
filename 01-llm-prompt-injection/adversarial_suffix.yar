@@ -1,6 +1,6 @@
 /*
    YARA rule: Adversarial Suffix Patterns (GCG-style attacks)
-   Author: Raymond DePalma (ai-dfir-detections)
+   Author: Raymond DePalma (ai-dfir-toolkit)
    Date: 2026-04-15
    Reference: Zou et al. 2023 - "Universal and Transferable Adversarial Attacks on Aligned Language Models"
               https://arxiv.org/abs/2307.15043
@@ -19,7 +19,7 @@ rule LLM_Adversarial_Suffix_GCG_Style
 {
     meta:
         description = "GCG-style adversarial suffix targeting LLM alignment"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0051.000"
         owasp       = "LLM01:2025"
@@ -49,7 +49,7 @@ rule LLM_Adversarial_Suffix_Repeated_Tokens
 {
     meta:
         description = "Repeated token flooding (often paired with adversarial attacks)"
-        author      = "Raymond DePalma (ai-dfir-detections)"
+        author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0029"
         owasp       = "LLM10:2025"

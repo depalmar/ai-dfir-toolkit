@@ -1,6 +1,6 @@
 # MCP (Model Context Protocol) Network Detection Rules
 # Format: Suricata (Snort-compatible subset)
-# Author: Raymond DePalma (ai-dfir-detections)
+# Author: Raymond DePalma (ai-dfir-toolkit)
 # Date: 2026-04-15
 #
 # Detects:
@@ -9,7 +9,7 @@
 #   - MCP server beaconing to suspicious tunneling/collaborator domains
 #   - Unauthenticated MCP server exposure on the network
 #
-# SID range: 9000001-9000099 reserved for ai-dfir-detections MCP rules
+# SID range: 9000001-9000099 reserved for ai-dfir-toolkit MCP rules
 #
 # References:
 #   https://www.cve.org/CVERecord?id=CVE-2025-49596

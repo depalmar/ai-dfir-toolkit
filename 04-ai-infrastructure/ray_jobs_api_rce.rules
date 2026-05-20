@@ -1,6 +1,6 @@
 # Ray Cluster Network Detection Rules (ShadowRay)
 # Format: Suricata
-# Author: Raymond DePalma (ai-dfir-detections)
+# Author: Raymond DePalma (ai-dfir-toolkit)
 # Date: 2026-04-15
 #
 # Detects exploitation of CVE-2023-48022 (Ray Jobs API unauthenticated RCE):

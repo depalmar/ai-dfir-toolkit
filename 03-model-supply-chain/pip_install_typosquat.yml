@@ -11,7 +11,7 @@ references:
   - https://thehackernews.com/2023/01/pytorch-machine-learning-framework.html
   - https://thehackernews.com/2025/06/malicious-pypi-npm-and-ruby-packages.html
   - https://atlas.mitre.org/techniques/AML.T0010.002
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access

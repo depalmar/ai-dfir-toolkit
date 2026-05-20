@@ -11,7 +11,7 @@ references:
   - https://genai.owasp.org/llmrisk/llm02-sensitive-information-disclosure/
   - https://atlas.mitre.org/techniques/AML.T0024
   - https://embracethered.com/blog/posts/2024/exploring-llm-data-exfiltration/
-author: Raymond DePalma (ai-dfir-detections)
+author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.exfiltration
