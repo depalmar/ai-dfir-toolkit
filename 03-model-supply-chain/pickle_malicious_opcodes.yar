@@ -71,7 +71,7 @@ rule Pickle_Dangerous_Imports
         $pkl_proto = { 80 ( 02 | 03 | 04 | 05 ) }
 
     condition:
-        $pkl_proto and (any of ($p2_*) or any of ($p4_*)) and filesize < 51200MB
+        $pkl_proto and (any of ($p2_*) or any of ($p4_*)) and filesize < 500MB
 }
 
 rule Pickle_Reduce_With_Shell_Command

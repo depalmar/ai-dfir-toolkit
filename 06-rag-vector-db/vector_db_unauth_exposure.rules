@@ -8,6 +8,13 @@
 #   ChromaDB (92% no auth), Weaviate (88%), Milvus (82%),
 #   Qdrant (78%), Pinecone (55%).
 #
+# Tuning / false positives:
+#   Ports 8000 (ChromaDB) and 8080 (Weaviate) are shared by many unrelated
+#   web apps. These rules already require the $EXTERNAL_NET -> service
+#   direction plus a product-specific URI path, but set $HOME_NET to your
+#   actual vector-DB hosts (or pin the destination to those hosts) so the
+#   rules don't fire on other apps that happen to use those ports.
+#
 # SID range: 9000600-9000699
 
 # ==========================================================================

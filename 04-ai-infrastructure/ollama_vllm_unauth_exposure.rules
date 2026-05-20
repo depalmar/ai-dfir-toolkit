@@ -17,6 +17,12 @@
 #
 # References:
 #   https://accuknox.com/blog/securing-ai-serving-engines-vllm-ollama-triton
+#
+# Tuning / false positives:
+#   9000410 suppresses the official OpenAI client via a negative user-agent.
+#   This is best-effort: it is trivially spoofed and other legitimate clients
+#   (LangChain, curl, app backends) will still match. Scope $HOME_NET to your
+#   inference hosts and consider allowlisting known client source IPs.
 
 # ==========================================================================
 # Ollama API exposure (port 11434)

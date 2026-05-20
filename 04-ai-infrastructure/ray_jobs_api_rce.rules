@@ -31,10 +31,10 @@ alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission with shell c
     metadata:atlas AML.T0011, mitre-attack T1190; \
     sid:9000200; rev:1;)
 
-alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard exposed (default port 8265)"; \
+alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard API accessed without auth (default port 8265)"; \
     flow:established,to_server; \
     http.method; content:"GET"; \
-    http.uri; content:"/"; \
+    http.uri; content:"/api/"; nocase; \
     http.header_names; content:!"authorization"; nocase; \
     classtype:misc-activity; \
     reference:cve,2023-48022; \
