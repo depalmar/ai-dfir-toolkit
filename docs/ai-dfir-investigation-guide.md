@@ -4,7 +4,7 @@
 
 Version 1.0 · April 2026 · Raymond DePalma · independent security researcher
 
-Companion detection content: [github.com/depalmar/ai-dfir-detections](https://github.com/depalmar/ai-dfir-detections)
+Companion detection content: [github.com/depalmar/ai-dfir-toolkit](https://github.com/depalmar/ai-dfir-toolkit)
 
 > **Independence disclaimer.** This is an independent personal project by the author. It is not affiliated with, endorsed by, or produced on behalf of any employer. All content is based on public sources: published CVEs, vendor advisories, academic papers, and vendor-neutral security research. The companion detection pack uses only open formats (Sigma, YARA, Suricata) so rules deploy in any modern detection stack.
 
@@ -31,7 +31,7 @@ AI/ML security incidents sit in an uncomfortable gap. Traditional DFIR training 
 Three audiences get different value from this material:
 
 - **Incident responders** (consultants, SOC leads, IR field teams): use the Day-0 triage flow in Part I and the playbooks in Part IV when you catch an AI case. The artifact tables tell you what to acquire before evidence disappears.
-- **Detection engineers** (SIEM/XDR/SOAR teams): the per-category evidence sources map to the companion `ai-dfir-detections` pack. Start with Part III's frameworks section to understand ATLAS coverage gaps.
+- **Detection engineers** (SIEM/XDR/SOAR teams): the per-category evidence sources map to the companion `ai-dfir-toolkit` pack. Start with Part III's frameworks section to understand ATLAS coverage gaps.
 - **CISOs and AI governance leads:** skim Part I (scope, decision tree), skip to Part V (common mistakes), and use the framework mappings to align your program with NIST AI RMF and the EU AI Act's Article 73 incident reporting requirements.
 
 ## The first hour: AI incident triage flow
@@ -753,7 +753,7 @@ There is no single scanner that catches all AI/ML attacks. Defense requires laye
 
 ### 6.3 XDR/SIEM detection coverage
 
-The companion `ai-dfir-detections` pack provides deployable rules for everything in this guide. It contains **43 rule files / 114 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage. Sigma rules convert to any modern SIEM via pySigma backends.
+The companion `ai-dfir-toolkit` pack provides deployable rules for everything in this guide. It contains **43 rule files / 114 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage. Sigma rules convert to any modern SIEM via pySigma backends.
 
 Recommended ingestion priorities for any SIEM/XDR program, ordered by signal-to-noise:
 
@@ -967,7 +967,7 @@ IR teams are increasingly high-value targets because they touch compromised syst
 
 ### Tools and detection content
 
-- Companion detection pack: [github.com/depalmar/ai-dfir-detections](https://github.com/depalmar/ai-dfir-detections)
+- Companion detection pack: [github.com/depalmar/ai-dfir-toolkit](https://github.com/depalmar/ai-dfir-toolkit)
 - Garak: LLM vulnerability scanner
 - Fickling: pickle security tool (Trail of Bits)
 - Promptfoo / ModelAudit: LLM evaluation and model scanning
