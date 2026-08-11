@@ -1,6 +1,15 @@
-* text=auto
+# Normalise line endings so the repo behaves the same on Windows and Linux.
+* text=auto eol=lf
+
 *.sh text eol=lf
 *.yml text eol=lf
 *.yar text eol=lf
 *.rules text eol=lf
 *.md text eol=lf
+
+# Generated feeds must be byte-identical across platforms or the CI staleness
+# check fails on pure line-ending noise.
+artifacts/docs/api/** text eol=lf
+
+# Keep the workbook binary.
+*.xlsx binary

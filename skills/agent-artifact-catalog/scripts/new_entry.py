@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scaffold a new catalog entry with the next free ID.
 
-    python skills/agent-artifact-catalog/scripts/new_entry.py "Tool Name"
+    python skill/agent-artifact-catalog/scripts/new_entry.py "Tool Name"
 """
 import re
 import sys
@@ -33,7 +33,8 @@ def main() -> int:
         return 1
     new_id = next_id()
     body = TEMPLATE.read_text().replace("AIRT-XXXX", new_id).replace("Tool Name", name)
-    dest.write_text(body)
+    with dest.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(body)
     print(f"Created {dest.relative_to(ROOT)} with id {new_id}")
     print("Fill it in, then run: python scripts/validate.py && python scripts/export.py")
     return 0

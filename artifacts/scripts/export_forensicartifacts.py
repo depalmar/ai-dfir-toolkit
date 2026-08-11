@@ -93,7 +93,8 @@ def main() -> int:
         "# process artifacts have no clean equivalent in the FILE source type.\n---\n"
     )
     body = yaml.safe_dump_all(definitions, sort_keys=False, default_flow_style=False)
-    OUT.write_text(header + body)
+    with OUT.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(header + body)
     print(f"{len(definitions)} artifact definitions -> {OUT.relative_to(ROOT)}")
     return 0
 

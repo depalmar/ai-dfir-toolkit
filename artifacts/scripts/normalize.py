@@ -10,6 +10,13 @@ the CSV feed unfilterable, which defeats the point of publishing it.
 import glob, json, re, sys
 from pathlib import Path
 
+def _write_lf(path: Path, text: str) -> None:
+    """LF on every platform - Windows would otherwise write CRLF and
+    make catalog files differ by author machine."""
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
+
 ROOT = Path(__file__).resolve().parent.parent
 
 ARTIFACT_TYPES = [
@@ -92,7 +99,7 @@ for path in sorted(glob.glob(str(ROOT / "catalog" / "*.yml"))):
             unmapped.add(m)
 
     if text != orig:
-        Path(path).write_text(text)
+        _write_lf(Path(path), text)
         changed += 1
 
 if unmapped:
@@ -123,6 +130,6 @@ for path in sorted(glob.glob(str(ROOT / "catalog" / "*.yml"))):
             out = new
             filled += 1
     if out != text:
-        Path(path).write_text(out)
+        _write_lf(Path(path), out)
 
 print(f"backfilled secret_type on {filled} credential entries")

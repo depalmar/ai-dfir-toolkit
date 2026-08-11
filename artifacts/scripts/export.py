@@ -18,10 +18,21 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "api"
 OUT.mkdir(parents=True, exist_ok=True)
 
+
+def write_lf(path: Path, text: str) -> None:
+    """Write with LF endings on every platform.
+
+    Python writes CRLF on Windows by default. That would make the generated
+    feeds differ by platform and break the CI staleness check on a diff that is
+    pure line-ending noise.
+    """
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
 entries = [yaml.safe_load(Path(p).read_text())
            for p in sorted(glob.glob(str(ROOT / "catalog" / "*.yml")))]
 
-(OUT / "catalog.json").write_text(json.dumps(entries, indent=2))
+write_lf(OUT / "catalog.json", json.dumps(entries, indent=2))
 
 # Flat artifact feed - one row per artifact, the shape most tools want.
 rows = []
@@ -63,7 +74,7 @@ for e in entries:
             "confidence": "high",
         })
 
-with (OUT / "artifacts.csv").open("w", newline="") as fh:
+with (OUT / "artifacts.csv").open("w", newline="", encoding="utf-8") as fh:
     writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator="\n")
     writer.writeheader()
     writer.writerows(rows)
@@ -73,7 +84,7 @@ manifest = sorted({
     r["artifact"] for r in rows
     if r["forensic_value"] == "high" and r["artifact_class"] in ("disk", "credential", "mcp-config")
 })
-(OUT / "collection-targets.txt").write_text("\n".join(manifest) + "\n")
+write_lf(OUT / "collection-targets.txt", "\n".join(manifest) + "\n")
 
 # Detection index so consumers can pull rules without walking the tree.
 detections = []
@@ -87,7 +98,7 @@ for path in sorted(glob.glob(str(ROOT / "detections" / "sigma" / "*.yml"))):
         "tags": rule.get("tags", []),
         "logsource": rule.get("logsource", {}),
     })
-(OUT / "detections.json").write_text(json.dumps(detections, indent=2))
+write_lf(OUT / "detections.json", json.dumps(detections, indent=2))
 
 print(f"{len(entries)} entries -> {len(rows)} artifact rows")
 print(f"{len(detections)} sigma rules indexed")
