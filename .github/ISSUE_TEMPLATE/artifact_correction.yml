@@ -1,0 +1,49 @@
+name: Correction
+description: A path, port, or other detail in an entry is wrong
+title: "[correction] "
+labels: ["correction"]
+body:
+  - type: input
+    id: entry
+    attributes:
+      label: Entry ID
+      placeholder: AIRT-0011
+    validations:
+      required: true
+  - type: input
+    id: field
+    attributes:
+      label: Field or path
+      placeholder: artifacts.disk[2].path
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What it says now
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How did you verify this?
+      description: This sets the confidence rating, so please be exact.
+      options:
+        - Observed on a live host
+        - Vendor documentation
+        - Source code
+        - Third-party analysis
+        - Inferred, not verified
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Tool version and install method
+      placeholder: "Cursor 1.4.2, MSI installer, Windows 11"

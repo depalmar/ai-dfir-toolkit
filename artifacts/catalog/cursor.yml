@@ -1,0 +1,215 @@
+# AI agent artifact catalog entry
+# AIRT-0002 - Cursor
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0002
+name: Cursor
+vendor: Anysphere
+category: coding-agent-ide
+description: VS Code fork with agentic Composer/Agent mode. Executes terminal commands and edits files autonomously.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Agent mode spawns shells. .cursorrules is a prompt-injection surface. MCP config = arbitrary child process launch.
+artifacts:
+  disk:
+    - path: "%LOCALAPPDATA%\\Programs\\cursor\\"
+      os:
+        - windows
+      artifact_type: install-dir
+      description: Electron app root
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: MSI/EXE
+      confidence: high
+    - path: "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: Main process
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: MSI/EXE
+      confidence: high
+    - path: "%LOCALAPPDATA%\\Programs\\cursor\\resources\\app\\bin\\cursor"
+      os:
+        - windows
+      artifact_type: binary
+      description: CLI shim
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: MSI/EXE
+      confidence: high
+    - path: "%LOCALAPPDATA%\\cursor-updater\\"
+      os:
+        - windows
+      artifact_type: install-dir
+      description: Auto-update staging - watch for unsigned writes
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: MSI/EXE
+      confidence: high
+    - path: "%APPDATA%\\Cursor\\User\\"
+      os:
+        - windows
+      artifact_type: config-dir
+      description: settings.json, globalStorage, workspaceStorage
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: MSI/EXE
+      confidence: high
+    - path: ~/Library/Application Support/Cursor/User/
+      os:
+        - macos
+      artifact_type: config-dir
+      description: Config Dir for Cursor
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: DMG
+      confidence: high
+    - path: ~/.config/Cursor/User/
+      os:
+        - linux
+      artifact_type: config-dir
+      description: Config Dir for Cursor
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: AppImage/deb
+      confidence: high
+    - path: ~/.cursor/mcp.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: mcp-config
+      description: Global MCP servers - EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/.cursor/mcp.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: mcp-config
+      description: Project MCP servers - review on clone
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: rules-file
+      description: Prompt-injection surface
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+    - path: "%APPDATA%\\Cursor\\User\\skills\\"
+      os:
+        - windows
+      artifact_type: agent-definition
+      description: Custom agent skills
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+  registry:
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Cursor GUID>"
+      value: InstallLocation, DisplayVersion
+      type: REG_SZ
+      description: Install metadata + version
+      persistence: false
+      forensic_value: medium
+      confidence: high
+    - key: "HKCU\\Software\\Classes\\cursor\\shell\\open\\command"
+      value: (Default)
+      type: REG_SZ
+      description: "cursor:// protocol handler"
+      persistence: true
+      forensic_value: medium
+      confidence: medium
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+      value: Cursor
+      type: REG_SZ
+      description: Auto-start on login (if enabled)
+      persistence: true
+      forensic_value: high
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: "*.cursor.sh, api2.cursor.sh, *.anysphere.co"
+      port: 443/TCP
+      description: Codebase context is sent to Anysphere cloud unless Privacy Mode
+      confidence: medium
+  process:
+    - name: Cursor.exe
+      os:
+        - windows
+      typical_parent: explorer.exe
+      typical_children: Cursor.exe (renderer), node.exe, cmd.exe, powershell.exe
+      service_or_daemon: "No"
+      persistence: Run key (optional)
+      confidence: high
+credentials: []
+mcp:
+  - config_path: ~/.cursor/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    notes: Global scope
+  - config_path: "<repo>/.cursor/mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process on workspace open
+    secrets_location: env block
+    persistence_trigger: Every workspace open
+    triage_priority: p1
+    notes: TRAVELS WITH THE REPO
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0080
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references: []
+last_modified: "2026-08-11"

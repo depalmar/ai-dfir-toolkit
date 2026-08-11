@@ -1,0 +1,70 @@
+# AI agent artifact catalog entry
+# AIRT-0007 - Devin
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0007
+name: Devin
+vendor: Cognition
+category: cloud-agent
+description: Cloud-hosted autonomous software engineer accessed via web UI, Slack, or API. Minimal endpoint footprint.
+supported_os:
+  - cloud
+execution_model: Fully cloud-hosted
+capabilities:
+  local_code_execution: false
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: medium
+confidence: medium
+abuse_potential: Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. THIN PUBLIC SOURCING.
+artifacts:
+  disk:
+    - path: Browser session / cookies for app.devin.ai
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: THIN SOURCING - primary indicator is outbound DNS
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: low
+      unverified: true
+  network:
+    - direction: egress
+      indicator: "app.devin.ai, *.cognition.ai"
+      port: 443/TCP
+      description: Primary and often ONLY endpoint indicator
+      confidence: low
+      unverified: true
+    - direction: egress
+      indicator: "*.devinapps.com (IDE/Desktop iframes), app.devin.ai"
+      port: 443/TCP + WSS
+      description: "CORRECTED: workstations must reach *.devinapps.com - this is the primary network IOC"
+      confidence: high
+  process:
+    - name: devin (CLI); VS Code Remote-SSH child
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell / Code.exe
+      typical_children: ssh
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+attack_techniques:
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

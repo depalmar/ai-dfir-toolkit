@@ -1,0 +1,36 @@
+# AI agent artifact case study
+# AIRT-CS-0003 - Langflow CVE-2025-3248 Mass Exploitation and Flodrix Botnet Deployment
+
+id: AIRT-CS-0003
+title: Langflow CVE-2025-3248 Mass Exploitation and Flodrix Botnet Deployment
+date_range: 2025-04 (disclosure) onward; CISA KEV listed 2025-05-05
+disclosed: "2025-04-09"
+affects: AIRT-0044
+summary: Langflow versions before 1.3.0 expose /api/v1/validate/code, which passes user-supplied Python to exec() with no authentication and no sandbox. Payloads hidden in function decorators and default arguments execute in the server context. CVSS 9.8. CISA added it to the Known Exploited Vulnerabilities catalog on 2025-05-05. Trend Micro documented in-the-wild exploitation deploying the Flodrix botnet, with operators first enumerating publicly exposed Langflow servers via Shodan or FOFA. A second flaw, CVE-2026-5027 (CVSS 8.8, path traversal via POST /api/v2/files) affects 1.8.4 and earlier.
+iocs:
+  - type: endpoint
+    value: POST /api/v1/validate/code
+    description: Exploitation endpoint for CVE-2025-3248
+  - type: endpoint
+    value: POST /api/v2/files
+    description: Exploitation endpoint for CVE-2026-5027
+  - type: pattern
+    value: Python payloads in decorators or argument defaults
+    description: Payload placement observed in the wild
+  - type: malware
+    value: Flodrix botnet
+    description: Payload delivered post-exploitation
+  - type: behavior
+    value: Scanning of exposed port 7860
+    description: Pre-exploitation enumeration via Shodan/FOFA
+  - type: config
+    value: LANGFLOW_AUTO_LOGIN=true
+    description: Removes authentication entirely; highest-risk configuration
+response_actions:
+  - Identify every Langflow instance and its version; anything before 1.3.0 should be assumed compromised if it was ever internet-reachable.
+  - Hunt retrospectively - exploitation may predate patching, so upgrading is not evidence of safety.
+  - Review web logs for POST requests to /api/v1/validate/code and /api/v2/files.
+  - Set LANGFLOW_AUTO_LOGIN=false and place the instance behind SSO or an isolated network.
+  - Run Langflow as a non-root least-privilege user so arbitrary file writes cannot land in root-owned paths.
+  - Rotate every credential stored in flows and in the Langflow database.
+lesson: "This is the clearest proof that AI agent infrastructure is now a mass-exploitation target rather than a theoretical one: a CISA KEV listing, a named botnet payload, and internet-wide scanning for the default port. Self-hosted agent platforms deployed by developers rarely sit in the asset inventory that vulnerability management actually scans, which is why an inventory sweep for these listeners is the highest-value first control."

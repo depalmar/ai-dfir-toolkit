@@ -1,0 +1,168 @@
+[
+  {
+    "file": "detections/sigma/ai_agent_autostart_persistence.yml",
+    "id": "0c8ca1e8-b669-54e0-b5e9-98a322e33dd0",
+    "title": "AI Agent Registered for Autostart",
+    "level": "low",
+    "tags": [
+      "attack.persistence",
+      "attack.t1547.001"
+    ],
+    "logsource": {
+      "category": "registry_set",
+      "product": "windows"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_credential_file_access.yml",
+    "id": "966883aa-08b3-5b78-be99-3025ce78e356",
+    "title": "AI Agent Credential File Accessed by Unexpected Process",
+    "level": "high",
+    "tags": [
+      "attack.credential_access",
+      "attack.t1552.001"
+    ],
+    "logsource": {
+      "category": "file_access"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_docker_socket_mount.yml",
+    "id": "cf0ad71d-8a3a-5c3c-9ad3-ee9a26db2a41",
+    "title": "AI Agent Container Started with Docker Socket Mount",
+    "level": "high",
+    "tags": [
+      "attack.privilege_escalation",
+      "attack.t1610"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_mcp_config_modification.yml",
+    "id": "3f1ea561-4da2-5dbb-adff-cabad3d44937",
+    "title": "AI Agent MCP Configuration Created or Modified",
+    "level": "low",
+    "tags": [
+      "attack.persistence",
+      "attack.t1543",
+      "attack.execution"
+    ],
+    "logsource": {
+      "category": "file_event"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_spawning_lolbin.yml",
+    "id": "e696a823-c1b3-5c18-ae2d-3575b0647270",
+    "title": "AI Agent Process Spawning LOLBAS Binary",
+    "level": "high",
+    "tags": [
+      "attack.execution",
+      "attack.t1059",
+      "attack.defense_evasion",
+      "attack.t1218"
+    ],
+    "logsource": {
+      "category": "process_creation",
+      "product": "windows"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_spawning_shell.yml",
+    "id": "730c1d85-5fde-54dc-95bd-cd6d725124a6",
+    "title": "AI Agent Process Spawning Command Interpreter",
+    "level": "low",
+    "tags": [
+      "attack.execution",
+      "attack.t1059"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_inference_endpoint_redirection.yml",
+    "id": "ef016b0c-7ce2-5366-925c-0337657af9f8",
+    "title": "AI Inference Endpoint Redirection via Environment Variable",
+    "level": "high",
+    "tags": [
+      "attack.command_and_control",
+      "attack.t1071.001",
+      "attack.collection"
+    ],
+    "logsource": {
+      "category": "registry_set",
+      "product": "windows"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_model_file_written_to_endpoint.yml",
+    "id": "377ca8f3-168a-5028-aee4-f7191ff60ba7",
+    "title": "Large Model File Written to Endpoint",
+    "level": "low",
+    "tags": [
+      "attack.command_and_control",
+      "attack.t1105"
+    ],
+    "logsource": {
+      "category": "file_event"
+    }
+  },
+  {
+    "file": "detections/sigma/browser_agent_session_state_capture.yml",
+    "id": "431474e9-d24d-508c-9cb4-b89e62f8d656",
+    "title": "Browser Automation Agent Capturing Session State",
+    "level": "high",
+    "tags": [
+      "attack.credential_access",
+      "attack.t1539",
+      "attack.collection",
+      "attack.t1185"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
+  },
+  {
+    "file": "detections/sigma/langflow_rce_exploitation_attempt.yml",
+    "id": "d04282cc-7b2b-5f3f-b192-d81980a9f590",
+    "title": "Langflow Code Validation Endpoint Exploitation Attempt",
+    "level": "high",
+    "tags": [
+      "attack.initial_access",
+      "attack.t1190",
+      "attack.execution"
+    ],
+    "logsource": {
+      "category": "webserver"
+    }
+  },
+  {
+    "file": "detections/sigma/local_llm_listener_non_loopback.yml",
+    "id": "75256f76-d771-5d2e-a4f4-fe4b3fd9cbc3",
+    "title": "Local LLM Runtime Listening on Non-Loopback Address",
+    "level": "high",
+    "tags": [
+      "attack.initial_access",
+      "attack.t1133"
+    ],
+    "logsource": {
+      "category": "network_connection"
+    }
+  },
+  {
+    "file": "detections/sigma/mcp_server_remote_code_fetch.yml",
+    "id": "c12c0a89-09c0-5487-b9cd-f698b18cc114",
+    "title": "MCP Server Fetching Remote Code at Launch",
+    "level": "medium",
+    "tags": [
+      "attack.initial_access",
+      "attack.t1195.002"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
+  }
+]

@@ -1,0 +1,58 @@
+# AI agent artifact catalog entry
+# AIRT-0023 - KoboldCpp
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0023
+name: KoboldCpp
+vendor: LostRuins (OSS)
+category: llm-runtime
+description: Single-binary llama.cpp derivative with a built-in web UI.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: false
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: false
+risk: medium
+confidence: medium
+abuse_potential: Single portable .exe - trivially dropped and run without install. Named in Splunk STRT local-LLM analytics.
+artifacts:
+  network:
+    - direction: listener
+      indicator: Kobold API + web UI
+      port: 5001/TCP
+      description: ""
+      confidence: medium
+      default_bind: "127.0.0.1"
+      authentication: NONE
+      exposure_risk: medium
+  process:
+    - name: koboldcpp.exe
+      os:
+        - windows
+      typical_parent: explorer.exe / shell
+      typical_children: "-"
+      service_or_daemon: "No"
+      persistence: None - PORTABLE SINGLE BINARY
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

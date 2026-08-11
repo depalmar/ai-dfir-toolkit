@@ -61,6 +61,64 @@ cd tests/
 
 Your new rule should pass the suite, and ideally add a new test case for the behavior you're detecting.
 
+## Artifact catalog contributions
+
+The [`artifacts/`](./artifacts/) catalog has its own submission rules, because it
+is reference data rather than detection logic.
+
+### Adding a tool
+
+1. Check it does not already exist: `grep -ril "<tool>" artifacts/catalog/`
+2. Scaffold: `python skills/agent-artifact-catalog/scripts/new_entry.py "Tool Name"`
+3. Research it — see `skills/agent-artifact-catalog/references/research-checklist.md`
+4. Validate: `cd artifacts && python scripts/validate.py`
+5. Regenerate feeds: `python scripts/export.py && python scripts/export_forensicartifacts.py`
+6. Commit the entry **and** the regenerated `artifacts/docs/api/` in the same commit
+7. Open a PR describing how you verified the paths
+
+### Catalog rules
+
+**IDs are permanent.** Never renumber an existing entry — downstream detections
+reference them. New entries take the next free ID.
+
+**Confidence must reflect provenance, not conviction.** If you did not verify a
+path on a real host or in vendor documentation, it is not `high`. Mark
+single-source artifacts with `unverified: true`. CI enforces this.
+
+**Omit rather than guess.** A missing field is honest. A guessed one becomes
+somebody's broken detection.
+
+**Cite your sources** in the `references` block with an access date — several of
+these tools change paths between releases.
+
+**Defensive content only.** Document where artifacts live and what they prove.
+No exploit code, no working attack tooling, no step-by-step abuse instructions.
+
+### Catalog detections
+
+Sigma only — no SPL, no KQL, no proprietary query language. Put the rule in
+`artifacts/detections/sigma/`, give it a fresh UUID, and confirm it converts:
+
+```bash
+sigma convert -t splunk artifacts/detections/sigma/your_rule.yml
+cd artifacts && python scripts/validate.py
+```
+
+Rate `level` honestly and fill in `falsepositives`. A rule that fires constantly
+in its target environment is worse than no rule, because it teaches people to
+ignore the whole feed.
+
+### Case studies
+
+Only for documented, dated, publicly reported incidents. Include concrete IOCs
+(paths, package names and versions, commit hashes, network destinations),
+response actions, and the transferable lesson. No IOCs, no case study.
+
+### Reporting a catalog error
+
+Open an issue with the entry ID, the field, what it says, what it should say, and
+how you verified. Corrections are logged in `artifacts/docs/VERIFICATION.md`.
+
 ## Pull request process
 
 1. Fork the repo and create a feature branch (`feat/new-detection-foo` or `fix/rule-bar-fp`)

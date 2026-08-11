@@ -1,0 +1,155 @@
+# AI agent artifact catalog entry
+# AIRT-0043 - OpenHands
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0043
+name: OpenHands
+vendor: All Hands AI (OSS)
+category: agent-framework
+description: Autonomous software-engineering agent (formerly OpenDevin) with a web UI, running agent code in Docker sandbox containers. Deployed via Docker, Docker Compose, or from source.
+supported_os:
+  - linux
+  - windows
+  - docker
+execution_model: Cloud or local inference + sandboxed exec
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: The documented run command mounts /var/run/docker.sock into the container - that is host-root-equivalent, so an agent or an attacker reaching the container controls the Docker daemon and therefore the host. Port 3000 has no authentication in the default local deployment.
+artifacts:
+  disk:
+    - path: ~/.openhands/config.toml
+      os:
+        - linux
+        - docker
+      artifact_type: config-file
+      description: "[core] workspace_base, [llm] model/api_key/base_url. PLAINTEXT api_key. base_url is an inference-redirection vector."
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: Docker/source
+      confidence: high
+    - path: ~/.openhands-state/  (mounted to /.openhands-state)
+      os:
+        - linux
+        - docker
+      artifact_type: data-dir
+      description: Persistent agent state across container restarts. Older deployments use this path; newer ones mount ~/.openhands.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: Docker
+      confidence: high
+    - path: ~/.openhands/  (mounted to /.openhands)
+      os:
+        - linux
+        - docker
+      artifact_type: data-dir
+      description: Current state directory. Also holds user skills at ~/.openhands/skills/.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: Docker
+      confidence: high
+    - path: workspace_base (default ./workspace, mounted to /opt/workspace_base)
+      os:
+        - linux
+        - docker
+      artifact_type: data-dir
+      description: AGENT-GENERATED AND AGENT-MODIFIED FILES. Treat as unknown-origin content during triage.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: Docker/source
+      confidence: high
+    - path: ~/.openhands/skills/ ; ~/.agents/skills/
+      os:
+        - linux
+        - docker
+      artifact_type: agent-definition
+      description: Custom skill definitions loaded by the agent.
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+    - path: docker-compose.yml / docker run invocation
+      os:
+        - linux
+        - docker
+      artifact_type: config-file
+      description: "CRITICAL TRIAGE ARTIFACT: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent."
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: Docker
+      confidence: high
+    - path: ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
+      os:
+        - linux
+        - docker
+      artifact_type: container
+      description: Sandbox runtime image pulled per session. Older tags use docker.all-hands.dev/all-hands-ai/.
+      forensic_value: high
+      evidence_type:
+        - program-presence
+      install_method: Docker
+      confidence: high
+  network:
+    - direction: listener
+      indicator: OpenHands web UI + API (uvicorn)
+      port: 3000/TCP
+      description: "Documented quick start publishes -p 3000:3000. Frontend dev server on 3001 when run from source."
+      confidence: high
+      default_bind: 0.0.0.0 (container)
+      authentication: None in default local deploy
+      exposure_risk: critical
+    - direction: listener
+      indicator: Sandbox VS Code server
+      port: 41234/TCP (SANDBOX_VSCODE_PORT)
+      description: Published when the in-sandbox editor is used.
+      confidence: medium
+      default_bind: "0.0.0.0"
+      authentication: None
+      exposure_risk: high
+    - direction: egress
+      indicator: docker.openhands.dev, ghcr.io, docker.all-hands.dev
+      port: 443/TCP
+      description: Runtime image pulls.
+      confidence: high
+    - direction: egress
+      indicator: LLM_BASE_URL / LLM_OLLAMA_BASE_URL configured endpoint
+      port: 443/TCP, 11434/TCP
+      description: Endpoint-override variables - a modified value redirects all agent traffic.
+      confidence: high
+  process:
+    - name: "python (uvicorn openhands.server.listen:app)"
+      os:
+        - linux
+        - docker
+      typical_parent: dockerd / shell
+      typical_children: docker (sandbox spawn), node
+      service_or_daemon: YES (container)
+      persistence: Docker restart policy
+      confidence: high
+credentials: []
+mcp:
+  - config_path: ~/.openhands/config.toml
+    config_key: "[mcp] section"
+    spawn_mechanism: Child process at agent start
+    secrets_location: config.toml plaintext
+    persistence_trigger: Every agent session
+    triage_priority: p1
+    notes: TOML not JSON
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques: []
+attack_techniques: []
+references: []
+last_modified: "2026-08-11"

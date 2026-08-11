@@ -1,0 +1,215 @@
+# AI agent artifact catalog entry
+# AIRT-0011 - Claude Desktop (MCP host)
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0011
+name: Claude Desktop (MCP host)
+vendor: Anthropic
+category: mcp-host
+description: Desktop chat client that launches arbitrary local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js runtime.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local MCP server exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: THE key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.
+artifacts:
+  disk:
+    - path: ~/Library/Application Support/Claude/claude_desktop_config.json
+      os:
+        - macos
+      artifact_type: mcp-config
+      description: PRIMARY EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: DMG
+      confidence: high
+    - path: "%APPDATA%\\Claude\\claude_desktop_config.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: PRIMARY EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: EXE installer
+      confidence: high
+    - path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: MS Store
+      confidence: high
+    - path: ~/.config/Claude/claude_desktop_config.json
+      os:
+        - linux
+      artifact_type: mcp-config
+      description: PRIMARY EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: deb/AppImage
+      confidence: high
+    - path: "*.mcpb (Desktop Extension)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: extension-bundle
+      description: ZIP archive containing server code + manifest - UNPACK AND REVIEW
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
+    - path: "%APPDATA%\\Claude\\logs\\mcp*.log"
+      os:
+        - windows
+      artifact_type: log
+      description: MCP server stdout/stderr - forensic goldmine
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: medium
+    - path: "~/Library/Logs/Claude/mcp*.log"
+      os:
+        - macos
+      artifact_type: log
+      description: MCP server stdout/stderr
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: medium
+  registry:
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude"
+      value: InstallLocation, DisplayVersion
+      type: REG_SZ
+      description: Install metadata
+      persistence: false
+      forensic_value: medium
+      confidence: medium
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+      value: Claude
+      type: REG_SZ
+      description: Auto-start - LAUNCHES ALL CONFIGURED MCP SERVERS ON LOGIN
+      persistence: true
+      forensic_value: high
+      confidence: medium
+    - key: "HKCU\\Software\\Classes\\claude\\shell\\open\\command"
+      value: (Default)
+      type: REG_SZ
+      description: "claude:// protocol handler - deep-link vector"
+      persistence: true
+      forensic_value: medium
+      confidence: medium
+    - key: "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*"
+      value: "-"
+      type: Key
+      description: Store package registration
+      persistence: false
+      forensic_value: medium
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: api.anthropic.com, claude.ai
+      port: 443/TCP
+      description: Plus ANY egress initiated by child MCP servers
+      confidence: high
+    - direction: egress-(indirect)
+      indicator: registry.npmjs.org (npx MCP server fetch)
+      port: 443/TCP
+      description: "npx @scope/server@latest pulls and EXECUTES code at every launch - supply-chain risk"
+      confidence: high
+  process:
+    - name: Claude.exe
+      os:
+        - windows
+      typical_parent: explorer.exe
+      typical_children: node.exe, npx.cmd, python.exe, docker.exe, uvx
+      service_or_daemon: "No"
+      persistence: Run key - LAUNCHES ALL MCP SERVERS ON LOGIN
+      confidence: high
+    - name: Claude
+      os:
+        - macos
+      typical_parent: launchd
+      typical_children: node, npx, python3, docker
+      service_or_daemon: "No"
+      persistence: LaunchAgent (login items)
+      confidence: high
+credentials: []
+mcp:
+  - config_path: "%APPDATA%\\Claude\\claude_desktop_config.json"
+    config_key: "mcpServers.<name>.command + .args"
+    spawn_mechanism: Child process at app launch
+    secrets_location: "mcpServers.<name>.env"
+    persistence_trigger: Every app start (+ Run key)
+    triage_priority: p1
+    notes: Standard EXE-installer path
+  - config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at app launch
+    secrets_location: "mcpServers.<name>.env"
+    persistence_trigger: Every app start
+    triage_priority: p1
+    notes: "VIRTUALIZED - the app reads THIS. 'Edit Config' in the UI can open the WRONG file. Commonly missed in IR."
+  - config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app launch
+    secrets_location: "mcpServers.<name>.env"
+    persistence_trigger: Every app start (LaunchAgent)
+    triage_priority: p1
+    notes: ""
+  - config_path: ~/.config/Claude/claude_desktop_config.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app launch
+    secrets_location: "mcpServers.<name>.env"
+    persistence_trigger: Every app start
+    triage_priority: p1
+    notes: ""
+  - config_path: "*.mcpb / *.dxt bundle files"
+    config_key: manifest.json inside archive
+    spawn_mechanism: Installed then spawned
+    secrets_location: manifest user_config
+    persistence_trigger: Every app start
+    triage_priority: p1
+    notes: ZIP ARCHIVE - unpack and review server code before trusting
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0110
+attack_techniques:
+  - T1059
+  - T1547.001
+  - T1195.002
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

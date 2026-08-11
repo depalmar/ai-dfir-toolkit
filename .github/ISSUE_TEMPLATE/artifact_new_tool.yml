@@ -1,0 +1,54 @@
+name: New tool
+description: Suggest an AI agent, runtime, or MCP component to catalogue
+title: "[new] "
+labels: ["new-entry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Tool name
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Project or vendor URL
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - coding-agent-cli
+        - coding-agent-ide
+        - code-completion
+        - mcp-host
+        - mcp-server
+        - agent-framework
+        - code-execution-agent
+        - llm-runtime
+        - workflow-engine
+        - browser-agent
+        - computer-use-agent
+        - cloud-agent
+    validations:
+      required: true
+  - type: textarea
+    id: footprint
+    attributes:
+      label: What does it leave on an endpoint?
+      description: >-
+        Install paths, config files, credential storage, MCP config, listening
+        ports, process names. Partial is fine — say what you know and what you
+        did not check. Omissions are honest; guesses become somebody's broken
+        detection.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Confirm
+      options:
+        - label: I have checked this tool is not already in catalog/
+          required: true

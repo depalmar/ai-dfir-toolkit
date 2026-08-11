@@ -1,0 +1,120 @@
+# AI agent artifact catalog entry
+# AIRT-0044 - Langflow
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0044
+name: Langflow
+vendor: Langflow / DataStax (OSS)
+category: workflow-engine
+description: Low-code visual builder for LLM agents and workflows, Python-based. Installable as a pip package, a desktop app, or a hosted service.
+supported_os:
+  - linux
+  - windows
+  - docker
+execution_model: Cloud or local inference + workflow exec
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: CVE-2025-3248 (CVSS 9.8, unauthenticated RCE via /api/v1/validate/code) is on the CISA KEV catalog and was mass-exploited to deploy the Flodrix botnet; attackers enumerated exposed instances with Shodan/FOFA first. CVE-2026-5027 (CVSS 8.8) adds path traversal to arbitrary file write via POST /api/v2/files.
+artifacts:
+  disk:
+    - path: ~/.langflow/  (LANGFLOW_CONFIG_DIR)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: Config and database root.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: pip/Docker
+      confidence: medium
+    - path: langflow.db (SQLite, in the config dir)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: database
+      description: Flows, users, and stored credentials. Flow definitions contain embedded API keys.
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: pip/Docker
+      confidence: medium
+    - path: LANGFLOW_AUTO_LOGIN
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: env-var
+      description: When true, the instance requires NO LOGIN. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: env-var
+      description: Superuser bootstrap credentials, commonly left plaintext in compose files.
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: medium
+    - path: Exported flow JSON files
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: Flow exports embed credentials and custom Python component code.
+      forensic_value: low
+      evidence_type:
+        - user-activity
+        - data-access
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Langflow web UI + API
+      port: 7860/TCP
+      description: MASS-EXPLOITED. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.
+      confidence: high
+      default_bind: "0.0.0.0"
+      authentication: None when LANGFLOW_AUTO_LOGIN=true
+      exposure_risk: critical
+    - direction: egress
+      indicator: Configured LLM provider endpoints
+      port: 443/TCP
+      description: ""
+      confidence: high
+  process:
+    - name: python (langflow run) / uvicorn
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: dockerd / shell
+      typical_children: python (custom components)
+      service_or_daemon: Optional
+      persistence: Docker restart policy or systemd
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques: []
+attack_techniques: []
+references: []
+last_modified: "2026-08-11"

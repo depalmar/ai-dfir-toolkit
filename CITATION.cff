@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: "AI DFIR Toolkit"
+message: "If you use this toolkit or its artifact catalog in research or published work, please cite it."
+type: software
+authors:
+  - family-names: DePalma
+    given-names: Raymond
+repository-code: "https://github.com/depalmar/ai-dfir-toolkit"
+abstract: >-
+  Tooling and reference material for digital forensics and incident response on
+  AI systems. Includes a machine-readable catalog of the endpoint artifacts left
+  by AI coding agents, local LLM runtimes, agentic workflow engines, and Model
+  Context Protocol components - install paths, credential storage, MCP
+  configurations, listening ports, process relationships, and registry keys, each
+  rated by forensic value and sourcing confidence, with collection priorities for
+  incident response triage. Ships vendor-neutral Sigma detection rules, an
+  osquery inventory pack, and exports in ForensicArtifacts format for Plaso, GRR,
+  and Timesketch.
+keywords:
+  - digital forensics
+  - incident response
+  - DFIR
+  - artificial intelligence
+  - AI agents
+  - Model Context Protocol
+  - detection engineering
+  - threat hunting
+  - shadow AI
+license: Apache-2.0
+date-released: "2026-08-11"

@@ -1,0 +1,694 @@
+# ForensicArtifacts-format export, generated from the catalog.
+# Spec: https://github.com/ForensicArtifacts/artifacts
+# Consumable by Plaso, GRR, and Timesketch. Do not hand-edit - regenerate with
+# scripts/export_forensicartifacts.py after changing catalog/*.yml.
+# Only high-forensic-value file artifacts are exported; registry, network, and
+# process artifacts have no clean equivalent in the FILE source type.
+---
+name: AiderArtifacts
+doc: Aider (AIRT-0004) - Python pair-programming agent operating directly on git repos.
+  Auto-commits changes.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aider.conf.yml'
+    - '%%users.homedir%%/.aider/oauth-keys.env'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aider.conf.yml'
+    - '%%users.homedir%%/.aider/oauth-keys.env'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aider.conf.yml'
+    - '%%users.homedir%%/.aider/oauth-keys.env'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: AmazonQDeveloperExCodewhispererArtifacts
+doc: Amazon Q Developer (ex-CodeWhisperer) (AIRT-0008) - AWS coding assistant. Node-based
+  language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE
+  plugins EOL 2027-04-30.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aws/sso/cache/*.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aws/sso/cache/*.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.aws/sso/cache/*.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ClaudeCodeArtifacts
+doc: Claude Code (AIRT-0001) - Terminal-native agentic coding assistant. Reads/writes
+  files, runs shell commands, invokes MCP servers.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.claude.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.claude.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.claude.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ClaudeDesktopMcpHostArtifacts
+doc: Claude Desktop (MCP host) (AIRT-0011) - Desktop chat client that launches arbitrary
+  local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js
+  runtime.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Claude\claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
+    - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
+    - '*.mcpb / *.dxt bundle files'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Claude\claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Logs/Claude/mcp*.log'
+    - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
+    - '*.mcpb / *.dxt bundle files'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Claude\claude_desktop_config.json'
+    - '%%users.appdata%%\Claude\logs\mcp*.log'
+    - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
+    - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
+    - '*.mcpb / *.dxt bundle files'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ClineArtifacts
+doc: Cline (AIRT-0039) - VS Code extension ID saoudrizwan.claude-dev (formerly Claude
+  Dev). Agentic file edit + terminal execution.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
+    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
+    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json'
+    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: CodeiumWindsurfArtifacts
+doc: Codeium / Windsurf (AIRT-0006) - Windsurf IDE with Cascade agentic flow; Codeium
+  plugins for other editors. Downloads its own language-server binary.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%\.codeium\windsurf\mcp_config.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ContinueDevArtifacts
+doc: Continue.dev (AIRT-0005) - VS Code / JetBrains extension with agent mode, custom
+  models, and MCP support.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.continue/config.json'
+    - '%%users.homedir%%/.continue/config.ts'
+    - '%%users.homedir%%/.continue/config.yaml'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.continue/config.json'
+    - '%%users.homedir%%/.continue/config.ts'
+    - '%%users.homedir%%/.continue/config.yaml'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.continue/config.json'
+    - '%%users.homedir%%/.continue/config.ts'
+    - '%%users.homedir%%/.continue/config.yaml'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: CursorArtifacts
+doc: Cursor (AIRT-0002) - VS Code fork with agentic Composer/Agent mode. Executes
+  terminal commands and edits files autonomously.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.cursor/mcp.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.cursor/mcp.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.cursor/mcp.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: GithubCopilotAgentModeCliArtifacts
+doc: GitHub Copilot (Agent Mode / CLI) (AIRT-0003) - copilot-language-server binary
+  + Copilot CLI. Agent mode runs multi-step tasks with tool calls; bundles a GitHub
+  MCP server.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.copilot/mcp-config.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.copilot/mcp-config.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.copilot/mcp-config.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: GoogleGeminiCliArtifacts
+doc: Google Gemini CLI (AIRT-0037) - Terminal agent installed via npm @google/gemini-cli.
+  Binary `gemini`. Supports system-wide policy config.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/google_accounts.json'
+    - '%%users.homedir%%/.gemini/oauth_creds.json'
+    - '%%users.homedir%%/.gemini/settings.json'
+    - /etc/gemini-cli/settings.json
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/google_accounts.json'
+    - '%%users.homedir%%/.gemini/oauth_creds.json'
+    - '%%users.homedir%%/.gemini/settings.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/google_accounts.json'
+    - '%%users.homedir%%/.gemini/oauth_creds.json'
+    - '%%users.homedir%%/.gemini/settings.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: GooseArtifacts
+doc: Goose (AIRT-0038) - Rust-based agent shipping both CLI and Desktop. Extension/MCP
+  host. GOOSE_PATH_ROOT overrides config root.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/goose/config.yaml'
+    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - Goose session logs
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/goose/config.yaml'
+    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - Goose session logs
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\goose\config.yaml'
+    - '%%users.homedir%%/.config/goose/config.yaml'
+    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - Goose session logs
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: KiroArtifacts
+doc: Kiro (AIRT-0041) - Agentic IDE from AWS built on a VS Code-style editor, using
+  a spec-driven workflow. Amazon Q Developer's IDE capabilities are migrating into
+  it. Ships an MCP client, auto-triggering agent hooks, steering files, and a CLI.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.kiro/settings/mcp.json'
+    - AWS Builder ID / IAM Identity Center token cache
+    - POWER.md / plugin.json / dev.kiro/
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.kiro/settings/mcp.json'
+    - AWS Builder ID / IAM Identity Center token cache
+    - POWER.md / plugin.json / dev.kiro/
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.kiro/settings/mcp.json'
+    - AWS Builder ID / IAM Identity Center token cache
+    - POWER.md / plugin.json / dev.kiro/
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://kiro.dev/docs/mcp/configuration/
+- https://kiro.dev/docs/mcp/
+- https://kiro.dev/docs/getting-started/first-project/
+---
+name: LangflowArtifacts
+doc: Langflow (AIRT-0044) - Low-code visual builder for LLM agents and workflows,
+  Python-based. Installable as a pip package, a desktop app, or a hosted service.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: LmStudioArtifacts
+doc: LM Studio (AIRT-0018) - GUI local model runner with OpenAI-compatible server,
+  CLI (lms), and daemon (llmster). MCP host capable.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.lmstudio/settings.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.lmstudio/settings.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.lmstudio/settings.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: N8nAiAgentLangchainNodesArtifacts
+doc: n8n (AI Agent / LangChain nodes) (AIRT-0025) - Self-hostable workflow automation
+  with native AI Agent / SQL Agent LangChain nodes and MCP support.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.n8n/database.sqlite'
+    - N8N_ENCRYPTION_KEY
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.n8n/database.sqlite'
+    - N8N_ENCRYPTION_KEY
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.n8n/database.sqlite'
+    - N8N_ENCRYPTION_KEY
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: OllamaArtifacts
+doc: Ollama (AIRT-0017) - Most widely deployed local LLM server. OpenAI-compatible
+  API. NO DEFAULT AUTHENTICATION.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
+    - journalctl -u ollama
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: OpenWebuiArtifacts
+doc: Open WebUI (AIRT-0042) - Self-hosted web interface for local and remote LLMs,
+  formerly Ollama WebUI. Multi-user with RBAC, RAG document ingestion, and a Tools/Functions
+  system that executes Python. Usually deployed via Docker; also installable via pip.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - /app/backend/data/.webui_secret_key
+    - /app/backend/data/config.json
+    - /app/backend/data/uploads/ and vector store directory
+    - /app/backend/data/webui.db
+    - Tools and Functions Python source stored in webui.db
+    - WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
+    - docker-compose.yml / docker run invocation
+    separator: /
+  supported_os:
+  - Linux
+supported_os:
+- Linux
+urls:
+- https://docs.openwebui.com/getting-started/advanced-topics/hardening/
+- https://docs.openwebui.com/getting-started/quick-start/
+- https://docs.openwebui.com/features/authentication-access/rbac/roles/
+---
+name: OpenaiCodexCliArtifacts
+doc: OpenAI Codex CLI (AIRT-0036) - Terminal coding agent installed via npm @openai/codex
+  (also Homebrew cask / winget). Binary `codex`. Reads AGENTS.md.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.codex/auth.json'
+    - '%%users.homedir%%/.codex/config.toml'
+    - '%%users.homedir%%/.codex/history.jsonl'
+    - '%%users.homedir%%/.codex/logs/codex-tui.log'
+    - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.codex/auth.json'
+    - '%%users.homedir%%/.codex/config.toml'
+    - '%%users.homedir%%/.codex/history.jsonl'
+    - '%%users.homedir%%/.codex/logs/codex-tui.log'
+    - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.codex/auth.json'
+    - '%%users.homedir%%/.codex/config.toml'
+    - '%%users.homedir%%/.codex/history.jsonl'
+    - '%%users.homedir%%/.codex/logs/codex-tui.log'
+    - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: OpenhandsArtifacts
+doc: OpenHands (AIRT-0043) - Autonomous software-engineering agent (formerly OpenDevin)
+  with a web UI, running agent code in Docker sandbox containers. Deployed via Docker,
+  Docker Compose, or from source.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.openhands/config.toml'
+    - docker-compose.yml / docker run invocation
+    - ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.openhands/config.toml'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.openhands/config.toml'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: RooCodeArtifacts
+doc: Roo Code (AIRT-0040) - VS Code extension ID rooveterinaryinc.roo-cline (Cline
+  fork). Multi-mode agent with project-scoped MCP.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json'
+    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json'
+    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []

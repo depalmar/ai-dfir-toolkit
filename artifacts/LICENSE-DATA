@@ -1,0 +1,34 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Raymond DePalma
+
+Applies to: catalog/, case-studies/, docs/api/
+
+You are free to:
+  Share  - copy and redistribute the material in any medium or format
+  Adapt  - remix, transform, and build upon the material for any purpose,
+           including commercially
+
+Under the following terms:
+  Attribution - You must give appropriate credit, provide a link to the
+  license, and indicate if changes were made. You may do so in any reasonable
+  manner, but not in any way that suggests the licensor endorses you or your
+  use.
+
+No additional restrictions - You may not apply legal terms or technological
+measures that legally restrict others from doing anything the license permits.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Attribution format:
+  AI agent artifact catalog, Raymond DePalma, CC BY 4.0
+  https://github.com/depalmar/ai-dfir-toolkit
+
+DISCLAIMER
+This catalog is provided for defensive security research and incident response.
+Entries document publicly observable software artifacts. Presence of a
+catalogued tool on a host is not evidence of compromise. The "risk" field
+describes exposure if a tool is misused or misconfigured, not a claim that any
+tool or vendor is malicious. No warranty is made as to accuracy or
+completeness; verify artifact locations in your own environment before relying
+on them.

@@ -1,0 +1,159 @@
+# AI agent artifact catalog entry
+# AIRT-0004 - Aider
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0004
+name: Aider
+vendor: Paul Gauthier (OSS)
+category: coding-agent-cli
+description: Python pair-programming agent operating directly on git repos. Auto-commits changes.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local file edit
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Chat history files (.aider.chat.history.md) are a source-code exfil goldmine. OAuth flow opens transient localhost listener 8484-8584.
+artifacts:
+  disk:
+    - path: "aider  (pipx: ~/.local/bin/aider)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Binary for Aider
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: pip / pipx / uv
+      confidence: high
+    - path: ~/.aider.conf.yml
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Also searched in CWD and git root
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.aider/caches/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: Cache Dir for Aider
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+    - path: "<repo>/.aider.tags.cache.v4/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: SQLite diskcache of repo symbol map
+      forensic_value: low
+      evidence_type:
+        - user-activity
+        - data-access
+        - timeline
+      install_method: n/a
+      confidence: medium
+    - path: "<repo>/.aider.chat.history.md"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: FULL CHAT TRANSCRIPT incl. source code - HIGH-VALUE FORENSIC ARTIFACT
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - data-access
+        - timeline
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/.aider.input.history"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: User prompt history - forensic timeline source
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - data-access
+        - timeline
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: egress
+      indicator: openrouter.ai, api.openai.com, api.anthropic.com
+      port: 443/TCP
+      description: ""
+      confidence: high
+    - direction: ingress-(loopback)
+      indicator: OAuth PKCE callback listener
+      port: 8484-8584/TCP
+      description: TRANSIENT listener during OpenRouter auth
+      confidence: medium
+  process:
+    - name: aider / python
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: git, python
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: ~/.aider/oauth-keys.env
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: oauth-token
+    description: OpenRouter OAuth (PKCE) tokens - PLAINTEXT
+    confidence: medium
+  - location: "<home|gitroot|cwd>/.env"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: OPENAI_API_KEY / ANTHROPIC_API_KEY - PLAINTEXT
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

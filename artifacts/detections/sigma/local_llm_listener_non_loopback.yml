@@ -1,0 +1,38 @@
+title: Local LLM Runtime Listening on Non-Loopback Address
+id: 75256f76-d771-5d2e-a4f4-fe4b3fd9cbc3
+status: experimental
+description: |
+  Detects a local LLM runtime binding its API to a non-loopback address, which
+  exposes an inference endpoint that in most of these runtimes has no authentication
+  at all. Researchers catalogued roughly 175,000 internet-exposed Ollama hosts in
+  January 2026, with nearly half advertising tool-calling - meaning remote agentic
+  execution, not merely free inference. Treat any hit as a finding.
+references:
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/ollama.yml
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.initial_access
+    - attack.t1133
+logsource:
+    category: network_connection
+detection:
+    selection:
+        Initiated: 'false'
+        DestinationPort:
+            - 11434   # Ollama
+            - 1234    # LM Studio
+            - 1337    # Jan.ai
+            - 4891    # GPT4All
+            - 5001    # KoboldCpp
+            - 7860    # Langflow / text-generation-webui
+            - 5678    # n8n
+            - 3000    # Flowise / OpenHands / Open WebUI (published)
+    filter_loopback:
+        SourceIp|startswith:
+            - '127.'
+            - '::1'
+    condition: selection and not filter_loopback
+falsepositives:
+    - Deliberate lab or shared-inference deployments, which should still be inventoried
+level: high

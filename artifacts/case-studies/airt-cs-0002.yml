@@ -1,0 +1,24 @@
+# AI agent artifact case study
+# AIRT-CS-0002 - postmark-mcp npm Backdoor - First In-the-Wild Malicious MCP Server
+
+id: AIRT-CS-0002
+title: postmark-mcp npm Backdoor - First In-the-Wild Malicious MCP Server
+date_range: 2025-09-17 (published) to ~2025-09-25 (removed)
+disclosed: 2025-09
+affects: MCP ecosystem
+summary: "npm package postmark-mcp v1.0.16, published by user 'phanpak', silently BCC'd every email processed through it to an attacker-controlled address. 1,643 downloads before removal. Koi Security called it the first real-world sighting of a malicious MCP server."
+iocs:
+  - type: package
+    value: "postmark-mcp@1.0.16"
+    description: Backdoored version
+  - type: npm-user
+    value: phanpak
+    description: Publishing account
+  - type: email
+    value: "phan@giftshop[.]club"
+    description: BCC exfiltration destination
+response_actions:
+  - Enumerate every MCP config for postmark-mcp and pin/remove.
+  - Treat all email processed through the server during the window as disclosed.
+  - "Audit MCP configs for @latest version specifiers, which would have pulled the backdoor automatically."
+lesson: An MCP server sits inside the trust boundary of the agent and inherits its credentials. Version-pinning MCP servers is not hygiene, it is a control.

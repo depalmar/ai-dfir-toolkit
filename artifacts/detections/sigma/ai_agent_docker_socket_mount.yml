@@ -1,0 +1,34 @@
+title: AI Agent Container Started with Docker Socket Mount
+id: cf0ad71d-8a3a-5c3c-9ad3-ee9a26db2a41
+status: experimental
+description: |
+  Detects an AI agent container started with the Docker socket bind-mounted.
+  Mounting /var/run/docker.sock grants control of the Docker daemon, which is
+  host-root-equivalent - so an agent that is prompt-injected, or an attacker who
+  reaches the container, escapes to the host. This appears in published deployment
+  instructions for agent platforms, so it is usually a misconfiguration inherited
+  from documentation rather than a deliberate choice.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.privilege_escalation
+    - attack.t1610
+logsource:
+    category: process_creation
+detection:
+    selection_docker:
+        Image|endswith:
+            - '/docker'
+            - '\docker.exe'
+    selection_sock:
+        CommandLine|contains: '/var/run/docker.sock'
+    selection_agent:
+        CommandLine|contains:
+            - 'openhands'
+            - 'agent-server'
+            - 'langflow'
+            - 'open-webui'
+    condition: all of selection_*
+falsepositives:
+    - CI runners and container-management tooling that legitimately require daemon access
+level: high

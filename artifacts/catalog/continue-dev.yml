@@ -1,0 +1,119 @@
+# AI agent artifact catalog entry
+# AIRT-0005 - Continue.dev
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0005
+name: Continue.dev
+vendor: Continue (OSS)
+category: coding-agent-ide
+description: VS Code / JetBrains extension with agent mode, custom models, and MCP support.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: config.yaml can point at ANY base_url including attacker-controlled inference proxies. Rules files = injection surface.
+artifacts:
+  disk:
+    - path: ~/.continue/config.yaml
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Current format
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: IDE extension
+      confidence: high
+    - path: ~/.continue/config.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Legacy format
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: IDE extension
+      confidence: high
+    - path: ~/.continue/config.ts
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Advanced - EXECUTES TYPESCRIPT
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: IDE extension
+      confidence: medium
+    - path: "<repo>/.continue/rules/*.md"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: rules-file
+      description: Prompt-injection surface
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/.continuerc.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Project Config for Continue.dev
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: Configured provider base_url (arbitrary)
+      port: 443/TCP
+      description: config.yaml can name ANY endpoint - inspect base_url values
+      confidence: high
+  process:
+    - name: node (extension host)
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Code.exe
+      typical_children: node (MCP servers)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0080
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references: []
+last_modified: "2026-08-11"

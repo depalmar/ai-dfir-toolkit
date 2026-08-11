@@ -1,0 +1,47 @@
+# AI agent artifact catalog entry
+# AIRT-0029 - Dify
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0029
+name: Dify
+vendor: LangGenius (OSS)
+category: workflow-engine
+description: Self-hosted LLM application builder with agent and workflow modes.
+supported_os:
+  - linux
+  - docker
+execution_model: Cloud or local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: medium
+confidence: medium
+abuse_potential: Multi-container stack; stored provider API keys; code node execution in sandbox.
+artifacts:
+  network:
+    - direction: listener
+      indicator: Dify web + API
+      port: 80/443, 5001/TCP
+      description: ""
+      confidence: medium
+      default_bind: 0.0.0.0 (container)
+      authentication: App auth
+      exposure_risk: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1133
+  - T1543
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,37 @@
+# AI agent artifact catalog entry
+# AIRT-0013 - AgentGPT
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0013
+name: AgentGPT
+vendor: Reworkd (OSS)
+category: agent-framework
+description: Browser-based autonomous agent, self-hostable via Docker.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: false
+risk: medium
+confidence: low
+abuse_potential: Self-hosted instance exposes a web UI; API keys in .env.
+artifacts: {}
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,101 @@
+# AI agent artifact catalog entry
+# AIRT-0009 - Tabnine
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0009
+name: Tabnine
+vendor: Tabnine
+category: code-completion
+description: Completion + agent platform. Editor plugin spawns and supervises a downloaded platform-specific binary.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud, self-hosted, or fully local
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: medium
+confidence: medium
+abuse_potential: binary_path is configurable = binary substitution risk. Self-hosted deployment adds K8s/Helm footprint.
+artifacts:
+  disk:
+    - path: ~/.tabnine/agent/settings.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: User scope
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: IDE plugin
+      confidence: high
+    - path: "<repo>/.tabnine/agent/settings.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: Project scope - overrides user
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
+    - path: Downloaded per-platform Tabnine binary (binary_path configurable)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: BINARY SUBSTITUTION RISK
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: IDE plugin
+      confidence: high
+    - path: TABNINE_CLI_SYSTEM_SETTINGS_PATH / TABNINE_CLI_SYSTEM_DEFAULTS_PATH
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: env-var
+      description: Env var config hijack vector
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: egress
+      indicator: api.tabnine.com, update.tabnine.com
+      port: 443/TCP
+      description: Optional OTLP telemetry endpoint is configurable
+      confidence: medium
+  process:
+    - name: TabNine.exe / TabNine-deep-local.exe
+      os:
+        - windows
+      typical_parent: Code.exe
+      typical_children: "-"
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+attack_techniques:
+  - T1071.001
+  - T1105
+references: []
+last_modified: "2026-08-11"

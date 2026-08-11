@@ -1,0 +1,139 @@
+# AI agent artifact catalog entry
+# AIRT-0018 - LM Studio
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0018
+name: LM Studio
+vendor: LM Studio (Element Labs)
+category: llm-runtime
+description: GUI local model runner with OpenAI-compatible server, CLI (lms), and daemon (llmster). MCP host capable.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: "'Serve on Local Network' / LMS_SERVER_HOST=0.0.0.0 exposes the API. Model download = unvetted binary blobs on disk."
+artifacts:
+  disk:
+    - path: "%LOCALAPPDATA%\\Programs\\lm-studio\\LM Studio.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: Binary for LM Studio
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: EXE installer
+      confidence: high
+    - path: ~/.lmstudio/bin/lms
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Headless control CLI
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: Created after first GUI run
+      confidence: high
+    - path: llmster
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Background service process
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+    - path: ~/.lmstudio/models/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: "Publisher/model/*.gguf layout"
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: ~/.lmstudio/settings.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Server bind address + port live here
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+  registry:
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*LM Studio*"
+      value: InstallLocation
+      type: REG_SZ
+      description: Install metadata
+      persistence: false
+      forensic_value: medium
+      confidence: medium
+    - key: "HKCU\\Environment"
+      value: LMS_SERVER_HOST
+      type: REG_SZ
+      description: 0.0.0.0 = NETWORK EXPOSURE of the OpenAI-compatible API
+      persistence: false
+      forensic_value: medium
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: OpenAI-compatible API
+      port: 1234/TCP
+      description: ""
+      confidence: high
+      default_bind: "127.0.0.1 (0.0.0.0 if 'Serve on Local Network')"
+      authentication: NONE
+      exposure_risk: high
+    - direction: egress
+      indicator: huggingface.co, lmstudio.ai
+      port: 443/TCP
+      description: Model downloads
+      confidence: high
+  process:
+    - name: LM Studio.exe, llmster.exe, lms.exe
+      os:
+        - windows
+      typical_parent: explorer.exe
+      typical_children: "-"
+      service_or_daemon: llmster daemon
+      persistence: Run key (optional)
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

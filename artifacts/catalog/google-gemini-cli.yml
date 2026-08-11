@@ -1,0 +1,121 @@
+# AI agent artifact catalog entry
+# AIRT-0037 - Google Gemini CLI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0037
+name: Google Gemini CLI
+vendor: Google
+category: coding-agent-cli
+description: "Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config."
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: ~/.gemini/oauth_creds.json stores access + refresh + id tokens with expiry and scope in plaintext. System-level /etc/gemini-cli/settings.json is a privileged tamper target.
+artifacts:
+  disk:
+    - path: "gemini  (npm -g @google/gemini-cli)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Binary for Google Gemini CLI
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm
+      confidence: high
+    - path: ~/.gemini/settings.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Auth type at security.auth.selectedType; MCP servers
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: /etc/gemini-cli/settings.json
+      os:
+        - linux
+      artifact_type: config-file
+      description: SYSTEM-LEVEL policy - privileged tamper/persistence target
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: egress
+      indicator: generativelanguage.googleapis.com, oauth2.googleapis.com, accounts.google.com
+      port: 443/TCP
+      description: ""
+      confidence: high
+  process:
+    - name: gemini / node
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: sh, bash, git, node (MCP)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: ~/.gemini/oauth_creds.json
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: oauth-token
+    description: PLAINTEXT access + refresh + id tokens, expiry, scope
+    confidence: high
+  - location: ~/.gemini/google_accounts.json
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: Bound Google account identity - USER ATTRIBUTION ARTIFACT
+    confidence: high
+  - location: ~/.gemini/.env  (plus cwd-upward .env search)
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

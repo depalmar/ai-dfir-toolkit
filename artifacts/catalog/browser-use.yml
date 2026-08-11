@@ -1,0 +1,55 @@
+# AI agent artifact catalog entry
+# AIRT-0032 - Browser-Use
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0032
+name: Browser-Use
+vendor: Browser Use (OSS)
+category: browser-agent
+description: Python library giving LLM agents DOM-level browser control via Playwright.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local browser
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Drives real, logged-in browser profiles. Spawns Playwright/Chromium children under a Python parent - a distinctive process tree.
+artifacts:
+  network:
+    - direction: egress
+      indicator: Configured LLM provider + arbitrary target sites
+      port: 443/TCP
+      description: Agent-driven browsing produces anomalous, machine-paced web traffic
+      confidence: medium
+  process:
+    - name: python
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: node, chromium, headless_shell
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0086
+  - AML.T0053
+attack_techniques:
+  - T1185
+  - T1539
+  - T1552
+references: []
+last_modified: "2026-08-11"

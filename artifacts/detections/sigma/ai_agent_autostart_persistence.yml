@@ -1,0 +1,32 @@
+title: AI Agent Registered for Autostart
+id: 0c8ca1e8-b669-54e0-b5e9-98a322e33dd0
+status: experimental
+description: |
+  Detects an AI agent or LLM runtime being registered to start automatically. This
+  matters more than ordinary autostart because an MCP host launching at login also
+  launches every MCP server in its configuration - so one Run key can start a chain
+  of child processes with inherited credentials.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.persistence
+    - attack.t1547.001
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection_key:
+        TargetObject|contains: '\CurrentVersion\Run'
+    selection_value:
+        Details|contains:
+            - 'claude'
+            - 'cursor'
+            - 'ollama'
+            - 'lm studio'
+            - 'windsurf'
+            - 'kiro'
+            - 'interpreter'
+    condition: all of selection_*
+falsepositives:
+    - Standard installation of any of these applications
+level: low

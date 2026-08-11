@@ -1,0 +1,216 @@
+# AI agent artifact catalog entry
+# AIRT-0041 - Kiro
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0041
+name: Kiro
+vendor: AWS
+category: coding-agent-ide
+description: >-
+  Agentic IDE from AWS built on a VS Code-style editor, using a spec-driven
+  workflow. Amazon Q Developer's IDE capabilities are migrating into it. Ships
+  an MCP client, auto-triggering agent hooks, steering files, and a CLI.
+website: https://kiro.dev
+status: active
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: >-
+  Three stacked execution primitives. Agent hooks fire the agent automatically on
+  file events with no user action, and both hooks and MCP config are project-scoped
+  under .kiro/ so they travel with a git clone. MCP entries carry an autoApprove
+  array naming tools that run without confirmation. Config hot-reloads via a file
+  watcher, so a tampered config takes effect without a restart and without the
+  user reopening anything.
+
+artifacts:
+  disk:
+    - path: ~/.kiro/settings/mcp.json
+      os: [windows, macos, linux]
+      artifact_type: mcp-config
+      description: >-
+        User-scope MCP servers, applied across every workspace. Powers installed
+        from the server directory are auto-registered here under a Powers section.
+      forensic_value: high
+      evidence_type: [execution, persistence, configuration]
+      confidence: high
+    - path: <repo>/.kiro/settings/mcp.json
+      os: [windows, macos, linux]
+      artifact_type: mcp-config
+      description: >-
+        Workspace-scope MCP servers. TRAVELS WITH THE REPO - a clone or PR can
+        introduce servers that launch on open.
+      forensic_value: high
+      evidence_type: [execution, persistence, configuration]
+      confidence: high
+    - path: <repo>/.kiro/hooks/*.kiro.hook
+      os: [windows, macos, linux]
+      artifact_type: agent-definition
+      description: >-
+        JSON hook definitions. The when block sets the trigger (fileSaved,
+        fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec
+        task events) with a file pattern; the then block invokes the agent with a
+        prompt. A fileSaved hook is an AUTO-TRIGGERING EXECUTION PRIMITIVE that
+        needs no user interaction. Enumerate every hook during triage.
+      forensic_value: high
+      evidence_type: [execution, persistence, configuration]
+      confidence: high
+    - path: <repo>/.kiro/steering/*.md
+      os: [windows, macos, linux]
+      artifact_type: rules-file
+      description: >-
+        Markdown guidance loaded selectively into agent context, optionally with
+        'inclusion: auto' frontmatter. Prompt-injection surface; travels with repo.
+      forensic_value: high
+      evidence_type: [configuration, prompt-injection-surface]
+      confidence: high
+    - path: <repo>/.kiro/agents/
+      os: [windows, macos, linux]
+      artifact_type: agent-definition
+      description: >-
+        Agent configuration directory. Agents can define MCP servers inline, so
+        this is a second location where servers are declared. Watched for hot-reload.
+      forensic_value: high
+      evidence_type: [execution, configuration]
+      confidence: high
+    - path: <repo>/.kiro/specs/
+      os: [windows, macos, linux]
+      artifact_type: project-artifact
+      description: >-
+        Spec-driven workflow artifacts (requirements, design, tasks). Useful for
+        reconstructing what the agent was asked to build and when.
+      forensic_value: medium
+      evidence_type: [user-activity, timeline]
+      confidence: medium
+    - path: POWER.md / plugin.json / dev.kiro/
+      os: [windows, macos, linux]
+      artifact_type: extension-bundle
+      description: >-
+        Kiro Power packages bundling MCP servers, skills, and steering. Installable
+        from a remote repository, including private repos cloned locally.
+      forensic_value: high
+      evidence_type: [execution, configuration]
+      confidence: high
+    - path: Kiro - MCP Logs (View > Output channel)
+      os: [windows, macos, linux]
+      artifact_type: log
+      description: >-
+        MCP server stdout/stderr. Records connection attempts and failures - useful
+        for establishing which servers actually ran.
+      forensic_value: high
+      evidence_type: [timeline, execution]
+      confidence: high
+    - path: VS Code-style globalStorage, extensions, and state.vscdb paths
+      os: [windows, macos, linux]
+      artifact_type: config-file
+      description: >-
+        Kiro presents a VS Code-derived editor (command palette, Output channels).
+        Treat the standard VS Code artifact layout as likely present and check for
+        it, but confirm the exact directory names on the host.
+      forensic_value: medium
+      evidence_type: [configuration, credential-access]
+      unverified: true
+      confidence: low
+  network:
+    - direction: egress
+      indicator: kiro.dev, AWS Kiro service endpoints
+      port: 443/TCP
+      description: Agent inference and Power/MCP directory retrieval.
+      confidence: high
+    - direction: egress
+      indicator: "kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links"
+      port: 443/TCP
+      description: >-
+        One-click MCP install deep links. Kiro shows a confirmation dialog listing
+        the command, args, and the NAMES of env vars (values stay hidden) before
+        writing. A convincing link is a social-engineering path to MCP installation.
+      confidence: high
+  process:
+    - name: kiro (IDE); kiro (CLI)
+      os: [windows, macos, linux]
+      typical_parent: explorer.exe / launchd / shell
+      typical_children: node, npx, uvx, python, docker, podman
+      service_or_daemon: 'No'
+      persistence: Hooks and MCP config re-arm on workspace open
+      confidence: high
+
+credentials:
+  - location: AWS Builder ID / IAM Identity Center token cache
+    os: [windows, macos, linux]
+    storage: unknown
+    secret_type: aws-sso-token
+    description: >-
+      Kiro authenticates via AWS identity. The exact cache path was not confirmed;
+      check ~/.aws/sso/cache/ and the Kiro config root before asserting a location.
+    confidence: low
+  - location: mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      MCP server env blocks. Kiro only expands env vars that are explicitly
+      approved and warns on unapproved ones, which is a genuine mitigating control -
+      but approved values still sit in the file.
+    confidence: high
+
+mcp:
+  - config_path: ~/.kiro/settings/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: stdio child process; hot-reloaded by file watcher
+    secrets_location: env block (explicit approval required for expansion)
+    persistence_trigger: Every session, and immediately on file save via hot-reload
+    triage_priority: p1
+    notes: >-
+      Entries carry an autoApprove array listing tools that execute WITHOUT user
+      confirmation - read it first. Hot-reload means a tampered config applies at
+      the next idle boundary with no restart, so file mtime is the change signal,
+      not process start time.
+  - config_path: <repo>/.kiro/settings/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: stdio child process; hot-reloaded by file watcher
+    secrets_location: env block
+    persistence_trigger: Workspace open, and on save via hot-reload
+    triage_priority: p1
+    notes: TRAVELS WITH THE REPO. Gate in CI alongside .kiro/hooks/.
+
+collection:
+  triage_priority: p1
+  guidance: >-
+    Collect the entire .kiro/ directory before remediation - hooks, steering,
+    agents, specs, and both MCP configs together establish what the agent was
+    authorised to do and what fired automatically. Capture the Kiro MCP Logs output
+    channel to confirm which servers actually connected, since a config entry alone
+    does not prove execution. Because config hot-reloads, correlate file mtimes
+    against session activity rather than assuming changes took effect at startup.
+
+atlas_techniques: [AML.T0051, AML.T0053, AML.T0080, AML.T0081, AML.T0110]
+attack_techniques: [T1059, T1195.002, T1546, T1552.001]
+
+references:
+  - title: Kiro MCP configuration
+    url: https://kiro.dev/docs/mcp/configuration/
+    accessed: '2026-08-11'
+  - title: Kiro MCP overview and config scopes
+    url: https://kiro.dev/docs/mcp/
+    accessed: '2026-08-11'
+  - title: Kiro first project - steering, specs, hooks
+    url: https://kiro.dev/docs/getting-started/first-project/
+    accessed: '2026-08-11'
+  - title: Kiro Powers and installation
+    url: https://kiro.dev/docs/powers/installation/
+    accessed: '2026-08-11'
+  - title: Unlock your development productivity with Kiro and MCP
+    url: https://kiro.dev/blog/unlock-your-development-productivity-with-kiro-and-mcp/
+    accessed: '2026-08-11'
+
+last_modified: '2026-08-11'

@@ -1,0 +1,70 @@
+# AI agent artifact catalog entry
+# AIRT-0010 - Supermaven
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0010
+name: Supermaven
+vendor: Supermaven
+category: code-completion
+description: Low-latency completion agent with very large context window. Downloads its own agent binary. Integrated in Zed and VS Code.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference
+capabilities:
+  local_code_execution: false
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: false
+risk: medium
+confidence: low
+abuse_potential: Large context = large code egress per request. THIN PUBLIC SOURCING on canonical paths.
+artifacts:
+  disk:
+    - path: Downloaded Supermaven agent binary (editor-managed)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: THIN SOURCING - validate locally
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: Editor extension
+      confidence: low
+      unverified: true
+    - path: "~/.config/zed/settings.json  ->  inline_completion_provider: supermaven"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Zed Config for Supermaven
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: Zed
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: "*.supermaven.com"
+      port: 443/TCP
+      description: ""
+      confidence: low
+      unverified: true
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+attack_techniques:
+  - T1071.001
+  - T1105
+references: []
+last_modified: "2026-08-11"

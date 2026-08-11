@@ -1,0 +1,32 @@
+title: AI Inference Endpoint Redirection via Environment Variable
+id: ef016b0c-7ce2-5366-925c-0337657af9f8
+status: experimental
+description: |
+  Detects modification of the environment variables that control which inference
+  endpoint an AI agent talks to. Changing one of these silently routes every prompt,
+  every file the agent reads, and every credential in its context to an
+  attacker-controlled proxy, while the agent continues to appear to work normally.
+  There is no user-visible symptom, which is what makes it worth alerting on.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.command_and_control
+    - attack.t1071.001
+    - attack.collection
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection:
+        TargetObject|contains: '\Environment\'
+        TargetObject|endswith:
+            - 'ANTHROPIC_BASE_URL'
+            - 'OPENAI_BASE_URL'
+            - 'OPENAI_API_BASE'
+            - 'OLLAMA_HOST'
+            - 'LLM_BASE_URL'
+            - 'LANGFLOW_AUTO_LOGIN'
+    condition: selection
+falsepositives:
+    - Legitimate configuration of a corporate AI gateway or proxy - baseline the approved value and alert on deviation
+level: high

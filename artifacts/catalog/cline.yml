@@ -1,0 +1,132 @@
+# AI agent artifact catalog entry
+# AIRT-0039 - Cline
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0039
+name: Cline
+vendor: Cline Bot Inc. (OSS)
+category: coding-agent-ide
+description: VS Code extension ID saoudrizwan.claude-dev (formerly Claude Dev). Agentic file edit + terminal execution.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: false
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled — env-embedded keys in mcpServers blocks can leave the endpoint.
+artifacts:
+  disk:
+    - path: "%APPDATA%\\Code\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: high
+    - path: ~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+      os:
+        - macos
+      artifact_type: mcp-config
+      description: MCP Config for Cline
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: high
+    - path: ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+      os:
+        - linux
+      artifact_type: mcp-config
+      description: MCP Config for Cline
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: high
+    - path: ~/.cline/data/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: SINGLE-SOURCE - corroborate
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: standalone/CLI mode
+      confidence: low
+      unverified: true
+  network:
+    - direction: listener
+      indicator: Standalone gRPC server
+      port: 26040/TCP
+      description: SINGLE-SOURCE - corroborate before detecting
+      confidence: low
+      unverified: true
+      default_bind: "127.0.0.1"
+      authentication: None
+      exposure_risk: medium
+    - direction: egress
+      indicator: Configured provider (Anthropic/OpenAI/OpenRouter/Bedrock/local)
+      port: 443/TCP
+      description: ""
+      confidence: high
+  process:
+    - name: node (extension host)
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Code.exe / cursor
+      typical_children: cmd.exe, powershell.exe, bash, node (MCP)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: "VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: state.vscdb is a collectible SQLite artifact
+    confidence: high
+mcp:
+  - config_path: …/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    notes: Syncs via VS Code Settings Sync if enabled
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0080
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references: []
+last_modified: "2026-08-11"

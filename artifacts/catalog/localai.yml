@@ -1,0 +1,48 @@
+# AI agent artifact catalog entry
+# AIRT-0024 - LocalAI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0024
+name: LocalAI
+vendor: mudler (OSS)
+category: llm-runtime
+description: Drop-in OpenAI API replacement, typically containerized.
+supported_os:
+  - linux
+  - docker
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: false
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: true
+risk: medium
+confidence: medium
+abuse_potential: "Container footprint; API-compatible drop-in means an attacker can redirect an app's OPENAI_BASE_URL to a rogue local instance."
+artifacts:
+  network:
+    - direction: listener
+      indicator: OpenAI-compatible API
+      port: 8080/TCP
+      description: Container default binds broadly
+      confidence: medium
+      default_bind: 0.0.0.0 (container)
+      authentication: Optional API key
+      exposure_risk: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

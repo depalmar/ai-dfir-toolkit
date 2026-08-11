@@ -1,0 +1,219 @@
+# AI agent artifact catalog entry
+# AIRT-0017 - Ollama
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0017
+name: Ollama
+vendor: Ollama Inc. (OSS)
+category: llm-runtime
+description: Most widely deployed local LLM server. OpenAI-compatible API. NO DEFAULT AUTHENTICATION.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: "LLMjacking: ~175,000 exposed hosts across 130 countries observed by SentinelLABS+Censys (Jan 2026); ~50% tool-calling enabled. Free compute for offensive agentic tooling."
+artifacts:
+  disk:
+    - path: "%LOCALAPPDATA%\\Programs\\Ollama\\ollama.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: Binary for Ollama
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: EXE installer
+      confidence: high
+    - path: "/usr/local/bin/ollama  |  /Applications/Ollama.app"
+      os:
+        - macos
+      artifact_type: binary
+      description: Binary for Ollama
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: DMG/brew
+      confidence: high
+    - path: "/usr/local/bin/ollama  |  /usr/bin/ollama"
+      os:
+        - linux
+      artifact_type: binary
+      description: systemd unit ollama.service
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: install.sh
+      confidence: high
+    - path: "%USERPROFILE%\\.ollama\\models\\"
+      os:
+        - windows
+      artifact_type: data-dir
+      description: blobs/ + manifests/ - multi-GB
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: ~/.ollama/models/
+      os:
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: Service account home on Linux (/usr/share/ollama/.ollama)
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: Modelfile
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Can embed SYSTEM prompts - jailbreak/backdoor vector
+      forensic_value: low
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: "/etc/systemd/system/ollama.service  |  .../ollama.service.d/*.conf"
+      os:
+        - linux
+      artifact_type: service-config
+      description: PERSISTENCE + where OLLAMA_HOST=0.0.0.0 is usually set
+      forensic_value: medium
+      evidence_type:
+        - persistence
+        - configuration
+      install_method: install.sh
+      confidence: high
+    - path: /usr/share/ollama/.ollama/models/
+      os:
+        - linux
+      artifact_type: data-dir
+      description: "SERVICE ACCOUNT HOME. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama MISSES ALL MODELS on a systemd install."
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - data-access
+      install_method: install.sh
+      confidence: high
+    - path: journalctl -u ollama
+      os:
+        - linux
+      artifact_type: log
+      description: Ollama writes no separate log file under systemd - journald is the only timeline source.
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: install.sh
+      confidence: high
+  registry:
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+      value: Ollama
+      type: REG_SZ
+      description: "Auto-start ollama app -> starts server on 11434"
+      persistence: true
+      forensic_value: high
+      confidence: high
+    - key: "HKCU\\Environment"
+      value: OLLAMA_HOST
+      type: REG_SZ
+      description: Bind address override - VALUE OF 0.0.0.0 = NETWORK EXPOSURE
+      persistence: false
+      forensic_value: medium
+      confidence: high
+    - key: "HKCU\\Environment"
+      value: OLLAMA_MODELS / OLLAMA_ORIGINS
+      type: REG_SZ
+      description: "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls"
+      persistence: false
+      forensic_value: medium
+      confidence: high
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Ollama"
+      value: InstallLocation
+      type: REG_SZ
+      description: Install metadata
+      persistence: false
+      forensic_value: medium
+      confidence: high
+  network:
+    - direction: listener
+      indicator: Ollama OpenAI-compatible + native API
+      port: 11434/TCP
+      description: NO DEFAULT AUTH. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.
+      confidence: high
+      default_bind: 127.0.0.1 (0.0.0.0 if OLLAMA_HOST set)
+      authentication: NONE
+      exposure_risk: critical
+    - direction: egress
+      indicator: registry.ollama.ai, ollama.com
+      port: 443/TCP
+      description: Model pulls - multi-GB inbound transfers
+      confidence: high
+  process:
+    - name: ollama.exe, ollama app.exe
+      os:
+        - windows
+      typical_parent: explorer.exe (Run key)
+      typical_children: ollama_llama_server.exe
+      service_or_daemon: No (tray app)
+      persistence: HKCU Run key
+      confidence: high
+    - name: ollama
+      os:
+        - linux
+      typical_parent: systemd (PID 1)
+      typical_children: "-"
+      service_or_daemon: YES - ollama.service
+      persistence: systemd unit, enabled at boot
+      confidence: high
+    - name: Ollama / ollama
+      os:
+        - macos
+      typical_parent: launchd
+      typical_children: "-"
+      service_or_daemon: LaunchAgent
+      persistence: ~/Library/LaunchAgents
+      confidence: high
+credentials:
+  - location: "~/.ollama/id_ed25519  |  id_ed25519.pub"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: Instance identity keypair
+    confidence: medium
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

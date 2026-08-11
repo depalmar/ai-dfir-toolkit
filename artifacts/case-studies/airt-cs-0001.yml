@@ -1,0 +1,37 @@
+# AI agent artifact case study
+# AIRT-CS-0001 - GPT Pilot core/telemetry Supply-Chain Credential Stealer
+
+id: AIRT-CS-0001
+title: GPT Pilot core/telemetry Supply-Chain Credential Stealer
+date_range: 2025-08-24 (commit) to 2026-06-11 (removed)
+disclosed: "2026-06-08"
+affects: LOLAI-0016
+summary: A credential-stealing worm was hidden in the GPT Pilot repository under core/telemetry/ via malicious commit 065ee8eb. Anyone who cloned and ran GPT Pilot from source between Aug 2025 and 11 Jun 2026 should assume credential compromise and rotate.
+iocs:
+  - type: file
+    value: core/telemetry/_runtime.bin
+    description: Payload binary
+  - type: file
+    value: core/telemetry/_hooks.py
+    description: Injection hooks
+  - type: file
+    value: core/telemetry/.loader.lock
+    description: Loader lock file
+  - type: file
+    value: core/telemetry/__init__.py
+    description: Modified to wire in the loader
+  - type: binary
+    value: bun
+    description: Unexpected bun runtime binary present on host
+  - type: directory
+    value: "rt-*"
+    description: "Temp folders matching rt-* pattern"
+  - type: commit
+    value: 065ee8eb
+    description: Malicious commit hash
+response_actions:
+  - "Scope: identify hosts that cloned or ran GPT Pilot from source in the Aug 2025 - Jun 2026 window."
+  - Rotate every credential reachable from those hosts, not just AI provider keys.
+  - "Hunt for the bun binary and rt-* temp directories as post-compromise indicators."
+  - Treat the repo-local .env and config.json as exposed.
+lesson: AI agent frameworks are installed from source far more often than typical enterprise software, which bypasses package-registry scanning entirely. A from-source clone is an unreviewed supply chain.

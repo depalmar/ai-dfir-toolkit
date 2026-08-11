@@ -1,0 +1,69 @@
+# AI agent artifact catalog entry
+# AIRT-0035 - Skyvern
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0035
+name: Skyvern
+vendor: Skyvern AI (OSS)
+category: browser-agent
+description: Open-source vision+DOM browser automation agent, commonly Docker-deployed with a web UI.
+supported_os:
+  - linux
+  - docker
+execution_model: Cloud or local inference + local browser
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Handles credentialed logins and 2FA workflows by design. Self-hosted UI is an exposure risk.
+artifacts:
+  disk:
+    - path: Docker compose stack + .env
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: container
+      description: Handles credentialed logins by design
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: docker compose
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Skyvern API + UI
+      port: 8000/TCP, 8080/TCP
+      description: ""
+      confidence: medium
+      default_bind: 0.0.0.0 (container)
+      authentication: API key
+      exposure_risk: high
+  process:
+    - name: python (uvicorn)
+      os:
+        - linux
+        - docker
+      typical_parent: dockerd
+      typical_children: chromium, headless_shell
+      service_or_daemon: YES (container)
+      persistence: Docker restart policy
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0086
+  - AML.T0053
+attack_techniques:
+  - T1185
+  - T1539
+  - T1552
+references: []
+last_modified: "2026-08-11"

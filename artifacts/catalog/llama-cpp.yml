@@ -1,0 +1,86 @@
+# AI agent artifact catalog entry
+# AIRT-0021 - llama.cpp
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0021
+name: llama.cpp
+vendor: ggml-org (OSS)
+category: llm-runtime
+description: Reference C/C++ inference engine underlying most local runtimes. llama-server / llama-cli / llama-run binaries.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: false
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: false
+risk: medium
+confidence: high
+abuse_potential: Statically compiled, easily renamed and dropped as a portable binary. GGUF model files can be very large (egress/storage anomaly).
+artifacts:
+  disk:
+    - path: llama-server / llama-cli / llama-run / llama-quantize
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Portable, easily renamed
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: build from source / release zip
+      confidence: high
+    - path: "*.gguf"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: PRIMARY FILE IOC across all local runtimes
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: listener
+      indicator: llama-server HTTP API
+      port: 8080/TCP
+      description: ""
+      confidence: high
+      default_bind: "127.0.0.1"
+      authentication: Optional --api-key
+      exposure_risk: medium
+  process:
+    - name: llama-server, llama-cli, llama-run
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell / systemd
+      typical_children: "-"
+      service_or_daemon: Optional custom unit
+      persistence: User-created service = SUSPICIOUS
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,130 @@
+# AI agent artifact catalog entry
+# AIRT-0006 - Codeium / Windsurf
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0006
+name: Codeium / Windsurf
+vendor: Codeium (Exafunction)
+category: coding-agent-ide
+description: Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Plugin downloads and executes a remote binary. Cascade runs terminal commands. Indexes entire codebase to cloud.
+artifacts:
+  disk:
+    - path: ~/.codeium/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: API key + downloaded language server
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: IDE plugin
+      confidence: high
+    - path: "%USERPROFILE%\\.codeium\\windsurf\\mcp_config.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: Windsurf
+      confidence: high
+    - path: ~/.codeium/windsurf/mcp_config.json
+      os:
+        - macos
+        - linux
+      artifact_type: mcp-config
+      description: EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: Windsurf
+      confidence: high
+    - path: "~/.codeium/<version>/language_server_*"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: REMOTE BINARY DOWNLOAD - verify hash
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: IDE plugin
+      confidence: medium
+    - path: "<repo>/.windsurf/settings.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Indexer scope config
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+    - path: "<repo>/.windsurfrules"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: rules-file
+      description: Prompt-injection surface
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: "server.codeium.com, *.codeium.com, *.windsurf.com"
+      port: 443/TCP
+      description: Full-codebase indexing to cloud
+      confidence: high
+  process:
+    - name: Windsurf.exe, language_server_windows_x64.exe
+      os:
+        - windows
+      typical_parent: explorer.exe
+      typical_children: cmd.exe, powershell.exe, node.exe
+      service_or_daemon: "No"
+      persistence: Run key (optional)
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0080
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references: []
+last_modified: "2026-08-11"

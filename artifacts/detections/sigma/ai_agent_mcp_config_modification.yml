@@ -1,0 +1,40 @@
+title: AI Agent MCP Configuration Created or Modified
+id: 3f1ea561-4da2-5dbb-adff-cabad3d44937
+status: experimental
+description: |
+  Detects creation or modification of a Model Context Protocol (MCP) configuration
+  file. An MCP config is simultaneously a persistence mechanism and an execution
+  primitive: each entry names a command and arguments that the host application
+  launches as a child process, with inherited environment, every time it starts.
+  Legitimate modification is common on developer endpoints, so this is most useful
+  as an inventory and change-tracking signal, or scoped to non-developer estates.
+references:
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/docs/MCP.md
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.persistence
+    - attack.t1543
+    - attack.execution
+logsource:
+    category: file_event
+detection:
+    selection_filename:
+        TargetFilename|endswith:
+            - '\claude_desktop_config.json'
+            - '\mcp.json'
+            - '\mcp_config.json'
+            - '\mcp-config.json'
+            - '\cline_mcp_settings.json'
+            - '\mcp_settings.json'
+            - '/claude_desktop_config.json'
+            - '/mcp.json'
+            - '/mcp_config.json'
+            - '/mcp-config.json'
+            - '/cline_mcp_settings.json'
+            - '/mcp_settings.json'
+    condition: selection_filename
+falsepositives:
+    - Developers legitimately adding or editing MCP servers
+    - IDE or agent updates rewriting configuration on upgrade
+level: low

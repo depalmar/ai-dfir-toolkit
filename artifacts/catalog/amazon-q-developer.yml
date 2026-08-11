@@ -1,0 +1,103 @@
+# AI agent artifact catalog entry
+# AIRT-0008 - Amazon Q Developer (ex-CodeWhisperer)
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0008
+name: Amazon Q Developer (ex-CodeWhisperer)
+vendor: AWS
+category: coding-agent-ide
+description: AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local agent
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: medium
+confidence: low
+abuse_potential: SSO token cache in ~/.aws/sso/cache. Agent can execute local commands in newer builds.
+artifacts:
+  disk:
+    - path: node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: "npm pkg @aws/lsp-codewhisperer"
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: IDE extension
+      confidence: high
+    - path: "%USERPROFILE%\\.vscode\\extensions\\amazonwebservices.amazon-q-vscode-*"
+      os:
+        - windows
+      artifact_type: install-dir
+      description: Extension Dir for Amazon Q Developer (ex-CodeWhisperer)
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: VS Code
+      confidence: high
+    - path: "<repo>/.amazonq/rules/*.md"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: rules-file
+      description: Rules File for Amazon Q Developer (ex-CodeWhisperer)
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: "q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start"
+      port: 443/TCP
+      description: HTTPS_PROXY honored
+      confidence: high
+  process:
+    - name: node (aws-lsp-codewhisperer-token-binary.js)
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Code.exe / idea
+      typical_children: "-"
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: "~/.aws/sso/cache/*.json"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: aws-sso-token
+    description: SSO access tokens - credential-theft target
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0080
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references: []
+last_modified: "2026-08-11"

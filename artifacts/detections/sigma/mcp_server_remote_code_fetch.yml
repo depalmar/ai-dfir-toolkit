@@ -1,0 +1,36 @@
+title: MCP Server Fetching Remote Code at Launch
+id: c12c0a89-09c0-5487-b9cd-f698b18cc114
+status: experimental
+description: |
+  Detects an MCP host launching a server via a package runner pinned to a floating
+  version. Because the package is fetched at every launch, a compromise upstream
+  reaches the endpoint on the next application start with no user action. The
+  postmark-mcp incident - a backdoored npm package that BCC'd every processed email
+  to an attacker - is the documented case for why pinned versions are a control
+  rather than hygiene.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.initial_access
+    - attack.t1195.002
+logsource:
+    category: process_creation
+detection:
+    selection_parent:
+        ParentImage|endswith:
+            - '\Claude.exe'
+            - '\Cursor.exe'
+            - '\Code.exe'
+            - '\Windsurf.exe'
+            - '/claude'
+            - '/kiro'
+    selection_cmd:
+        CommandLine|contains:
+            - 'npx '
+            - 'uvx '
+    selection_floating:
+        CommandLine|contains: '@latest'
+    condition: selection_parent and selection_cmd and selection_floating
+falsepositives:
+    - Common in genuine MCP setup documentation, which is precisely the risk - treat as a policy finding rather than an intrusion alert
+level: medium

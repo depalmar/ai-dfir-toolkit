@@ -1,0 +1,221 @@
+# AI agent artifact catalog entry
+# AIRT-0001 - Claude Code
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0001
+name: Claude Code
+vendor: Anthropic
+category: coding-agent-cli
+description: Terminal-native agentic coding assistant. Reads/writes files, runs shell commands, invokes MCP servers.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: "Documented ITW: Anthropic GTG-2002 'vibe hacking' - autonomous recon, credential harvesting, exploit dev, extortion against 17+ orgs."
+artifacts:
+  disk:
+    - path: "%APPDATA%\\npm\\claude.cmd"
+      os:
+        - windows
+      artifact_type: binary
+      description: npm global bin shim
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: "npm -g @anthropic-ai/claude-code"
+      confidence: high
+    - path: "%APPDATA%\\npm\\node_modules\\@anthropic-ai\\claude-code\\"
+      os:
+        - windows
+      artifact_type: binary
+      description: Package root
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm -g
+      confidence: high
+    - path: ~/.local/bin/claude
+      os:
+        - macos
+        - linux
+      artifact_type: binary
+      description: Native installer path
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: "curl -fsSL https://claude.ai/install.sh | bash"
+      confidence: high
+    - path: /usr/local/bin/claude
+      os:
+        - macos
+        - linux
+      artifact_type: binary
+      description: npm global
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm -g
+      confidence: high
+    - path: ~/.claude/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: settings.json, settings.local.json, CLAUDE.md, .credentials.json, statsig/
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: All
+      confidence: high
+    - path: ~/.claude.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Runtime auth state + user-scoped MCP servers
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: All
+      confidence: high
+    - path: "<repo>/.claude/settings.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: Project-scoped settings, committed to git
+      forensic_value: low
+      evidence_type:
+        - user-activity
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/.mcp.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: Project-scoped MCP servers - EXECUTION PRIMITIVE, review on clone
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: "<repo>/CLAUDE.md"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: Instruction file - prompt-injection surface
+      forensic_value: low
+      evidence_type:
+        - user-activity
+        - data-access
+      install_method: n/a
+      confidence: high
+  registry:
+    - key: "HKLM\\SOFTWARE\\Microsoft\\Cryptography"
+      value: MachineGuid
+      type: REG_SZ
+      description: Read (not written) for device fingerprinting / licensing telemetry
+      persistence: false
+      forensic_value: medium
+      confidence: high
+    - key: "HKCU\\Environment"
+      value: OPENAI_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, OPENAI_BASE_URL, GOOGLE_API_KEY, HF_TOKEN
+      type: REG_SZ
+      description: "PERSISTENT USER-LEVEL SECRETS. A modified *_BASE_URL silently redirects ALL inference to an attacker proxy"
+      persistence: false
+      forensic_value: medium
+      confidence: high
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*"
+      value: DisplayName contains Cursor/Windsurf/Copilot
+      type: REG_SZ
+      description: Shadow-AI IDE inventory sweep
+      persistence: false
+      forensic_value: medium
+      confidence: high
+  network:
+    - direction: egress
+      indicator: api.anthropic.com
+      port: 443/TCP
+      description: ANTHROPIC_BASE_URL can redirect to a gateway/proxy - check for overrides
+      confidence: high
+    - direction: egress
+      indicator: claude.ai (installer), statsig.anthropic.com (telemetry)
+      port: 443/TCP
+      description: install.sh source
+      confidence: high
+  process:
+    - name: node.exe (claude)
+      os:
+        - windows
+      typical_parent: cmd.exe / powershell.exe / WindowsTerminal.exe
+      typical_children: cmd.exe, powershell.exe, git.exe, python.exe, npx
+      service_or_daemon: "No"
+      persistence: None (user-invoked)
+      confidence: high
+    - name: claude / node
+      os:
+        - macos
+        - linux
+      typical_parent: bash / zsh / tmux
+      typical_children: sh, bash, git, python3, node (MCP)
+      service_or_daemon: "No"
+      persistence: None (user-invoked)
+      confidence: high
+credentials: []
+mcp:
+  - config_path: ~/.claude.json
+    config_key: mcpServers (user scope)
+    spawn_mechanism: Child process on CLI start
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation
+    triage_priority: p1
+    notes: User-scoped, applies to all projects
+  - config_path: "<repo>/.mcp.json"
+    config_key: mcpServers (project scope)
+    spawn_mechanism: Child process on CLI start in repo
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation in repo
+    triage_priority: p1
+    notes: TRAVELS WITH THE REPO - review on every clone/PR
+  - config_path: "<repo>/.claude/settings.local.json"
+    config_key: enabledMcpjsonServers
+    spawn_mechanism: Approval gate for .mcp.json
+    secrets_location: "-"
+    persistence_trigger: "-"
+    triage_priority: p2
+    notes: Records which project servers the user approved - CONSENT EVIDENCE
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1071.001
+references: []
+last_modified: "2026-08-11"
