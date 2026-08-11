@@ -9,7 +9,7 @@ description: |
   Legitimate modification is common on developer endpoints, so this is most useful
   as an inventory and change-tracking signal, or scoped to non-developer estates.
 references:
-    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/docs/MCP.md
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/docs/MCP.md
 author: AI DFIR Toolkit contributors
 date: 2026-08-11
 tags:
