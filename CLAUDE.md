@@ -109,4 +109,4 @@ Risk: 11 critical, 21 high, 10 medium, 2 low.
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when
-- `PUBLISH_TODAY.md` — the publish runbook
+- `CONTRIBUTING.md` — submission rules for entries, detections, and case studies

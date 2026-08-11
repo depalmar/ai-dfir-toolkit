@@ -60,5 +60,5 @@ Write-Host "==> Ready." -ForegroundColor Green
 Write-Host "    Entries:  $entries"
 Write-Host "    Sigma:    $sigma"
 Write-Host ""
-Write-Host "    Next:  see PUBLISH_TODAY.md"
-Write-Host "           git checkout -b artifact-catalog"
+Write-Host "    Next:  see CONTRIBUTING.md to add an entry, or"
+Write-Host "           artifacts/BACKLOG.md for open work"

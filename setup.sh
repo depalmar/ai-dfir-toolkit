@@ -35,5 +35,5 @@ echo "==> Ready."
 echo "    Entries:  $(ls artifacts/catalog/*.yml | wc -l | tr -d ' ')"
 echo "    Sigma:    $(ls artifacts/detections/sigma/*.yml | wc -l | tr -d ' ')"
 echo
-echo "    Next:  see PUBLISH_TODAY.md"
-echo "           git checkout -b artifact-catalog"
+echo "    Next:  see CONTRIBUTING.md to add an entry, or"
+echo "           artifacts/BACKLOG.md for open work"
