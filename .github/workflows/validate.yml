@@ -56,7 +56,16 @@ jobs:
       - name: Validate every Sigma rule parses and converts
         run: |
           failed=0
-          for f in $(find . -name '*.yml' -not -path './.github/*'); do
+          # Not every YAML file in the repo is a Sigma rule. The artifact catalog
+          # stores entries, case studies, and its schema template as YAML data;
+          # those are validated by scripts/validate.py in the artifact-catalog
+          # workflow. Sigma rules shipped with the catalog live in
+          # artifacts/detections/sigma/ and stay in scope here.
+          for f in $(find . -name '*.yml' \
+                       -not -path './.github/*' \
+                       -not -path './artifacts/catalog/*' \
+                       -not -path './artifacts/case-studies/*' \
+                       -not -path './artifacts/schema/*'); do
             echo "=== $f ==="
             if ! sigma convert -t lucene --without-pipeline "$f" > /dev/null 2>&1; then
               echo "FAILED: $f"
