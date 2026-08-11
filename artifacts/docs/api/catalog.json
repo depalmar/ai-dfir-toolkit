@@ -1,0 +1,5968 @@
+[
+  {
+    "id": "AIRT-0013",
+    "name": "AgentGPT",
+    "vendor": "Reworkd (OSS)",
+    "category": "agent-framework",
+    "description": "Browser-based autonomous agent, self-hostable via Docker.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "low",
+    "abuse_potential": "Self-hosted instance exposes a web UI; API keys in .env.",
+    "artifacts": {},
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0004",
+    "name": "Aider",
+    "vendor": "Paul Gauthier (OSS)",
+    "category": "coding-agent-cli",
+    "description": "Python pair-programming agent operating directly on git repos. Auto-commits changes.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local file edit",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Chat history files (.aider.chat.history.md) are a source-code exfil goldmine. OAuth flow opens transient localhost listener 8484-8584.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "aider  (pipx: ~/.local/bin/aider)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Aider",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "pip / pipx / uv",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.aider.conf.yml",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Also searched in CWD and git root",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.aider/caches/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Cache Dir for Aider",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.aider.tags.cache.v4/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "SQLite diskcache of repo symbol map",
+          "forensic_value": "low",
+          "evidence_type": [
+            "user-activity",
+            "data-access",
+            "timeline"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.aider.chat.history.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "FULL CHAT TRANSCRIPT incl. source code - HIGH-VALUE FORENSIC ARTIFACT",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "data-access",
+            "timeline"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.aider.input.history",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "User prompt history - forensic timeline source",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "data-access",
+            "timeline"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "openrouter.ai, api.openai.com, api.anthropic.com",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        },
+        {
+          "direction": "ingress-(loopback)",
+          "indicator": "OAuth PKCE callback listener",
+          "port": "8484-8584/TCP",
+          "description": "TRANSIENT listener during OpenRouter auth",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "aider / python",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "git, python",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.aider/oauth-keys.env",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "oauth-token",
+        "description": "OpenRouter OAuth (PKCE) tokens - PLAINTEXT",
+        "confidence": "medium"
+      },
+      {
+        "location": "<home|gitroot|cwd>/.env",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "OPENAI_API_KEY / ANTHROPIC_API_KEY - PLAINTEXT",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0008",
+    "name": "Amazon Q Developer (ex-CodeWhisperer)",
+    "vendor": "AWS",
+    "category": "coding-agent-ide",
+    "description": "AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local agent",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "low",
+    "abuse_potential": "SSO token cache in ~/.aws/sso/cache. Agent can execute local commands in newer builds.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "npm pkg @aws/lsp-codewhisperer",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "IDE extension",
+          "confidence": "high"
+        },
+        {
+          "path": "%USERPROFILE%\\.vscode\\extensions\\amazonwebservices.amazon-q-vscode-*",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Extension Dir for Amazon Q Developer (ex-CodeWhisperer)",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "VS Code",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.amazonq/rules/*.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Rules File for Amazon Q Developer (ex-CodeWhisperer)",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start",
+          "port": "443/TCP",
+          "description": "HTTPS_PROXY honored",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (aws-lsp-codewhisperer-token-binary.js)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe / idea",
+          "typical_children": "-",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.aws/sso/cache/*.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "aws-sso-token",
+        "description": "SSO access tokens - credential-theft target",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0027",
+    "name": "AutoGen",
+    "vendor": "Microsoft (OSS)",
+    "category": "agent-framework",
+    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "LocalCommandLineCodeExecutor runs generated code directly on the host. OAI_CONFIG_LIST is a plaintext JSON key file.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "OAI_CONFIG_LIST  (JSON, CWD or env-specified path)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "PLAINTEXT api_key values",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "pip",
+          "confidence": "high"
+        },
+        {
+          "path": "coding/  (default LocalCommandLineCodeExecutor work_dir)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "AGENT-GENERATED CODE executed on host",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "python",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "sh/cmd (LocalCommandLineCodeExecutor), docker",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0012",
+    "name": "AutoGPT",
+    "vendor": "Significant Gravitas (OSS)",
+    "category": "agent-framework",
+    "description": "Python autonomous agent loop; goal-driven, self-prompting. Commonly self-hosted via Docker.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Executes generated code and shell commands in a loop with minimal supervision. Workspace dir accumulates agent-generated files.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "<install>/workspace/  |  auto_gpt_workspace/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "AGENT-GENERATED FILES - triage as unknown-origin content",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "<install>/.env",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "OPENAI_API_KEY plaintext",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0032",
+    "name": "Browser-Use",
+    "vendor": "Browser Use (OSS)",
+    "category": "browser-agent",
+    "description": "Python library giving LLM agents DOM-level browser control via Playwright.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local browser",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Drives real, logged-in browser profiles. Spawns Playwright/Chromium children under a Python parent - a distinctive process tree.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured LLM provider + arbitrary target sites",
+          "port": "443/TCP",
+          "description": "Agent-driven browsing produces anomalous, machine-paced web traffic",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "python",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "node, chromium, headless_shell",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0086",
+      "AML.T0053"
+    ],
+    "attack_techniques": [
+      "T1185",
+      "T1539",
+      "T1552"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0001",
+    "name": "Claude Code",
+    "vendor": "Anthropic",
+    "category": "coding-agent-cli",
+    "description": "Terminal-native agentic coding assistant. Reads/writes files, runs shell commands, invokes MCP servers.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "Documented ITW: Anthropic GTG-2002 'vibe hacking' - autonomous recon, credential harvesting, exploit dev, extortion against 17+ orgs.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%APPDATA%\\npm\\claude.cmd",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "npm global bin shim",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm -g @anthropic-ai/claude-code",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\npm\\node_modules\\@anthropic-ai\\claude-code\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Package root",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm -g",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.local/bin/claude",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Native installer path",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "curl -fsSL https://claude.ai/install.sh | bash",
+          "confidence": "high"
+        },
+        {
+          "path": "/usr/local/bin/claude",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "npm global",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm -g",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.claude/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "settings.json, settings.local.json, CLAUDE.md, .credentials.json, statsig/",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "All",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.claude.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Runtime auth state + user-scoped MCP servers",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "All",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.claude/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Project-scoped settings, committed to git",
+          "forensic_value": "low",
+          "evidence_type": [
+            "user-activity",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Project-scoped MCP servers - EXECUTION PRIMITIVE, review on clone",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/CLAUDE.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Instruction file - prompt-injection surface",
+          "forensic_value": "low",
+          "evidence_type": [
+            "user-activity",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKLM\\SOFTWARE\\Microsoft\\Cryptography",
+          "value": "MachineGuid",
+          "type": "REG_SZ",
+          "description": "Read (not written) for device fingerprinting / licensing telemetry",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Environment",
+          "value": "OPENAI_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, OPENAI_BASE_URL, GOOGLE_API_KEY, HF_TOKEN",
+          "type": "REG_SZ",
+          "description": "PERSISTENT USER-LEVEL SECRETS. A modified *_BASE_URL silently redirects ALL inference to an attacker proxy",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*",
+          "value": "DisplayName contains Cursor/Windsurf/Copilot",
+          "type": "REG_SZ",
+          "description": "Shadow-AI IDE inventory sweep",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.anthropic.com",
+          "port": "443/TCP",
+          "description": "ANTHROPIC_BASE_URL can redirect to a gateway/proxy - check for overrides",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "claude.ai (installer), statsig.anthropic.com (telemetry)",
+          "port": "443/TCP",
+          "description": "install.sh source",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node.exe (claude)",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "cmd.exe / powershell.exe / WindowsTerminal.exe",
+          "typical_children": "cmd.exe, powershell.exe, git.exe, python.exe, npx",
+          "service_or_daemon": "No",
+          "persistence": "None (user-invoked)",
+          "confidence": "high"
+        },
+        {
+          "name": "claude / node",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "bash / zsh / tmux",
+          "typical_children": "sh, bash, git, python3, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None (user-invoked)",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [
+      {
+        "config_path": "~/.claude.json",
+        "config_key": "mcpServers (user scope)",
+        "spawn_mechanism": "Child process on CLI start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation",
+        "triage_priority": "p1",
+        "notes": "User-scoped, applies to all projects"
+      },
+      {
+        "config_path": "<repo>/.mcp.json",
+        "config_key": "mcpServers (project scope)",
+        "spawn_mechanism": "Child process on CLI start in repo",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation in repo",
+        "triage_priority": "p1",
+        "notes": "TRAVELS WITH THE REPO - review on every clone/PR"
+      },
+      {
+        "config_path": "<repo>/.claude/settings.local.json",
+        "config_key": "enabledMcpjsonServers",
+        "spawn_mechanism": "Approval gate for .mcp.json",
+        "secrets_location": "-",
+        "persistence_trigger": "-",
+        "triage_priority": "p2",
+        "notes": "Records which project servers the user approved - CONSENT EVIDENCE"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0033",
+    "name": "Claude Computer Use",
+    "vendor": "Anthropic",
+    "category": "computer-use-agent",
+    "description": "Vision-driven screenshot-to-coordinate GUI control loop. Reference implementation ships as a Docker container.",
+    "supported_os": [
+      "container"
+    ],
+    "execution_model": "Cloud inference + local GUI control",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Full mouse/keyboard control of a desktop. Screenshot loop = continuous screen capture (data at rest in container).",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "Docker container running the reference implementation",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "container",
+          "description": "Screenshot loop artifacts inside container",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "docker run",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.anthropic.com",
+          "port": "443/TCP",
+          "description": "High-volume image (screenshot) uploads - distinctive egress volume signature",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1113",
+      "T1185",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0011",
+    "name": "Claude Desktop (MCP host)",
+    "vendor": "Anthropic",
+    "category": "mcp-host",
+    "description": "Desktop chat client that launches arbitrary local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js runtime.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local MCP server exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "THE key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/Library/Application Support/Claude/claude_desktop_config.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "DMG",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\Claude\\claude_desktop_config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "MS Store",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Claude/claude_desktop_config.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "deb/AppImage",
+          "confidence": "high"
+        },
+        {
+          "path": "*.mcpb (Desktop Extension)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "extension-bundle",
+          "description": "ZIP archive containing server code + manifest - UNPACK AND REVIEW",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\Claude\\logs\\mcp*.log",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "MCP server stdout/stderr - forensic goldmine",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/Library/Logs/Claude/mcp*.log",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "log",
+          "description": "MCP server stdout/stderr",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude",
+          "value": "InstallLocation, DisplayVersion",
+          "type": "REG_SZ",
+          "description": "Install metadata",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        },
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "value": "Claude",
+          "type": "REG_SZ",
+          "description": "Auto-start - LAUNCHES ALL CONFIGURED MCP SERVERS ON LOGIN",
+          "persistence": true,
+          "forensic_value": "high",
+          "confidence": "medium"
+        },
+        {
+          "key": "HKCU\\Software\\Classes\\claude\\shell\\open\\command",
+          "value": "(Default)",
+          "type": "REG_SZ",
+          "description": "claude:// protocol handler - deep-link vector",
+          "persistence": true,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        },
+        {
+          "key": "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*",
+          "value": "-",
+          "type": "Key",
+          "description": "Store package registration",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.anthropic.com, claude.ai",
+          "port": "443/TCP",
+          "description": "Plus ANY egress initiated by child MCP servers",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress-(indirect)",
+          "indicator": "registry.npmjs.org (npx MCP server fetch)",
+          "port": "443/TCP",
+          "description": "npx @scope/server@latest pulls and EXECUTES code at every launch - supply-chain risk",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "Claude.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe",
+          "typical_children": "node.exe, npx.cmd, python.exe, docker.exe, uvx",
+          "service_or_daemon": "No",
+          "persistence": "Run key - LAUNCHES ALL MCP SERVERS ON LOGIN",
+          "confidence": "high"
+        },
+        {
+          "name": "Claude",
+          "os": [
+            "macos"
+          ],
+          "typical_parent": "launchd",
+          "typical_children": "node, npx, python3, docker",
+          "service_or_daemon": "No",
+          "persistence": "LaunchAgent (login items)",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [
+      {
+        "config_path": "%APPDATA%\\Claude\\claude_desktop_config.json",
+        "config_key": "mcpServers.<name>.command + .args",
+        "spawn_mechanism": "Child process at app launch",
+        "secrets_location": "mcpServers.<name>.env",
+        "persistence_trigger": "Every app start (+ Run key)",
+        "triage_priority": "p1",
+        "notes": "Standard EXE-installer path"
+      },
+      {
+        "config_path": "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app launch",
+        "secrets_location": "mcpServers.<name>.env",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "notes": "VIRTUALIZED - the app reads THIS. 'Edit Config' in the UI can open the WRONG file. Commonly missed in IR."
+      },
+      {
+        "config_path": "~/Library/Application Support/Claude/claude_desktop_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app launch",
+        "secrets_location": "mcpServers.<name>.env",
+        "persistence_trigger": "Every app start (LaunchAgent)",
+        "triage_priority": "p1",
+        "notes": ""
+      },
+      {
+        "config_path": "~/.config/Claude/claude_desktop_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app launch",
+        "secrets_location": "mcpServers.<name>.env",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "notes": ""
+      },
+      {
+        "config_path": "*.mcpb / *.dxt bundle files",
+        "config_key": "manifest.json inside archive",
+        "spawn_mechanism": "Installed then spawned",
+        "secrets_location": "manifest user_config",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "notes": "ZIP ARCHIVE - unpack and review server code before trusting"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0110"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1547.001",
+      "T1195.002",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0039",
+    "name": "Cline",
+    "vendor": "Cline Bot Inc. (OSS)",
+    "category": "coding-agent-ide",
+    "description": "VS Code extension ID saoudrizwan.claude-dev (formerly Claude Dev). Agentic file edit + terminal execution.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled \u2014 env-embedded keys in mcpServers blocks can leave the endpoint.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%APPDATA%\\Code\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "high"
+        },
+        {
+          "path": "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "MCP Config for Cline",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "MCP Config for Cline",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.cline/data/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "SINGLE-SOURCE - corroborate",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "standalone/CLI mode",
+          "confidence": "low",
+          "unverified": true
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Standalone gRPC server",
+          "port": "26040/TCP",
+          "description": "SINGLE-SOURCE - corroborate before detecting",
+          "confidence": "low",
+          "unverified": true,
+          "default_bind": "127.0.0.1",
+          "authentication": "None",
+          "exposure_risk": "medium"
+        },
+        {
+          "direction": "egress",
+          "indicator": "Configured provider (Anthropic/OpenAI/OpenRouter/Bedrock/local)",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (extension host)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe / cursor",
+          "typical_children": "cmd.exe, powershell.exe, bash, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "state.vscdb is a collectible SQLite artifact",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [
+      {
+        "config_path": "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": "Syncs via VS Code Settings Sync if enabled"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0006",
+    "name": "Codeium / Windsurf",
+    "vendor": "Codeium (Exafunction)",
+    "category": "coding-agent-ide",
+    "description": "Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Plugin downloads and executes a remote binary. Cascade runs terminal commands. Indexes entire codebase to cloud.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.codeium/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "API key + downloaded language server",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "IDE plugin",
+          "confidence": "high"
+        },
+        {
+          "path": "%USERPROFILE%\\.codeium\\windsurf\\mcp_config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "Windsurf",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codeium/windsurf/mcp_config.json",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "Windsurf",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codeium/<version>/language_server_*",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "REMOTE BINARY DOWNLOAD - verify hash",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "IDE plugin",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.windsurf/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Indexer scope config",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.windsurfrules",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Prompt-injection surface",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "server.codeium.com, *.codeium.com, *.windsurf.com",
+          "port": "443/TCP",
+          "description": "Full-codebase indexing to cloud",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "Windsurf.exe, language_server_windows_x64.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe",
+          "typical_children": "cmd.exe, powershell.exe, node.exe",
+          "service_or_daemon": "No",
+          "persistence": "Run key (optional)",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0005",
+    "name": "Continue.dev",
+    "vendor": "Continue (OSS)",
+    "category": "coding-agent-ide",
+    "description": "VS Code / JetBrains extension with agent mode, custom models, and MCP support.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "config.yaml can point at ANY base_url including attacker-controlled inference proxies. Rules files = injection surface.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.continue/config.yaml",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Current format",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "IDE extension",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.continue/config.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Legacy format",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "IDE extension",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.continue/config.ts",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Advanced - EXECUTES TYPESCRIPT",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "IDE extension",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.continue/rules/*.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Prompt-injection surface",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.continuerc.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Project Config for Continue.dev",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured provider base_url (arbitrary)",
+          "port": "443/TCP",
+          "description": "config.yaml can name ANY endpoint - inspect base_url values",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (extension host)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe",
+          "typical_children": "node (MCP servers)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0028",
+    "name": "CrewAI",
+    "vendor": "CrewAI Inc. (OSS)",
+    "category": "agent-framework",
+    "description": "Role-based multi-agent orchestration. crewai CLI scaffolds config/agents.yaml + config/tasks.yaml + crew.py.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "<project>/config/agents.yaml  |  config/tasks.yaml",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Autonomous goal definitions",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "crewai create crew",
+          "confidence": "medium"
+        },
+        {
+          "path": "<project>/src/<name>/crew.py",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Entrypoint for CrewAI",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "crewai create crew",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "python / crewai",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "python, sh",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "<project>/.env",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "Provider keys via LiteLLM",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0002",
+    "name": "Cursor",
+    "vendor": "Anysphere",
+    "category": "coding-agent-ide",
+    "description": "VS Code fork with agentic Composer/Agent mode. Executes terminal commands and edits files autonomously.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Agent mode spawns shells. .cursorrules is a prompt-injection surface. MCP config = arbitrary child process launch.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Electron app root",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "MSI/EXE",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Main process",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "MSI/EXE",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\resources\\app\\bin\\cursor",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "CLI shim",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "MSI/EXE",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\cursor-updater\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Auto-update staging - watch for unsigned writes",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "MSI/EXE",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\Cursor\\User\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "settings.json, globalStorage, workspaceStorage",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "MSI/EXE",
+          "confidence": "high"
+        },
+        {
+          "path": "~/Library/Application Support/Cursor/User/",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Config Dir for Cursor",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "DMG",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Cursor/User/",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Config Dir for Cursor",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "AppImage/deb",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.cursor/mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Global MCP servers - EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.cursor/mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Project MCP servers - review on clone",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Prompt-injection surface",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\Cursor\\User\\skills\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Custom agent skills",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Cursor GUID>",
+          "value": "InstallLocation, DisplayVersion",
+          "type": "REG_SZ",
+          "description": "Install metadata + version",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Software\\Classes\\cursor\\shell\\open\\command",
+          "value": "(Default)",
+          "type": "REG_SZ",
+          "description": "cursor:// protocol handler",
+          "persistence": true,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        },
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "value": "Cursor",
+          "type": "REG_SZ",
+          "description": "Auto-start on login (if enabled)",
+          "persistence": true,
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "*.cursor.sh, api2.cursor.sh, *.anysphere.co",
+          "port": "443/TCP",
+          "description": "Codebase context is sent to Anysphere cloud unless Privacy Mode",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "Cursor.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe",
+          "typical_children": "Cursor.exe (renderer), node.exe, cmd.exe, powershell.exe",
+          "service_or_daemon": "No",
+          "persistence": "Run key (optional)",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [
+      {
+        "config_path": "~/.cursor/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": "Global scope"
+      },
+      {
+        "config_path": "<repo>/.cursor/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process on workspace open",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every workspace open",
+        "triage_priority": "p1",
+        "notes": "TRAVELS WITH THE REPO"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0007",
+    "name": "Devin",
+    "vendor": "Cognition",
+    "category": "cloud-agent",
+    "description": "Cloud-hosted autonomous software engineer accessed via web UI, Slack, or API. Minimal endpoint footprint.",
+    "supported_os": [
+      "cloud"
+    ],
+    "execution_model": "Fully cloud-hosted",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. THIN PUBLIC SOURCING.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "Browser session / cookies for app.devin.ai",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "THIN SOURCING - primary indicator is outbound DNS",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "low",
+          "unverified": true
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "app.devin.ai, *.cognition.ai",
+          "port": "443/TCP",
+          "description": "Primary and often ONLY endpoint indicator",
+          "confidence": "low",
+          "unverified": true
+        },
+        {
+          "direction": "egress",
+          "indicator": "*.devinapps.com (IDE/Desktop iframes), app.devin.ai",
+          "port": "443/TCP + WSS",
+          "description": "CORRECTED: workstations must reach *.devinapps.com - this is the primary network IOC",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "devin (CLI); VS Code Remote-SSH child",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell / Code.exe",
+          "typical_children": "ssh",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024"
+    ],
+    "attack_techniques": [
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0029",
+    "name": "Dify",
+    "vendor": "LangGenius (OSS)",
+    "category": "workflow-engine",
+    "description": "Self-hosted LLM application builder with agent and workflow modes.",
+    "supported_os": [
+      "linux",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "Multi-container stack; stored provider API keys; code node execution in sandbox.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Dify web + API",
+          "port": "80/443, 5001/TCP",
+          "description": "",
+          "confidence": "medium",
+          "default_bind": "0.0.0.0 (container)",
+          "authentication": "App auth",
+          "exposure_risk": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1133",
+      "T1543"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0030",
+    "name": "Flowise",
+    "vendor": "FlowiseAI (OSS)",
+    "category": "workflow-engine",
+    "description": "Drag-and-drop LangChain flow builder. Default port 3000, flows persisted to local DB.",
+    "supported_os": [
+      "linux",
+      "windows",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Custom Function node executes arbitrary JS. Historically shipped with weak/no default auth - frequently found exposed.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Flowise UI + prediction API",
+          "port": "3000/TCP",
+          "description": "Frequently found internet-exposed",
+          "confidence": "medium",
+          "default_bind": "0.0.0.0",
+          "authentication": "Weak/optional historically",
+          "exposure_risk": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (flowise)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "systemd / dockerd / npx",
+          "typical_children": "node",
+          "service_or_daemon": "Optional",
+          "persistence": "pm2 / systemd / Docker",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1133",
+      "T1543"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0003",
+    "name": "GitHub Copilot (Agent Mode / CLI)",
+    "vendor": "GitHub/Microsoft",
+    "category": "coding-agent-ide",
+    "description": "copilot-language-server binary + Copilot CLI. Agent mode runs multi-step tasks with tool calls; bundles a GitHub MCP server.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Custom .agent.md files define autonomous behavior. Token exchange via api.github.com/copilot_internal/v2/token.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "copilot-language-server (per-platform native binary)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "github/copilot-language-server-release",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "IDE extension / release artifact",
+          "confidence": "high"
+        },
+        {
+          "path": "node <pkg>/@github/copilot-language-server/dist/language-server.js --stdio",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Node variant; also --node-ipc",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.copilot/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "mcp-config.json, lsp-config.json, agents/",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Copilot CLI",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.copilot/mcp-config.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "Copilot CLI",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.copilot/agents/*.agent.md  |  <repo>/.github/agents/*.agent.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Custom autonomous agent definitions - review on clone",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%USERPROFILE%\\.vscode\\extensions\\github.copilot-*",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Extension Dir for GitHub Copilot (Agent Mode / CLI)",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "VS Code",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.github.com, copilot-proxy.githubusercontent.com, api.githubcopilot.com",
+          "port": "443/TCP",
+          "description": "Token exchange at api.github.com/copilot_internal/v2/token",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "copilot-language-server / node",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe / cursor / nvim",
+          "typical_children": "git, gh, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [],
+    "attack_techniques": [],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0037",
+    "name": "Google Gemini CLI",
+    "vendor": "Google",
+    "category": "coding-agent-cli",
+    "description": "Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "~/.gemini/oauth_creds.json stores access + refresh + id tokens with expiry and scope in plaintext. System-level /etc/gemini-cli/settings.json is a privileged tamper target.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "gemini  (npm -g @google/gemini-cli)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Google Gemini CLI",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.gemini/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Auth type at security.auth.selectedType; MCP servers",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "/etc/gemini-cli/settings.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "SYSTEM-LEVEL policy - privileged tamper/persistence target",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "generativelanguage.googleapis.com, oauth2.googleapis.com, accounts.google.com",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "gemini / node",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "sh, bash, git, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.gemini/oauth_creds.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "oauth-token",
+        "description": "PLAINTEXT access + refresh + id tokens, expiry, scope",
+        "confidence": "high"
+      },
+      {
+        "location": "~/.gemini/google_accounts.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "Bound Google account identity - USER ATTRIBUTION ARTIFACT",
+        "confidence": "high"
+      },
+      {
+        "location": "~/.gemini/.env  (plus cwd-upward .env search)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0038",
+    "name": "Goose",
+    "vendor": "Block",
+    "category": "mcp-host",
+    "description": "Rust-based agent shipping both CLI and Desktop. Extension/MCP host. GOOSE_PATH_ROOT overrides config root.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) \u2014 but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.config/goose/config.yaml",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "GOOSE_PATH_ROOT overrides. API keys here are IGNORED by design",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\goose\\config.yaml",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Config File for Goose",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/goose/permission.yaml ; permissions/tool_permissions.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Records which tools were authorized - CONSENT EVIDENCE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "user-activity"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "Goose session logs",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "PURGED AFTER 14 DAYS - collect early, short retention window",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured provider endpoint (arbitrary)",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "goose / goosed",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell / Goose Desktop",
+          "typical_children": "sh, bash, node, python, uvx (extensions)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "OS keyring: service `goose`, username `secrets` (single JSON blob)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "os-keyring",
+        "secret_type": "api-key",
+        "description": "DEFAULT - requires keychain acquisition, not file collection",
+        "confidence": "high"
+      },
+      {
+        "location": "~/.config/goose/secrets.yaml (mode 0600)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "PLAINTEXT FALLBACK when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless",
+        "confidence": "high"
+      },
+      {
+        "location": "<config>/githubcopilot/info.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "GitHub Copilot token cache",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [
+      {
+        "config_path": "~/.config/goose/config.yaml",
+        "config_key": "extensions",
+        "spawn_mechanism": "Child process at agent start",
+        "secrets_location": "OS keyring (or secrets.yaml fallback)",
+        "persistence_trigger": "Every agent start",
+        "triage_priority": "p1",
+        "notes": "YAML not JSON"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0110"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1547.001",
+      "T1195.002",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0016",
+    "name": "GPT Pilot",
+    "vendor": "Pythagora (OSS)",
+    "category": "agent-framework",
+    "description": "Python agent that scaffolds and runs full applications, executing generated code.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": false
+    },
+    "risk": "high",
+    "confidence": "low",
+    "abuse_potential": "Runs generated code on host. THIN PUBLIC SOURCING on canonical paths - inventory by Python process command line.",
+    "artifacts": {},
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0020",
+    "name": "GPT4All",
+    "vendor": "Nomic AI",
+    "category": "llm-runtime",
+    "description": "Desktop local LLM app with optional localhost-only HTTP API server and LocalDocs RAG.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "high",
+    "abuse_potential": "LocalDocs indexes local file trees into the model context - a data-aggregation surface for exfil.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.local/share/nomic.ai/GPT4All/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Models + LocalDocs index; env GPT4ALL_HOME overrides",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\gpt4all\\bin\\chat.exe",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for GPT4All",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "medium"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Environment",
+          "value": "GPT4ALL_HOME / GPT4ALL_MODEL_PATH",
+          "type": "REG_SZ",
+          "description": "Data + model path redirection",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Local HTTP API server",
+          "port": "4891/TCP",
+          "description": "Localhost-bound by design",
+          "confidence": "high",
+          "default_bind": "127.0.0.1 only",
+          "authentication": "NONE",
+          "exposure_risk": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "chat.exe / gpt4all.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe",
+          "typical_children": "-",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0019",
+    "name": "Jan.ai",
+    "vendor": "Menlo Research (OSS)",
+    "category": "llm-runtime",
+    "description": "Open-source ChatGPT alternative running fully offline; ships a headless daemon mode.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Linux daemon reads /etc/jan/jan.env - a system-level config an attacker can modify for persistence.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "/usr/local/bin/jan  |  ~/.local/bin/jan",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Jan.ai",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "deb/AppImage",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.config/Jan/  |  ~/jan/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "data/, models/, logs/",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "/etc/jan/jan.env",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "SYSTEM-LEVEL config - persistence/tamper target",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "daemon install",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Jan local API / headless",
+          "port": "1337/TCP (also 8080)",
+          "description": "",
+          "confidence": "medium",
+          "default_bind": "127.0.0.1",
+          "authentication": "NONE",
+          "exposure_risk": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "jan, jan-daemon",
+          "os": [
+            "linux"
+          ],
+          "typical_parent": "systemd / user shell",
+          "typical_children": "-",
+          "service_or_daemon": "YES (daemon mode)",
+          "persistence": "systemd unit + /etc/jan/jan.env",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0041",
+    "name": "Kiro",
+    "vendor": "AWS",
+    "category": "coding-agent-ide",
+    "description": "Agentic IDE from AWS built on a VS Code-style editor, using a spec-driven workflow. Amazon Q Developer's IDE capabilities are migrating into it. Ships an MCP client, auto-triggering agent hooks, steering files, and a CLI.",
+    "website": "https://kiro.dev",
+    "status": "active",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "Three stacked execution primitives. Agent hooks fire the agent automatically on file events with no user action, and both hooks and MCP config are project-scoped under .kiro/ so they travel with a git clone. MCP entries carry an autoApprove array naming tools that run without confirmation. Config hot-reloads via a file watcher, so a tampered config takes effect without a restart and without the user reopening anything.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.kiro/settings/mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "User-scope MCP servers, applied across every workspace. Powers installed from the server directory are auto-registered here under a Powers section.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.kiro/settings/mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Workspace-scope MCP servers. TRAVELS WITH THE REPO - a clone or PR can introduce servers that launch on open.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.kiro/hooks/*.kiro.hook",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "JSON hook definitions. The when block sets the trigger (fileSaved, fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec task events) with a file pattern; the then block invokes the agent with a prompt. A fileSaved hook is an AUTO-TRIGGERING EXECUTION PRIMITIVE that needs no user interaction. Enumerate every hook during triage.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.kiro/steering/*.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Markdown guidance loaded selectively into agent context, optionally with 'inclusion: auto' frontmatter. Prompt-injection surface; travels with repo.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.kiro/agents/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Agent configuration directory. Agents can define MCP servers inline, so this is a second location where servers are declared. Watched for hot-reload.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.kiro/specs/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Spec-driven workflow artifacts (requirements, design, tasks). Useful for reconstructing what the agent was asked to build and when.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "user-activity",
+            "timeline"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": "POWER.md / plugin.json / dev.kiro/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "extension-bundle",
+          "description": "Kiro Power packages bundling MCP servers, skills, and steering. Installable from a remote repository, including private repos cloned locally.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "Kiro - MCP Logs (View > Output channel)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "MCP server stdout/stderr. Records connection attempts and failures - useful for establishing which servers actually ran.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "VS Code-style globalStorage, extensions, and state.vscdb paths",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Kiro presents a VS Code-derived editor (command palette, Output channels). Treat the standard VS Code artifact layout as likely present and check for it, but confirm the exact directory names on the host.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration",
+            "credential-access"
+          ],
+          "unverified": true,
+          "confidence": "low"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "kiro.dev, AWS Kiro service endpoints",
+          "port": "443/TCP",
+          "description": "Agent inference and Power/MCP directory retrieval.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links",
+          "port": "443/TCP",
+          "description": "One-click MCP install deep links. Kiro shows a confirmation dialog listing the command, args, and the NAMES of env vars (values stay hidden) before writing. A convincing link is a social-engineering path to MCP installation.",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "kiro (IDE); kiro (CLI)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "explorer.exe / launchd / shell",
+          "typical_children": "node, npx, uvx, python, docker, podman",
+          "service_or_daemon": "No",
+          "persistence": "Hooks and MCP config re-arm on workspace open",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "AWS Builder ID / IAM Identity Center token cache",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "unknown",
+        "secret_type": "aws-sso-token",
+        "description": "Kiro authenticates via AWS identity. The exact cache path was not confirmed; check ~/.aws/sso/cache/ and the Kiro config root before asserting a location.",
+        "confidence": "low"
+      },
+      {
+        "location": "mcpServers.<name>.env inside ~/.kiro/settings/mcp.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "MCP server env blocks. Kiro only expands env vars that are explicitly approved and warns on unapproved ones, which is a genuine mitigating control - but approved values still sit in the file.",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [
+      {
+        "config_path": "~/.kiro/settings/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "stdio child process; hot-reloaded by file watcher",
+        "secrets_location": "env block (explicit approval required for expansion)",
+        "persistence_trigger": "Every session, and immediately on file save via hot-reload",
+        "triage_priority": "p1",
+        "notes": "Entries carry an autoApprove array listing tools that execute WITHOUT user confirmation - read it first. Hot-reload means a tampered config applies at the next idle boundary with no restart, so file mtime is the change signal, not process start time."
+      },
+      {
+        "config_path": "<repo>/.kiro/settings/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "stdio child process; hot-reloaded by file watcher",
+        "secrets_location": "env block",
+        "persistence_trigger": "Workspace open, and on save via hot-reload",
+        "triage_priority": "p1",
+        "notes": "TRAVELS WITH THE REPO. Gate in CI alongside .kiro/hooks/."
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect the entire .kiro/ directory before remediation - hooks, steering, agents, specs, and both MCP configs together establish what the agent was authorised to do and what fired automatically. Capture the Kiro MCP Logs output channel to confirm which servers actually connected, since a config entry alone does not prove execution. Because config hot-reloads, correlate file mtimes against session activity rather than assuming changes took effect at startup."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081",
+      "AML.T0110"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1195.002",
+      "T1546",
+      "T1552.001"
+    ],
+    "references": [
+      {
+        "title": "Kiro MCP configuration",
+        "url": "https://kiro.dev/docs/mcp/configuration/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Kiro MCP overview and config scopes",
+        "url": "https://kiro.dev/docs/mcp/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Kiro first project - steering, specs, hooks",
+        "url": "https://kiro.dev/docs/getting-started/first-project/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Kiro Powers and installation",
+        "url": "https://kiro.dev/docs/powers/installation/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Unlock your development productivity with Kiro and MCP",
+        "url": "https://kiro.dev/blog/unlock-your-development-productivity-with-kiro-and-mcp/",
+        "accessed": "2026-08-11"
+      }
+    ],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0023",
+    "name": "KoboldCpp",
+    "vendor": "LostRuins (OSS)",
+    "category": "llm-runtime",
+    "description": "Single-binary llama.cpp derivative with a built-in web UI.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "Single portable .exe - trivially dropped and run without install. Named in Splunk STRT local-LLM analytics.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Kobold API + web UI",
+          "port": "5001/TCP",
+          "description": "",
+          "confidence": "medium",
+          "default_bind": "127.0.0.1",
+          "authentication": "NONE",
+          "exposure_risk": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "koboldcpp.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe / shell",
+          "typical_children": "-",
+          "service_or_daemon": "No",
+          "persistence": "None - PORTABLE SINGLE BINARY",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0026",
+    "name": "LangChain / LangGraph",
+    "vendor": "LangChain Inc. (OSS)",
+    "category": "agent-framework",
+    "description": "Dominant agent-building library. Deployed as bespoke services - no fixed install path.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Shell/Python REPL tools are standard. No canonical path = inventory by process command line and imported module names.",
+    "artifacts": {},
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0044",
+    "name": "Langflow",
+    "vendor": "Langflow / DataStax (OSS)",
+    "category": "workflow-engine",
+    "description": "Low-code visual builder for LLM agents and workflows, Python-based. Installable as a pip package, a desktop app, or a hosted service.",
+    "supported_os": [
+      "linux",
+      "windows",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference + workflow exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "CVE-2025-3248 (CVSS 9.8, unauthenticated RCE via /api/v1/validate/code) is on the CISA KEV catalog and was mass-exploited to deploy the Flodrix botnet; attackers enumerated exposed instances with Shodan/FOFA first. CVE-2026-5027 (CVSS 8.8) adds path traversal to arbitrary file write via POST /api/v2/files.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.langflow/  (LANGFLOW_CONFIG_DIR)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Config and database root.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "pip/Docker",
+          "confidence": "medium"
+        },
+        {
+          "path": "langflow.db (SQLite, in the config dir)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "database",
+          "description": "Flows, users, and stored credentials. Flow definitions contain embedded API keys.",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "pip/Docker",
+          "confidence": "medium"
+        },
+        {
+          "path": "LANGFLOW_AUTO_LOGIN",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "env-var",
+          "description": "When true, the instance requires NO LOGIN. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "env-var",
+          "description": "Superuser bootstrap credentials, commonly left plaintext in compose files.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "Exported flow JSON files",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Flow exports embed credentials and custom Python component code.",
+          "forensic_value": "low",
+          "evidence_type": [
+            "user-activity",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Langflow web UI + API",
+          "port": "7860/TCP",
+          "description": "MASS-EXPLOITED. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.",
+          "confidence": "high",
+          "default_bind": "0.0.0.0",
+          "authentication": "None when LANGFLOW_AUTO_LOGIN=true",
+          "exposure_risk": "critical"
+        },
+        {
+          "direction": "egress",
+          "indicator": "Configured LLM provider endpoints",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "python (langflow run) / uvicorn",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "dockerd / shell",
+          "typical_children": "python (custom components)",
+          "service_or_daemon": "Optional",
+          "persistence": "Docker restart policy or systemd",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [],
+    "attack_techniques": [],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0021",
+    "name": "llama.cpp",
+    "vendor": "ggml-org (OSS)",
+    "category": "llm-runtime",
+    "description": "Reference C/C++ inference engine underlying most local runtimes. llama-server / llama-cli / llama-run binaries.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "high",
+    "abuse_potential": "Statically compiled, easily renamed and dropped as a portable binary. GGUF model files can be very large (egress/storage anomaly).",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "llama-server / llama-cli / llama-run / llama-quantize",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Portable, easily renamed",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "build from source / release zip",
+          "confidence": "high"
+        },
+        {
+          "path": "*.gguf",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "PRIMARY FILE IOC across all local runtimes",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "llama-server HTTP API",
+          "port": "8080/TCP",
+          "description": "",
+          "confidence": "high",
+          "default_bind": "127.0.0.1",
+          "authentication": "Optional --api-key",
+          "exposure_risk": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "llama-server, llama-cli, llama-run",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell / systemd",
+          "typical_children": "-",
+          "service_or_daemon": "Optional custom unit",
+          "persistence": "User-created service = SUSPICIOUS",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0018",
+    "name": "LM Studio",
+    "vendor": "LM Studio (Element Labs)",
+    "category": "llm-runtime",
+    "description": "GUI local model runner with OpenAI-compatible server, CLI (lms), and daemon (llmster). MCP host capable.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "'Serve on Local Network' / LMS_SERVER_HOST=0.0.0.0 exposes the API. Model download = unvetted binary blobs on disk.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\lm-studio\\LM Studio.exe",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for LM Studio",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/bin/lms",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Headless control CLI",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Created after first GUI run",
+          "confidence": "high"
+        },
+        {
+          "path": "llmster",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Background service process",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.lmstudio/models/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Publisher/model/*.gguf layout",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Server bind address + port live here",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*LM Studio*",
+          "value": "InstallLocation",
+          "type": "REG_SZ",
+          "description": "Install metadata",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        },
+        {
+          "key": "HKCU\\Environment",
+          "value": "LMS_SERVER_HOST",
+          "type": "REG_SZ",
+          "description": "0.0.0.0 = NETWORK EXPOSURE of the OpenAI-compatible API",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "OpenAI-compatible API",
+          "port": "1234/TCP",
+          "description": "",
+          "confidence": "high",
+          "default_bind": "127.0.0.1 (0.0.0.0 if 'Serve on Local Network')",
+          "authentication": "NONE",
+          "exposure_risk": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "huggingface.co, lmstudio.ai",
+          "port": "443/TCP",
+          "description": "Model downloads",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "LM Studio.exe, llmster.exe, lms.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe",
+          "typical_children": "-",
+          "service_or_daemon": "llmster daemon",
+          "persistence": "Run key (optional)",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0024",
+    "name": "LocalAI",
+    "vendor": "mudler (OSS)",
+    "category": "llm-runtime",
+    "description": "Drop-in OpenAI API replacement, typically containerized.",
+    "supported_os": [
+      "linux",
+      "docker"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "Container footprint; API-compatible drop-in means an attacker can redirect an app's OPENAI_BASE_URL to a rogue local instance.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "OpenAI-compatible API",
+          "port": "8080/TCP",
+          "description": "Container default binds broadly",
+          "confidence": "medium",
+          "default_bind": "0.0.0.0 (container)",
+          "authentication": "Optional API key",
+          "exposure_risk": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0014",
+    "name": "Microsoft Copilot Studio Agents",
+    "vendor": "Microsoft",
+    "category": "cloud-agent",
+    "description": "Low-code agent builder hosted in Microsoft cloud. Endpoint footprint is browser only.",
+    "supported_os": [
+      "cloud"
+    ],
+    "execution_model": "Fully cloud-hosted",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "low",
+    "confidence": "high",
+    "abuse_potential": "Primary telemetry is M365/Purview audit, not endpoint. CrowdStrike ships AIDR for Copilot Studio Agents.",
+    "artifacts": {},
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p3",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024"
+    ],
+    "attack_techniques": [
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0025",
+    "name": "n8n (AI Agent / LangChain nodes)",
+    "vendor": "n8n GmbH",
+    "category": "workflow-engine",
+    "description": "Self-hostable workflow automation with native AI Agent / SQL Agent LangChain nodes and MCP support.",
+    "supported_os": [
+      "linux",
+      "windows",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference + workflow exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Code node = arbitrary JS/Python execution. Exposed 5678 without auth = full workflow + credential compromise. Webhook nodes are ingress.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.n8n/  (Docker: /home/node/.n8n)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "database.sqlite, config, encryptionKey",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "npm / Docker",
+          "confidence": "high"
+        },
+        {
+          "path": "N8N_ENCRYPTION_KEY",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "env-var",
+          "description": "HIGH-VALUE SECRET",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Environment",
+          "value": "N8N_ENCRYPTION_KEY",
+          "type": "REG_SZ",
+          "description": "Decrypts ALL stored n8n credentials - CROWN JEWEL",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "n8n editor UI + REST API + webhooks",
+          "port": "5678/TCP",
+          "description": "Exposed 5678 without auth = full workflow + credential compromise. Webhooks are unauthenticated ingress by design.",
+          "confidence": "high",
+          "default_bind": "0.0.0.0",
+          "authentication": "Basic auth OPTIONAL",
+          "exposure_risk": "critical"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (n8n)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "typical_parent": "systemd / dockerd",
+          "typical_children": "node (task runner), python (Code node)",
+          "service_or_daemon": "YES",
+          "persistence": "systemd unit or Docker restart:always",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.n8n/database.sqlite",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "encryption-key",
+        "description": "Credentials encrypted with N8N_ENCRYPTION_KEY - key theft = full cred compromise",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1133",
+      "T1543"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0017",
+    "name": "Ollama",
+    "vendor": "Ollama Inc. (OSS)",
+    "category": "llm-runtime",
+    "description": "Most widely deployed local LLM server. OpenAI-compatible API. NO DEFAULT AUTHENTICATION.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "LLMjacking: ~175,000 exposed hosts across 130 countries observed by SentinelLABS+Censys (Jan 2026); ~50% tool-calling enabled. Free compute for offensive agentic tooling.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\Ollama\\ollama.exe",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Ollama",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "/usr/local/bin/ollama  |  /Applications/Ollama.app",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Ollama",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "DMG/brew",
+          "confidence": "high"
+        },
+        {
+          "path": "/usr/local/bin/ollama  |  /usr/bin/ollama",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "systemd unit ollama.service",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "install.sh",
+          "confidence": "high"
+        },
+        {
+          "path": "%USERPROFILE%\\.ollama\\models\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "blobs/ + manifests/ - multi-GB",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.ollama/models/",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Service account home on Linux (/usr/share/ollama/.ollama)",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "Modelfile",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Can embed SYSTEM prompts - jailbreak/backdoor vector",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "/etc/systemd/system/ollama.service  |  .../ollama.service.d/*.conf",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "service-config",
+          "description": "PERSISTENCE + where OLLAMA_HOST=0.0.0.0 is usually set",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "install.sh",
+          "confidence": "high"
+        },
+        {
+          "path": "/usr/share/ollama/.ollama/models/",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "SERVICE ACCOUNT HOME. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama MISSES ALL MODELS on a systemd install.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "install.sh",
+          "confidence": "high"
+        },
+        {
+          "path": "journalctl -u ollama",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "Ollama writes no separate log file under systemd - journald is the only timeline source.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "install.sh",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "value": "Ollama",
+          "type": "REG_SZ",
+          "description": "Auto-start ollama app -> starts server on 11434",
+          "persistence": true,
+          "forensic_value": "high",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Environment",
+          "value": "OLLAMA_HOST",
+          "type": "REG_SZ",
+          "description": "Bind address override - VALUE OF 0.0.0.0 = NETWORK EXPOSURE",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Environment",
+          "value": "OLLAMA_MODELS / OLLAMA_ORIGINS",
+          "type": "REG_SZ",
+          "description": "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Ollama",
+          "value": "InstallLocation",
+          "type": "REG_SZ",
+          "description": "Install metadata",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Ollama OpenAI-compatible + native API",
+          "port": "11434/TCP",
+          "description": "NO DEFAULT AUTH. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.",
+          "confidence": "high",
+          "default_bind": "127.0.0.1 (0.0.0.0 if OLLAMA_HOST set)",
+          "authentication": "NONE",
+          "exposure_risk": "critical"
+        },
+        {
+          "direction": "egress",
+          "indicator": "registry.ollama.ai, ollama.com",
+          "port": "443/TCP",
+          "description": "Model pulls - multi-GB inbound transfers",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "ollama.exe, ollama app.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "explorer.exe (Run key)",
+          "typical_children": "ollama_llama_server.exe",
+          "service_or_daemon": "No (tray app)",
+          "persistence": "HKCU Run key",
+          "confidence": "high"
+        },
+        {
+          "name": "ollama",
+          "os": [
+            "linux"
+          ],
+          "typical_parent": "systemd (PID 1)",
+          "typical_children": "-",
+          "service_or_daemon": "YES - ollama.service",
+          "persistence": "systemd unit, enabled at boot",
+          "confidence": "high"
+        },
+        {
+          "name": "Ollama / ollama",
+          "os": [
+            "macos"
+          ],
+          "typical_parent": "launchd",
+          "typical_children": "-",
+          "service_or_daemon": "LaunchAgent",
+          "persistence": "~/Library/LaunchAgents",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.ollama/id_ed25519  |  id_ed25519.pub",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "Instance identity keypair",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0015",
+    "name": "Open Interpreter",
+    "vendor": "Open Interpreter (OSS)",
+    "category": "code-execution-agent",
+    "description": "Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "BY DESIGN a code execution primitive. --allow-all-tools / autopilot runs commands with NO user confirmation. Effectively a LOLBIN.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "interpreter  (venv: .../open-interpreter/bin/interpreter)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Python 3.10/3.11",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "pip",
+          "confidence": "high"
+        },
+        {
+          "path": "...\\open-interpreter\\Scripts\\interpreter.EXE",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for Open Interpreter",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "pip",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Open Interpreter/  |  %APPDATA%\\Open Interpreter\\",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "profiles/, config yaml",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "pip",
+          "confidence": "medium"
+        },
+        {
+          "path": "llamafile artifacts (--local mode)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "No API key needed - fully offline agent",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.openai.com or configured base_url; NONE in --local mode",
+          "port": "443/TCP",
+          "description": "--local mode has ZERO network IOCs - file/process telemetry only",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "interpreter / python",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "sh, bash, cmd.exe, powershell.exe, python",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1059"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0042",
+    "name": "Open WebUI",
+    "vendor": "Open WebUI (OSS)",
+    "category": "llm-runtime",
+    "description": "Self-hosted web interface for local and remote LLMs, formerly Ollama WebUI. Multi-user with RBAC, RAG document ingestion, and a Tools/Functions system that executes Python. Usually deployed via Docker; also installable via pip.",
+    "website": "https://openwebui.com",
+    "status": "active",
+    "supported_os": [
+      "linux",
+      "docker",
+      "windows",
+      "macos"
+    ],
+    "execution_model": "Local or remote inference, self-hosted multi-user server",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "The first account registered on a fresh instance is automatically the administrator, so an instance reachable before its owner registers can be taken over outright by whoever signs up first. Tools and Functions execute Python server-side. The OpenAI router exposes a catch-all proxy that forwards requests upstream using the admin-configured API key, turning an authenticated account into free use of the organisation's inference spend. Multiple RCE, SSRF, and information-disclosure CVEs have shipped against it.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "/app/backend/data/  (DATA_DIR; Docker volume open-webui)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Root of all persistent state. DATA_DIR relocates it. If the volume was never mounted, all state lives in the container's writable layer and is lost on recreation - check before concluding data was deleted.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "/app/backend/data/webui.db",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "database",
+          "description": "Primary SQLite database - users, roles, chats, API keys, Tools and Functions source, RAG metadata. The single highest-value artifact on the host; contains full conversation history and stored Python.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "data-access",
+            "timeline",
+            "credential-access"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "/app/backend/data/.webui_secret_key",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "credential-file",
+          "description": "Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not set in the environment and reloaded on restart.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "credential-access"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "/app/backend/data/config.json",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "config-file",
+          "description": "Persisted application config. Note the tiered config model - database settings override environment variables unless ENABLE_PERSISTENT_CONFIG is false, so the running config may not match the env you were shown.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "/app/backend/data/uploads/ and vector store directory",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "data-dir",
+          "description": "RAG document uploads and embedding store. Scope data exposure here - users commonly upload internal documents.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": ".env (deployment directory)",
+          "os": [
+            "linux",
+            "docker",
+            "windows",
+            "macos"
+          ],
+          "artifact_type": "credential-file",
+          "description": "Deployment env file. Commonly holds WEBUI_SECRET_KEY, OPENAI_API_KEY, OLLAMA_BASE_URL, and WEBUI_ADMIN_PASSWORD in plaintext.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "credential-access",
+            "configuration"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "docker-compose.yml / docker run invocation",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "config-file",
+          "description": "Records port mapping, volume mounts, and env injection. Establishes whether the instance was network-exposed and whether state was persisted.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Open WebUI HTTP server (uvicorn)",
+          "port": "8080/TCP in container, commonly published as 3000/TCP on the host",
+          "default_bind": "0.0.0.0 within the container",
+          "authentication": "Application login; first registrant becomes admin",
+          "exposure_risk": "critical",
+          "description": "Published with -p 3000:8080 in the documented quick start. An instance exposed before first registration can be claimed by any visitor.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "Configured inference backends via OLLAMA_BASE_URL / OPENAI_API_BASE_URL",
+          "port": "443/TCP, 11434/TCP",
+          "description": "Both are endpoint-override variables - a modified value silently redirects all prompts and documents to an attacker-controlled proxy.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "Direct Connections to user-supplied OpenAI-compatible servers",
+          "port": "443/TCP",
+          "description": "User-configurable external model servers. The feature behind CVE-2025-64496; a hostile server could reach the victim's browser session.",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "/app/backend/data/.webui_secret_key",
+        "os": [
+          "linux",
+          "docker"
+        ],
+        "storage": "plaintext",
+        "secret_type": "jwt-signing-key",
+        "description": "Signs session tokens. Theft permits forging a session for any user including an administrator. Rotating it invalidates all existing sessions - which is also the containment action after suspected theft.",
+        "confidence": "high"
+      },
+      {
+        "location": "webui.db (user and API key tables)",
+        "os": [
+          "linux",
+          "docker"
+        ],
+        "storage": "sqlite",
+        "secret_type": "api-key",
+        "description": "Per-user API keys and hashed passwords. Admin-configured upstream provider keys are also reachable through the application.",
+        "confidence": "high"
+      },
+      {
+        "location": "WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME",
+        "os": [
+          "linux",
+          "docker"
+        ],
+        "storage": "plaintext",
+        "secret_type": "admin-credential",
+        "description": "Headless admin creation on first startup. The password is hashed before storage, but the environment variable itself is frequently left in plaintext in compose files, shell history, and container inspect output.",
+        "confidence": "high"
+      },
+      {
+        "location": "Tools and Functions Python source stored in webui.db",
+        "os": [
+          "linux",
+          "docker"
+        ],
+        "storage": "sqlite",
+        "secret_type": "embedded-credentials",
+        "description": "Tool source commonly embeds hard-coded API keys and internal service URLs. This is exactly what CVE-2026-70491 exposed to non-admin users.",
+        "confidence": "high"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0082"
+    ],
+    "attack_techniques": [
+      "T1133",
+      "T1059",
+      "T1552.001",
+      "T1078",
+      "T1213"
+    ],
+    "references": [
+      {
+        "title": "Open WebUI hardening guide (WEBUI_SECRET_KEY, first-user admin, Tools/Functions)",
+        "url": "https://docs.openwebui.com/getting-started/advanced-topics/hardening/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Open WebUI quick start (ports, volume, secret key)",
+        "url": "https://docs.openwebui.com/getting-started/quick-start/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "Open WebUI roles and headless admin creation",
+        "url": "https://docs.openwebui.com/features/authentication-access/rbac/roles/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "CVE-2026-45672 - unauthenticated-path RCE via /api/v1/utils/code/execute",
+        "url": "https://www.sentinelone.com/vulnerability-database/cve-2026-45672/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "CVE-2026-70491 - tool source disclosure to non-admin users",
+        "url": "https://www.sentinelone.com/vulnerability-database/cve-2026-70491/",
+        "accessed": "2026-08-11"
+      },
+      {
+        "title": "CVE-2025-64496 - Direct Connections account takeover to RCE (Cato CTRL)",
+        "url": "https://www.catonetworks.com/blog/cato-ctrl-vulnerability-discovered-open-webui-cve-2025-64496/",
+        "accessed": "2026-08-11"
+      }
+    ],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0036",
+    "name": "OpenAI Codex CLI",
+    "vendor": "OpenAI",
+    "category": "coding-agent-cli",
+    "description": "Terminal coding agent installed via npm @openai/codex (also Homebrew cask / winget). Binary `codex`. Reads AGENTS.md.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local tool exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "~/.codex/auth.json holds a ChatGPT OAuth token in plaintext. Session rollout files capture full prompt+response history including source code.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "codex  (npm -g @openai/codex; brew cask; winget)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for OpenAI Codex CLI",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "npm/brew/winget",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codex/config.toml",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Contains [mcp_servers] blocks - EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codex/history.jsonl",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "Prompt history - FORENSIC TIMELINE SOURCE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "timeline"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "session-artifact",
+          "description": "FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "data-access",
+            "timeline"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.codex/logs/codex-tui.log",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "Log for OpenAI Codex CLI",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "CODEX_HOME",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "env-var",
+          "description": "Relocates the entire artifact set - check before concluding absence",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "AGENTS.md",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "rules-file",
+          "description": "Prompt-injection surface, travels with repo",
+          "forensic_value": "low",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.openai.com, chatgpt.com (OAuth)",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "codex / node",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "sh, bash, cmd.exe, powershell.exe, git, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "~/.codex/auth.json",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "oauth-token",
+        "description": "PLAINTEXT ChatGPT OAuth token",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0034",
+    "name": "OpenAI Operator / CUA",
+    "vendor": "OpenAI",
+    "category": "computer-use-agent",
+    "description": "Cloud-hosted computer-using agent operating a remote browser.",
+    "supported_os": [
+      "cloud"
+    ],
+    "execution_model": "Fully cloud-hosted",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": false
+    },
+    "risk": "low",
+    "confidence": "medium",
+    "abuse_potential": "Minimal endpoint footprint; credentials handed to a remote agent session. Network/DLP telemetry only.",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "operator.chatgpt.com, *.openai.com",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p3",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0086"
+    ],
+    "attack_techniques": [
+      "T1113",
+      "T1185",
+      "T1071.001"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0043",
+    "name": "OpenHands",
+    "vendor": "All Hands AI (OSS)",
+    "category": "agent-framework",
+    "description": "Autonomous software-engineering agent (formerly OpenDevin) with a web UI, running agent code in Docker sandbox containers. Deployed via Docker, Docker Compose, or from source.",
+    "supported_os": [
+      "linux",
+      "windows",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference + sandboxed exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "The documented run command mounts /var/run/docker.sock into the container - that is host-root-equivalent, so an agent or an attacker reaching the container controls the Docker daemon and therefore the host. Port 3000 has no authentication in the default local deployment.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.openhands/config.toml",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "config-file",
+          "description": "[core] workspace_base, [llm] model/api_key/base_url. PLAINTEXT api_key. base_url is an inference-redirection vector.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "Docker/source",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.openhands-state/  (mounted to /.openhands-state)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Persistent agent state across container restarts. Older deployments use this path; newer ones mount ~/.openhands.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Docker",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.openhands/  (mounted to /.openhands)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Current state directory. Also holds user skills at ~/.openhands/skills/.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Docker",
+          "confidence": "high"
+        },
+        {
+          "path": "workspace_base (default ./workspace, mounted to /opt/workspace_base)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "data-dir",
+          "description": "AGENT-GENERATED AND AGENT-MODIFIED FILES. Treat as unknown-origin content during triage.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Docker/source",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.openhands/skills/ ; ~/.agents/skills/",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Custom skill definitions loaded by the agent.",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "docker-compose.yml / docker run invocation",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "config-file",
+          "description": "CRITICAL TRIAGE ARTIFACT: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "Docker",
+          "confidence": "high"
+        },
+        {
+          "path": "ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "container",
+          "description": "Sandbox runtime image pulled per session. Older tags use docker.all-hands.dev/all-hands-ai/.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Docker",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "OpenHands web UI + API (uvicorn)",
+          "port": "3000/TCP",
+          "description": "Documented quick start publishes -p 3000:3000. Frontend dev server on 3001 when run from source.",
+          "confidence": "high",
+          "default_bind": "0.0.0.0 (container)",
+          "authentication": "None in default local deploy",
+          "exposure_risk": "critical"
+        },
+        {
+          "direction": "listener",
+          "indicator": "Sandbox VS Code server",
+          "port": "41234/TCP (SANDBOX_VSCODE_PORT)",
+          "description": "Published when the in-sandbox editor is used.",
+          "confidence": "medium",
+          "default_bind": "0.0.0.0",
+          "authentication": "None",
+          "exposure_risk": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "docker.openhands.dev, ghcr.io, docker.all-hands.dev",
+          "port": "443/TCP",
+          "description": "Runtime image pulls.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "LLM_BASE_URL / LLM_OLLAMA_BASE_URL configured endpoint",
+          "port": "443/TCP, 11434/TCP",
+          "description": "Endpoint-override variables - a modified value redirects all agent traffic.",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "python (uvicorn openhands.server.listen:app)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "typical_parent": "dockerd / shell",
+          "typical_children": "docker (sandbox spawn), node",
+          "service_or_daemon": "YES (container)",
+          "persistence": "Docker restart policy",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [
+      {
+        "config_path": "~/.openhands/config.toml",
+        "config_key": "[mcp] section",
+        "spawn_mechanism": "Child process at agent start",
+        "secrets_location": "config.toml plaintext",
+        "persistence_trigger": "Every agent session",
+        "triage_priority": "p1",
+        "notes": "TOML not JSON"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [],
+    "attack_techniques": [],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0031",
+    "name": "Playwright MCP",
+    "vendor": "Microsoft (OSS)",
+    "category": "browser-agent",
+    "description": "npx @playwright/mcp - gives any MCP client full browser control. Downloads browser binaries on first run.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Local browser driving via MCP",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "critical",
+    "confidence": "high",
+    "abuse_potential": "--caps=storage exposes cookie/localStorage tools. --storage-state replays AUTHENTICATED SESSIONS. Session-token theft and MFA-bypass surface.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "npx @playwright/mcp@latest",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "RUNS WITHOUT INSTALL - npx cache only",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "npx (no install)",
+          "confidence": "high"
+        },
+        {
+          "path": "%USERPROFILE%\\AppData\\Local\\ms-playwright\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Downloaded Chromium/Firefox/WebKit binaries",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "first run",
+          "confidence": "high"
+        },
+        {
+          "path": "~/Library/Caches/ms-playwright/",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Browser Cache for Playwright MCP",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "first run",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.cache/ms-playwright/",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Browser Cache for Playwright MCP",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "first run",
+          "confidence": "high"
+        },
+        {
+          "path": "outputDir (config) - screenshots, traces, PDFs",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "May contain captured sensitive screens",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "SSE/HTTP transport mode",
+          "port": "Configurable (PLAYWRIGHT_MCP_HOST)",
+          "description": "0.0.0.0 bind = REMOTE BROWSER CONTROL of the host",
+          "confidence": "high",
+          "default_bind": "127.0.0.1 (0.0.0.0 if set)",
+          "authentication": "NONE",
+          "exposure_risk": "critical"
+        },
+        {
+          "direction": "egress",
+          "indicator": "playwright.azureedge.net / cdn.playwright.dev (browser binary download)",
+          "port": "443/TCP",
+          "description": "First-run downloads full browser binaries",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "npx -> node (@playwright/mcp)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Claude.exe / Cursor.exe / Code.exe / node",
+          "typical_children": "chrome.exe / chromium / headless_shell / firefox",
+          "service_or_daemon": "No",
+          "persistence": "Persists via the MCP config of its host client",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "--storage-state <file.json>",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "session-state",
+        "description": "SERIALIZED COOKIES + localStorage = SESSION HIJACK ARTIFACT",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0086",
+      "AML.T0053"
+    ],
+    "attack_techniques": [
+      "T1185",
+      "T1539",
+      "T1552"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0040",
+    "name": "Roo Code",
+    "vendor": "Roo Veterinary Inc. (OSS)",
+    "category": "coding-agent-ide",
+    "description": "VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "Project-scoped .roo/mcp.json travels with the repo \u2014 an untrusted clone ships an execution primitive.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%APPDATA%\\Code\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\mcp_settings.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "EXECUTION PRIMITIVE",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "high"
+        },
+        {
+          "path": "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "MCP Config for Roo Code",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.roo/mcp.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "TRAVELS WITH THE REPO - review on clone/PR",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured provider (arbitrary)",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (extension host)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe / cursor",
+          "typical_children": "cmd.exe, powershell.exe, bash, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "VS Code SecretStorage -> OS keychain (state.vscdb)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "",
+        "confidence": "high"
+      }
+    ],
+    "mcp": [
+      {
+        "config_path": "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": ""
+      },
+      {
+        "config_path": "<repo>/.roo/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process on workspace open",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every workspace open",
+        "triage_priority": "p1",
+        "notes": "TRAVELS WITH THE REPO"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0080",
+      "AML.T0081"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0035",
+    "name": "Skyvern",
+    "vendor": "Skyvern AI (OSS)",
+    "category": "browser-agent",
+    "description": "Open-source vision+DOM browser automation agent, commonly Docker-deployed with a web UI.",
+    "supported_os": [
+      "linux",
+      "docker"
+    ],
+    "execution_model": "Cloud or local inference + local browser",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Handles credentialed logins and 2FA workflows by design. Self-hosted UI is an exposure risk.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "Docker compose stack + .env",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "container",
+          "description": "Handles credentialed logins by design",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "docker compose",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Skyvern API + UI",
+          "port": "8000/TCP, 8080/TCP",
+          "description": "",
+          "confidence": "medium",
+          "default_bind": "0.0.0.0 (container)",
+          "authentication": "API key",
+          "exposure_risk": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "python (uvicorn)",
+          "os": [
+            "linux",
+            "docker"
+          ],
+          "typical_parent": "dockerd",
+          "typical_children": "chromium, headless_shell",
+          "service_or_daemon": "YES (container)",
+          "persistence": "Docker restart policy",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0086",
+      "AML.T0053"
+    ],
+    "attack_techniques": [
+      "T1185",
+      "T1539",
+      "T1552"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0010",
+    "name": "Supermaven",
+    "vendor": "Supermaven",
+    "category": "code-completion",
+    "description": "Low-latency completion agent with very large context window. Downloads its own agent binary. Integrated in Zed and VS Code.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "low",
+    "abuse_potential": "Large context = large code egress per request. THIN PUBLIC SOURCING on canonical paths.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "Downloaded Supermaven agent binary (editor-managed)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "THIN SOURCING - validate locally",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "Editor extension",
+          "confidence": "low",
+          "unverified": true
+        },
+        {
+          "path": "~/.config/zed/settings.json  ->  inline_completion_provider: supermaven",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Zed Config for Supermaven",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "Zed",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "*.supermaven.com",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "low",
+          "unverified": true
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024"
+    ],
+    "attack_techniques": [
+      "T1071.001",
+      "T1105"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0009",
+    "name": "Tabnine",
+    "vendor": "Tabnine",
+    "category": "code-completion",
+    "description": "Completion + agent platform. Editor plugin spawns and supervises a downloaded platform-specific binary.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud, self-hosted, or fully local",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "binary_path is configurable = binary substitution risk. Self-hosted deployment adds K8s/Helm footprint.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.tabnine/agent/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "User scope",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "IDE plugin",
+          "confidence": "high"
+        },
+        {
+          "path": "<repo>/.tabnine/agent/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Project scope - overrides user",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "Downloaded per-platform Tabnine binary (binary_path configurable)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "BINARY SUBSTITUTION RISK",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "IDE plugin",
+          "confidence": "high"
+        },
+        {
+          "path": "TABNINE_CLI_SYSTEM_SETTINGS_PATH / TABNINE_CLI_SYSTEM_DEFAULTS_PATH",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "env-var",
+          "description": "Env var config hijack vector",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "api.tabnine.com, update.tabnine.com",
+          "port": "443/TCP",
+          "description": "Optional OTLP telemetry endpoint is configurable",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "TabNine.exe / TabNine-deep-local.exe",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "Code.exe",
+          "typical_children": "-",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024"
+    ],
+    "attack_techniques": [
+      "T1071.001",
+      "T1105"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0022",
+    "name": "text-generation-webui (oobabooga)",
+    "vendor": "oobabooga (OSS)",
+    "category": "llm-runtime",
+    "description": "Gradio web UI for local models with an extension system.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Fully local inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": null,
+      "mcp_capable": false
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Extensions execute arbitrary Python. Gradio --share creates a PUBLIC TUNNEL to the host - a covert ingress channel.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "text-generation-webui.exe  |  python server.py",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "binary",
+          "description": "Binary for text-generation-webui (oobabooga)",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "install_method": "one-click installer / git",
+          "confidence": "medium"
+        },
+        {
+          "path": "<install>/models/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Models Dir for text-generation-webui (oobabooga)",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<install>/extensions/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "install-dir",
+          "description": "ARBITRARY PYTHON EXECUTION",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Gradio UI / OpenAI-compatible API",
+          "port": "7860/TCP, 5000/TCP",
+          "description": "--share creates a PUBLIC gradio.live TUNNEL - covert ingress",
+          "confidence": "medium",
+          "default_bind": "127.0.0.1",
+          "authentication": "Optional",
+          "exposure_risk": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "python (server.py), text-generation-webui.exe",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell",
+          "typical_children": "python (extensions)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+    },
+    "atlas_techniques": [
+      "AML.T0024",
+      "AML.T0029",
+      "AML.T0054"
+    ],
+    "attack_techniques": [
+      "T1543",
+      "T1133",
+      "T1105",
+      "T1590"
+    ],
+    "references": [],
+    "last_modified": "2026-08-11"
+  }
+]

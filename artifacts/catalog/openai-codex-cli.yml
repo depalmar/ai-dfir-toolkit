@@ -1,0 +1,156 @@
+# AI agent artifact catalog entry
+# AIRT-0036 - OpenAI Codex CLI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0036
+name: OpenAI Codex CLI
+vendor: OpenAI
+category: coding-agent-cli
+description: "Terminal coding agent installed via npm @openai/codex (also Homebrew cask / winget). Binary `codex`. Reads AGENTS.md."
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: ~/.codex/auth.json holds a ChatGPT OAuth token in plaintext. Session rollout files capture full prompt+response history including source code.
+artifacts:
+  disk:
+    - path: "codex  (npm -g @openai/codex; brew cask; winget)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Binary for OpenAI Codex CLI
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm/brew/winget
+      confidence: high
+    - path: ~/.codex/config.toml
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: "Contains [mcp_servers] blocks - EXECUTION PRIMITIVE"
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.codex/history.jsonl
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: Prompt history - FORENSIC TIMELINE SOURCE
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - timeline
+      install_method: n/a
+      confidence: high
+    - path: "~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - data-access
+        - timeline
+      install_method: n/a
+      confidence: high
+    - path: ~/.codex/logs/codex-tui.log
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: log
+      description: Log for OpenAI Codex CLI
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: high
+    - path: CODEX_HOME
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: env-var
+      description: Relocates the entire artifact set - check before concluding absence
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: AGENTS.md
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: rules-file
+      description: Prompt-injection surface, travels with repo
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: egress
+      indicator: api.openai.com, chatgpt.com (OAuth)
+      port: 443/TCP
+      description: ""
+      confidence: high
+  process:
+    - name: codex / node
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: sh, bash, cmd.exe, powershell.exe, git, node (MCP)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: ~/.codex/auth.json
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: oauth-token
+    description: PLAINTEXT ChatGPT OAuth token
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

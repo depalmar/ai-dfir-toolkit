@@ -1,0 +1,92 @@
+# AI agent artifact catalog entry
+# AIRT-0019 - Jan.ai
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0019
+name: Jan.ai
+vendor: Menlo Research (OSS)
+category: llm-runtime
+description: Open-source ChatGPT alternative running fully offline; ships a headless daemon mode.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Linux daemon reads /etc/jan/jan.env - a system-level config an attacker can modify for persistence.
+artifacts:
+  disk:
+    - path: "/usr/local/bin/jan  |  ~/.local/bin/jan"
+      os:
+        - linux
+      artifact_type: binary
+      description: Binary for Jan.ai
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: deb/AppImage
+      confidence: medium
+    - path: "~/.config/Jan/  |  ~/jan/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: data/, models/, logs/
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+    - path: /etc/jan/jan.env
+      os:
+        - linux
+      artifact_type: config-file
+      description: SYSTEM-LEVEL config - persistence/tamper target
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: daemon install
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Jan local API / headless
+      port: 1337/TCP (also 8080)
+      description: ""
+      confidence: medium
+      default_bind: "127.0.0.1"
+      authentication: NONE
+      exposure_risk: high
+  process:
+    - name: jan, jan-daemon
+      os:
+        - linux
+      typical_parent: systemd / user shell
+      typical_children: "-"
+      service_or_daemon: YES (daemon mode)
+      persistence: systemd unit + /etc/jan/jan.env
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

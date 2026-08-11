@@ -1,0 +1,37 @@
+# AI agent artifact catalog entry
+# AIRT-0016 - GPT Pilot
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0016
+name: GPT Pilot
+vendor: Pythagora (OSS)
+category: agent-framework
+description: Python agent that scaffolds and runs full applications, executing generated code.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: false
+risk: high
+confidence: low
+abuse_potential: Runs generated code on host. THIN PUBLIC SOURCING on canonical paths - inventory by Python process command line.
+artifacts: {}
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

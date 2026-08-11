@@ -1,0 +1,43 @@
+title: AI Agent Process Spawning Command Interpreter
+id: 730c1d85-5fde-54dc-95bd-cd6d725124a6
+status: experimental
+description: |
+  Detects an AI coding agent or MCP host launching a command interpreter. Agents
+  running shell commands is expected behaviour, so the value here is not the event
+  itself but the baseline: alert on agents that should not be executing commands in
+  your environment, on hosts outside the developer estate, or on service accounts.
+  Pair with the LOLBAS variant of this rule for higher fidelity.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.execution
+    - attack.t1059
+logsource:
+    category: process_creation
+detection:
+    selection_parent:
+        ParentImage|endswith:
+            - '\Claude.exe'
+            - '\Cursor.exe'
+            - '\Windsurf.exe'
+            - '\Code.exe'
+            - '/claude'
+            - '/cursor'
+            - '/codex'
+            - '/gemini'
+            - '/goose'
+            - '/aider'
+            - '/interpreter'
+            - '/kiro'
+    selection_child:
+        Image|endswith:
+            - '\cmd.exe'
+            - '\powershell.exe'
+            - '\pwsh.exe'
+            - '/bash'
+            - '/sh'
+            - '/zsh'
+    condition: all of selection_*
+falsepositives:
+    - Normal agentic coding workflows on developer workstations
+level: low

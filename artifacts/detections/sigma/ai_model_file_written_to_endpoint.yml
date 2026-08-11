@@ -1,0 +1,26 @@
+title: Large Model File Written to Endpoint
+id: 377ca8f3-168a-5028-aee4-f7191ff60ba7
+status: experimental
+description: |
+  Detects model weight files being written to an endpoint. On its own this is an
+  inventory signal for shadow AI rather than an intrusion alert, but it is worth
+  tracking: model files are multi-gigabyte, arrive from unvetted repositories, and
+  a runtime capable of loading them is usually accompanied by an unauthenticated
+  local API.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.command_and_control
+    - attack.t1105
+logsource:
+    category: file_event
+detection:
+    selection:
+        TargetFilename|endswith:
+            - '.gguf'
+            - '.safetensors'
+            - '.ggml'
+    condition: selection
+falsepositives:
+    - Sanctioned local inference on developer or data science workstations
+level: low

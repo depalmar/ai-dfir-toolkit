@@ -1,0 +1,33 @@
+# AI agent artifact catalog entry
+# AIRT-0014 - Microsoft Copilot Studio Agents
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0014
+name: Microsoft Copilot Studio Agents
+vendor: Microsoft
+category: cloud-agent
+description: Low-code agent builder hosted in Microsoft cloud. Endpoint footprint is browser only.
+supported_os:
+  - cloud
+execution_model: Fully cloud-hosted
+capabilities:
+  local_code_execution: false
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: low
+confidence: high
+abuse_potential: Primary telemetry is M365/Purview audit, not endpoint. CrowdStrike ships AIDR for Copilot Studio Agents.
+artifacts: {}
+credentials: []
+mcp: []
+collection:
+  triage_priority: p3
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+attack_techniques:
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

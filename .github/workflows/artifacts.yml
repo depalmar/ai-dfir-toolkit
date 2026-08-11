@@ -1,0 +1,55 @@
+name: artifact-catalog
+
+on:
+  push:
+    branches: [main]
+    paths: ['artifacts/**']
+  pull_request:
+    paths: ['artifacts/**']
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: artifacts
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Validate catalog and detections
+        run: python scripts/validate.py
+      - name: Verify Sigma rules convert to a real backend
+        run: |
+          pip install sigma-cli pysigma-backend-splunk
+          python - <<'PY'
+          from sigma.collection import SigmaCollection
+          from sigma.backends.splunk import SplunkBackend
+          import glob, sys
+          backend, failed = SplunkBackend(), 0
+          for path in sorted(glob.glob("detections/sigma/*.yml")):
+              try:
+                  backend.convert(SigmaCollection.from_yaml(open(path).read()))
+              except Exception as exc:
+                  print(f"::error::{path} does not convert: {exc}")
+                  failed += 1
+          sys.exit(1 if failed else 0)
+          PY
+      - name: Rebuild export feeds
+        run: |
+          python scripts/export.py
+          python scripts/export_forensicartifacts.py
+      - name: Fail if feeds are stale
+        run: |
+          if ! git diff --quiet docs/api; then
+            echo "::error::artifacts/docs/api is stale. Run the export scripts and commit."
+            git diff --stat docs/api
+            exit 1
+          fi

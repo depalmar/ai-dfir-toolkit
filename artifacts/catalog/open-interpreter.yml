@@ -1,0 +1,102 @@
+# AI agent artifact catalog entry
+# AIRT-0015 - Open Interpreter
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0015
+name: Open Interpreter
+vendor: Open Interpreter (OSS)
+category: code-execution-agent
+description: Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: BY DESIGN a code execution primitive. --allow-all-tools / autopilot runs commands with NO user confirmation. Effectively a LOLBIN.
+artifacts:
+  disk:
+    - path: "interpreter  (venv: .../open-interpreter/bin/interpreter)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Python 3.10/3.11
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: pip
+      confidence: high
+    - path: "...\\open-interpreter\\Scripts\\interpreter.EXE"
+      os:
+        - windows
+      artifact_type: binary
+      description: Binary for Open Interpreter
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: pip
+      confidence: high
+    - path: "~/.config/Open Interpreter/  |  %APPDATA%\\Open Interpreter\\"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: profiles/, config yaml
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: pip
+      confidence: medium
+    - path: llamafile artifacts (--local mode)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: No API key needed - fully offline agent
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: api.openai.com or configured base_url; NONE in --local mode
+      port: 443/TCP
+      description: "--local mode has ZERO network IOCs - file/process telemetry only"
+      confidence: high
+  process:
+    - name: interpreter / python
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: sh, bash, cmd.exe, powershell.exe, python
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0054
+attack_techniques:
+  - T1059
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,127 @@
+# AI agent artifact catalog entry template
+# Copy to catalog/<tool-slug>.yml and fill in. Run scripts/validate.py before opening a PR.
+#
+# Honesty rule: confidence reflects how well-sourced the artifact is, not how
+# confident you feel. If you could not verify a path on a real host or in
+# vendor docs, mark it low. A gap is fine; an overstatement is not.
+
+id: AIRT-XXXX                      # next free ID, four digits
+name: Tool Name
+vendor: Vendor or Project
+category: coding-agent-cli         # see schema for the enum
+description: >-
+  What the tool is and what it does on an endpoint. At least a sentence.
+website: https://example.com
+status: active                     # active | legacy | dormant | unmaintained | eol
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high                         # critical | high | medium | low
+confidence: high                   # high | medium | low
+abuse_potential: >-
+  How a threat actor could misuse this, ideally citing documented cases.
+
+artifacts:
+  disk:
+    - path: ~/.example/config.json
+      os: [macos, linux]
+      artifact_type: config-file    # CONTROLLED VOCABULARY - see below
+      description: What it contains and why an analyst cares.
+      forensic_value: high
+      evidence_type: [configuration, execution]
+      install_method: npm -g example
+      confidence: high
+  registry:
+    - key: HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+      value: Example
+      type: REG_SZ
+      description: Autostart entry.
+      persistence: true
+      forensic_value: high
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Local API server
+      port: 1234/TCP
+      default_bind: 127.0.0.1
+      authentication: none
+      exposure_risk: high
+      description: Note if it can be bound to 0.0.0.0.
+      confidence: high
+  process:
+    - name: example.exe
+      os: [windows]
+      typical_parent: explorer.exe
+      typical_children: cmd.exe, powershell.exe
+      service_or_daemon: 'No'
+      persistence: None
+      confidence: high
+
+credentials:
+  - location: ~/.example/auth.json
+    os: [macos, linux]
+    storage: plaintext              # plaintext | os-keyring | encrypted | sqlite | unknown
+    secret_type: oauth-token
+    description: What is stored and what it unlocks.
+    confidence: high
+
+mcp:
+  - config_path: ~/.example/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app launch
+    secrets_location: env block
+    persistence_trigger: Every app start
+    triage_priority: p1
+    notes: Anything an analyst must know before remediating.
+
+collection:
+  triage_priority: p1
+  guidance: >-
+    Order of collection and anything volatile or short-retention.
+  kape_target: ''
+  velociraptor_artifact: ''
+
+atlas_techniques: [AML.T0053]
+attack_techniques: [T1059, T1552.001]
+
+references:
+  - title: Vendor documentation
+    url: https://example.com/docs
+    accessed: '2026-08-11'
+
+last_modified: '2026-08-11'
+
+# ---------------------------------------------------------------------------
+# CONTROLLED VOCABULARIES (enforced by schema - CI fails on anything else)
+#
+# artifact_type:
+#   binary            install-dir       config-file       config-dir
+#   mcp-config        rules-file        agent-definition  credential-file
+#   session-artifact  log               database          data-dir
+#   env-var           service-config    extension-bundle  container
+#   project-artifact
+#
+# evidence_type:
+#   execution   persistence   configuration   credential-access
+#   user-activity   data-access   timeline   program-presence
+#   prompt-injection-surface
+#
+# secret_type:
+#   api-key   oauth-token   jwt-signing-key   session-state   aws-sso-token
+#   admin-credential   embedded-credentials   encryption-key   unknown
+#
+# storage:
+#   plaintext   os-keyring   encrypted   sqlite   unknown
+#
+# If a genuinely new kind of artifact appears, extend the enum in
+# schema/artifact.schema.json, this template, and the skill together. Do not
+# invent a one-off value: an unconstrained field fragments the published CSV
+# feed and makes it unfilterable, which defeats the point of publishing it.
+# ---------------------------------------------------------------------------

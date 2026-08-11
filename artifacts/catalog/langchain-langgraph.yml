@@ -1,0 +1,37 @@
+# AI agent artifact catalog entry
+# AIRT-0026 - LangChain / LangGraph
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0026
+name: LangChain / LangGraph
+vendor: LangChain Inc. (OSS)
+category: agent-framework
+description: Dominant agent-building library. Deployed as bespoke services - no fixed install path.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Shell/Python REPL tools are standard. No canonical path = inventory by process command line and imported module names.
+artifacts: {}
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

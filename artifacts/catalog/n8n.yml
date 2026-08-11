@@ -1,0 +1,100 @@
+# AI agent artifact catalog entry
+# AIRT-0025 - n8n (AI Agent / LangChain nodes)
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0025
+name: n8n (AI Agent / LangChain nodes)
+vendor: n8n GmbH
+category: workflow-engine
+description: Self-hostable workflow automation with native AI Agent / SQL Agent LangChain nodes and MCP support.
+supported_os:
+  - linux
+  - windows
+  - docker
+execution_model: Cloud or local inference + workflow exec
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Code node = arbitrary JS/Python execution. Exposed 5678 without auth = full workflow + credential compromise. Webhook nodes are ingress.
+artifacts:
+  disk:
+    - path: "~/.n8n/  (Docker: /home/node/.n8n)"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: database.sqlite, config, encryptionKey
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: npm / Docker
+      confidence: high
+    - path: N8N_ENCRYPTION_KEY
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: env-var
+      description: HIGH-VALUE SECRET
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: N8N_ENCRYPTION_KEY
+      type: REG_SZ
+      description: Decrypts ALL stored n8n credentials - CROWN JEWEL
+      persistence: false
+      forensic_value: medium
+      confidence: high
+  network:
+    - direction: listener
+      indicator: n8n editor UI + REST API + webhooks
+      port: 5678/TCP
+      description: Exposed 5678 without auth = full workflow + credential compromise. Webhooks are unauthenticated ingress by design.
+      confidence: high
+      default_bind: "0.0.0.0"
+      authentication: Basic auth OPTIONAL
+      exposure_risk: critical
+  process:
+    - name: node (n8n)
+      os:
+        - linux
+        - docker
+      typical_parent: systemd / dockerd
+      typical_children: node (task runner), python (Code node)
+      service_or_daemon: "YES"
+      persistence: "systemd unit or Docker restart:always"
+      confidence: high
+credentials:
+  - location: ~/.n8n/database.sqlite
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: encryption-key
+    description: Credentials encrypted with N8N_ENCRYPTION_KEY - key theft = full cred compromise
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1133
+  - T1543
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,90 @@
+# AI agent artifact catalog entry
+# AIRT-0020 - GPT4All
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0020
+name: GPT4All
+vendor: Nomic AI
+category: llm-runtime
+description: Desktop local LLM app with optional localhost-only HTTP API server and LocalDocs RAG.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: false
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: false
+risk: medium
+confidence: high
+abuse_potential: LocalDocs indexes local file trees into the model context - a data-aggregation surface for exfil.
+artifacts:
+  disk:
+    - path: ~/.local/share/nomic.ai/GPT4All/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: Models + LocalDocs index; env GPT4ALL_HOME overrides
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: installer
+      confidence: high
+    - path: "%LOCALAPPDATA%\\Programs\\gpt4all\\bin\\chat.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: Binary for GPT4All
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: EXE installer
+      confidence: medium
+  registry:
+    - key: "HKCU\\Environment"
+      value: GPT4ALL_HOME / GPT4ALL_MODEL_PATH
+      type: REG_SZ
+      description: Data + model path redirection
+      persistence: false
+      forensic_value: medium
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Local HTTP API server
+      port: 4891/TCP
+      description: Localhost-bound by design
+      confidence: high
+      default_bind: 127.0.0.1 only
+      authentication: NONE
+      exposure_risk: medium
+  process:
+    - name: chat.exe / gpt4all.exe
+      os:
+        - windows
+      typical_parent: explorer.exe
+      typical_children: "-"
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"

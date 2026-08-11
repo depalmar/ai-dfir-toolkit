@@ -1,0 +1,299 @@
+entry_id,tool,category,entry_risk,artifact_class,artifact,os,forensic_value,evidence_type,description,confidence
+AIRT-0004,Aider,coding-agent-cli,high,disk,aider  (pipx: ~/.local/bin/aider),windows|macos|linux,medium,execution|program-presence,Binary for Aider,high
+AIRT-0004,Aider,coding-agent-cli,high,disk,~/.aider.conf.yml,windows|macos|linux,high,configuration,Also searched in CWD and git root,high
+AIRT-0004,Aider,coding-agent-cli,high,disk,~/.aider/caches/,windows|macos|linux,low,program-presence,Cache Dir for Aider,medium
+AIRT-0004,Aider,coding-agent-cli,high,disk,<repo>/.aider.tags.cache.v4/,windows|macos|linux,low,user-activity|data-access|timeline,SQLite diskcache of repo symbol map,medium
+AIRT-0004,Aider,coding-agent-cli,high,disk,<repo>/.aider.chat.history.md,windows|macos|linux,high,user-activity|data-access|timeline,FULL CHAT TRANSCRIPT incl. source code - HIGH-VALUE FORENSIC ARTIFACT,high
+AIRT-0004,Aider,coding-agent-cli,high,disk,<repo>/.aider.input.history,windows|macos|linux,high,user-activity|data-access|timeline,User prompt history - forensic timeline source,high
+AIRT-0004,Aider,coding-agent-cli,high,network,"openrouter.ai, api.openai.com, api.anthropic.com",,,,,high
+AIRT-0004,Aider,coding-agent-cli,high,network,OAuth PKCE callback listener,,,,TRANSIENT listener during OpenRouter auth,medium
+AIRT-0004,Aider,coding-agent-cli,high,process,aider / python,windows|macos|linux,,,,high
+AIRT-0004,Aider,coding-agent-cli,high,credential,~/.aider/oauth-keys.env,windows|macos|linux,high,credential-access,plaintext: OpenRouter OAuth (PKCE) tokens - PLAINTEXT,medium
+AIRT-0004,Aider,coding-agent-cli,high,credential,<home|gitroot|cwd>/.env,windows|macos|linux,high,credential-access,plaintext: OPENAI_API_KEY / ANTHROPIC_API_KEY - PLAINTEXT,high
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,disk,node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio,windows|macos|linux,medium,execution|program-presence,npm pkg @aws/lsp-codewhisperer,high
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,disk,%USERPROFILE%\.vscode\extensions\amazonwebservices.amazon-q-vscode-*,windows,low,program-presence,Extension Dir for Amazon Q Developer (ex-CodeWhisperer),high
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,disk,<repo>/.amazonq/rules/*.md,windows|macos|linux,low,configuration|prompt-injection-surface,Rules File for Amazon Q Developer (ex-CodeWhisperer),medium
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,network,"q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start",,,,HTTPS_PROXY honored,high
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,process,node (aws-lsp-codewhisperer-token-binary.js),windows|macos|linux,,,,high
+AIRT-0008,Amazon Q Developer (ex-CodeWhisperer),coding-agent-ide,medium,credential,~/.aws/sso/cache/*.json,windows|macos|linux,high,credential-access,plaintext: SSO access tokens - credential-theft target,high
+AIRT-0027,AutoGen,agent-framework,high,disk,"OAI_CONFIG_LIST  (JSON, CWD or env-specified path)",windows|macos|linux,high,configuration,PLAINTEXT api_key values,high
+AIRT-0027,AutoGen,agent-framework,high,disk,coding/  (default LocalCommandLineCodeExecutor work_dir),windows|macos|linux,low,program-presence,AGENT-GENERATED CODE executed on host,medium
+AIRT-0027,AutoGen,agent-framework,high,process,python,windows|macos|linux,,,,high
+AIRT-0012,AutoGPT,agent-framework,high,disk,<install>/workspace/  |  auto_gpt_workspace/,windows|macos|linux,low,program-presence,AGENT-GENERATED FILES - triage as unknown-origin content,medium
+AIRT-0012,AutoGPT,agent-framework,high,credential,<install>/.env,windows|macos|linux,high,credential-access,plaintext: OPENAI_API_KEY plaintext,medium
+AIRT-0032,Browser-Use,browser-agent,high,network,Configured LLM provider + arbitrary target sites,,,,"Agent-driven browsing produces anomalous, machine-paced web traffic",medium
+AIRT-0032,Browser-Use,browser-agent,high,process,python,windows|macos|linux,,,,medium
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,%APPDATA%\npm\claude.cmd,windows,medium,execution|program-presence,npm global bin shim,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,%APPDATA%\npm\node_modules\@anthropic-ai\claude-code\,windows,medium,execution|program-presence,Package root,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,~/.local/bin/claude,macos|linux,medium,execution|program-presence,Native installer path,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,/usr/local/bin/claude,macos|linux,medium,execution|program-presence,npm global,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,~/.claude/,windows|macos|linux,low,program-presence,"settings.json, settings.local.json, CLAUDE.md, .credentials.json, statsig/",high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,~/.claude.json,windows|macos|linux,high,configuration,Runtime auth state + user-scoped MCP servers,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,<repo>/.claude/settings.json,windows|macos|linux,low,user-activity|data-access,"Project-scoped settings, committed to git",high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,<repo>/.mcp.json,windows|macos|linux,high,user-activity|data-access,"Project-scoped MCP servers - EXECUTION PRIMITIVE, review on clone",high
+AIRT-0001,Claude Code,coding-agent-cli,critical,disk,<repo>/CLAUDE.md,windows|macos|linux,low,user-activity|data-access,Instruction file - prompt-injection surface,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,registry,HKLM\SOFTWARE\Microsoft\Cryptography,,medium,,Read (not written) for device fingerprinting / licensing telemetry,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,registry,HKCU\Environment,,medium,,PERSISTENT USER-LEVEL SECRETS. A modified *_BASE_URL silently redirects ALL inference to an attacker proxy,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\*,,medium,,Shadow-AI IDE inventory sweep,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,network,api.anthropic.com,,,,ANTHROPIC_BASE_URL can redirect to a gateway/proxy - check for overrides,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,network,"claude.ai (installer), statsig.anthropic.com (telemetry)",,,,install.sh source,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,process,node.exe (claude),windows,,,,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,process,claude / node,macos|linux,,,,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,mcp-config,~/.claude.json,,high,execution|persistence,"User-scoped, applies to all projects",high
+AIRT-0001,Claude Code,coding-agent-cli,critical,mcp-config,<repo>/.mcp.json,,high,execution|persistence,TRAVELS WITH THE REPO - review on every clone/PR,high
+AIRT-0001,Claude Code,coding-agent-cli,critical,mcp-config,<repo>/.claude/settings.local.json,,high,execution|persistence,Records which project servers the user approved - CONSENT EVIDENCE,high
+AIRT-0033,Claude Computer Use,computer-use-agent,high,disk,Docker container running the reference implementation,windows|macos|linux,low,program-presence,Screenshot loop artifacts inside container,high
+AIRT-0033,Claude Computer Use,computer-use-agent,high,network,api.anthropic.com,,,,High-volume image (screenshot) uploads - distinctive egress volume signature,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,~/Library/Application Support/Claude/claude_desktop_config.json,macos,high,execution|persistence|configuration,PRIMARY EXECUTION PRIMITIVE,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,%APPDATA%\Claude\claude_desktop_config.json,windows,high,execution|persistence|configuration,PRIMARY EXECUTION PRIMITIVE,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json,windows,high,execution|persistence|configuration,VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,~/.config/Claude/claude_desktop_config.json,linux,high,execution|persistence|configuration,PRIMARY EXECUTION PRIMITIVE,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,*.mcpb (Desktop Extension),windows|macos|linux,medium,program-presence,ZIP archive containing server code + manifest - UNPACK AND REVIEW,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,%APPDATA%\Claude\logs\mcp*.log,windows,high,timeline|execution,MCP server stdout/stderr - forensic goldmine,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,disk,~/Library/Logs/Claude/mcp*.log,macos,high,timeline|execution,MCP server stdout/stderr,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Claude,,medium,,Install metadata,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Run,,high,,Auto-start - LAUNCHES ALL CONFIGURED MCP SERVERS ON LOGIN,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,registry,HKCU\Software\Classes\claude\shell\open\command,,medium,,claude:// protocol handler - deep-link vector,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,registry,HKCU\Software\Classes\ActivatableClasses\Package\Claude_pzs8sxrjxfjjc*,,medium,,Store package registration,medium
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,network,"api.anthropic.com, claude.ai",,,,Plus ANY egress initiated by child MCP servers,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,network,registry.npmjs.org (npx MCP server fetch),,,,npx @scope/server@latest pulls and EXECUTES code at every launch - supply-chain risk,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,process,Claude.exe,windows,,,,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,process,Claude,macos,,,,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,mcp-config,%APPDATA%\Claude\claude_desktop_config.json,,high,execution|persistence,Standard EXE-installer path,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,mcp-config,%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json,,high,execution|persistence,VIRTUALIZED - the app reads THIS. 'Edit Config' in the UI can open the WRONG file. Commonly missed in IR.,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,mcp-config,~/Library/Application Support/Claude/claude_desktop_config.json,,high,execution|persistence,,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,mcp-config,~/.config/Claude/claude_desktop_config.json,,high,execution|persistence,,high
+AIRT-0011,Claude Desktop (MCP host),mcp-host,critical,mcp-config,*.mcpb / *.dxt bundle files,,high,execution|persistence,ZIP ARCHIVE - unpack and review server code before trusting,high
+AIRT-0039,Cline,coding-agent-ide,high,disk,%APPDATA%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json,windows,high,execution|persistence|configuration,EXECUTION PRIMITIVE,high
+AIRT-0039,Cline,coding-agent-ide,high,disk,~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json,macos,high,execution|persistence|configuration,MCP Config for Cline,high
+AIRT-0039,Cline,coding-agent-ide,high,disk,~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json,linux,high,execution|persistence|configuration,MCP Config for Cline,high
+AIRT-0039,Cline,coding-agent-ide,high,disk,~/.cline/data/,windows|macos|linux,low,program-presence,SINGLE-SOURCE - corroborate,low
+AIRT-0039,Cline,coding-agent-ide,high,network,Standalone gRPC server,,,,SINGLE-SOURCE - corroborate before detecting,low
+AIRT-0039,Cline,coding-agent-ide,high,network,Configured provider (Anthropic/OpenAI/OpenRouter/Bedrock/local),,,,,high
+AIRT-0039,Cline,coding-agent-ide,high,process,node (extension host),windows|macos|linux,,,,high
+AIRT-0039,Cline,coding-agent-ide,high,credential,"VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)",windows|macos|linux,high,credential-access,plaintext: state.vscdb is a collectible SQLite artifact,high
+AIRT-0039,Cline,coding-agent-ide,high,mcp-config,…/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json,,high,execution|persistence,Syncs via VS Code Settings Sync if enabled,high
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,~/.codeium/,windows|macos|linux,low,program-presence,API key + downloaded language server,high
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,%USERPROFILE%\.codeium\windsurf\mcp_config.json,windows,high,execution|persistence|configuration,EXECUTION PRIMITIVE,high
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,~/.codeium/windsurf/mcp_config.json,macos|linux,high,execution|persistence|configuration,EXECUTION PRIMITIVE,high
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,~/.codeium/<version>/language_server_*,windows|macos|linux,low,program-presence,REMOTE BINARY DOWNLOAD - verify hash,medium
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,<repo>/.windsurf/settings.json,windows|macos|linux,low,program-presence,Indexer scope config,medium
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,disk,<repo>/.windsurfrules,windows|macos|linux,low,configuration|prompt-injection-surface,Prompt-injection surface,medium
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,network,"server.codeium.com, *.codeium.com, *.windsurf.com",,,,Full-codebase indexing to cloud,high
+AIRT-0006,Codeium / Windsurf,coding-agent-ide,high,process,"Windsurf.exe, language_server_windows_x64.exe",windows,,,,high
+AIRT-0005,Continue.dev,coding-agent-ide,high,disk,~/.continue/config.yaml,windows|macos|linux,high,configuration,Current format,high
+AIRT-0005,Continue.dev,coding-agent-ide,high,disk,~/.continue/config.json,windows|macos|linux,high,configuration,Legacy format,high
+AIRT-0005,Continue.dev,coding-agent-ide,high,disk,~/.continue/config.ts,windows|macos|linux,high,configuration,Advanced - EXECUTES TYPESCRIPT,medium
+AIRT-0005,Continue.dev,coding-agent-ide,high,disk,<repo>/.continue/rules/*.md,windows|macos|linux,low,configuration|prompt-injection-surface,Prompt-injection surface,high
+AIRT-0005,Continue.dev,coding-agent-ide,high,disk,<repo>/.continuerc.json,windows|macos|linux,low,program-presence,Project Config for Continue.dev,medium
+AIRT-0005,Continue.dev,coding-agent-ide,high,network,Configured provider base_url (arbitrary),,,,config.yaml can name ANY endpoint - inspect base_url values,high
+AIRT-0005,Continue.dev,coding-agent-ide,high,process,node (extension host),windows|macos|linux,,,,high
+AIRT-0028,CrewAI,agent-framework,high,disk,<project>/config/agents.yaml  |  config/tasks.yaml,windows|macos|linux,low,program-presence,Autonomous goal definitions,medium
+AIRT-0028,CrewAI,agent-framework,high,disk,<project>/src/<name>/crew.py,windows|macos|linux,low,program-presence,Entrypoint for CrewAI,medium
+AIRT-0028,CrewAI,agent-framework,high,process,python / crewai,windows|macos|linux,,,,medium
+AIRT-0028,CrewAI,agent-framework,high,credential,<project>/.env,windows|macos|linux,high,credential-access,plaintext: Provider keys via LiteLLM,medium
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%LOCALAPPDATA%\Programs\cursor\,windows,medium,program-presence,Electron app root,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%LOCALAPPDATA%\Programs\cursor\Cursor.exe,windows,medium,execution|program-presence,Main process,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%LOCALAPPDATA%\Programs\cursor\resources\app\bin\cursor,windows,medium,execution|program-presence,CLI shim,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%LOCALAPPDATA%\cursor-updater\,windows,low,program-presence,Auto-update staging - watch for unsigned writes,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%APPDATA%\Cursor\User\,windows,low,program-presence,"settings.json, globalStorage, workspaceStorage",high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,~/Library/Application Support/Cursor/User/,macos,low,program-presence,Config Dir for Cursor,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,~/.config/Cursor/User/,linux,low,program-presence,Config Dir for Cursor,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,~/.cursor/mcp.json,windows|macos|linux,high,execution|persistence|configuration,Global MCP servers - EXECUTION PRIMITIVE,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,<repo>/.cursor/mcp.json,windows|macos|linux,high,execution|persistence|configuration,Project MCP servers - review on clone,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc,windows|macos|linux,low,configuration|prompt-injection-surface,Prompt-injection surface,high
+AIRT-0002,Cursor,coding-agent-ide,high,disk,%APPDATA%\Cursor\User\skills\,windows,low,program-presence,Custom agent skills,medium
+AIRT-0002,Cursor,coding-agent-ide,high,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\<Cursor GUID>,,medium,,Install metadata + version,high
+AIRT-0002,Cursor,coding-agent-ide,high,registry,HKCU\Software\Classes\cursor\shell\open\command,,medium,,cursor:// protocol handler,medium
+AIRT-0002,Cursor,coding-agent-ide,high,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Run,,high,,Auto-start on login (if enabled),medium
+AIRT-0002,Cursor,coding-agent-ide,high,network,"*.cursor.sh, api2.cursor.sh, *.anysphere.co",,,,Codebase context is sent to Anysphere cloud unless Privacy Mode,medium
+AIRT-0002,Cursor,coding-agent-ide,high,process,Cursor.exe,windows,,,,high
+AIRT-0002,Cursor,coding-agent-ide,high,mcp-config,~/.cursor/mcp.json,,high,execution|persistence,Global scope,high
+AIRT-0002,Cursor,coding-agent-ide,high,mcp-config,<repo>/.cursor/mcp.json,,high,execution|persistence,TRAVELS WITH THE REPO,high
+AIRT-0007,Devin,cloud-agent,medium,disk,Browser session / cookies for app.devin.ai,windows|macos|linux,low,program-presence,THIN SOURCING - primary indicator is outbound DNS,low
+AIRT-0007,Devin,cloud-agent,medium,network,"app.devin.ai, *.cognition.ai",,,,Primary and often ONLY endpoint indicator,low
+AIRT-0007,Devin,cloud-agent,medium,network,"*.devinapps.com (IDE/Desktop iframes), app.devin.ai",,,,CORRECTED: workstations must reach *.devinapps.com - this is the primary network IOC,high
+AIRT-0007,Devin,cloud-agent,medium,process,devin (CLI); VS Code Remote-SSH child,windows|macos|linux,,,,medium
+AIRT-0029,Dify,workflow-engine,medium,network,Dify web + API,,,,,medium
+AIRT-0030,Flowise,workflow-engine,high,network,Flowise UI + prediction API,,,,Frequently found internet-exposed,medium
+AIRT-0030,Flowise,workflow-engine,high,process,node (flowise),windows|macos|linux,,,,medium
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,copilot-language-server (per-platform native binary),windows|macos|linux,medium,execution|program-presence,github/copilot-language-server-release,high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,node <pkg>/@github/copilot-language-server/dist/language-server.js --stdio,windows|macos|linux,medium,execution|program-presence,Node variant; also --node-ipc,high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,~/.copilot/,windows|macos|linux,low,program-presence,"mcp-config.json, lsp-config.json, agents/",high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,~/.copilot/mcp-config.json,windows|macos|linux,high,execution|persistence|configuration,EXECUTION PRIMITIVE,high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,~/.copilot/agents/*.agent.md  |  <repo>/.github/agents/*.agent.md,windows|macos|linux,low,program-presence,Custom autonomous agent definitions - review on clone,high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,disk,%USERPROFILE%\.vscode\extensions\github.copilot-*,windows,low,program-presence,Extension Dir for GitHub Copilot (Agent Mode / CLI),high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,network,"api.github.com, copilot-proxy.githubusercontent.com, api.githubcopilot.com",,,,Token exchange at api.github.com/copilot_internal/v2/token,high
+AIRT-0003,GitHub Copilot (Agent Mode / CLI),coding-agent-ide,high,process,copilot-language-server / node,windows|macos|linux,,,,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,disk,gemini  (npm -g @google/gemini-cli),windows|macos|linux,medium,execution|program-presence,Binary for Google Gemini CLI,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,disk,~/.gemini/settings.json,windows|macos|linux,high,configuration,Auth type at security.auth.selectedType; MCP servers,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,disk,/etc/gemini-cli/settings.json,linux,high,execution|persistence|configuration,SYSTEM-LEVEL policy - privileged tamper/persistence target,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,network,"generativelanguage.googleapis.com, oauth2.googleapis.com, accounts.google.com",,,,,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,process,gemini / node,windows|macos|linux,,,,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,credential,~/.gemini/oauth_creds.json,windows|macos|linux,high,credential-access,"plaintext: PLAINTEXT access + refresh + id tokens, expiry, scope",high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,credential,~/.gemini/google_accounts.json,windows|macos|linux,high,credential-access,plaintext: Bound Google account identity - USER ATTRIBUTION ARTIFACT,high
+AIRT-0037,Google Gemini CLI,coding-agent-cli,critical,credential,~/.gemini/.env  (plus cwd-upward .env search),windows|macos|linux,high,credential-access,plaintext: GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY,high
+AIRT-0038,Goose,mcp-host,high,disk,~/.config/goose/config.yaml,macos|linux,high,configuration,GOOSE_PATH_ROOT overrides. API keys here are IGNORED by design,high
+AIRT-0038,Goose,mcp-host,high,disk,%APPDATA%\goose\config.yaml,windows,high,configuration,Config File for Goose,high
+AIRT-0038,Goose,mcp-host,high,disk,~/.config/goose/permission.yaml ; permissions/tool_permissions.json,windows|macos|linux,high,configuration|user-activity,Records which tools were authorized - CONSENT EVIDENCE,high
+AIRT-0038,Goose,mcp-host,high,disk,Goose session logs,windows|macos|linux,high,timeline|execution,"PURGED AFTER 14 DAYS - collect early, short retention window",high
+AIRT-0038,Goose,mcp-host,high,network,Configured provider endpoint (arbitrary),,,,,high
+AIRT-0038,Goose,mcp-host,high,process,goose / goosed,windows|macos|linux,,,,high
+AIRT-0038,Goose,mcp-host,high,credential,"OS keyring: service `goose`, username `secrets` (single JSON blob)",windows|macos|linux,high,credential-access,"os-keyring: DEFAULT - requires keychain acquisition, not file collection",high
+AIRT-0038,Goose,mcp-host,high,credential,~/.config/goose/secrets.yaml (mode 0600),windows|macos|linux,high,credential-access,plaintext: PLAINTEXT FALLBACK when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless,high
+AIRT-0038,Goose,mcp-host,high,credential,<config>/githubcopilot/info.json,windows|macos|linux,high,credential-access,plaintext: GitHub Copilot token cache,medium
+AIRT-0038,Goose,mcp-host,high,mcp-config,~/.config/goose/config.yaml,,high,execution|persistence,YAML not JSON,high
+AIRT-0020,GPT4All,llm-runtime,medium,disk,~/.local/share/nomic.ai/GPT4All/,windows|macos|linux,medium,program-presence,Models + LocalDocs index; env GPT4ALL_HOME overrides,high
+AIRT-0020,GPT4All,llm-runtime,medium,disk,%LOCALAPPDATA%\Programs\gpt4all\bin\chat.exe,windows,medium,execution|program-presence,Binary for GPT4All,medium
+AIRT-0020,GPT4All,llm-runtime,medium,registry,HKCU\Environment,,medium,,Data + model path redirection,medium
+AIRT-0020,GPT4All,llm-runtime,medium,network,Local HTTP API server,,,,Localhost-bound by design,high
+AIRT-0020,GPT4All,llm-runtime,medium,process,chat.exe / gpt4all.exe,windows,,,,medium
+AIRT-0019,Jan.ai,llm-runtime,high,disk,/usr/local/bin/jan  |  ~/.local/bin/jan,linux,medium,execution|program-presence,Binary for Jan.ai,medium
+AIRT-0019,Jan.ai,llm-runtime,high,disk,~/.config/Jan/  |  ~/jan/,windows|macos|linux,low,program-presence,"data/, models/, logs/",medium
+AIRT-0019,Jan.ai,llm-runtime,high,disk,/etc/jan/jan.env,linux,low,program-presence,SYSTEM-LEVEL config - persistence/tamper target,medium
+AIRT-0019,Jan.ai,llm-runtime,high,network,Jan local API / headless,,,,,medium
+AIRT-0019,Jan.ai,llm-runtime,high,process,"jan, jan-daemon",linux,,,,medium
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,~/.kiro/settings/mcp.json,windows|macos|linux,high,execution|persistence|configuration,"User-scope MCP servers, applied across every workspace. Powers installed from the server directory are auto-registered here under a Powers section.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,<repo>/.kiro/settings/mcp.json,windows|macos|linux,high,execution|persistence|configuration,Workspace-scope MCP servers. TRAVELS WITH THE REPO - a clone or PR can introduce servers that launch on open.,high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,<repo>/.kiro/hooks/*.kiro.hook,windows|macos|linux,high,execution|persistence|configuration,"JSON hook definitions. The when block sets the trigger (fileSaved, fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec task events) with a file pattern; the then block invokes the agent with a prompt. A fileSaved hook is an AUTO-TRIGGERING EXECUTION PRIMITIVE that needs no user interaction. Enumerate every hook during triage.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,<repo>/.kiro/steering/*.md,windows|macos|linux,high,configuration|prompt-injection-surface,"Markdown guidance loaded selectively into agent context, optionally with 'inclusion: auto' frontmatter. Prompt-injection surface; travels with repo.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,<repo>/.kiro/agents/,windows|macos|linux,high,execution|configuration,"Agent configuration directory. Agents can define MCP servers inline, so this is a second location where servers are declared. Watched for hot-reload.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,<repo>/.kiro/specs/,windows|macos|linux,medium,user-activity|timeline,"Spec-driven workflow artifacts (requirements, design, tasks). Useful for reconstructing what the agent was asked to build and when.",medium
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,POWER.md / plugin.json / dev.kiro/,windows|macos|linux,high,execution|configuration,"Kiro Power packages bundling MCP servers, skills, and steering. Installable from a remote repository, including private repos cloned locally.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,Kiro - MCP Logs (View > Output channel),windows|macos|linux,high,timeline|execution,MCP server stdout/stderr. Records connection attempts and failures - useful for establishing which servers actually ran.,high
+AIRT-0041,Kiro,coding-agent-ide,critical,disk,"VS Code-style globalStorage, extensions, and state.vscdb paths",windows|macos|linux,medium,configuration|credential-access,"Kiro presents a VS Code-derived editor (command palette, Output channels). Treat the standard VS Code artifact layout as likely present and check for it, but confirm the exact directory names on the host.",low
+AIRT-0041,Kiro,coding-agent-ide,critical,network,"kiro.dev, AWS Kiro service endpoints",,,,Agent inference and Power/MCP directory retrieval.,high
+AIRT-0041,Kiro,coding-agent-ide,critical,network,kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links,,,,"One-click MCP install deep links. Kiro shows a confirmation dialog listing the command, args, and the NAMES of env vars (values stay hidden) before writing. A convincing link is a social-engineering path to MCP installation.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,process,kiro (IDE); kiro (CLI),windows|macos|linux,,,,high
+AIRT-0041,Kiro,coding-agent-ide,critical,credential,AWS Builder ID / IAM Identity Center token cache,windows|macos|linux,high,credential-access,unknown: Kiro authenticates via AWS identity. The exact cache path was not confirmed; check ~/.aws/sso/cache/ and the Kiro config root before asserting a location.,low
+AIRT-0041,Kiro,coding-agent-ide,critical,credential,mcpServers.<name>.env inside ~/.kiro/settings/mcp.json,windows|macos|linux,high,credential-access,"plaintext: MCP server env blocks. Kiro only expands env vars that are explicitly approved and warns on unapproved ones, which is a genuine mitigating control - but approved values still sit in the file.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,mcp-config,~/.kiro/settings/mcp.json,,high,execution|persistence,"Entries carry an autoApprove array listing tools that execute WITHOUT user confirmation - read it first. Hot-reload means a tampered config applies at the next idle boundary with no restart, so file mtime is the change signal, not process start time.",high
+AIRT-0041,Kiro,coding-agent-ide,critical,mcp-config,<repo>/.kiro/settings/mcp.json,,high,execution|persistence,TRAVELS WITH THE REPO. Gate in CI alongside .kiro/hooks/.,high
+AIRT-0023,KoboldCpp,llm-runtime,medium,network,Kobold API + web UI,,,,,medium
+AIRT-0023,KoboldCpp,llm-runtime,medium,process,koboldcpp.exe,windows,,,,medium
+AIRT-0044,Langflow,workflow-engine,critical,disk,~/.langflow/  (LANGFLOW_CONFIG_DIR),windows|macos|linux,medium,program-presence,Config and database root.,medium
+AIRT-0044,Langflow,workflow-engine,critical,disk,"langflow.db (SQLite, in the config dir)",windows|macos|linux,low,program-presence,"Flows, users, and stored credentials. Flow definitions contain embedded API keys.",medium
+AIRT-0044,Langflow,workflow-engine,critical,disk,LANGFLOW_AUTO_LOGIN,windows|macos|linux,medium,configuration,"When true, the instance requires NO LOGIN. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.",high
+AIRT-0044,Langflow,workflow-engine,critical,disk,LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD,windows|macos|linux,high,configuration,"Superuser bootstrap credentials, commonly left plaintext in compose files.",medium
+AIRT-0044,Langflow,workflow-engine,critical,disk,Exported flow JSON files,windows|macos|linux,low,user-activity|data-access,Flow exports embed credentials and custom Python component code.,medium
+AIRT-0044,Langflow,workflow-engine,critical,network,Langflow web UI + API,,,,"MASS-EXPLOITED. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.",high
+AIRT-0044,Langflow,workflow-engine,critical,network,Configured LLM provider endpoints,,,,,high
+AIRT-0044,Langflow,workflow-engine,critical,process,python (langflow run) / uvicorn,windows|macos|linux,,,,high
+AIRT-0021,llama.cpp,llm-runtime,medium,disk,llama-server / llama-cli / llama-run / llama-quantize,windows|macos|linux,medium,execution|program-presence,"Portable, easily renamed",high
+AIRT-0021,llama.cpp,llm-runtime,medium,disk,*.gguf,windows|macos|linux,low,program-presence,PRIMARY FILE IOC across all local runtimes,high
+AIRT-0021,llama.cpp,llm-runtime,medium,network,llama-server HTTP API,,,,,high
+AIRT-0021,llama.cpp,llm-runtime,medium,process,"llama-server, llama-cli, llama-run",windows|macos|linux,,,,high
+AIRT-0018,LM Studio,llm-runtime,high,disk,%LOCALAPPDATA%\Programs\lm-studio\LM Studio.exe,windows,medium,execution|program-presence,Binary for LM Studio,high
+AIRT-0018,LM Studio,llm-runtime,high,disk,~/.lmstudio/bin/lms,windows|macos|linux,low,program-presence,Headless control CLI,high
+AIRT-0018,LM Studio,llm-runtime,high,disk,llmster,windows|macos|linux,low,program-presence,Background service process,medium
+AIRT-0018,LM Studio,llm-runtime,high,disk,~/.lmstudio/models/,windows|macos|linux,medium,program-presence|data-access,Publisher/model/*.gguf layout,high
+AIRT-0018,LM Studio,llm-runtime,high,disk,~/.lmstudio/settings.json,windows|macos|linux,high,configuration,Server bind address + port live here,high
+AIRT-0018,LM Studio,llm-runtime,high,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\*LM Studio*,,medium,,Install metadata,medium
+AIRT-0018,LM Studio,llm-runtime,high,registry,HKCU\Environment,,medium,,0.0.0.0 = NETWORK EXPOSURE of the OpenAI-compatible API,medium
+AIRT-0018,LM Studio,llm-runtime,high,network,OpenAI-compatible API,,,,,high
+AIRT-0018,LM Studio,llm-runtime,high,network,"huggingface.co, lmstudio.ai",,,,Model downloads,high
+AIRT-0018,LM Studio,llm-runtime,high,process,"LM Studio.exe, llmster.exe, lms.exe",windows,,,,high
+AIRT-0024,LocalAI,llm-runtime,medium,network,OpenAI-compatible API,,,,Container default binds broadly,medium
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,disk,~/.n8n/  (Docker: /home/node/.n8n),windows|macos|linux,medium,program-presence,"database.sqlite, config, encryptionKey",high
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,disk,N8N_ENCRYPTION_KEY,windows|macos|linux,high,configuration,HIGH-VALUE SECRET,high
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,registry,HKCU\Environment,,medium,,Decrypts ALL stored n8n credentials - CROWN JEWEL,high
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,network,n8n editor UI + REST API + webhooks,,,,Exposed 5678 without auth = full workflow + credential compromise. Webhooks are unauthenticated ingress by design.,high
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,process,node (n8n),linux|docker,,,,high
+AIRT-0025,n8n (AI Agent / LangChain nodes),workflow-engine,high,credential,~/.n8n/database.sqlite,windows|macos|linux,high,credential-access,plaintext: Credentials encrypted with N8N_ENCRYPTION_KEY - key theft = full cred compromise,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,%LOCALAPPDATA%\Programs\Ollama\ollama.exe,windows,medium,execution|program-presence,Binary for Ollama,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,/usr/local/bin/ollama  |  /Applications/Ollama.app,macos,medium,execution|program-presence,Binary for Ollama,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,/usr/local/bin/ollama  |  /usr/bin/ollama,linux,medium,execution|program-presence,systemd unit ollama.service,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,%USERPROFILE%\.ollama\models\,windows,medium,program-presence|data-access,blobs/ + manifests/ - multi-GB,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,~/.ollama/models/,macos|linux,medium,program-presence|data-access,Service account home on Linux (/usr/share/ollama/.ollama),high
+AIRT-0017,Ollama,llm-runtime,critical,disk,Modelfile,windows|macos|linux,low,configuration,Can embed SYSTEM prompts - jailbreak/backdoor vector,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,/etc/systemd/system/ollama.service  |  .../ollama.service.d/*.conf,linux,medium,persistence|configuration,PERSISTENCE + where OLLAMA_HOST=0.0.0.0 is usually set,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,/usr/share/ollama/.ollama/models/,linux,medium,program-presence|data-access,SERVICE ACCOUNT HOME. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama MISSES ALL MODELS on a systemd install.,high
+AIRT-0017,Ollama,llm-runtime,critical,disk,journalctl -u ollama,linux,high,timeline|execution,Ollama writes no separate log file under systemd - journald is the only timeline source.,high
+AIRT-0017,Ollama,llm-runtime,critical,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Run,,high,,Auto-start ollama app -> starts server on 11434,high
+AIRT-0017,Ollama,llm-runtime,critical,registry,HKCU\Environment,,medium,,Bind address override - VALUE OF 0.0.0.0 = NETWORK EXPOSURE,high
+AIRT-0017,Ollama,llm-runtime,critical,registry,HKCU\Environment,,medium,,Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls,high
+AIRT-0017,Ollama,llm-runtime,critical,registry,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Ollama,,medium,,Install metadata,high
+AIRT-0017,Ollama,llm-runtime,critical,network,Ollama OpenAI-compatible + native API,,,,"NO DEFAULT AUTH. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.",high
+AIRT-0017,Ollama,llm-runtime,critical,network,"registry.ollama.ai, ollama.com",,,,Model pulls - multi-GB inbound transfers,high
+AIRT-0017,Ollama,llm-runtime,critical,process,"ollama.exe, ollama app.exe",windows,,,,high
+AIRT-0017,Ollama,llm-runtime,critical,process,ollama,linux,,,,high
+AIRT-0017,Ollama,llm-runtime,critical,process,Ollama / ollama,macos,,,,high
+AIRT-0017,Ollama,llm-runtime,critical,credential,~/.ollama/id_ed25519  |  id_ed25519.pub,windows|macos|linux,high,credential-access,plaintext: Instance identity keypair,medium
+AIRT-0015,Open Interpreter,code-execution-agent,critical,disk,interpreter  (venv: .../open-interpreter/bin/interpreter),windows|macos|linux,medium,execution|program-presence,Python 3.10/3.11,high
+AIRT-0015,Open Interpreter,code-execution-agent,critical,disk,...\open-interpreter\Scripts\interpreter.EXE,windows,medium,execution|program-presence,Binary for Open Interpreter,high
+AIRT-0015,Open Interpreter,code-execution-agent,critical,disk,~/.config/Open Interpreter/  |  %APPDATA%\Open Interpreter\,windows|macos|linux,low,program-presence,"profiles/, config yaml",medium
+AIRT-0015,Open Interpreter,code-execution-agent,critical,disk,llamafile artifacts (--local mode),windows|macos|linux,low,program-presence,No API key needed - fully offline agent,medium
+AIRT-0015,Open Interpreter,code-execution-agent,critical,network,api.openai.com or configured base_url; NONE in --local mode,,,,--local mode has ZERO network IOCs - file/process telemetry only,high
+AIRT-0015,Open Interpreter,code-execution-agent,critical,process,interpreter / python,windows|macos|linux,,,,high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,/app/backend/data/  (DATA_DIR; Docker volume open-webui),linux|docker,high,data-access|configuration,"Root of all persistent state. DATA_DIR relocates it. If the volume was never mounted, all state lives in the container's writable layer and is lost on recreation - check before concluding data was deleted.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,/app/backend/data/webui.db,linux|docker,high,user-activity|data-access|timeline|credential-access,"Primary SQLite database - users, roles, chats, API keys, Tools and Functions source, RAG metadata. The single highest-value artifact on the host; contains full conversation history and stored Python.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,/app/backend/data/.webui_secret_key,linux|docker,high,credential-access,"Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not set in the environment and reloaded on restart.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,/app/backend/data/config.json,linux|docker,high,configuration,"Persisted application config. Note the tiered config model - database settings override environment variables unless ENABLE_PERSISTENT_CONFIG is false, so the running config may not match the env you were shown.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,/app/backend/data/uploads/ and vector store directory,linux|docker,high,data-access,RAG document uploads and embedding store. Scope data exposure here - users commonly upload internal documents.,medium
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,.env (deployment directory),linux|docker|windows|macos,high,credential-access|configuration,"Deployment env file. Commonly holds WEBUI_SECRET_KEY, OPENAI_API_KEY, OLLAMA_BASE_URL, and WEBUI_ADMIN_PASSWORD in plaintext.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,disk,docker-compose.yml / docker run invocation,linux|docker,high,configuration,"Records port mapping, volume mounts, and env injection. Establishes whether the instance was network-exposed and whether state was persisted.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,network,Open WebUI HTTP server (uvicorn),,,,Published with -p 3000:8080 in the documented quick start. An instance exposed before first registration can be claimed by any visitor.,high
+AIRT-0042,Open WebUI,llm-runtime,critical,network,Configured inference backends via OLLAMA_BASE_URL / OPENAI_API_BASE_URL,,,,Both are endpoint-override variables - a modified value silently redirects all prompts and documents to an attacker-controlled proxy.,high
+AIRT-0042,Open WebUI,llm-runtime,critical,network,Direct Connections to user-supplied OpenAI-compatible servers,,,,User-configurable external model servers. The feature behind CVE-2025-64496; a hostile server could reach the victim's browser session.,high
+AIRT-0042,Open WebUI,llm-runtime,critical,credential,/app/backend/data/.webui_secret_key,linux|docker,high,credential-access,plaintext: Signs session tokens. Theft permits forging a session for any user including an administrator. Rotating it invalidates all existing sessions - which is also the containment action after suspected theft.,high
+AIRT-0042,Open WebUI,llm-runtime,critical,credential,webui.db (user and API key tables),linux|docker,high,credential-access,sqlite: Per-user API keys and hashed passwords. Admin-configured upstream provider keys are also reachable through the application.,high
+AIRT-0042,Open WebUI,llm-runtime,critical,credential,WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME,linux|docker,high,credential-access,"plaintext: Headless admin creation on first startup. The password is hashed before storage, but the environment variable itself is frequently left in plaintext in compose files, shell history, and container inspect output.",high
+AIRT-0042,Open WebUI,llm-runtime,critical,credential,Tools and Functions Python source stored in webui.db,linux|docker,high,credential-access,sqlite: Tool source commonly embeds hard-coded API keys and internal service URLs. This is exactly what CVE-2026-70491 exposed to non-admin users.,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,codex  (npm -g @openai/codex; brew cask; winget),windows|macos|linux,medium,execution|program-presence,Binary for OpenAI Codex CLI,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,~/.codex/config.toml,windows|macos|linux,high,configuration,Contains [mcp_servers] blocks - EXECUTION PRIMITIVE,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,~/.codex/history.jsonl,windows|macos|linux,high,user-activity|timeline,Prompt history - FORENSIC TIMELINE SOURCE,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl,windows|macos|linux,high,user-activity|data-access|timeline,FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,~/.codex/logs/codex-tui.log,windows|macos|linux,high,timeline|execution,Log for OpenAI Codex CLI,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,CODEX_HOME,windows|macos|linux,medium,configuration,Relocates the entire artifact set - check before concluding absence,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,disk,AGENTS.md,windows|macos|linux,low,configuration|prompt-injection-surface,"Prompt-injection surface, travels with repo",high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,network,"api.openai.com, chatgpt.com (OAuth)",,,,,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,process,codex / node,windows|macos|linux,,,,high
+AIRT-0036,OpenAI Codex CLI,coding-agent-cli,critical,credential,~/.codex/auth.json,windows|macos|linux,high,credential-access,plaintext: PLAINTEXT ChatGPT OAuth token,high
+AIRT-0034,OpenAI Operator / CUA,computer-use-agent,low,network,"operator.chatgpt.com, *.openai.com",,,,,medium
+AIRT-0043,OpenHands,agent-framework,critical,disk,~/.openhands/config.toml,linux|docker,high,configuration,"[core] workspace_base, [llm] model/api_key/base_url. PLAINTEXT api_key. base_url is an inference-redirection vector.",high
+AIRT-0043,OpenHands,agent-framework,critical,disk,~/.openhands-state/  (mounted to /.openhands-state),linux|docker,medium,program-presence,Persistent agent state across container restarts. Older deployments use this path; newer ones mount ~/.openhands.,high
+AIRT-0043,OpenHands,agent-framework,critical,disk,~/.openhands/  (mounted to /.openhands),linux|docker,medium,program-presence,Current state directory. Also holds user skills at ~/.openhands/skills/.,high
+AIRT-0043,OpenHands,agent-framework,critical,disk,"workspace_base (default ./workspace, mounted to /opt/workspace_base)",linux|docker,medium,program-presence,AGENT-GENERATED AND AGENT-MODIFIED FILES. Treat as unknown-origin content during triage.,high
+AIRT-0043,OpenHands,agent-framework,critical,disk,~/.openhands/skills/ ; ~/.agents/skills/,linux|docker,low,program-presence,Custom skill definitions loaded by the agent.,medium
+AIRT-0043,OpenHands,agent-framework,critical,disk,docker-compose.yml / docker run invocation,linux|docker,high,configuration,"CRITICAL TRIAGE ARTIFACT: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent.",high
+AIRT-0043,OpenHands,agent-framework,critical,disk,ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands,linux|docker,high,program-presence,Sandbox runtime image pulled per session. Older tags use docker.all-hands.dev/all-hands-ai/.,high
+AIRT-0043,OpenHands,agent-framework,critical,network,OpenHands web UI + API (uvicorn),,,,Documented quick start publishes -p 3000:3000. Frontend dev server on 3001 when run from source.,high
+AIRT-0043,OpenHands,agent-framework,critical,network,Sandbox VS Code server,,,,Published when the in-sandbox editor is used.,medium
+AIRT-0043,OpenHands,agent-framework,critical,network,"docker.openhands.dev, ghcr.io, docker.all-hands.dev",,,,Runtime image pulls.,high
+AIRT-0043,OpenHands,agent-framework,critical,network,LLM_BASE_URL / LLM_OLLAMA_BASE_URL configured endpoint,,,,Endpoint-override variables - a modified value redirects all agent traffic.,high
+AIRT-0043,OpenHands,agent-framework,critical,process,python (uvicorn openhands.server.listen:app),linux|docker,,,,high
+AIRT-0043,OpenHands,agent-framework,critical,mcp-config,~/.openhands/config.toml,,high,execution|persistence,TOML not JSON,high
+AIRT-0031,Playwright MCP,browser-agent,critical,disk,npx @playwright/mcp@latest,windows|macos|linux,low,program-presence,RUNS WITHOUT INSTALL - npx cache only,high
+AIRT-0031,Playwright MCP,browser-agent,critical,disk,%USERPROFILE%\AppData\Local\ms-playwright\,windows,low,program-presence,Downloaded Chromium/Firefox/WebKit binaries,high
+AIRT-0031,Playwright MCP,browser-agent,critical,disk,~/Library/Caches/ms-playwright/,macos,low,program-presence,Browser Cache for Playwright MCP,high
+AIRT-0031,Playwright MCP,browser-agent,critical,disk,~/.cache/ms-playwright/,linux,low,program-presence,Browser Cache for Playwright MCP,high
+AIRT-0031,Playwright MCP,browser-agent,critical,disk,"outputDir (config) - screenshots, traces, PDFs",windows|macos|linux,low,program-presence,May contain captured sensitive screens,medium
+AIRT-0031,Playwright MCP,browser-agent,critical,network,SSE/HTTP transport mode,,,,0.0.0.0 bind = REMOTE BROWSER CONTROL of the host,high
+AIRT-0031,Playwright MCP,browser-agent,critical,network,playwright.azureedge.net / cdn.playwright.dev (browser binary download),,,,First-run downloads full browser binaries,high
+AIRT-0031,Playwright MCP,browser-agent,critical,process,npx -> node (@playwright/mcp),windows|macos|linux,,,,high
+AIRT-0031,Playwright MCP,browser-agent,critical,credential,--storage-state <file.json>,windows|macos|linux,high,credential-access,plaintext: SERIALIZED COOKIES + localStorage = SESSION HIJACK ARTIFACT,high
+AIRT-0040,Roo Code,coding-agent-ide,high,disk,%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json,windows,high,execution|persistence|configuration,EXECUTION PRIMITIVE,high
+AIRT-0040,Roo Code,coding-agent-ide,high,disk,~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json,macos,high,execution|persistence|configuration,MCP Config for Roo Code,high
+AIRT-0040,Roo Code,coding-agent-ide,high,disk,<repo>/.roo/mcp.json,windows|macos|linux,high,execution|persistence|configuration,TRAVELS WITH THE REPO - review on clone/PR,high
+AIRT-0040,Roo Code,coding-agent-ide,high,network,Configured provider (arbitrary),,,,,high
+AIRT-0040,Roo Code,coding-agent-ide,high,process,node (extension host),windows|macos|linux,,,,high
+AIRT-0040,Roo Code,coding-agent-ide,high,credential,VS Code SecretStorage -> OS keychain (state.vscdb),windows|macos|linux,high,credential-access,plaintext: ,high
+AIRT-0040,Roo Code,coding-agent-ide,high,mcp-config,…/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json,,high,execution|persistence,,high
+AIRT-0040,Roo Code,coding-agent-ide,high,mcp-config,<repo>/.roo/mcp.json,,high,execution|persistence,TRAVELS WITH THE REPO,high
+AIRT-0035,Skyvern,browser-agent,high,disk,Docker compose stack + .env,windows|macos|linux,low,program-presence,Handles credentialed logins by design,medium
+AIRT-0035,Skyvern,browser-agent,high,network,Skyvern API + UI,,,,,medium
+AIRT-0035,Skyvern,browser-agent,high,process,python (uvicorn),linux|docker,,,,medium
+AIRT-0010,Supermaven,code-completion,medium,disk,Downloaded Supermaven agent binary (editor-managed),windows|macos|linux,medium,execution|program-presence,THIN SOURCING - validate locally,low
+AIRT-0010,Supermaven,code-completion,medium,disk,~/.config/zed/settings.json  ->  inline_completion_provider: supermaven,windows|macos|linux,low,program-presence,Zed Config for Supermaven,medium
+AIRT-0010,Supermaven,code-completion,medium,network,*.supermaven.com,,,,,low
+AIRT-0009,Tabnine,code-completion,medium,disk,~/.tabnine/agent/settings.json,windows|macos|linux,low,program-presence,User scope,high
+AIRT-0009,Tabnine,code-completion,medium,disk,<repo>/.tabnine/agent/settings.json,windows|macos|linux,low,program-presence,Project scope - overrides user,high
+AIRT-0009,Tabnine,code-completion,medium,disk,Downloaded per-platform Tabnine binary (binary_path configurable),windows|macos|linux,medium,execution|program-presence,BINARY SUBSTITUTION RISK,high
+AIRT-0009,Tabnine,code-completion,medium,disk,TABNINE_CLI_SYSTEM_SETTINGS_PATH / TABNINE_CLI_SYSTEM_DEFAULTS_PATH,windows|macos|linux,medium,configuration,Env var config hijack vector,high
+AIRT-0009,Tabnine,code-completion,medium,network,"api.tabnine.com, update.tabnine.com",,,,Optional OTLP telemetry endpoint is configurable,medium
+AIRT-0009,Tabnine,code-completion,medium,process,TabNine.exe / TabNine-deep-local.exe,windows,,,,medium
+AIRT-0022,text-generation-webui (oobabooga),llm-runtime,high,disk,text-generation-webui.exe  |  python server.py,windows|macos|linux,medium,execution|program-presence,Binary for text-generation-webui (oobabooga),medium
+AIRT-0022,text-generation-webui (oobabooga),llm-runtime,high,disk,<install>/models/,windows|macos|linux,medium,program-presence|data-access,Models Dir for text-generation-webui (oobabooga),medium
+AIRT-0022,text-generation-webui (oobabooga),llm-runtime,high,disk,<install>/extensions/,windows|macos|linux,low,program-presence,ARBITRARY PYTHON EXECUTION,medium
+AIRT-0022,text-generation-webui (oobabooga),llm-runtime,high,network,Gradio UI / OpenAI-compatible API,,,,--share creates a PUBLIC gradio.live TUNNEL - covert ingress,medium
+AIRT-0022,text-generation-webui (oobabooga),llm-runtime,high,process,"python (server.py), text-generation-webui.exe",windows|macos|linux,,,,medium

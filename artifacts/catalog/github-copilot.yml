@@ -1,0 +1,125 @@
+# AI agent artifact catalog entry
+# AIRT-0003 - GitHub Copilot (Agent Mode / CLI)
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0003
+name: GitHub Copilot (Agent Mode / CLI)
+vendor: GitHub/Microsoft
+category: coding-agent-ide
+description: copilot-language-server binary + Copilot CLI. Agent mode runs multi-step tasks with tool calls; bundles a GitHub MCP server.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Custom .agent.md files define autonomous behavior. Token exchange via api.github.com/copilot_internal/v2/token.
+artifacts:
+  disk:
+    - path: copilot-language-server (per-platform native binary)
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: github/copilot-language-server-release
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: IDE extension / release artifact
+      confidence: high
+    - path: "node <pkg>/@github/copilot-language-server/dist/language-server.js --stdio"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Node variant; also --node-ipc
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm
+      confidence: high
+    - path: ~/.copilot/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: mcp-config.json, lsp-config.json, agents/
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: Copilot CLI
+      confidence: high
+    - path: ~/.copilot/mcp-config.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: mcp-config
+      description: EXECUTION PRIMITIVE
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: Copilot CLI
+      confidence: high
+    - path: "~/.copilot/agents/*.agent.md  |  <repo>/.github/agents/*.agent.md"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: Custom autonomous agent definitions - review on clone
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
+    - path: "%USERPROFILE%\\.vscode\\extensions\\github.copilot-*"
+      os:
+        - windows
+      artifact_type: install-dir
+      description: Extension Dir for GitHub Copilot (Agent Mode / CLI)
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: VS Code
+      confidence: high
+  network:
+    - direction: egress
+      indicator: api.github.com, copilot-proxy.githubusercontent.com, api.githubcopilot.com
+      port: 443/TCP
+      description: Token exchange at api.github.com/copilot_internal/v2/token
+      confidence: high
+  process:
+    - name: copilot-language-server / node
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Code.exe / cursor / nvim
+      typical_children: git, gh, node (MCP)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques: []
+attack_techniques: []
+references: []
+last_modified: "2026-08-11"

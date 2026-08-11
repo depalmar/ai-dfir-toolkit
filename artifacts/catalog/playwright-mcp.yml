@@ -1,0 +1,127 @@
+# AI agent artifact catalog entry
+# AIRT-0031 - Playwright MCP
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0031
+name: Playwright MCP
+vendor: Microsoft (OSS)
+category: browser-agent
+description: "npx @playwright/mcp - gives any MCP client full browser control. Downloads browser binaries on first run."
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Local browser driving via MCP
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: "--caps=storage exposes cookie/localStorage tools. --storage-state replays AUTHENTICATED SESSIONS. Session-token theft and MFA-bypass surface."
+artifacts:
+  disk:
+    - path: "npx @playwright/mcp@latest"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: RUNS WITHOUT INSTALL - npx cache only
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: npx (no install)
+      confidence: high
+    - path: "%USERPROFILE%\\AppData\\Local\\ms-playwright\\"
+      os:
+        - windows
+      artifact_type: data-dir
+      description: Downloaded Chromium/Firefox/WebKit binaries
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: first run
+      confidence: high
+    - path: ~/Library/Caches/ms-playwright/
+      os:
+        - macos
+      artifact_type: data-dir
+      description: Browser Cache for Playwright MCP
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: first run
+      confidence: high
+    - path: ~/.cache/ms-playwright/
+      os:
+        - linux
+      artifact_type: data-dir
+      description: Browser Cache for Playwright MCP
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: first run
+      confidence: high
+    - path: outputDir (config) - screenshots, traces, PDFs
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: May contain captured sensitive screens
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: SSE/HTTP transport mode
+      port: Configurable (PLAYWRIGHT_MCP_HOST)
+      description: 0.0.0.0 bind = REMOTE BROWSER CONTROL of the host
+      confidence: high
+      default_bind: 127.0.0.1 (0.0.0.0 if set)
+      authentication: NONE
+      exposure_risk: critical
+    - direction: egress
+      indicator: playwright.azureedge.net / cdn.playwright.dev (browser binary download)
+      port: 443/TCP
+      description: First-run downloads full browser binaries
+      confidence: high
+  process:
+    - name: "npx -> node (@playwright/mcp)"
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Claude.exe / Cursor.exe / Code.exe / node
+      typical_children: chrome.exe / chromium / headless_shell / firefox
+      service_or_daemon: "No"
+      persistence: Persists via the MCP config of its host client
+      confidence: high
+credentials:
+  - location: "--storage-state <file.json>"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: session-state
+    description: SERIALIZED COOKIES + localStorage = SESSION HIJACK ARTIFACT
+    confidence: high
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0086
+  - AML.T0053
+attack_techniques:
+  - T1185
+  - T1539
+  - T1552
+references: []
+last_modified: "2026-08-11"

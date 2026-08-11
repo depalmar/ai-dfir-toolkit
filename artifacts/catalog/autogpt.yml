@@ -1,0 +1,59 @@
+# AI agent artifact catalog entry
+# AIRT-0012 - AutoGPT
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0012
+name: AutoGPT
+vendor: Significant Gravitas (OSS)
+category: agent-framework
+description: Python autonomous agent loop; goal-driven, self-prompting. Commonly self-hosted via Docker.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Executes generated code and shell commands in a loop with minimal supervision. Workspace dir accumulates agent-generated files.
+artifacts:
+  disk:
+    - path: "<install>/workspace/  |  auto_gpt_workspace/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: AGENT-GENERATED FILES - triage as unknown-origin content
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+credentials:
+  - location: "<install>/.env"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: OPENAI_API_KEY plaintext
+    confidence: medium
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,139 @@
+# AI agent artifact catalog entry
+# AIRT-0038 - Goose
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0038
+name: Goose
+vendor: Block
+category: mcp-host
+description: Rust-based agent shipping both CLI and Desktop. Extension/MCP host. GOOSE_PATH_ROOT overrides config root.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) — but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers."
+artifacts:
+  disk:
+    - path: ~/.config/goose/config.yaml
+      os:
+        - macos
+        - linux
+      artifact_type: config-file
+      description: GOOSE_PATH_ROOT overrides. API keys here are IGNORED by design
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: "%APPDATA%\\goose\\config.yaml"
+      os:
+        - windows
+      artifact_type: config-file
+      description: Config File for Goose
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.config/goose/permission.yaml ; permissions/tool_permissions.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Records which tools were authorized - CONSENT EVIDENCE
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - user-activity
+      install_method: n/a
+      confidence: high
+    - path: Goose session logs
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: log
+      description: PURGED AFTER 14 DAYS - collect early, short retention window
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: high
+  network:
+    - direction: egress
+      indicator: Configured provider endpoint (arbitrary)
+      port: 443/TCP
+      description: ""
+      confidence: high
+  process:
+    - name: goose / goosed
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell / Goose Desktop
+      typical_children: sh, bash, node, python, uvx (extensions)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: "OS keyring: service `goose`, username `secrets` (single JSON blob)"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: os-keyring
+    secret_type: api-key
+    description: DEFAULT - requires keychain acquisition, not file collection
+    confidence: high
+  - location: ~/.config/goose/secrets.yaml (mode 0600)
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: PLAINTEXT FALLBACK when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless
+    confidence: high
+  - location: "<config>/githubcopilot/info.json"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: GitHub Copilot token cache
+    confidence: medium
+mcp:
+  - config_path: ~/.config/goose/config.yaml
+    config_key: extensions
+    spawn_mechanism: Child process at agent start
+    secrets_location: OS keyring (or secrets.yaml fallback)
+    persistence_trigger: Every agent start
+    triage_priority: p1
+    notes: YAML not JSON
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0110
+attack_techniques:
+  - T1059
+  - T1547.001
+  - T1195.002
+  - T1552.001
+references: []
+last_modified: "2026-08-11"

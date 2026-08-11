@@ -1,0 +1,202 @@
+# AI agent artifact catalog entry
+# AIRT-0042 - Open WebUI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0042
+name: Open WebUI
+vendor: Open WebUI (OSS)
+category: llm-runtime
+description: >-
+  Self-hosted web interface for local and remote LLMs, formerly Ollama WebUI.
+  Multi-user with RBAC, RAG document ingestion, and a Tools/Functions system that
+  executes Python. Usually deployed via Docker; also installable via pip.
+website: https://openwebui.com
+status: active
+supported_os:
+  - linux
+  - docker
+  - windows
+  - macos
+execution_model: Local or remote inference, self-hosted multi-user server
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: critical
+confidence: high
+abuse_potential: >-
+  The first account registered on a fresh instance is automatically the
+  administrator, so an instance reachable before its owner registers can be taken
+  over outright by whoever signs up first. Tools and Functions execute Python
+  server-side. The OpenAI router exposes a catch-all proxy that forwards requests
+  upstream using the admin-configured API key, turning an authenticated account
+  into free use of the organisation's inference spend. Multiple RCE, SSRF, and
+  information-disclosure CVEs have shipped against it.
+
+artifacts:
+  disk:
+    - path: /app/backend/data/  (DATA_DIR; Docker volume open-webui)
+      os: [linux, docker]
+      artifact_type: data-dir
+      description: >-
+        Root of all persistent state. DATA_DIR relocates it. If the volume was
+        never mounted, all state lives in the container's writable layer and is
+        lost on recreation - check before concluding data was deleted.
+      forensic_value: high
+      evidence_type: [data-access, configuration]
+      confidence: high
+    - path: /app/backend/data/webui.db
+      os: [linux, docker]
+      artifact_type: database
+      description: >-
+        Primary SQLite database - users, roles, chats, API keys, Tools and
+        Functions source, RAG metadata. The single highest-value artifact on the
+        host; contains full conversation history and stored Python.
+      forensic_value: high
+      evidence_type: [user-activity, data-access, timeline, credential-access]
+      confidence: high
+    - path: /app/backend/data/.webui_secret_key
+      os: [linux, docker]
+      artifact_type: credential-file
+      description: >-
+        Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not
+        set in the environment and reloaded on restart.
+      forensic_value: high
+      evidence_type: [credential-access]
+      confidence: high
+    - path: /app/backend/data/config.json
+      os: [linux, docker]
+      artifact_type: config-file
+      description: >-
+        Persisted application config. Note the tiered config model - database
+        settings override environment variables unless ENABLE_PERSISTENT_CONFIG is
+        false, so the running config may not match the env you were shown.
+      forensic_value: high
+      evidence_type: [configuration]
+      confidence: high
+    - path: /app/backend/data/uploads/ and vector store directory
+      os: [linux, docker]
+      artifact_type: data-dir
+      description: >-
+        RAG document uploads and embedding store. Scope data exposure here - users
+        commonly upload internal documents.
+      forensic_value: high
+      evidence_type: [data-access]
+      confidence: medium
+    - path: .env (deployment directory)
+      os: [linux, docker, windows, macos]
+      artifact_type: credential-file
+      description: >-
+        Deployment env file. Commonly holds WEBUI_SECRET_KEY, OPENAI_API_KEY,
+        OLLAMA_BASE_URL, and WEBUI_ADMIN_PASSWORD in plaintext.
+      forensic_value: high
+      evidence_type: [credential-access, configuration]
+      confidence: high
+    - path: docker-compose.yml / docker run invocation
+      os: [linux, docker]
+      artifact_type: config-file
+      description: >-
+        Records port mapping, volume mounts, and env injection. Establishes whether
+        the instance was network-exposed and whether state was persisted.
+      forensic_value: high
+      evidence_type: [configuration]
+      confidence: high
+  network:
+    - direction: listener
+      indicator: Open WebUI HTTP server (uvicorn)
+      port: 8080/TCP in container, commonly published as 3000/TCP on the host
+      default_bind: 0.0.0.0 within the container
+      authentication: Application login; first registrant becomes admin
+      exposure_risk: critical
+      description: >-
+        Published with -p 3000:8080 in the documented quick start. An instance
+        exposed before first registration can be claimed by any visitor.
+      confidence: high
+    - direction: egress
+      indicator: Configured inference backends via OLLAMA_BASE_URL / OPENAI_API_BASE_URL
+      port: 443/TCP, 11434/TCP
+      description: >-
+        Both are endpoint-override variables - a modified value silently redirects
+        all prompts and documents to an attacker-controlled proxy.
+      confidence: high
+    - direction: egress
+      indicator: Direct Connections to user-supplied OpenAI-compatible servers
+      port: 443/TCP
+      description: >-
+        User-configurable external model servers. The feature behind CVE-2025-64496;
+        a hostile server could reach the victim's browser session.
+      confidence: high
+
+credentials:
+  - location: /app/backend/data/.webui_secret_key
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      Signs session tokens. Theft permits forging a session for any user including
+      an administrator. Rotating it invalidates all existing sessions - which is
+      also the containment action after suspected theft.
+    confidence: high
+  - location: webui.db (user and API key tables)
+    os: [linux, docker]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Per-user API keys and hashed passwords. Admin-configured upstream provider
+      keys are also reachable through the application.
+    confidence: high
+  - location: WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: admin-credential
+    description: >-
+      Headless admin creation on first startup. The password is hashed before
+      storage, but the environment variable itself is frequently left in plaintext
+      in compose files, shell history, and container inspect output.
+    confidence: high
+  - location: Tools and Functions Python source stored in webui.db
+    os: [linux, docker]
+    storage: sqlite
+    secret_type: embedded-credentials
+    description: >-
+      Tool source commonly embeds hard-coded API keys and internal service URLs.
+      This is exactly what CVE-2026-70491 exposed to non-admin users.
+    confidence: high
+
+collection:
+  triage_priority: p1
+  guidance: >-
+    Snapshot the whole DATA_DIR volume before touching the container - recreating
+    a container without the volume destroys everything. webui.db is the priority
+    artifact; it carries chats, users, API keys, and stored Python in one file.
+    Capture the compose file or docker run invocation to establish exposure and
+    whether persistence was configured. Record the version, since which CVEs apply
+    is version-dependent. If .webui_secret_key may have been read, rotate it and
+    force re-authentication.
+
+atlas_techniques: [AML.T0024, AML.T0029, AML.T0082]
+attack_techniques: [T1133, T1059, T1552.001, T1078, T1213]
+
+references:
+  - title: Open WebUI hardening guide (WEBUI_SECRET_KEY, first-user admin, Tools/Functions)
+    url: https://docs.openwebui.com/getting-started/advanced-topics/hardening/
+    accessed: '2026-08-11'
+  - title: Open WebUI quick start (ports, volume, secret key)
+    url: https://docs.openwebui.com/getting-started/quick-start/
+    accessed: '2026-08-11'
+  - title: Open WebUI roles and headless admin creation
+    url: https://docs.openwebui.com/features/authentication-access/rbac/roles/
+    accessed: '2026-08-11'
+  - title: CVE-2026-45672 - unauthenticated-path RCE via /api/v1/utils/code/execute
+    url: https://www.sentinelone.com/vulnerability-database/cve-2026-45672/
+    accessed: '2026-08-11'
+  - title: CVE-2026-70491 - tool source disclosure to non-admin users
+    url: https://www.sentinelone.com/vulnerability-database/cve-2026-70491/
+    accessed: '2026-08-11'
+  - title: CVE-2025-64496 - Direct Connections account takeover to RCE (Cato CTRL)
+    url: https://www.catonetworks.com/blog/cato-ctrl-vulnerability-discovered-open-webui-cve-2025-64496/
+    accessed: '2026-08-11'
+
+last_modified: '2026-08-11'

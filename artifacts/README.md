@@ -1,0 +1,139 @@
+# AI Agent Artifact Catalog
+
+**What AI agents leave behind on an endpoint, what each trace proves, and in what
+order to collect it.**
+
+AI coding agents, local model runtimes, and MCP servers are now installed across
+enterprise endpoints at scale, and they leave a regular, predictable set of
+traces: dot-directories holding plaintext API tokens, config files that spawn
+child processes at every login, unauthenticated listeners on well-known ports,
+and session transcripts containing whole source trees.
+
+This catalog documents those traces so responders can find them, collect them in
+the right order, and know what each one proves.
+
+## What this is not
+
+Not a living-off-the-land abuse catalog. LOLBAS, LOLRMM, LOOBins, and
+lolai-project answer *what can this tool be misused to do*. This answers a
+different question:
+
+> **What does this tool leave on the host, what investigative question does it
+> answer, and in what order should I collect it?**
+
+Every artifact carries a `forensic_value` rating and an `evidence_type`
+classification; every entry carries a `collection` block with a triage priority;
+every field carries a `confidence` rating tied to how it was sourced.
+
+## Contents
+
+| | Count |
+|---|---|
+| Catalogued tools | **44** |
+| Documented artifacts | **258** |
+| Credential locations | **23** |
+| MCP config locations | **17** |
+| Sigma detection rules | **12** |
+| Case studies | **3** |
+
+**Risk:** 11 critical · 21 high · 10 medium · 2 low
+**Confidence:** 27 high · 13 medium · 4 low
+
+Categories: llm-runtime (9), coding-agent-ide (8), agent-framework (7), coding-agent-cli (4), workflow-engine (4), browser-agent (3), computer-use-agent (2), mcp-host (2), cloud-agent (2), code-completion (2), code-execution-agent (1)
+
+## Layout
+
+```
+artifacts/
+├── catalog/          one YAML file per tool
+├── case-studies/     documented incidents with IOC blocks
+├── detections/       vendor-neutral Sigma rules + osquery pack
+├── schema/           JSON Schema + entry template
+├── scripts/          validate, export, normalize
+└── docs/api/         generated feeds — never hand-edit
+```
+
+## Using the data
+
+Consume the generated feeds rather than parsing YAML directly, so the on-disk
+format can change without breaking you:
+
+| Feed | Contents |
+|---|---|
+| `docs/api/catalog.json` | Full catalog, one object per tool |
+| `docs/api/artifacts.csv` | Flattened — one row per artifact |
+| `docs/api/collection-targets.txt` | High-value paths, for triage sweeps |
+| `docs/api/detections.json` | Sigma rule index with levels and tags |
+| `docs/api/forensicartifacts.yaml` | ForensicArtifacts format — Plaso / GRR / Timesketch |
+
+## Detections
+
+Vendor-neutral by design — Sigma plus an osquery pack, no proprietary query
+language anywhere:
+
+```bash
+sigma convert -t splunk detections/sigma/     # or elasticsearch, sentinel, ...
+```
+
+All 12 rules are verified in CI to compile against a real backend, so a rule that
+would not convert cannot merge. See `detections/README.md` for the rule table and
+honest notes on tuning — several rules are deliberately `level: low` because on a
+developer estate they describe the product working correctly.
+
+## Confidence, and why it is the important field
+
+A reference that overstates certainty is worse than one with gaps, because
+detections get built on it. Ratings map to provenance:
+
+- **high** — verified on a live host, or documented by the vendor
+- **medium** — multiple independent third-party sources agree
+- **low** — single-source or inferred; always carries `unverified: true`
+
+`scripts/validate.py` enforces this in CI: a high-confidence entry cannot contain
+an unmarked low-confidence artifact. `docs/VERIFICATION.md` is the audit trail of
+every correction made to date.
+
+## Controlled vocabularies
+
+`artifact_type`, `evidence_type`, `secret_type`, and `storage` are closed enums
+enforced by the schema, so the CSV feed stays filterable — `log` and `logs` and
+`logfile` cannot all coexist. Extending an enum means changing the schema, the
+template, and the authoring skill together.
+
+## Contributing
+
+Copy `schema/entry-template.yml`, fill it in, then:
+
+```bash
+python scripts/validate.py
+python scripts/export.py
+python scripts/export_forensicartifacts.py
+```
+
+Commit the entry and the regenerated `docs/api/` together. `BACKLOG.md` lists
+tools that are in scope but not yet verified — good first contributions.
+An authoring skill for Claude lives in `../skills/agent-artifact-catalog/`.
+
+## Related work
+
+| Project | Relationship |
+|---|---|
+| [ForensicArtifacts](https://github.com/ForensicArtifacts/artifacts) | The established prior art for machine-readable artifact definitions, consumed by Plaso, GRR, Timesketch. This catalog **exports to that format**. |
+| LOLBAS / LOLRMM / LOOBins | Abuse-oriented; this is collection-oriented. |
+| lolai-project | AI agent abuse techniques — complementary. |
+| MITRE ATLAS | Entries map to ATLAS technique IDs. |
+
+## Licence
+
+Catalog data, case studies, and generated feeds are **CC BY 4.0** — see
+`LICENSE-DATA`. The scripts and schema fall under the repository's Apache-2.0
+licence.
+The split is deliberate: a permissive data licence is what lets other catalogs
+and vendors ingest the corpus.
+
+## Scope
+
+Defensive reference material. Nearly every tool listed is legitimate, widely used
+software; `risk` describes exposure if a tool is misused or misconfigured, not a
+claim that a tool is malicious. **Presence of an agent on an endpoint is not an
+incident.**

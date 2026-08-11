@@ -39,6 +39,8 @@ ai-dfir-toolkit/
 ├── 04-ai-infrastructure/          # ShadowRay, Triton, MLflow, GPU abuse
 ├── 05-copilot-assistant-abuse/    # M365 Copilot, GitHub Copilot, Claude, Cursor
 ├── 06-rag-vector-db/              # Vector DB exposure, RAG poisoning
+├── artifacts/                     # Machine-readable AI agent artifact catalog
+├── skills/                        # Agent skills for maintaining the catalog
 ├── tests/                         # Sample events / test files
 ├── MAPPINGS.md                    # ATLAS + OWASP cross-reference
 └── README.md
@@ -100,6 +102,23 @@ echo 'rule-files: [ai-dfir.rules]' >> /etc/suricata/suricata.yaml
 suricata -T -c /etc/suricata/suricata.yaml  # validate
 systemctl reload suricata
 ```
+
+---
+
+## Artifact Catalog
+
+[`artifacts/`](artifacts/) is a machine-readable catalog of the endpoint
+artifacts left by AI coding agents, local LLM runtimes, agentic workflow
+engines, and Model Context Protocol components — install paths, credential
+storage, MCP configs, listening ports, process relationships, and registry keys,
+each rated by forensic value and sourcing confidence, with collection priorities
+for IR triage.
+
+Ships vendor-neutral Sigma detection rules and an osquery inventory pack, plus
+exports in [ForensicArtifacts](https://github.com/ForensicArtifacts/artifacts)
+format for Plaso, GRR, and Timesketch.
+
+See [`artifacts/README.md`](artifacts/README.md).
 
 ---
 
@@ -180,6 +199,12 @@ Sigma format: follow the [Sigma specification](https://github.com/SigmaHQ/sigma-
 Apache License 2.0 — see [LICENSE](./LICENSE).
 
 You are free to use, modify, and redistribute these rules in commercial and non-commercial settings. Attribution appreciated but not required.
+
+Catalog data under `artifacts/catalog/`, `artifacts/case-studies/`, and
+`artifacts/docs/api/` is licensed CC BY 4.0; see
+[`artifacts/LICENSE-DATA`](./artifacts/LICENSE-DATA). All other content,
+including the scripts and schema under `artifacts/`, is under the repository's
+Apache-2.0 licence.
 
 ---
 

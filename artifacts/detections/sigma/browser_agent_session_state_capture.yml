@@ -1,0 +1,28 @@
+title: Browser Automation Agent Capturing Session State
+id: 431474e9-d24d-508c-9cb4-b89e62f8d656
+status: experimental
+description: |
+  Detects browser automation agents invoked with flags that read or persist cookies
+  and local storage. Serialized session state is functionally equivalent to a stolen
+  authenticated session and bypasses MFA, so this is a credential-access signal even
+  though no password is involved.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.credential_access
+    - attack.t1539
+    - attack.collection
+    - attack.t1185
+logsource:
+    category: process_creation
+detection:
+    selection:
+        CommandLine|contains:
+            - '--storage-state'
+            - '--caps=storage'
+            - 'browser_set_storage_state'
+            - '@playwright/mcp'
+    condition: selection
+falsepositives:
+    - Legitimate end-to-end test automation, which typically runs on CI hosts rather than user endpoints
+level: high

@@ -1,0 +1,59 @@
+# AI agent artifact catalog entry
+# AIRT-0030 - Flowise
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0030
+name: Flowise
+vendor: FlowiseAI (OSS)
+category: workflow-engine
+description: Drag-and-drop LangChain flow builder. Default port 3000, flows persisted to local DB.
+supported_os:
+  - linux
+  - windows
+  - docker
+execution_model: Cloud or local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Custom Function node executes arbitrary JS. Historically shipped with weak/no default auth - frequently found exposed.
+artifacts:
+  network:
+    - direction: listener
+      indicator: Flowise UI + prediction API
+      port: 3000/TCP
+      description: Frequently found internet-exposed
+      confidence: medium
+      default_bind: "0.0.0.0"
+      authentication: Weak/optional historically
+      exposure_risk: high
+  process:
+    - name: node (flowise)
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: systemd / dockerd / npx
+      typical_children: node
+      service_or_daemon: Optional
+      persistence: pm2 / systemd / Docker
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0086
+attack_techniques:
+  - T1059
+  - T1133
+  - T1543
+references: []
+last_modified: "2026-08-11"

@@ -1,0 +1,44 @@
+title: AI Agent Process Spawning LOLBAS Binary
+id: e696a823-c1b3-5c18-ae2d-3575b0647270
+status: experimental
+description: |
+  Detects an AI agent or MCP server launching a living-off-the-land binary commonly
+  used for download, execution, or defence evasion. Unlike a plain shell, these
+  binaries are rarely part of a legitimate coding workflow, which makes this a
+  materially higher-fidelity signal. An audit of MCP marketplace agents found agents
+  wired to invoke exactly these chains through signed Microsoft binaries.
+author: AI DFIR Toolkit contributors
+date: 2026-08-11
+tags:
+    - attack.execution
+    - attack.t1059
+    - attack.defense_evasion
+    - attack.t1218
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_parent:
+        ParentImage|endswith:
+            - '\Claude.exe'
+            - '\Cursor.exe'
+            - '\Windsurf.exe'
+            - '\Code.exe'
+            - '\node.exe'
+            - '\python.exe'
+            - '\uvx.exe'
+    selection_child:
+        Image|endswith:
+            - '\mshta.exe'
+            - '\regsvr32.exe'
+            - '\rundll32.exe'
+            - '\certutil.exe'
+            - '\bitsadmin.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\installutil.exe'
+            - '\msbuild.exe'
+    condition: all of selection_*
+falsepositives:
+    - Build tooling invoking msbuild through an agent-managed terminal
+level: high

@@ -1,0 +1,54 @@
+# AI agent artifact catalog entry
+# AIRT-0033 - Claude Computer Use
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0033
+name: Claude Computer Use
+vendor: Anthropic
+category: computer-use-agent
+description: Vision-driven screenshot-to-coordinate GUI control loop. Reference implementation ships as a Docker container.
+supported_os:
+  - container
+execution_model: Cloud inference + local GUI control
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Full mouse/keyboard control of a desktop. Screenshot loop = continuous screen capture (data at rest in container).
+artifacts:
+  disk:
+    - path: Docker container running the reference implementation
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: container
+      description: Screenshot loop artifacts inside container
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: docker run
+      confidence: high
+  network:
+    - direction: egress
+      indicator: api.anthropic.com
+      port: 443/TCP
+      description: High-volume image (screenshot) uploads - distinctive egress volume signature
+      confidence: high
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0086
+attack_techniques:
+  - T1113
+  - T1185
+  - T1071.001
+references: []
+last_modified: "2026-08-11"

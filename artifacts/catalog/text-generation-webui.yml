@@ -1,0 +1,99 @@
+# AI agent artifact catalog entry
+# AIRT-0022 - text-generation-webui (oobabooga)
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0022
+name: text-generation-webui (oobabooga)
+vendor: oobabooga (OSS)
+category: llm-runtime
+description: Gradio web UI for local models with an extension system.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Fully local inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: null
+  mcp_capable: false
+risk: high
+confidence: medium
+abuse_potential: Extensions execute arbitrary Python. Gradio --share creates a PUBLIC TUNNEL to the host - a covert ingress channel.
+artifacts:
+  disk:
+    - path: "text-generation-webui.exe  |  python server.py"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: Binary for text-generation-webui (oobabooga)
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: one-click installer / git
+      confidence: medium
+    - path: "<install>/models/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: Models Dir for text-generation-webui (oobabooga)
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - data-access
+      install_method: n/a
+      confidence: medium
+    - path: "<install>/extensions/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: install-dir
+      description: ARBITRARY PYTHON EXECUTION
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Gradio UI / OpenAI-compatible API
+      port: 7860/TCP, 5000/TCP
+      description: "--share creates a PUBLIC gradio.live TUNNEL - covert ingress"
+      confidence: medium
+      default_bind: "127.0.0.1"
+      authentication: Optional
+      exposure_risk: high
+  process:
+    - name: python (server.py), text-generation-webui.exe
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: python (extensions)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+credentials: []
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0024
+  - AML.T0029
+  - AML.T0054
+attack_techniques:
+  - T1543
+  - T1133
+  - T1105
+  - T1590
+references: []
+last_modified: "2026-08-11"
