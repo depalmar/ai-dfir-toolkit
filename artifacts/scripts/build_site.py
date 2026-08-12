@@ -806,8 +806,10 @@ setThemeBtn();update();applyHash();
 """
 
 THEME_BOOT = (
-    "(function(){try{var t=localStorage.getItem('aiart-theme');"
-    "if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';"
+    # Default to light for first-time visitors; a stored choice still wins, and
+    # the toggle continues to persist. (The prefers-color-scheme CSS block only
+    # applies as a no-JS fallback, when no data-theme attribute gets set.)
+    "(function(){try{var t=localStorage.getItem('aiart-theme')||'light';"
     "document.documentElement.dataset.theme=t}catch(e){}})();"
 )
 
