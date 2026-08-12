@@ -17,6 +17,7 @@ Each gets its own extractor, and fields a format does not carry are simply
 absent rather than faked - the same omit-rather-than-guess rule the catalog
 itself follows.
 """
+import hashlib
 import re
 from pathlib import Path
 
@@ -268,6 +269,36 @@ def _anchor(text: str) -> str:
     return re.sub(r"[\s_]+", "-", s)
 
 
+DIAGRAMS = REPO / "artifacts" / "docs" / "site-assets" / "diagrams"
+
+
+def _inline_diagrams(html_body: str, raw: str):
+    """Swap each rendered mermaid code block for its pre-rendered SVG.
+
+    scripts/render_diagrams.py writes content-addressed SVGs, so a diagram
+    edited without re-rendering has no matching file and is reported here
+    rather than silently shipping as raw mermaid source.
+    """
+    sources = re.findall(r"```mermaid\n(.*?)```", raw, re.S)
+    missing, it = [], iter(sources)
+
+    def repl(_m):
+        try:
+            src = next(it)
+        except StopIteration:
+            return _m.group(0)
+        h = hashlib.sha1(src.strip().encode("utf-8")).hexdigest()[:12]
+        svg = DIAGRAMS / f"d-{h}-default.svg"
+        if not svg.exists():
+            missing.append(h)
+            return _m.group(0)
+        return f'<figure class="mmd">{svg.read_text(encoding="utf-8")}</figure>' 
+
+    out = re.sub(r"<pre><code class=\"language-mermaid\">.*?</code></pre>",
+                 repl, html_body, flags=re.S)
+    return out, missing
+
+
 def load_guide():
     """Render the investigation guide to HTML at build time.
 
@@ -280,6 +311,7 @@ def load_guide():
     import markdown as md
     raw = GUIDE.read_text(encoding="utf-8")
     html_body = md.markdown(raw, extensions=["fenced_code", "tables", "toc", "sane_lists"])
+    html_body, missing_diagrams = _inline_diagrams(html_body, raw)
     toc, part, fenced = [], None, False
     for line in raw.splitlines():
         # Shell comments inside fenced blocks look exactly like ATX headings.
@@ -297,4 +329,5 @@ def load_guide():
             toc.append(part)
         elif part is not None:
             part["sections"].append({"title": text, "anchor": _anchor(text)})
-    return {"html": html_body, "toc": toc, "source": "docs/ai-dfir-investigation-guide.md"}
+    return {"html": html_body, "toc": toc, "missing_diagrams": missing_diagrams,
+            "source": "docs/ai-dfir-investigation-guide.md"}

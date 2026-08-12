@@ -238,10 +238,12 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .pill{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--muted);
   background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .sub{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
-.hdr-right{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.hdr-right{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
 .stat{min-width:64px}
 .stat b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:20px;
-  font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--accent)}
+.stat.warn b{color:var(--crit)}
+.stat.warn span{color:var(--crit);opacity:.85}
 .stat span{font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
 #themeBtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;
   padding:7px 11px;font-size:12.5px;color:var(--muted)}
@@ -255,7 +257,7 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .tabs .guidelink{margin-left:auto;align-self:center;font-size:12.5px;text-decoration:none;
   color:var(--muted);padding:9px 4px}
 .tabs .guidelink:hover,.tabs .guidelink[aria-current=true]{color:var(--accent)}
-.ghlink{align-self:center;font-size:12.5px;text-decoration:none;color:var(--muted);
+.ghlink{font-size:12.5px;text-decoration:none;color:var(--muted);
   border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
 .ghlink:hover{color:var(--ink);border-color:var(--accent)}
 
@@ -536,6 +538,24 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
   margin:0 0 14px}
 .gtop h2{margin:0;font-size:16px}
 .gtop p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+
+/* ---- guide diagrams ---- */
+/* The diagrams carry their own light fills and dark text from the guide's
+   classDefs, so they keep a light card in both themes rather than being
+   recoloured into illegibility. */
+figure.mmd{margin:0 0 14px;background:#fbfbfa;border:1px solid var(--line);
+  border-radius:9px;padding:14px;overflow-x:auto;
+  /* Mermaid labels resolve to currentColor, which would inherit the page's
+     light ink in dark mode and vanish against these light node fills. */
+  color:#1f2328}
+/* Mermaid puts node text in <p> inside a foreignObject, which .gbody p would
+   otherwise paint with the page ink - light, on a light node fill. */
+figure.mmd .nodeLabel,figure.mmd .edgeLabel,figure.mmd .label,
+figure.mmd text,figure.mmd tspan,figure.mmd p,figure.mmd span,
+figure.mmd div{fill:#1f2328;color:#1f2328}
+figure.mmd p{margin:0;font-size:inherit}
+figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
+figure.mmd svg{max-width:100%;height:auto;display:block;margin:0 auto}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -823,10 +843,15 @@ function openDrawer(anchor,fromEl){
   renderMain();
 }
 function closeDrawer(){
+  // Remember what to return focus to before re-rendering detaches it: the row
+  // element itself does not survive renderMain(), so restore by anchor.
+  const back=lastFocus&&lastFocus.dataset?(lastFocus.dataset.a||lastFocus.dataset.f):null;
   sel=null; selRule=null; $('#drawer').hidden=true;
   history.replaceState(null,'',location.pathname+location.search);
   renderMain();
-  if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
+  const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
+  if(el)el.focus();
+  else if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
 }
 
 /* ---------- clipboard ---------- */
@@ -1180,10 +1205,14 @@ def main():
         f"ports and process trees, each rated by forensic value and sourcing confidence."
     )
 
-    stats = [(len(tools), "tools"), (n_art, "artifacts"), (n_cred, "creds"),
-             (n_mcp, "MCP"), (len(rules), "detections"), (n_unv, "unverified")]
+    # "unverified" is the one number a reader should feel, not just read: it is
+    # the honesty counter the whole confidence model rests on.
+    stats = [(len(tools), "tools", ""), (n_art, "artifacts", ""), (n_cred, "creds", ""),
+             (n_mcp, "MCP", ""), (len(rules), "detections", ""),
+             (n_unv, "unverified", " warn")]
     stats_html = "".join(
-        f'<div class="stat"><b>{n}</b><span>{label}</span></div>' for n, label in stats)
+        f'<div class="stat{cls}"><b>{n}</b><span>{label}</span></div>'
+        for n, label, cls in stats)
 
     page = f"""<!doctype html>
 <html lang="en">
