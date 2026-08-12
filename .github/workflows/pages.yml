@@ -6,7 +6,14 @@ on:
     paths:
       - 'artifacts/catalog/**'
       - 'artifacts/docs/api/**'
+      - 'artifacts/case-studies/**'
+      - 'artifacts/detections/**'
       - 'artifacts/scripts/build_site.py'
+      - 'artifacts/scripts/site_data.py'
+      - 'artifacts/requirements.txt'
+      - 'docs/ai-dfir-investigation-guide.md'
+      - 'MAPPINGS.md'
+      - '0*/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -33,6 +40,9 @@ jobs:
       # The site is generated from docs/api/catalog.json, which is validated
       # and staleness-checked by the artifact-catalog workflow. Building at
       # deploy time means the page can never drift from the catalog.
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: artifacts
       - name: Build site
         run: python scripts/build_site.py
         working-directory: artifacts

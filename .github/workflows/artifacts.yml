@@ -1,11 +1,13 @@
 name: artifact-catalog
 
+# No path filter: this workflow's `validate` job is a required status check on
+# main, and a required check that never runs blocks the merge forever. A PR
+# touching only workflows or docs would deadlock. The job is ~1 minute, so
+# running it on every PR is cheaper than the alternative.
 on:
   push:
     branches: [main]
-    paths: ['artifacts/**']
   pull_request:
-    paths: ['artifacts/**']
 
 permissions:
   contents: read
