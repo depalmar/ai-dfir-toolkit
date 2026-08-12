@@ -24,7 +24,11 @@ import html
 import json
 import re
 import shutil
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import site_data  # noqa: E402  (same-directory build helper)
 
 ROOT = Path(__file__).resolve().parent.parent
 API = ROOT / "docs" / "api"
@@ -248,6 +252,12 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 .tabs .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--line-soft);
   border-radius:20px;padding:1px 7px;color:var(--muted)}
+.tabs .guidelink{margin-left:auto;align-self:center;font-size:12.5px;text-decoration:none;
+  color:var(--muted);padding:9px 4px}
+.tabs .guidelink:hover,.tabs .guidelink[aria-current=true]{color:var(--accent)}
+.ghlink{align-self:center;font-size:12.5px;text-decoration:none;color:var(--muted);
+  border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
+.ghlink:hover{color:var(--ink);border-color:var(--accent)}
 
 /* ---- shell ---- */
 .shell{max-width:1440px;margin:0 auto;padding:20px 28px 90px;display:grid;
@@ -275,6 +285,7 @@ details.railfold{display:none}
 
 /* ---- controls ---- */
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.controls[hidden],.meta-row[hidden],.tgl[hidden]{display:none!important}
 .search{position:relative;flex:1 1 320px}
 .search .glyph{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
 .search input{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);
@@ -431,6 +442,101 @@ td .note{font-size:12.5px;color:var(--muted);max-width:38ch;display:inline-block
   color:var(--toast-ink);padding:5px 10px;font-size:12px}
 .toast a{color:var(--toast-muted);cursor:pointer;font-size:12px}
 
+/* ---- detections ---- */
+.rulegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.rule{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px;
+  display:flex;flex-direction:column;gap:9px;cursor:pointer;text-align:left}
+.rule:hover{border-color:var(--accent)}
+.rule .rtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rule .rname{font-size:14px;font-weight:600}
+.rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
+  word-break:break-all}
+.rule p{margin:0;font-size:12.5px;color:var(--muted)}
+.rule .rfoot{display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--line-soft);
+  padding-top:9px}
+.fmt{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
+  border-radius:5px;padding:1px 7px;background:var(--panel-2);border:1px solid var(--line);
+  color:var(--muted)}
+.tchip{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--accent-soft);
+  border:1px solid var(--accent-border);color:var(--accent);border-radius:5px;padding:1px 6px;
+  cursor:pointer}
+.tchip:hover{background:var(--accent-soft-2)}
+pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:8px;
+  padding:10px;overflow:auto;max-height:340px;font-family:ui-monospace,Menlo,monospace;
+  font-size:11.5px;line-height:1.45;white-space:pre;color:var(--ink)}
+.fplist{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}
+
+/* ---- mappings ---- */
+.idxwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:22px}
+.idx h2{margin:0 0 3px;font-size:15px}
+.idx .isub{margin:0 0 11px;font-size:12.5px;color:var(--muted)}
+.irow{display:grid;grid-template-columns:96px minmax(0,1fr) 36px;gap:10px;align-items:center;
+  padding:7px 9px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.irow:hover{background:var(--accent-soft);border-color:var(--accent-border)}
+.irow .iid{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--accent)}
+.irow .ittl{font-size:12.5px}
+.irow .icount{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
+  text-align:right}
+.bar{grid-column:1/-1;height:4px;border-radius:3px;background:var(--line-soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+
+/* ---- case studies ---- */
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.cs{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px;
+  display:flex;flex-direction:column;gap:10px}
+.cs .cshead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.cs .csname{font-size:14.5px;font-weight:600}
+.cs .csmeta{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
+.cs p{margin:0;font-size:12.5px;color:var(--muted)}
+.cs h5{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.iocs{display:flex;flex-wrap:wrap;gap:5px}
+.ioc{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
+  border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;color:var(--ink);
+  word-break:break-all}
+.cs ol{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}
+.lesson{background:var(--alert-bg);border:1px solid var(--alert-line);
+  border-left:3px solid var(--accent);border-radius:8px;padding:10px;font-size:12.5px;
+  color:var(--muted)}
+.lesson b{color:var(--accent)}
+.sechead{margin:26px 0 12px;font-size:15px}
+
+/* ---- guide ---- */
+.guidewrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:26px;align-items:start}
+.gtoc{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto}
+.gtoc h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted)}
+.gtoc a{display:block;padding:3px 7px;border-radius:6px;font-size:12.5px;text-decoration:none;
+  color:var(--ink)}
+.gtoc a:hover{background:var(--accent-soft);color:var(--accent)}
+.gtoc a.sub{padding-left:16px;font-size:12px;color:var(--muted)}
+.gbody{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  padding:24px 28px;max-width:none;overflow-wrap:break-word}
+.gbody h1{font-size:20px;margin:26px 0 10px;padding-top:10px;border-top:1px solid var(--line-soft)}
+.gbody h1:first-child{margin-top:0;border-top:0;padding-top:0}
+.gbody h2{font-size:16.5px;margin:22px 0 8px}
+.gbody h3{font-size:14px;margin:18px 0 6px}
+.gbody p,.gbody li{font-size:13.5px;color:var(--ink)}
+.gbody p{margin:0 0 10px}
+.gbody ul,.gbody ol{margin:0 0 10px;padding-left:20px}
+.gbody code{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:4px;
+  padding:1px 5px;font-size:12px}
+/* Wide code and tables scroll inside their own box; the page never does. */
+.gbody pre{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:8px;
+  padding:11px;overflow-x:auto;max-width:100%}
+.gbody pre code{background:none;border:0;padding:0;font-size:11.5px;line-height:1.5;
+  display:block;width:max-content;min-width:100%}
+.gbody table{border-collapse:collapse;margin:0 0 12px;font-size:12.5px;
+  display:block;width:max-content;min-width:100%;max-width:100%;overflow-x:auto}
+.gbody th,.gbody td{border:1px solid var(--line-soft);padding:6px 9px;text-align:left}
+.gbody th{background:var(--panel-2);color:var(--muted)}
+.gbody blockquote{margin:0 0 10px;padding-left:12px;border-left:3px solid var(--accent-border);
+  color:var(--muted)}
+.gbody a{overflow-wrap:anywhere}
+.gtop{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:baseline;
+  margin:0 0 14px}
+.gtop h2{margin:0;font-size:16px}
+.gtop p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
   grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;
@@ -449,10 +555,23 @@ footer p{margin:0}
   details.railfold .fgroup{min-width:150px;flex:none}
   footer{padding:0 14px 40px}
 }
+@media(max-width:900px){
+  .guidewrap{grid-template-columns:minmax(0,1fr)}
+  .gtoc{position:static;max-height:none;border:1px solid var(--line);border-radius:9px;
+    background:var(--panel);padding:12px}
+  .gbody{padding:16px}
+  /* Five tabs plus the guide link exceed a phone's width: scroll the strip,
+     not the page. */
+  .tabs{overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button,.tabs .guidelink{flex:none;white-space:nowrap}
+  .tabs .guidelink{margin-left:6px}
+}
 @media(max-width:620px){
   .tablewrap{display:none}
   .cards{display:flex}
   .drawer{width:100vw;max-width:100vw}
+  .idxwrap{grid-template-columns:minmax(0,1fr)}
 }
 """
 
@@ -473,10 +592,30 @@ const OPTIONS={
   tool:TOOLS.map(t=>t.tool).sort((a,b)=>a.localeCompare(b)),
 };
 
+const RULEMAP=Object.fromEntries(RULES.map(r=>[r.file,r]));
+const RGROUPS={fmt:'Format',rcat:'Category',ratlas:'ATLAS technique',rowasp:'OWASP LLM'};
+const RFIELD={fmt:r=>[r.format],rcat:r=>[r.category],ratlas:r=>r.atlas,rowasp:r=>r.owasp};
+const ROPTIONS={
+  fmt:[...new Set(RULES.map(r=>r.format))].sort(),
+  rcat:[...new Set(RULES.map(r=>r.category))].sort(),
+  ratlas:[...new Set(RULES.flatMap(r=>r.atlas))].sort(),
+  rowasp:[...new Set(RULES.flatMap(r=>r.owasp))].sort(),
+};
+
 let view='catalog', query='', unvOnly=false, dense=false,
-    sortKey='entry_id', sortDir=1, sel=null, lastFocus=null;
+    sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
 const filters={cls:[],os:[],fv:[],conf:[],tool:[]};
-const picks=new Set();
+const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
+const PICKS_KEY='aiart-picks';
+const picks=new Set((()=>{
+  try{
+    const v=JSON.parse(localStorage.getItem(PICKS_KEY)||'[]');
+    // Anchors are stable across builds, row indexes are not - but an artifact
+    // can still be removed from the catalog, so drop anchors that no longer resolve.
+    return Array.isArray(v)?v.filter(a=>ROWMAP[a]):[];
+  }catch(e){return[]}
+})());
+function savePicks(){try{localStorage.setItem(PICKS_KEY,JSON.stringify([...picks]))}catch(e){}}
 
 function badge(v,filled,prefix){
   if(!v)return'';
@@ -527,12 +666,14 @@ function railHTML(){
   }).join('');
 }
 function renderRail(){
-  const h=railHTML();
+  const h=view==='rules'?ruleRailHTML():railHTML();
   $('#rail').innerHTML=h;
   $('#railfold .foldbody').innerHTML=h;
   $$('.fbtn').forEach(b=>b.onclick=()=>{
-    const g=b.dataset.g,v=b.dataset.v,a=filters[g],i=a.indexOf(v);
-    i<0?a.push(v):a.splice(i,1);
+    const g=b.dataset.g||b.dataset.rg;
+    const set=b.dataset.rg?rfilters:filters;
+    const a=set[g],i=a.indexOf(b.dataset.v);
+    i<0?a.push(b.dataset.v):a.splice(i,1);
     update();
   });
 }
@@ -652,7 +793,9 @@ function drawerHTML(r){
       <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}</div>
       ${t.guidance?`<p>${esc(t.guidance)}</p>`:''}</div>
     ${t.techniques&&t.techniques.length?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${t.techniques.map(x=>`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
+      <div class="tech">${t.techniques.map(x=>
+        /^AML\./.test(x)?`<span class="tchip" data-tech="${esc(x)}">${esc(x)}</span>`
+                        :`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
       <input readonly value="#${esc(r.anchor)}" aria-label="Permalink">
       <button class="btn" id="dCopyLink" data-v="${esc(base+'#'+r.anchor)}">copy link</button></div></div>
@@ -676,10 +819,11 @@ function openDrawer(anchor,fromEl){
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dCopyPath').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
+  wireTechChips();
   renderMain();
 }
 function closeDrawer(){
-  sel=null; $('#drawer').hidden=true;
+  sel=null; selRule=null; $('#drawer').hidden=true;
   history.replaceState(null,'',location.pathname+location.search);
   renderMain();
   if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
@@ -702,15 +846,206 @@ function fallbackCopy(text,done){
 }
 
 /* ---------- picks ---------- */
-function togglePick(a){picks.has(a)?picks.delete(a):picks.add(a);update()}
+function togglePick(a){picks.has(a)?picks.delete(a):picks.add(a);savePicks();update()}
+
+/* ---------- detections ---------- */
+function ruleMatches(r,skip){
+  for(const g of Object.keys(rfilters)){
+    if(g===skip)continue;
+    const want=rfilters[g];
+    if(!want.length)continue;
+    const have=RFIELD[g](r).filter(Boolean);
+    if(!have.length)return false;
+    if(!have.some(v=>want.includes(v)))return false;
+  }
+  if(!query)return true;
+  const hay=(r.title+' '+r.file+' '+r.description+' '+r.category+' '+r.format+' '+
+    r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+r.logsource).toLowerCase();
+  return hay.includes(query);
+}
+const filteredRules=()=>RULES.filter(r=>ruleMatches(r,null));
+
+function ruleRailHTML(){
+  return Object.keys(RGROUPS).map(g=>{
+    const counts={};
+    for(const r of RULES){
+      if(!ruleMatches(r,g))continue;
+      for(const v of RFIELD[g](r).filter(Boolean))counts[v]=(counts[v]||0)+1;
+    }
+    const opts=ROPTIONS[g].filter(v=>counts[v]||rfilters[g].includes(v));
+    if(!opts.length)return'';
+    return `<div class="fgroup"><h3>${RGROUPS[g]}</h3>`+opts.map(v=>{
+      const on=rfilters[g].includes(v);
+      return `<button class="fbtn" data-rg="${g}" data-v="${esc(v)}" aria-pressed="${on}">
+        <span>${esc(v)}</span><span class="c">${counts[v]||0}</span></button>`;
+    }).join('')+'</div>';
+  }).join('');
+}
+function rulesHTML(rules){
+  if(!rules.length)return `<div class="empty">No rules match those filters.
+    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  return '<div class="rulegrid">'+rules.map(r=>`
+    <button class="rule" data-f="${esc(r.file)}">
+      <div class="rtop"><div><div class="rname">${esc(r.title)}</div>
+        <div class="rfile">${esc(r.file)}</div></div>
+        ${r.level?badge(r.level,r.level==='critical'):''}</div>
+      ${r.description?`<p>${esc(r.description.split('\n')[0])}</p>`:''}
+      <div class="rfoot"><span class="fmt">${esc(r.format)}</span>
+        ${r.atlas.map(a=>`<span class="tchip">${esc(a)}</span>`).join('')}
+        ${r.owasp.map(o=>`<span class="tchip">${esc(o)}</span>`).join('')}</div>
+    </button>`).join('')+'</div>';
+}
+function ruleDrawerHTML(r){
+  const base=location.origin==='null'?'':location.origin+location.pathname;
+  return `<div class="dhead"><b>${esc(r.title)}</b>
+    <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
+  <div class="dbody">
+    <div class="dsec"><h4>Rule file</h4><div class="locator">${esc(r.path)}</div>
+      <div class="badgerow"><span class="fmt">${esc(r.format)}</span>
+        ${r.level?badge(r.level,r.level==='critical','level'):''}
+        ${r.status?badge(r.status,false):''}</div></div>
+    ${r.description?`<div class="dsec"><h4>What it detects</h4><p>${esc(r.description)}</p></div>`:''}
+    ${r.logsource?`<div class="dsec"><h4>Telemetry</h4><p>${esc(r.logsource)}</p></div>`:''}
+    ${(r.atlas.length||r.owasp.length)?`<div class="dsec"><h4>Mapped techniques</h4>
+      <div class="tech">${r.atlas.map(a=>`<span class="tchip" data-tech="${esc(a)}">${esc(a)}</span>`).join('')}
+      ${r.owasp.map(o=>`<span class="tchip" data-owasp="${esc(o)}">${esc(o)}</span>`).join('')}</div></div>`:''}
+    ${r.falsepositives.length?`<div class="dsec"><h4>False positives</h4>
+      <ul class="fplist">${r.falsepositives.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
+    <div class="dsec"><h4>Detection logic</h4><pre class="yaml">${esc(r.body)}</pre></div>
+    <div class="dsec"><h4>Permalink</h4><div class="linkrow">
+      <input readonly value="#rule/${esc(r.file)}" aria-label="Permalink">
+      <button class="btn" id="dCopyLink" data-v="${esc(base+'#rule/'+r.file)}">copy link</button></div></div>
+  </div>
+  <div class="dfoot">
+    <a class="btn primary" href="${REPO_URL}/blob/main/${esc(r.path)}" target="_blank" rel="noopener">View on GitHub</a>
+    <button class="btn" id="dCopyPath" data-v="${esc(r.path)}">copy path</button>
+  </div>`;
+}
+function openRuleDrawer(file,fromEl){
+  const r=RULEMAP[file]; if(!r)return;
+  selRule=file; lastFocus=fromEl||document.activeElement;
+  const d=$('#drawer');
+  d.innerHTML=ruleDrawerHTML(r);
+  d.hidden=false;
+  d.setAttribute('aria-label','Detection rule '+r.title);
+  history.replaceState(null,'','#rule/'+file);
+  $('#dClose').onclick=closeDrawer;
+  $('#dClose').focus();
+  $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
+  $('#dCopyPath').onclick=e=>copy(e.target.dataset.v,e.target);
+  wireTechChips();
+}
+function wireTechChips(){
+  $$('#drawer .tchip[data-tech],#drawer .tchip[data-owasp]').forEach(c=>c.onclick=()=>{
+    const t=c.dataset.tech,o=c.dataset.owasp;
+    closeDrawer();
+    resetRuleFilters();
+    if(t)rfilters.ratlas=[t]; else rfilters.rowasp=[o];
+    view='rules'; update();
+  });
+}
+function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];query='';$('#q').value=''}
+
+/* ---------- mappings ---------- */
+function indexHTML(title,sub,items,key){
+  const max=Math.max(1,...items.map(i=>i.count));
+  return `<div class="idx"><h2>${esc(title)}</h2><p class="isub">${esc(sub)}</p>`+
+    items.map(i=>`<div class="irow" data-idx="${key}" data-v="${esc(i.id)}"
+        role="button" tabindex="0">
+      <span class="iid">${esc(i.raw)}</span><span class="ittl">${esc(i.title)}</span>
+      <span class="icount">${i.count}</span>
+      <span class="bar"><i style="width:${Math.round(i.count/max*100)}%"></i></span>
+    </div>`).join('')+'</div>';
+}
+function mappingsHTML(){
+  return `<div class="gtop"><div><h2>Technique coverage</h2>
+    <p>Rule counts per MITRE ATLAS technique and OWASP LLM Top 10 category.
+    Click any row to see the rules that cover it.</p></div></div>
+    <div class="idxwrap">
+      ${indexHTML('MITRE ATLAS','Adversarial threat landscape for AI systems.',ATLAS_INDEX,'ratlas')}
+      ${indexHTML('OWASP Top 10 for LLM Applications 2025','Application-layer risk categories.',OWASP_INDEX,'rowasp')}
+    </div>`;
+}
+
+/* ---------- case studies ---------- */
+function caseStudiesHTML(){
+  if(!CASES.length)return'';
+  return `<h2 class="sechead">Case studies</h2><div class="csgrid">`+CASES.map(c=>`
+    <div class="cs">
+      <div class="cshead"><div><div class="csname">${esc(c.title)}</div>
+        <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}</div></div></div>
+      ${c.affects?`<div class="csmeta">affects: ${esc(c.affects)}</div>`:''}
+      <p>${esc(c.summary)}</p>
+      ${c.iocs.length?`<h5>Indicators</h5><div class="iocs">${c.iocs.map(i=>
+        `<span class="ioc" title="${esc(i.description)}">${esc(i.value)}</span>`).join('')}</div>`:''}
+      ${c.response_actions.length?`<h5>Response</h5><ol>${c.response_actions.map(a=>
+        `<li>${esc(a)}</li>`).join('')}</ol>`:''}
+      ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
+    </div>`).join('')+'</div>';
+}
+
+/* ---------- guide ---------- */
+function guideHTML(){
+  const toc=GUIDE.toc.map(p=>
+    `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
+    p.sections.map(s=>`<a class="sub" href="#g-${esc(s.anchor)}">${esc(s.title)}</a>`).join('')
+  ).join('');
+  return `<div class="gtop"><div><h2>AI/ML DFIR Investigation Guide</h2>
+    <p>Rendered from <code>${esc(GUIDE.source)}</code> at build time.</p></div>
+    <a class="btn" href="${REPO_URL}/blob/main/${esc(GUIDE.source)}" target="_blank" rel="noopener">View on GitHub</a></div>
+  <div class="guidewrap">
+    <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
+    <div class="gbody">${GUIDE.html}</div>
+  </div>`;
+}
 
 /* ---------- render ---------- */
 function renderMain(){
   const shell=$('.shell');
-  shell.classList.toggle('nocol',view!=='catalog');
-  $('#controls').hidden=view!=='catalog';
-  $('#metaRow').hidden=view!=='catalog';
+  const railed=(view==='catalog'||view==='rules');
+  shell.classList.toggle('nocol',!railed);
+  $('#controls').hidden=!railed;
+  $('#unvBtn').hidden=view!=='catalog';
+  $('#denseBtn').hidden=view!=='catalog';
+  $('#metaRow').hidden=!railed;
+  $('#q').placeholder=view==='rules'?'Search rules, techniques, telemetry...'
+                                    :'Search paths, tools, descriptions...';
   const main=$('#main');
+  if(view==='rules'){
+    const rules=filteredRules();
+    $('#count').textContent=`${rules.length} of ${RULES.length} shown`;
+    $('#chips').innerHTML=Object.keys(rfilters).flatMap(g=>rfilters[g].map(v=>
+      `<button class="chip" data-rg="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`)).join('');
+    $$('#chips .chip').forEach(c=>c.onclick=()=>{
+      const a=rfilters[c.dataset.rg],i=a.indexOf(c.dataset.v);
+      if(i>=0)a.splice(i,1);
+      update();
+    });
+    main.innerHTML=rulesHTML(rules);
+    $$('#main .rule').forEach(el=>el.onclick=()=>openRuleDrawer(el.dataset.f,el));
+    renderTabs();renderToast();return;
+  }
+  if(view==='mappings'){
+    main.innerHTML=mappingsHTML();
+    const go=el=>{
+      resetRuleFilters();
+      rfilters[el.dataset.idx]=[el.dataset.v];
+      view='rules'; update();
+    };
+    $$('#main .irow').forEach(el=>{
+      el.onclick=()=>go(el);
+      el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(el)}};
+    });
+    renderTabs();renderToast();return;
+  }
+  if(view==='guide'){
+    main.innerHTML=guideHTML();
+    // Prefix rendered heading ids so guide anchors never collide with row anchors.
+    $$('#main .gbody h1,#main .gbody h2').forEach(h=>{
+      if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
+    });
+    renderTabs();renderToast();return;
+  }
   if(view==='catalog'){
     const rows=filteredRows();
     $('#count').textContent=`${rows.length} of ${ROWS.length} shown`;
@@ -734,7 +1069,7 @@ function renderMain(){
     });
     $$('#main .pick').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
   }else if(view==='tools'){
-    main.innerHTML=toolsHTML();
+    main.innerHTML=toolsHTML()+caseStudiesHTML();
     $$('#main .tool').forEach(c=>c.onclick=()=>{
       resetFilters();filters.tool=[c.dataset.t];view='catalog';
       history.replaceState(null,'','#'+c.dataset.id);
@@ -745,7 +1080,7 @@ function renderMain(){
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
-    $$('#main .rm').forEach(b=>b.onclick=()=>{picks.delete(b.dataset.a);update()});
+    $$('#main .rm').forEach(b=>b.onclick=()=>{picks.delete(b.dataset.a);savePicks();update()});
   }
   renderTabs();renderToast();
 }
@@ -754,6 +1089,7 @@ function renderTabs(){
     b.setAttribute('aria-selected',String(b.dataset.v===view));
     if(b.dataset.v==='plan')b.querySelector('.n').textContent=picks.size;
   });
+  $('#guideLink').setAttribute('aria-current',String(view==='guide'));
 }
 function renderToast(){
   const t=$('#toast');
@@ -767,13 +1103,20 @@ function resetFilters(){
   query='';$('#q').value='';
   unvOnly=false;$('#unvBtn').setAttribute('aria-pressed','false');
 }
-function resetAll(){resetFilters();update()}
+function resetAll(){resetFilters();resetRuleFilters();update()}
 window.resetAll=resetAll;
 
 /* ---------- hash routing ---------- */
 function applyHash(){
   const h=decodeURIComponent(location.hash.slice(1));
   if(!h)return;
+  if(h.startsWith('rule/')){
+    const f=h.slice(5);
+    if(RULEMAP[f]){view='rules';update();openRuleDrawer(f,null)}
+    return;
+  }
+  if(h.startsWith('g-')){view='guide';update();
+    const el=document.getElementById(h);if(el)el.scrollIntoView();return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
   const t=TOOLS.find(t=>t.entry_id.toLowerCase()===h.toLowerCase()||t.slug===h.toLowerCase());
   if(t){resetFilters();filters.tool=[t.tool];view='catalog';update()}
@@ -785,10 +1128,11 @@ $('#unvBtn').onclick=()=>{unvOnly=!unvOnly;$('#unvBtn').setAttribute('aria-press
 $('#denseBtn').onclick=()=>{dense=!dense;
   $('#denseBtn').setAttribute('aria-pressed',String(dense));
   $('#denseBtn').textContent=dense?'Comfortable rows':'Compact rows';renderMain()};
-$$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;renderMain()});
+$$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
+$('#guideLink').onclick=e=>{e.preventDefault();view='guide';update()};
 $('#railReset').onclick=e=>{e.preventDefault();resetAll()};
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
-$('#toastClear').onclick=()=>{picks.clear();update()};
+$('#toastClear').onclick=()=>{picks.clear();savePicks();update()};
 $('#themeBtn').onclick=()=>{
   const cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=cur;
@@ -819,6 +1163,12 @@ def main():
     rows = build_rows(entries)
     tools = build_tools(entries, rows)
 
+    # Everything outside the catalog proper: rules, indexes, case studies, guide.
+    mapping_rows, atlas_index, owasp_index = site_data.load_mappings()
+    rules = site_data.load_rules(mapping_rows)
+    cases = site_data.load_case_studies()
+    guide = site_data.load_guide()
+
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
     n_art = len(rows) - n_cred - n_mcp
@@ -831,7 +1181,7 @@ def main():
     )
 
     stats = [(len(tools), "tools"), (n_art, "artifacts"), (n_cred, "creds"),
-             (n_mcp, "MCP"), (n_unv, "unverified")]
+             (n_mcp, "MCP"), (len(rules), "detections"), (n_unv, "unverified")]
     stats_html = "".join(
         f'<div class="stat"><b>{n}</b><span>{label}</span></div>' for n, label in stats)
 
@@ -866,12 +1216,17 @@ def main():
       on an endpoint, what each trace proves, and in what order to collect it.</p>
     </div>
     <div class="hdr-right">{stats_html}
+      <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
+         aria-label="View this project on GitHub">GitHub &#8599;</a>
       <button id="themeBtn" type="button"></button></div>
   </div>
   <nav class="tabs" role="tablist">
     <button role="tab" data-v="catalog">Artifacts <span class="n">{len(rows)}</span></button>
     <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
+    <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
+    <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n">0</span></button>
+    <a class="guidelink" id="guideLink" href="#guide">Investigation guide &#8594;</a>
   </nav>
 </div></div>
 
@@ -916,8 +1271,14 @@ def main():
   Catalog data CC BY 4.0. Scripts and schema Apache-2.0.</p>
 </footer>
 <script>
+const REPO_URL={json.dumps(REPO)};
 const ROWS={json.dumps(rows, separators=(",", ":"))};
 const TOOLS={json.dumps(tools, separators=(",", ":"))};
+const RULES={json.dumps(rules, separators=(",", ":"))};
+const ATLAS_INDEX={json.dumps(atlas_index, separators=(",", ":"))};
+const OWASP_INDEX={json.dumps(owasp_index, separators=(",", ":"))};
+const CASES={json.dumps(cases, separators=(",", ":"))};
+const GUIDE={json.dumps(guide, separators=(",", ":"))};
 {JS}
 </script>
 </body>
