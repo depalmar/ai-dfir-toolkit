@@ -13,3 +13,4 @@ artifacts/docs/api/** text eol=lf
 
 # Keep the workbook binary.
 *.xlsx binary
+*.png binary
