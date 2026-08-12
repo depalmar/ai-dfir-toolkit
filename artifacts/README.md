@@ -3,6 +3,9 @@
 **What AI agents leave behind on an endpoint, what each trace proves, and in what
 order to collect it.**
 
+Browse it at **https://depalmar.github.io/ai-dfir-toolkit/** or work from the
+[machine-readable feeds](docs/api/).
+
 AI coding agents, local model runtimes, and MCP servers are now installed across
 enterprise endpoints at scale, and they leave a regular, predictable set of
 traces: dot-directories holding plaintext API tokens, config files that spawn
