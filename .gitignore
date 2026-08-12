@@ -31,3 +31,6 @@ build/
 *.log
 *.pcap
 scratch/
+
+# Generated Pages site (built by .github/workflows/pages.yml at deploy time)
+artifacts/docs/site/
