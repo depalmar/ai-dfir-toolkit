@@ -28,6 +28,15 @@ jobs:
         run: pip install -r requirements.txt
       - name: Validate catalog and detections
         run: python scripts/validate.py
+      # validate_mappings.py walks the repository root to find the 0N-* rule
+      # directories, so it cannot run under this job's `artifacts` default.
+      - name: Validate MAPPINGS.md against rules on disk
+        working-directory: .
+        run: python artifacts/scripts/validate_mappings.py
+      # The page itself is only built on push to main, so without this a change
+      # that breaks the site's data contract would not surface until deploy.
+      - name: Check site data contract
+        run: python scripts/build_site.py --check
       - name: Verify Sigma rules convert to a real backend
         run: |
           pip install sigma-cli pysigma-backend-splunk

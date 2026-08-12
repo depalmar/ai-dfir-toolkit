@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`MAPPINGS.md` section 07 — Endpoint (cross-tool)**: the 12 endpoint Sigma
+  rules under `artifacts/detections/sigma/` are now indexed, along with the
+  osquery inventory pack. Documented scope moves from 43 rule files / 114
+  signatures to **55 rule files / 126 signatures**.
+- **`artifacts/scripts/validate_mappings.py`**: fails when `MAPPINGS.md`
+  references a rule file that does not exist, or when a rule file on disk is
+  never indexed. Wired into CI, so neither kind of drift can recur.
+- **`artifacts/scripts/apply_mappings_update.py`**: the idempotent one-shot that
+  applied the section-07 insertion and recomputed the index counts.
+- **`build_site.py --check`**: validates the site's data contract — anchor
+  uniqueness and URL-safety, no empty locators, no orphaned rows, no empty or
+  off-enum evidence types — without rendering. Runs on every pull request,
+  where previously the site was only built on push to `main`.
+- **`artifacts/docs/HANDOFF_REVIEW.md`**: the design-handoff review and its
+  resolution, recording which findings were applied, which were declined, and
+  why.
+
+### Fixed
+
+- **ATLAS and OWASP index counts in `MAPPINGS.md`.** Seven hand-maintained
+  counts disagreed with the tables they summarise (ATLAS `T0010`, `T0020`,
+  `T0024`; OWASP `LLM03`, `LLM06`, `LLM07`), and four techniques were missing
+  rows entirely (`T0051`, `T0053`, `T0081`, `T0082`). The index is now derived
+  from the tables and verified to match them exactly.
+- **Empty "what it proves" on 107 of 298 catalog rows (36%).** The schema
+  declares `evidence_type` only on disk artifacts, so every registry, network
+  and process row rendered the section blank. These are now derived from
+  existing fields, within the schema's `evidence_type` enum.
+- **Rule permalinks** use the repo-relative path instead of a bare filename, so
+  two directories holding the same filename cannot collide. Previously-shared
+  bare-filename links still resolve. `#guide` now deep-links, which it silently
+  did not.
+
+### Changed
+
+- The Investigation guide header entry is a real tab rather than a link inside
+  `role="tablist"`, which had broken arrow-key navigation. The tablist now has
+  roving tabindex, arrow/Home/End keys, and `aria-controls` onto a
+  `role="tabpanel"` container.
+- `localStorage` keys renamed from the dropped `aiart-` working name to
+  `aidfir-theme` / `aidfir-picks`, each reading the old key once so returning
+  visitors keep their theme and saved picks.
+
 ## [1.0.0] - 2026-04-19
 
 ### Added

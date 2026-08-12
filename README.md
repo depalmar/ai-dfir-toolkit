@@ -124,7 +124,8 @@ See [`artifacts/README.md`](artifacts/README.md).
 
 ## Coverage overview
 
-43 rule files containing 114 individual signatures across six categories:
+55 rule files containing 126 individual signatures — six attack-class categories
+plus a cross-tool endpoint set:
 
 | Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
 |----------|-------|-----------:|------------------|-----------|
@@ -134,7 +135,13 @@ See [`artifacts/README.md`](artifacts/README.md).
 | AI Infrastructure | 9 | 31 | T0011, T0017, T0019 | LLM10 |
 | Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM06 |
 | RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
-| **Total** | **43** | **114** | | |
+| Endpoint (cross-tool) | 12 | 12 | T0053, T0081, T0082 | LLM02, LLM06, LLM03 |
+| **Total** | **55** | **126** | | |
+
+The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
+scoped to agent behaviour on a host rather than to one attack class, so it applies
+across every tool in the artifact catalog. An osquery pack there answers the
+inventory question ("which hosts have this") that the Sigma rules cannot.
 
 *Signature count includes multi-document Sigma YAML, multiple `rule` blocks inside a single YARA file, and multiple `alert` lines inside a single Suricata `.rules` file. One file often covers several related variants.*
 
