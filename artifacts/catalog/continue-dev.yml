@@ -187,7 +187,24 @@ credentials:
       it the .bin files are opaque, so acquiring the globalStorage folder alone is not
       sufficient.
     confidence: medium
-mcp: []
+mcp:
+  - config_path: "~/.continue/config.yaml"
+    config_key: mcpServers (name, command, args, cwd, env)
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    notes: YAML not JSON
+  - config_path: "~/.continue/mcpServers/"
+    config_key: One JSON file per server, in the format other clients use
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block inside each file
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    notes: >-
+      A drop-in directory - a config copied from Claude Desktop, Cursor or Cline
+      is picked up automatically, so a server can arrive here without ever being
+      configured in Continue itself
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

@@ -597,7 +597,35 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.aws/amazonq/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation",
+        "triage_priority": "p1",
+        "notes": "Global scope. The CLI reads this and the workspace file together and takes the union, so checking one path alone under-reports what the agent could run."
+      },
+      {
+        "config_path": "<repo>/.amazonq/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start in the workspace",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation in the workspace",
+        "triage_priority": "p1",
+        "notes": "Workspace scope. Travels with the repo."
+      },
+      {
+        "config_path": "~/.aws/amazonq/default.json",
+        "config_key": "Agent configuration, global scope in the IDE",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p2",
+        "notes": "Where the IDE stores a server added at global scope"
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -2306,7 +2334,17 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.codeium/windsurf/mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": "Under the Codeium directory rather than a windsurf one, which is where the path is most often looked for and not found"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -2568,7 +2606,26 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.continue/config.yaml",
+        "config_key": "mcpServers (name, command, args, cwd, env)",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": "YAML not JSON"
+      },
+      {
+        "config_path": "~/.continue/mcpServers/",
+        "config_key": "One JSON file per server, in the format other clients use",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block inside each file",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "notes": "A drop-in directory - a config copied from Claude Desktop, Cursor or Cline is picked up automatically, so a server can arrive here without ever being configured in Continue itself"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -3838,7 +3895,26 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.copilot/mcp-config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation",
+        "triage_priority": "p1",
+        "notes": "Copilot CLI, read natively by the agent host. COPILOT_HOME relocates the whole directory, so a responder checking only the default path misses a moved config - read the environment before concluding there is none."
+      },
+      {
+        "config_path": "<repo>/.mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start in the workspace",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation in the workspace",
+        "triage_priority": "p1",
+        "notes": "Workspace scope, and portable across the agent host and other Copilot tools. Travels with the repo."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -3999,7 +4075,26 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.gemini/settings.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start",
+        "secrets_location": "env block; the CLI expands environment variables here, so the value on disk may be a reference rather than the secret itself",
+        "persistence_trigger": "Every CLI invocation",
+        "triage_priority": "p1",
+        "notes": "User scope"
+      },
+      {
+        "config_path": "<repo>/.gemini/settings.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at CLI start in the workspace",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation in the workspace",
+        "triage_priority": "p1",
+        "notes": "Workspace scope. Travels with the repo."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -7023,7 +7118,35 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "config_path": "~/.codex/config.toml",
+        "config_key": "[mcp_servers.<name>] command + args, or url for HTTP servers",
+        "spawn_mechanism": "stdio child process at CLI start",
+        "secrets_location": "env block; HTTP servers name an env var in bearer_token_env_var",
+        "persistence_trigger": "Every CLI invocation",
+        "triage_priority": "p1",
+        "notes": "User scope. TOML not JSON."
+      },
+      {
+        "config_path": "<repo>/.codex/config.toml",
+        "config_key": "[mcp_servers.<name>]",
+        "spawn_mechanism": "stdio child process at CLI start in the project",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation in the project",
+        "triage_priority": "p1",
+        "notes": "Project scope, applied only to trusted projects. Travels with the repo, so review it on every clone."
+      },
+      {
+        "config_path": "/etc/codex/config.toml",
+        "config_key": "[mcp_servers.<name>]",
+        "spawn_mechanism": "stdio child process at CLI start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every CLI invocation by any user",
+        "triage_priority": "p1",
+        "notes": "System scope on Unix, and the one most likely to be missed - it applies to every user on the host, not just the one under investigation"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",

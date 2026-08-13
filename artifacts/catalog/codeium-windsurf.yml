@@ -183,7 +183,16 @@ credentials:
       ~/.cache/nvim/codeium/config.json. A responder who only collects ~/.codeium/ will
       miss a Neovim user's key entirely.
     confidence: high
-mcp: []
+mcp:
+  - config_path: "~/.codeium/windsurf/mcp_config.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    notes: >-
+      Under the Codeium directory rather than a windsurf one, which is where the
+      path is most often looked for and not found
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

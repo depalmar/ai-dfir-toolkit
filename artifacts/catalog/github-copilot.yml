@@ -207,7 +207,26 @@ credentials:
       turn, so collect both. Windows equivalent sits in the same
       %LOCALAPPDATA%\github-copilot\ directory.
     confidence: medium
-mcp: []
+mcp:
+  - config_path: "~/.copilot/mcp-config.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at CLI start
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation
+    triage_priority: p1
+    notes: >-
+      Copilot CLI, read natively by the agent host. COPILOT_HOME relocates the
+      whole directory, so a responder checking only the default path misses a
+      moved config - read the environment before concluding there is none.
+  - config_path: "<repo>/.mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at CLI start in the workspace
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation in the workspace
+    triage_priority: p1
+    notes: >-
+      Workspace scope, and portable across the agent host and other Copilot
+      tools. Travels with the repo.
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

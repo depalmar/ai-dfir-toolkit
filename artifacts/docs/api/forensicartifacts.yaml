@@ -85,6 +85,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.aws/amazonq/default.json'
+    - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
     separator: /
   supported_os:
@@ -92,6 +94,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.aws/amazonq/default.json'
+    - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
     separator: /
   supported_os:
@@ -99,6 +103,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.aws/amazonq/default.json'
+    - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
     separator: \
   supported_os:
@@ -390,6 +396,7 @@ sources:
     paths:
     - '%%users.appdata%%\Windsurf\User\globalStorage\state.vscdb'
     - '%%users.homedir%%/.codeium/config.json'
+    - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
     - '%%users.homedir%%\.codeium\windsurf\mcp_config.json'
     separator: \
   supported_os:
@@ -413,6 +420,7 @@ sources:
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - '%%users.homedir%%/.continue/mcpServers/'
     - CONTINUE_API_KEY
     separator: /
   supported_os:
@@ -425,6 +433,7 @@ sources:
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - '%%users.homedir%%/.continue/mcpServers/'
     - CONTINUE_API_KEY
     separator: /
   supported_os:
@@ -437,6 +446,7 @@ sources:
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - '%%users.homedir%%/.continue/mcpServers/'
     - CONTINUE_API_KEY
     separator: \
   supported_os:
@@ -1060,6 +1070,7 @@ sources:
     - '%%users.homedir%%/.codex/history.jsonl'
     - '%%users.homedir%%/.codex/logs/codex-tui.log'
     - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    - /etc/codex/config.toml
     separator: /
   supported_os:
   - Linux
@@ -1071,6 +1082,7 @@ sources:
     - '%%users.homedir%%/.codex/history.jsonl'
     - '%%users.homedir%%/.codex/logs/codex-tui.log'
     - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    - /etc/codex/config.toml
     separator: /
   supported_os:
   - Darwin
@@ -1082,6 +1094,7 @@ sources:
     - '%%users.homedir%%/.codex/history.jsonl'
     - '%%users.homedir%%/.codex/logs/codex-tui.log'
     - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
+    - /etc/codex/config.toml
     separator: \
   supported_os:
   - Windows
