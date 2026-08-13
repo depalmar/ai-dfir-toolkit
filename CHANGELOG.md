@@ -169,6 +169,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- **The header stat row is gone.** Everything it carried is still reachable and
+  in a better place: tools, catalog rows, detections and mappings are counts on
+  the tabs, and the credential / MCP split is a facet count in the rail. The one
+  figure with nowhere else to live — `unverified` — moved onto the "Unverified
+  only" toggle, which is where a reader looks for it anyway, keeping its warning
+  colour. Six numbers became one that is attached to the control it describes.
+
 - **The Artifacts tab is now the Catalog tab.** It holds artifacts, credentials
   and MCP configs, so labelling it "Artifacts" put two different numbers under
   one word: the tab counted 434 rows while the header stat counted 265. Both were

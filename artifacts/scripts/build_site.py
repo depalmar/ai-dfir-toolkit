@@ -293,13 +293,13 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .pill{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--muted);
   background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .sub{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
-.hdr-right{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
-.stat{min-width:64px}
-.stat b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:20px;
-  font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--accent)}
-.stat.warn b{color:var(--crit)}
-.stat.warn span{color:var(--crit);opacity:.85}
-.stat span{font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* The unverified count keeps the warning colour it had as a stat: it is the one
+   figure on the page a reader should feel rather than merely read. */
+#unvBtn .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  background:var(--alert-bg);color:var(--crit);border-radius:20px;padding:1px 6px;
+  margin-left:5px;font-variant-numeric:tabular-nums}
+#unvBtn[aria-pressed=true] .n{background:var(--on-accent);color:var(--crit)}
 #themeBtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;
   padding:7px 11px;font-size:12.5px;color:var(--muted)}
 #themeBtn:hover{color:var(--ink);border-color:var(--accent)}
@@ -1434,15 +1434,6 @@ def main():
         f"ports and process trees, each rated by forensic value and sourcing confidence."
     )
 
-    # "unverified" is the one number a reader should feel, not just read: it is
-    # the honesty counter the whole confidence model rests on.
-    stats = [(len(tools), "tools", ""), (n_art, "artifacts", ""), (n_cred, "creds", ""),
-             (n_mcp, "MCP", ""), (len(rules), "detections", ""),
-             (n_unv, "unverified", " warn")]
-    stats_html = "".join(
-        f'<div class="stat{cls}"><b>{n}</b><span>{label}</span></div>'
-        for n, label, cls in stats)
-
     page = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -1473,7 +1464,7 @@ def main():
       <p class="sub">What AI coding agents, local model runtimes and MCP components leave
       on an endpoint, what each trace proves, and in what order to collect it.</p>
     </div>
-    <div class="hdr-right">{stats_html}
+    <div class="hdr-right">
       <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
          aria-label="View this project on GitHub">GitHub &#8599;</a>
       <button id="themeBtn" type="button"></button></div>
@@ -1500,7 +1491,8 @@ def main():
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."
         aria-label="Search the catalog"></div>
-    <button class="tgl" id="unvBtn" type="button" aria-pressed="false">Unverified only</button>
+    <button class="tgl" id="unvBtn" type="button" aria-pressed="false">Unverified only
+      <span class="n">{n_unv}</span></button>
     <button class="tgl plain" id="denseBtn" type="button" aria-pressed="false">Compact rows</button>
     <div class="exportgrp" role="group" aria-label="Export the filtered rows">
       <span class="exportlbl">Export</span>
