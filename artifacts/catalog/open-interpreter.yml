@@ -7,10 +7,11 @@ id: AIRT-0015
 name: Open Interpreter
 aliases:
   - open-interpreter
+  - openinterpreter
   - interpreter
 vendor: Open Interpreter (OSS)
 category: code-execution-agent
-description: Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).
+description: Natural-language to executed code on the host. Supports --local via llamafile (no API key needed). Everything below is the classic Python build (pip install open-interpreter). A Rust successor, also called Open Interpreter, now lives at openinterpreter/openinterpreter and is built on Codex; its artifact locations have not been verified and are not recorded here, so a host running the Rust build will not match these paths.
 supported_os:
   - windows
   - macos

@@ -56,6 +56,15 @@ and shutdowns are the most common form of decay and the cheapest to catch:
 - Has it been renamed? Add the former name to `aliases` so a search for it still
   lands somewhere.
 
+**Confirm a disappearance against a second source before recording it.** GitHub's
+repository search does not return every live repository - `LostRuins/koboldcpp`
+returns nothing from repo search, including under `user:LostRuins`, while its
+forks index normally. It is live and actively maintained. An absent search result
+looks identical to a deleted repository and is not evidence of one. The same
+caution applied to `oobabooga/text-generation-webui` in the same sweep produced
+the opposite answer - that absence was real, and the repository had been renamed
+to `oobabooga/textgen`.
+
 ## 3. Path verification (as much as you can do on a real host)
 
 This can only be done on a real machine, which is why it is the work that most

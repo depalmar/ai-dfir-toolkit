@@ -85,3 +85,46 @@ primary source disagreed.
 | `KAPE` / `Velociraptor` | consistency check | one direction only | **both directions** | CORRECTED. The declared-vs-emitted check only ran for entries that produced output, so `AIRT-0047` could declare `kape_target: Letta` while producing no target at all - a catalog entry pointing a responder at a file that does not exist. Found by listing the emitted files rather than by trusting the clean run. Both exporters now also fail on a declaration with nothing behind it; negative-tested. |
 | `NOTES` | acronym list | derived from the corpus | **plus MITRE, ATLAS, CVE, KEV, SIEM, EDR, DFIR** | CORRECTED. The allowlist was derived by enumerating every uppercase token then in the corpus, which is why it was right about CWD and PKCE and wrong about MITRE - no note used it until `AIRT-0047` did. A derived allowlist is only complete for the corpus it was derived from. |
 | `REFS` | coverage | 3/45 | **48/49** | Every entry except `AIRT-0034` OpenAI Operator now cites a primary source. The holdout is left empty rather than padded, and `validate.py` names it on every run. |
+
+## Verification Pass 6 — first lifecycle sweep, August 2026
+
+The first run of `docs/REVERIFICATION.md` step 2, against all 49 entries. 34 cite
+a GitHub repository and were checked through the API for `archived` and
+`updated_at`; the other 15 are vendor-hosted and were checked against reporting.
+
+### Corrections
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0022` | repo / description | `oobabooga/text-generation-webui`, "Gradio web UI" | **`oobabooga/textgen`, and a native desktop app** | CORRECTED. Renamed to TextGen in 2026; the repository is the same object (created 2022-12-21, 47.5k stars) under a new name, and the old URL redirects. It now ships a native Electron desktop app alongside the browser UI, released in v4.7.3 on 2026-05-03. The catalogued paths were recorded against the web UI, and the entry now says so - a desktop build may add Electron app-data locations that nobody here has verified. |
+| `AIRT-0015` | successor | not recorded | **Rust rewrite at `openinterpreter/openinterpreter`** | CORRECTED. The project has a Rust successor, built on Codex, carrying the same name. The catalogued paths are the classic Python build (`pip install open-interpreter`), which is still on PyPI. A host running the Rust build will not match them. Its locations are unverified and deliberately not recorded. |
+| `AIRT-0027` | status detail | "maintenance mode as of 2026" | **maintenance mode since October 2025; AG2 controls the original PyPI packages** | EXPANDED. Last feature release September 2025, bug and security fixes only, community managed. Microsoft Agent Framework is the successor (1.0 GA April 2026). The forensically useful part is the fork: the original authors' AG2 controls the original PyPI package names, so `pip install` may not put Microsoft's AutoGen on disk. Check the installed distribution, not the import name. |
+
+### Re-confirmed, no change
+
+Not archived and updated within the day of the sweep: `AIRT-0001` Claude Code,
+`AIRT-0004` Aider, `AIRT-0005` Continue.dev, `AIRT-0012` AutoGPT, `AIRT-0016`
+GPT Pilot, `AIRT-0017` Ollama, `AIRT-0019` Jan, `AIRT-0020` GPT4All, `AIRT-0021`
+llama.cpp, `AIRT-0024` LocalAI, `AIRT-0025` n8n, `AIRT-0026` LangChain/LangGraph,
+`AIRT-0028` CrewAI, `AIRT-0029` Dify, `AIRT-0030` Flowise, `AIRT-0031` Playwright
+MCP, `AIRT-0032` Browser-Use, `AIRT-0035` Skyvern, `AIRT-0036` Codex CLI,
+`AIRT-0037` Gemini CLI, `AIRT-0038` Goose, `AIRT-0039` Cline, `AIRT-0043`
+OpenHands, `AIRT-0044` Langflow, `AIRT-0048` Docker Model Runner, `AIRT-0049`
+framework libraries (all three cited repos).
+
+Archived, and already marked as such: `AIRT-0013` AgentGPT and `AIRT-0040` Roo
+Code both return `archived: true` from the API, which confirms the status set in
+the previous pass from reporting alone.
+
+### Methodology note — an absent search result is not evidence of absence
+
+`LostRuins/koboldcpp` returned nothing from GitHub's repository search, including
+under a `user:LostRuins` query, while its forks and satellites indexed normally.
+That looks exactly like a deleted or transferred repository. It is not: the
+repository is live and actively maintained, with v1.117.1 released 2026-07-10.
+The search index simply does not return it.
+
+`AIRT-0023` is therefore **unchanged**, and the next person running this sweep
+should confirm a disappearance against a second source before recording it. The
+same caution applied to `AIRT-0022` produced the opposite result - there the
+absence was real, and the repository had been renamed.

@@ -1,6 +1,6 @@
 name: Custom.AIAgents.OpenInterpreter
 description: |
-  Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).
+  Natural-language to executed code on the host. Supports --local via llamafile (no API key needed). Everything below is the classic Python build (pip install ope
 
   Generated from the AI agent artifact catalog (AIRT-0015). Every glob below is
   derived from a location the catalog has already verified.
