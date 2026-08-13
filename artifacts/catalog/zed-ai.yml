@@ -1,0 +1,177 @@
+# AI agent artifact catalog entry
+# AIRT-0050 - Zed AI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0050
+name: Zed AI
+aliases:
+  - Zed
+  - Zed Editor
+  - zed-ai
+vendor: Zed Industries
+status: active
+category: coding-agent-ide
+description: Rust GPUI editor with a built-in Agent Panel and native MCP support. Settings are a single JSON file rather than a per-extension store, and MCP servers live in that same file under context_servers - not mcpServers, which is why a sweep grepping for the usual key misses Zed entirely. Also hosts external agents over ACP, so a Zed install can be driving another vendor's agent binary.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: A project-scoped .zed/settings.json travels with a clone and can define context servers, so an untrusted repository carries an execution primitive that the user never configured.
+artifacts:
+  disk:
+    - path: ~/.config/zed/settings.json
+      os:
+        - macos
+        - linux
+      artifact_type: config-file
+      description: >-
+        The whole configuration in one file, including context_servers and the
+        agent's tool permission settings. Read agent.tool_permissions.default
+        first - "allow" means the agent was running tools without asking, which
+        changes how the rest of the timeline should be read.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - execution
+      install_method: n/a
+      confidence: medium
+    - path: "%APPDATA%\\Zed\\settings.json"
+      os:
+        - windows
+      artifact_type: config-file
+      description: Same file on Windows. Honours XDG_CONFIG_HOME on the POSIX platforms, so resolve it rather than assuming the default.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - execution
+      install_method: n/a
+      confidence: medium
+    - path: "<repo>/.zed/settings.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Project scope, overriding the user file. Travels with the repository, so review it on clone and on pull rather than only at triage.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - execution
+        - persistence
+      install_method: n/a
+      confidence: medium
+    - path: "%LOCALAPPDATA%\\Zed\\extensions"
+      os:
+        - windows
+      artifact_type: extension-bundle
+      description: Installed extensions, which is where an MCP server shipped as a Zed extension lands rather than in the settings file
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - configuration
+      install_method: n/a
+      confidence: low
+      unverified: true
+  network:
+    - direction: egress
+      indicator: Configured provider endpoint (arbitrary), plus collab.zed.dev for the hosted service
+      port: 443/TCP
+      description: ""
+      confidence: medium
+  process:
+    - name: zed / zed.exe
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell / desktop session
+      typical_children: sh, bash, node, python, uvx (context servers and external agents)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+  eventlog:
+    - channel: Microsoft-Windows-Sysmon/Operational
+      event_id: "1"
+      selector: Image ends with zed.exe
+      description: >-
+        Proves the editor ran, which the settings file does not. The child
+        processes are the interesting part: a context server or an external
+        agent started by Zed appears here as a child, and that is the only
+        record that the agent panel did anything.
+      requires: >-
+        Sysmon deployed with process creation logging. Security 4688 is the
+        fallback where it is not, but it carries CommandLine only when Include
+        command line in process creation events is enabled.
+      evidence_type:
+        - execution
+        - timeline
+      os:
+        - windows
+      forensic_value: high
+      confidence: medium
+credentials:
+  - location: OS keychain, via the editor's own credential storage
+    os:
+      - windows
+      - macos
+      - linux
+    storage: os-keyring
+    secret_type: api-key
+    description: Provider keys are not in settings.json by default - collect from the keychain rather than the config file
+    confidence: low
+    unverified: true
+mcp:
+  - mechanism: config-file
+    config_path: ~/.config/zed/settings.json
+    config_key: context_servers
+    spawn_mechanism: Child process at editor start
+    secrets_location: env block within the server definition
+    persistence_trigger: Every editor start
+    triage_priority: p1
+    confidence: medium
+    notes: >-
+      The key is context_servers, not mcpServers. A collection script written
+      against the Claude Desktop shape will read this file and find nothing.
+  - mechanism: config-file
+    config_path: "<repo>/.zed/settings.json"
+    config_key: context_servers
+    spawn_mechanism: Child process on project open
+    secrets_location: env block within the server definition
+    persistence_trigger: Every project open
+    triage_priority: p1
+    confidence: medium
+    notes: Travels with the repo - review on clone
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0011
+attack_techniques:
+  - T1059
+  - T1195.002
+references:
+  - title: Zed docs - Model Context Protocol
+    url: https://zed.dev/docs/assistant/model-context-protocol
+    accessed: "2026-08-13"
+  - title: Zed docs - Agent Settings
+    url: https://zed.dev/docs/ai/agent-settings
+    accessed: "2026-08-13"
+  - title: Zed docs - Configuring Zed
+    url: https://zed.dev/docs/configuring-zed
+    accessed: "2026-08-13"
+  - title: Zed docs - External Agents
+    url: https://zed.dev/docs/ai/external-agents
+    accessed: "2026-08-13"
+last_verified: "2026-08-13"
+last_modified: "2026-08-13"

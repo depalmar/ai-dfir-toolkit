@@ -189,18 +189,24 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-49 entries, 313 artifacts, 154 credential locations, 58 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
-Velociraptor artifacts, 9 telemetry sources. Validation clean.
+51 entries, 340 artifacts, 156 credential locations, 61 MCP config
+locations, 12 endpoint Sigma rules, 14 case studies, 9 telemetry sources.
+Validation clean.
 
-Volatility across the 507 site rows: 101 live, 43 rotating, 363 stable.
+Volatility across the 557 site rows: live 106 · rotating 45 · stable 406
+
+Detection content maps to the OWASP LLM Top 10 **2026** list. Eight of the ten
+IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
+names a different category here than it did there -
+`scripts/remap_owasp_2026.py` holds the mapping table and the reasoning.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
-Confidence: 28 high, 17 medium, 4 low.
-Provenance: 48/49 entries carry a reference - `validate.py` names the holdout
-(AIRT-0034 OpenAI Operator) on every run. 28/49 carry aliases. 37/49 carry
+Confidence: 28 high, 19 medium, 4 low.
+Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
+sourcing it turned up a correction rather than a citation - Operator is EOL and
+its only network indicator was a domain that had been sunset. 28/49 carry aliases. 37/49 carry
 `last_verified`; the 12 without it are vendor-hosted entries that the first
 lifecycle sweep could not check through a repository API, and `validate.py`
 lists them as never verified rather than letting them look fresh.

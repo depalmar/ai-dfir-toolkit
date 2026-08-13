@@ -1,10 +1,12 @@
 $CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\Claude\claude_desktop_config.json
 %APPDATA%\Claude\logs\mcp*.log
+%APPDATA%\Code\User\globalStorage\kilocode.kilo-code\settings\mcp_settings.json
 %APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json
 %APPDATA%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json
 %APPDATA%\Cursor\User\globalStorage\state.vscdb
 %APPDATA%\Windsurf\User\globalStorage\state.vscdb
+%APPDATA%\Zed\settings.json
 %APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)
 %APPDATA%\goose\config.yaml
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
@@ -29,6 +31,9 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on Linux/Docker)
 <VS Code User dir>/globalStorage/continue.continue/*.bin
 <config>/githubcopilot/info.json
+<globalStorage>/kilocode.kilo-code/
+<globalStorage>/kilocode.kilo-code/settings/custom_modes.yaml
+<globalStorage>/kilocode.kilo-code/settings/mcp_settings.json
 <home|gitroot|cwd>/.env
 <install>/.env
 <install>/browser_sessions/
@@ -69,6 +74,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <repo>/.roo/mcp.json
 <repo>/.tabnine/mcp_servers.json
 <repo>/.warp/.mcp.json
+<repo>/.zed/settings.json
 ANTHROPIC_API_KEY
 ANTHROPIC_AUTH_TOKEN
 AWS Builder ID / IAM Identity Center token cache
@@ -118,6 +124,7 @@ OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_AP
 OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
 OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
 OP_SERVICE_ACCOUNT_TOKEN
+OS keychain, via the editor's own credential storage
 OS keyring: service "Codex Auth", account "cli|<first 16 hex of SHA-256 of the resolved home path>"
 OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)
 OS keyring: service `goose`, username `secrets` (single JSON blob)
@@ -170,6 +177,7 @@ webui.db (user and API key tables)
 ~/.codex/logs/codex-tui.log
 ~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl
 ~/.config/Claude/claude_desktop_config.json
+~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
 ~/.config/Cursor/User/globalStorage/state.vscdb
 ~/.config/TabNine/.refresh_token_v2
@@ -188,6 +196,7 @@ webui.db (user and API key tables)
 ~/.config/goose/secrets.yaml (mode 0600)
 ~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml
 ~/.config/vllm/usage_stats.json
+~/.config/zed/settings.json
 ~/.continue/.env
 ~/.continue/auth.json
 ~/.continue/config.json
@@ -228,9 +237,11 @@ webui.db (user and API key tables)
 ~/.skyvern/data.db
 ~/.supermaven/config.json
 ~/.tabnine/mcp_servers.json
+~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.warp_cli/.mcp.json
 ~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
 ~/Library/Application Support/Claude/claude_desktop_config.json
+~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
 ~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
 ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb

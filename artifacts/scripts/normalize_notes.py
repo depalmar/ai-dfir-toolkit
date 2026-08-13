@@ -54,7 +54,13 @@ ACRONYMS = {
     "ML", "MSIX",
     "NPM", "OS", "OSS", "OTLP", "PATH", "PEM", "PID", "PII", "PKCE", "POSIX",
     "PAT", "POST", "PR", "RAG", "REPL", "RCE", "README", "REST", "RPC", "RSA", "SDK", "SQL",
+    "WSL", "ACP", "GPUI", "XDG",
     "SSE", "SSH", "SSO", "STS", "TCP", "TLS", "TOML", "TTY", "UI", "URI",
+    # WSL and ACP arrived with AIRT-0050/0051. The allowlist is derived from the
+    # corpus it was built against, so it is complete only for that corpus - the
+    # same way MITRE had to be added when AIRT-0047 first used it. Adding a tool
+    # that speaks a new acronym means adding the acronym, or the normalizer
+    # quietly writes "wsl".
     "URL", "UUID", "VM", "VPN", "VS", "WAL", "XML", "YAML", "YOLO", "ZIP",
 }
 
