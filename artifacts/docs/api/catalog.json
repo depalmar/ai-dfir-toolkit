@@ -5406,7 +5406,6 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect the memory store before touching the deployment. Memory is a persistence mechanism here, and a container teardown or a database reset destroys the record of what the agent knew and when it learned it. Read the memory contents for injected standing instructions, not only for data - an agent cleaned everywhere else will re-execute an instruction that survived in memory. Check whether 8283 is reachable beyond loopback.",
-      "kape_target": "Letta",
       "velociraptor_artifact": "Custom.AIAgents.Letta"
     },
     "atlas_techniques": [
