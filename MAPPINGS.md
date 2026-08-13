@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 63 rule files / 142 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 66 rule files / 154 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -102,7 +102,24 @@ loop are the durable detection surface.
 YARA string sets here are derived from public reporting rather than confirmed
 samples — see the category README before deploying them for blocking.
 
-## 08 — Endpoint (cross-tool)
+## 08 — Agentic Orchestration Abuse & AI-Service C2
+
+The adversary using an agent as the operator, and AI provider APIs abused as covert
+C2. Different in kind from 01-07: every individual tool call here is legitimate, and
+what betrays the intrusion is emergent - tempo, phase progression, breadth, and the
+ratio of agent actions to human decisions.
+
+| Rule | Format | ATLAS | OWASP | CVE / Reference |
+|------|--------|-------|-------|-----------------|
+| `sesameop_assistants_api_c2.yml` | Sigma | T0096 | LLM06 | SesameOp, Microsoft DART Nov 2025 (AML.CS0042) |
+| `agentic_orchestration_behavior.yml` | Sigma | T0086, T0054 | LLM06 | GTG-1002, Anthropic Nov 2025 |
+| `ai_service_api_c2.rules` | Suricata | T0096, T0086 | LLM06 | SesameOp / agent-as-C2 egress |
+
+GTG-1002 is vendor-disclosed with no public IOCs, so these are behavioural rather
+than signature-based. `agentic_orchestration_behavior.yml` is threshold-driven and
+must be baselined before alerting - see the category README.
+
+## Endpoint (cross-tool)
 
 Cross-tool endpoint rules generated alongside the artifact catalog
 (`artifacts/detections/sigma/`). Scoped to agent behaviour on a host rather than
@@ -148,11 +165,11 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 | T0051.000 | Direct Prompt Injection | 2 |
 | T0051.001 | Indirect Prompt Injection | 1 |
 | T0053    | AI Agent Tool Invocation | 4 |
-| T0054    | LLM Jailbreak | 4 |
+| T0054    | LLM Jailbreak | 5 |
 | T0081    | Modify AI Agent Configuration | 2 |
 | T0082    | RAG Credential Harvesting | 1 |
-| T0086    | Exfiltration via AI Agent Tool Invocation | 15 |
-| T0096    | AI Service API | 8 |
+| T0086    | Exfiltration via AI Agent Tool Invocation | 17 |
+| T0096    | AI Service API | 10 |
 | T0104    | Publish Poisoned AI Agent Tool | 1 |
 | T0110    | AI Agent Tool Poisoning | 3 |
 
@@ -163,7 +180,7 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 | LLM01    | Prompt Injection | 10 |
 | LLM02    | Sensitive Information Disclosure | 15 |
 | LLM03    | Supply Chain | 12 |
-| LLM06    | Excessive Agency | 18 |
+| LLM06    | Excessive Agency | 21 |
 | LLM07    | System Prompt Leakage | 2 |
 | LLM08    | Vector and Embedding Weaknesses | 5 |
 | LLM10    | Unbounded Consumption | 3 |

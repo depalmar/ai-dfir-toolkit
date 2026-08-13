@@ -8,6 +8,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **`08-agentic-orchestration/` — 3 rule files / 12 signatures.** The adversary
+  using an agent as the operator (GTG-1002, Anthropic Nov 2025) and AI provider
+  APIs abused as covert C2 (SesameOp, Microsoft DART Nov 2025). Different in kind
+  from the other categories: every individual tool call is legitimate, and what
+  betrays the intrusion is emergent — tempo, phase progression, breadth. Both
+  cases are vendor-disclosed with no public IOCs, so the content is behavioural
+  and threshold-driven; the README says plainly that the thresholds must be
+  baselined before they are alerted on. Maps to `AML.T0096` and `AML.T0086`.
+
 - **`07-runtime-ai-malware/` — 8 rule files / 16 signatures.** Detections for
   malware that calls an LLM API *during execution* to generate or mutate its own
   code ("just-in-time code creation", GTIG November 2025): PROMPTFLUX, PROMPTSTEAL
