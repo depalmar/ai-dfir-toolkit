@@ -323,6 +323,23 @@ def _inline_diagrams(html_body: str, raw: str):
     return out, missing
 
 
+def _demote_headings(html: str) -> str:
+    """Shift the guide's heading tree down one level.
+
+    The guide is a document in its own right, so its parts are authored as h1 -
+    and it gets injected into a page that already has one, leaving seven h1s
+    competing and no usable outline for a screen reader.
+
+    The whole tree moves, not just the top: demoting h1 to h2 alone would put a
+    guide Part and a guide Section at the same level, which is worse than the
+    problem it fixes. Deepest first, so nothing is shifted twice. Ids are
+    untouched, so the table of contents and every #g- anchor still resolve.
+    """
+    for level in range(5, 0, -1):
+        html = re.sub(rf"<(/?)h{level}(\b)", rf"<\g<1>h{level + 1}\g<2>", html)
+    return html
+
+
 def load_guide():
     """Render the investigation guide to HTML at build time.
 
@@ -335,6 +352,7 @@ def load_guide():
     import markdown as md
     raw = GUIDE.read_text(encoding="utf-8")
     html_body = md.markdown(raw, extensions=["fenced_code", "tables", "toc", "sane_lists"])
+    html_body = _demote_headings(html_body)
     html_body, missing_diagrams = _inline_diagrams(html_body, raw)
     toc, part, fenced = [], None, False
     for line in raw.splitlines():

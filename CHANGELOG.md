@@ -126,6 +126,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Fixed
 
+- **Filtering was silent to a screen reader.** The result count changed from
+  "434 of 434 shown" to "4 of 434 shown" with no live region anywhere on the
+  page, so the table silently resized for anyone not watching it. `#count` is now
+  `role="status"` with `aria-live="polite"` — polite rather than assertive,
+  because it should not interrupt what the reader is already hearing.
+- **No `<main>` landmark and no skip link.** `<nav>` and `<aside>` were already
+  marked up, leaving the content region — the one people actually jump to — as
+  the only one missing. A skip link now precedes the header, since the filter
+  rail carries six facet groups (one listing 45 tools) that a keyboard user
+  otherwise tabs through to reach a single row.
+- **Seven `<h1>` elements.** The investigation guide authors its parts as `h1`,
+  correct for a standalone document and wrong once injected into a page that has
+  one, which left no usable outline. The whole tree shifts down one level rather
+  than just the top: demoting `h1` alone would put a guide Part and a guide
+  Section at the same level, worse than the problem it fixes. Ids are untouched —
+  all 22 table-of-contents anchors still resolve, verified in a browser.
+
 - **`AIRT-CS-0001` referenced a dead entry id.** It pointed at `LOLAI-0016`, from
   the naming scheme retired when the catalog was renamed, so the case study could
   not be cross-linked to the tool it describes. Both ids are GPT Pilot; corrected
