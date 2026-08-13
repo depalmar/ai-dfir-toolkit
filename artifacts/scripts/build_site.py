@@ -494,9 +494,25 @@ tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--hover)}
 tbody tr.sel{background:var(--accent-soft)}
 tr:last-child td{border-bottom:0}
+/* Column widths, so the two prose-ish columns are not left fighting over the
+   slack. Artifact holds paths that break anywhere, and with no widths at all it
+   took whatever it wanted and squeezed Notes into a 38ch ribbon. */
+col.k-pick{width:34px}
+col.k-id{width:96px}
+col.k-tool{width:132px}
+col.k-cls{width:92px}
+col.k-os{width:108px}
+col.k-fv{width:74px}
+col.k-conf{width:74px}
+col.k-art{width:34%}
+/* word-break:break-all lets a path shrink to a single character, so in auto
+   layout the Artifact column surrendered everything to Notes and ended up
+   narrower than the OS column. A floor on the cell stops the giveaway; the two
+   prose columns then split what is left. */
+td.artcell{min-width:300px}
 td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
 td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap}
-td .note{font-size:12.5px;color:var(--muted);max-width:38ch;display:inline-block}
+td .note{font-size:12.5px;color:var(--muted);display:block}
 .pick{width:17px;height:17px;border-radius:5px;border:1px solid var(--field-line);
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
   font-size:12px;color:transparent;padding:0}
@@ -572,19 +588,30 @@ th .pick.all{vertical-align:middle}
   color:var(--ink);font-size:12px;cursor:pointer}
 .srcjump:hover{border-color:var(--accent);background:var(--accent-soft-2)}
 /* --- data sources view --- */
-.srcintro{margin:0 0 16px;font-size:13.5px;color:var(--muted);max-width:70ch}
+.srcintro{margin:0;font-size:13.5px;color:var(--muted);max-width:70ch}
 .vollegend{display:grid;gap:7px;margin-top:12px}
 .vollegend>div{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:start;font-size:12.5px}
+/* Same grid as the case studies. Reading order is still volatility order - the
+   whole point of this view - because a grid fills left to right before it wraps,
+   so `live` stays first however many columns fit. */
+.srcgridwrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:10px}
 details.src{background:var(--panel);border:1px solid var(--line);border-radius:11px;
-  padding:0;margin-bottom:10px;overflow:hidden}
-details.src>summary.srchead{display:flex;justify-content:space-between;gap:14px;
-  align-items:center;flex-wrap:wrap;padding:12px 16px 12px 34px;cursor:pointer;
+  padding:0;margin:0;overflow:hidden;display:flex;flex-direction:column}
+details.src[open]{grid-column:1/-1}
+details.src:not([open])>summary{flex:1}
+@media(max-width:760px){.srcgridwrap{grid-template-columns:1fr}}
+details.src>summary.srchead{display:flex;flex-direction:column;gap:9px;
+  justify-content:space-between;align-items:stretch;
+  padding:12px 14px 12px 30px;cursor:pointer;min-height:74px;
   list-style:none;position:relative;margin:0}
+details.src[open]>summary.srchead{flex-direction:row;flex-wrap:wrap;
+  align-items:center;gap:12px;min-height:0}
 details.src>summary::-webkit-details-marker{display:none}
-details.src>summary::before{content:'';position:absolute;left:15px;top:50%;
+details.src>summary::before{content:'';position:absolute;left:13px;top:17px;
   width:0;height:0;border:5px solid transparent;border-left-color:var(--faint);
-  transform:translateY(-50%);transition:transform .12s}
-details.src[open]>summary::before{transform:translateY(-50%) rotate(90deg)}
+  transition:transform .12s}
+details.src[open]>summary::before{top:50%;transform:translateY(-50%) rotate(90deg)}
 details.src>summary:hover{background:var(--hover)}
 details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .srcinner{padding:14px 16px 16px}
@@ -615,6 +642,34 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   border-bottom:1px dotted var(--line)}
 .srcref:hover{color:var(--accent)}
 @media(max-width:640px){.vollegend>div{grid-template-columns:1fr;gap:3px}}
+.plansum{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;
+  padding:10px 13px;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:9px;font-size:12.5px;color:var(--muted)}
+.plansum b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:3px}
+.plansum>span:not(.badge){white-space:nowrap}
+.plancred{color:var(--med)}
+.ptool{font-size:11.5px;color:var(--faint);margin-left:auto;padding-left:10px;
+  white-space:nowrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.segbtn{background:var(--panel);border:0;padding:6px 11px;font-size:12px;
+  color:var(--muted);cursor:pointer}
+.segbtn+.segbtn{border-left:1px solid var(--line)}
+.segbtn.on{background:var(--accent);color:var(--on-accent)}
+.segbtn:not(.on):hover{background:var(--hover);color:var(--ink)}
+.btn.danger{color:var(--crit);border-color:var(--alert-line)}
+.btn.danger:hover{background:var(--alert-bg);border-color:var(--crit)}
+.btn.danger[data-armed="1"]{background:var(--crit);color:#fff;border-color:var(--crit)}
+#backbar{margin:0 0 12px}
+.backbtn{background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  padding:5px 13px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.backbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.clsgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.clsrow{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+  padding:7px 9px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left}
+.clsrow b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:5px}
+.clsrow:hover{border-color:var(--accent);background:var(--accent-soft)}
+.tmeta{margin-top:7px;font-size:12px;color:var(--faint)}
+.badge.vol i{font-style:normal;opacity:.6;margin-right:5px;font-size:10px}
 .locrow{display:flex;gap:8px;align-items:stretch}
 .locrow .locator{flex:1;min-width:0}
 .copybtn{flex:none;align-self:stretch;font-size:11.5px;padding:0 11px}
@@ -700,6 +755,15 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:8px;
   padding:10px;overflow:auto;max-height:340px;font-family:ui-monospace,Menlo,monospace;
   font-size:11.5px;line-height:1.45;white-space:pre;color:var(--ink)}
+pre.yaml.wrapped{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+pre.yaml.grown{max-height:none}
+.codetools{float:right;display:flex;gap:5px;text-transform:none;letter-spacing:0}
+.minibtn{background:var(--panel);border:1px solid var(--line);border-radius:5px;
+  padding:1px 8px;font-size:10.5px;color:var(--muted);cursor:pointer;
+  text-transform:none;letter-spacing:0}
+.minibtn:hover{border-color:var(--accent);color:var(--accent)}
+.minibtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--on-accent)}
 .fplist{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}
 
 /* ---- mappings ---- */
@@ -746,6 +810,13 @@ details.csfull[open]>summary{border-bottom:1px solid var(--line-soft);
 details.csfull[open]>summary::before{top:50%;transform:translateY(-50%) rotate(90deg)}
 .cstop{min-width:0}
 .csname{font-size:13.5px;font-weight:600;line-height:1.35}
+/* Clamped, not truncated at a character count: three lines of the real summary
+   is enough to decide whether to open a case, and a hard character cut lands
+   mid-word on some and mid-sentence on all of them. */
+.csbrief{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+  overflow:hidden}
+details.csfull[open] .csbrief{display:none}
 .csaff{color:var(--accent);margin-top:1px}
 /* One line, always the same order, so the tiles read as a column of facts
    rather than as ragged chip soup: indicators, rules, provenance, dispute. */
@@ -777,8 +848,34 @@ table.cov th{text-align:left;background:var(--panel-2);color:var(--muted);
 table.cov td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
 table.cov tr:last-child td{border-bottom:0}
 table.cov .num{text-align:right;font-family:ui-monospace,Menlo,monospace}
-table.cov td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.covrow{cursor:pointer}
 .covrow:hover{background:var(--hover)}
+.covrow.open{background:var(--accent-soft)}
+.cvcaret{display:inline-block;width:0;height:0;border:4px solid transparent;
+  border-left-color:var(--faint);margin-right:8px;transition:transform .12s;
+  vertical-align:middle}
+.covrow.open .cvcaret{transform:rotate(90deg)}
+.covdet td{background:var(--panel-2);padding:14px 14px 14px 34px}
+.cdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.cdgrid h5{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--faint)}
+.cdgrid .n{font-family:ui-monospace,Menlo,monospace;font-size:10px;
+  background:var(--line-soft);border-radius:20px;padding:0 6px;color:var(--muted)}
+.cdchip{display:block;width:100%;text-align:left;background:var(--panel);
+  border:1px solid var(--line);border-radius:6px;padding:4px 8px;margin-bottom:4px;
+  font-size:11.5px;color:var(--ink);cursor:pointer}
+.cdchip[data-rule]{font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.cdchip:hover{border-color:var(--accent);background:var(--accent-soft)}
+.iwrap{border-bottom:1px solid var(--line-soft)}
+.iwrap:last-child{border-bottom:0}
+.irow.open{background:var(--accent-soft)}
+.idet{padding:10px 12px 14px 34px;background:var(--panel-2)}
+.idet .cdchip{max-width:520px}
+.idrill{margin-top:8px;font-size:11.5px}
+.cdref{display:inline-block;margin-top:12px;font-size:11.5px;color:var(--muted);
+  text-decoration:none;border-bottom:1px dotted var(--line)}
+.cdref:hover{color:var(--accent)}
 .covrow .iid{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink);
   margin-right:8px}
 .covrow .ittl{color:var(--muted)}
@@ -942,7 +1039,12 @@ table.cov td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowr
 .gbody blockquote{margin:0 0 10px;padding-left:12px;border-left:3px solid var(--accent-border);
   color:var(--muted)}
 .gbody a{overflow-wrap:anywhere}
-.gtop{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:baseline;
+/* The text block grows to the full row, so with flex-wrap the button wrapped
+   underneath and read as part of the prose. Pin it: text takes the slack, button
+   keeps its size, both align to the top. */
+.gtop>:first-child{flex:1 1 420px;min-width:0}
+.gtop>.btn{flex:none;align-self:flex-start}
+.gtop{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-start;
   margin:0 0 14px}
 .gtop h2{margin:0;font-size:16px}
 .gtop p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
@@ -1067,6 +1169,46 @@ const ROPTIONS={
   rowasp:[...new Set(RULES.flatMap(r=>r.owasp))].sort(),
 };
 
+/* ---------- navigation history ----------
+   Every cross-view jump on this page - a coverage count into the catalog, a case
+   into its tool's artifacts, a drawer into a data source - used to be one way.
+   replaceState meant the browser Back button did nothing either, so the only
+   route back was to work out which filters had been set and undo them by hand.
+   A jump now pushes the state it left, restores it on popstate, and shows where
+   Back goes so the affordance is not just a browser gesture people may not try. */
+const VIEW_LABEL={catalog:'Catalog',tools:'Tools',rules:'Detections',
+  mappings:'Mappings',sources:'Data sources',cases:'Case studies',
+  plan:'Collection plan',guide:'Investigation guide'};
+let navStack=[];
+function snapshot(){
+  return {view,query,unvOnly,
+    filters:JSON.parse(JSON.stringify(filters)),
+    rfilters:JSON.parse(JSON.stringify(rfilters)),
+    ruleSet:ruleSet?[...ruleSet]:null,
+    scroll:window.scrollY};
+}
+function restore(s){
+  view=s.view;query=s.query;unvOnly=s.unvOnly;
+  for(const k of Object.keys(filters))filters[k]=s.filters[k]||[];
+  for(const k of Object.keys(rfilters))rfilters[k]=s.rfilters[k]||[];
+  ruleSet=s.ruleSet?new Set(s.ruleSet):null;
+  const q=$('#q');if(q)q.value=s.query||'';
+  $('#unvBtn').setAttribute('aria-pressed',String(unvOnly));
+  update();
+  requestAnimationFrame(()=>window.scrollTo(0,s.scroll||0));
+}
+// Called by a jump BEFORE it mutates anything, so the stack holds where you were.
+function pushNav(){
+  navStack.push(snapshot());
+  history.pushState({nav:navStack.length},'',location.hash||location.pathname);
+}
+function goBack(){
+  const s=navStack.pop();
+  if(s)restore(s);
+}
+window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
+
+let codeWrap=false, codeGrow=false, planMode='tool';
 let view='catalog', query='', unvOnly=false, dense=false,
     sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
 const filters={cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
@@ -1202,7 +1344,11 @@ function tableHTML(rows){
   // reader looks for it - not stranded at the right edge of the toolbar.
   const anchors=rows.map(r=>r.anchor);
   const allPicked=anchors.length&&anchors.every(a=>picks.has(a));
-  return `<div class="tablescroll"><table><thead><tr>`+COLS.map(([l,k])=>{
+  const KEYCOL={pick:'k-pick',entry_id:'k-id',tool:'k-tool',cls:'k-cls',
+    artifact:'k-art',os:'k-os',forensic_value:'k-fv',confidence:'k-conf'};
+  return `<div class="tablescroll"><table><colgroup>`
+    +COLS.map(([,k])=>`<col class="${KEYCOL[k]||''}">`).join('')
+    +`</colgroup><thead><tr>`+COLS.map(([l,k])=>{
     if(k==='pick')return `<th><button class="pick all" id="pickAllCol"
       aria-pressed="${allPicked}"
       aria-label="${allPicked?'Remove all shown from':'Add all shown to'} the collection plan"
@@ -1216,7 +1362,7 @@ function tableHTML(rows){
       <td><span class="id">${esc(r.entry_id)}</span></td>
       <td>${esc(r.tool)}</td>
       <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td><span class="path">${esc(r.artifact)}</span>${r.unverified?' <span class="unv">unverified</span>':''}</td>
+      <td class="artcell"><span class="path">${esc(r.artifact)}</span>${r.unverified?' <span class="unv">unverified</span>':''}</td>
       <td>${esc(r.os.join(', '))}</td>
       <td>${fvBadge(r.forensic_value,true)}</td>
       <td>${confBadge(r.confidence,true)}</td>
@@ -1275,15 +1421,17 @@ function toolsHTML(){
 function sourcesHTML(){
   const list=[...SOURCES].sort((a,b)=>
     (VOL_ORDER[a.volatility]-VOL_ORDER[b.volatility])||b.n_rows-a.n_rows);
-  return `<div class="srcintro">
+  return `<div class="gtop"><div class="srcintro">
     <p>Ordered by how fast the evidence disappears, not by how useful it is. A
     source further down this page is not less important - it is just still going
     to be there tomorrow.</p>
     <div class="vollegend">${VOL_TIERS.map(v=>
       `<div><span class="badge vol v-${v}"><i>volatility</i>${v}</span>
        <span>${esc(VOL_MEANING[v])}</span></div>`).join('')}</div>
-    <button class="btn" id="srcAll" data-open="0">Expand all</button>
-  </div>`+list.map(s=>`
+  </div>
+  <button class="btn" id="srcAll" data-open="0">Expand all</button>
+  </div>
+  <div class="srcgridwrap">`+list.map(s=>`
     <details class="src" id="src-${esc(s.id)}">
       <summary class="srchead">
         <div><h3>${esc(s.name)}</h3>
@@ -1312,7 +1460,7 @@ function sourcesHTML(){
           target="_blank" rel="noopener">${esc(r.title)} &#8599;</a>`).join('')}
       </div>
       </div>
-    </details>`).join('');
+    </details>`).join('')+'</div>';
 }
 
 /* ---------- plan ---------- */
@@ -1330,23 +1478,71 @@ function planGroups(){
   return groups;
 }
 function planHTML(){
-  const groups=planGroups();
+  const rows=[...picks].map(a=>ROWMAP[a]).filter(Boolean);
+  const vol={};
+  for(const r of rows)vol[r.vol]=(vol[r.vol]||0)+1;
+  const tools=new Set(rows.map(r=>r.entry_id)).size;
+  const creds=rows.filter(r=>r.cls==='credential').length;
   const head=`<div class="planhead"><div><h2>Collection plan</h2>
-    <p>Picked artifacts grouped by tool, tools ordered by triage priority and
-    rows within each tool by how fast they disappear. Work top to bottom.</p></div>
-    <div class="acts"><button class="btn" id="cpLinks">Copy permalinks</button>
-    <button class="btn primary" id="cpList">Copy as triage list</button></div></div>`;
-  if(!groups.length)return head+`<div class="plan-empty">Nothing picked yet.
+    <p>${planMode==='vol'
+      ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
+      :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p></div>
+    <div class="acts">
+      <div class="seg"><button class="segbtn${planMode==='tool'?' on':''}" data-mode="tool"
+        >by tool</button><button class="segbtn${planMode==='vol'?' on':''}" data-mode="vol"
+        >by volatility</button></div>
+      <button class="btn" id="cpLinks">Copy permalinks</button>
+      <button class="btn primary" id="cpList">Copy as triage list</button>
+      <button class="btn danger" id="cpClear">Clear all</button></div></div>`;
+  if(!rows.length)return head+`<div class="plan-empty">Nothing picked yet.
     Tick artifacts in the catalog to build a collection plan.</div>`;
-  return head+groups.map(g=>`
-    <div class="pgroup"><div class="ghead">${triageBadge(g.t.triage)}<b>${esc(g.t.tool)}</b>
-      <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
-    ${g.rows.map(r=>`<div class="prow">
-      <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-      <span class="path">${esc(r.artifact)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
-    ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
+  // A standing summary of what is in the plan, because the thing a responder
+  // needs to know before starting is how much of it will not wait.
+  const summary=`<div class="plansum">
+    <span><b>${rows.length}</b> artifact${rows.length>1?'s':''}</span>
+    <span><b>${tools}</b> tool${tools>1?'s':''}</span>
+    ${VOL_TIERS.filter(v=>vol[v]).map(v=>
+      `<span class="badge vol v-${v}"><i>${vol[v]}</i>${v}</span>`).join('')}
+    ${creds?`<span class="plancred">${creds} credential location${creds>1?'s':''} -
+      collect, then treat every value as exposed</span>`:''}</div>`;
+  const body=planMode==='vol'
+    ? planByVolatility().map(g=>`
+      <div class="pgroup"><div class="ghead"><span class="badge vol v-${g.vol}"
+        ><i>volatility</i>${g.vol}</span>
+        <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
+      ${g.rows.map(r=>`<div class="prow">
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <span class="path">${esc(r.artifact)}</span>
+        <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
+      <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
+    : planGroups().map(g=>`
+      <div class="pgroup"><div class="ghead">${triageBadge(g.t.triage)}<b>${esc(g.t.tool)}</b>
+        <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
+      ${g.rows.map(r=>`<div class="prow">
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <span class="path">${esc(r.artifact)}</span>
+        <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
+        ${fvBadge(r.forensic_value)}</div>`).join('')}
+      ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
+  return head+summary+body;
+}
+// Grouped by volatility rather than by tool. This is the ordering a responder
+// actually works in: everything that dies at reboot, across every tool, before
+// anything that survives it. Grouping by tool put a config file that will still
+// be there next week ahead of a socket table that will not.
+function planByVolatility(){
+  const by={live:[],rotating:[],stable:[]};
+  for(const a of picks){const r=ROWMAP[a];if(r)by[r.vol||'stable'].push(r)}
+  for(const k of Object.keys(by))
+    by[k].sort((a,b)=>(RANK[a.forensic_value]??9)-(RANK[b.forensic_value]??9)
+      ||a.tool.localeCompare(b.tool));
+  return VOL_TIERS.map(v=>({vol:v,rows:by[v]})).filter(g=>g.rows.length);
 }
 function planText(){
+  if(planMode==='vol')return planByVolatility().map(g=>
+    `# ${g.vol.toUpperCase()} - ${VOL_MEANING[g.vol]}\n`+
+    g.rows.map(r=>`${r.artifact}    # ${r.tool}`).join('\n')
+  ).join('\n\n');
   return planGroups().map(g=>
     `# ${g.t.tool} (${g.t.triage||'-'})\n`+g.rows.map(r=>r.artifact).join('\n')
   ).join('\n\n');
@@ -1426,14 +1622,14 @@ function openDrawer(anchor,fromEl){
   $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
-    closeDrawer();view='cases';update();
+    pushNav();closeDrawer();view='cases';update();
     // Cases are collapsed by default now, so a jump has to open its target -
     // otherwise the link scrolls to a closed summary and looks broken.
     const el=document.getElementById('cs-'+b.dataset.cs);
     if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
   $$('#drawer .srcjump').forEach(b=>b.onclick=()=>{
-    closeDrawer();view='sources';update();
+    pushNav();closeDrawer();view='sources';update();
     const el=document.getElementById('src-'+b.dataset.src);
     if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
@@ -1445,7 +1641,11 @@ function closeDrawer(){
   // element itself does not survive renderMain(), so restore by anchor.
   const back=lastFocus&&lastFocus.dataset?(lastFocus.dataset.a||lastFocus.dataset.f):null;
   sel=null; selRule=null; $('#drawer').hidden=true;
-  history.replaceState(null,'',location.pathname+location.search);
+  // Only clear the drawer's own anchor. This used to replaceState
+  // unconditionally, which overwrote the entry pushNav had just pushed when a
+  // drill started from inside a drawer - so the jump happened and Back had
+  // nothing to go to.
+  if(!navStack.length)history.replaceState(null,'',location.pathname+location.search);
   renderMain();
   const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
   if(el)el.focus();
@@ -1543,7 +1743,11 @@ function ruleDrawerHTML(r){
       ${r.owasp.map(o=>`<span class="tchip" data-owasp="${esc(o)}">${esc(o)}</span>`).join('')}</div></div>`:''}
     ${r.falsepositives.length?`<div class="dsec"><h4>False positives</h4>
       <ul class="fplist">${r.falsepositives.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
-    <div class="dsec"><h4>Detection logic</h4><pre class="yaml">${esc(r.body)}</pre></div>
+    <div class="dsec"><h4>Detection logic
+      <span class="codetools"><button class="minibtn" id="wrapBtn" aria-pressed="false"
+        >wrap</button><button class="minibtn" id="growBtn" aria-pressed="false"
+        >expand</button></span></h4>
+      <pre class="yaml" id="ruleBody">${esc(r.body)}</pre></div>
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
       <input readonly value="#rule/${esc(r.path)}" aria-label="Permalink">
       <button class="btn" id="dCopyLink" data-v="${esc(base+'#rule/'+r.path)}">copy link</button></div></div>
@@ -1551,6 +1755,82 @@ function ruleDrawerHTML(r){
   <div class="dfoot">
     <a class="btn primary" href="${REPO_URL}/blob/main/${esc(r.path)}" target="_blank" rel="noopener">View on GitHub</a>
   </div>`;
+}
+/* ---------- tool drawer ----------
+   The tools grid answered "which tools are catalogued" and nothing else: a click
+   filtered the catalog and the card's own question - what is this thing, what
+   does it leave, how exposed is it - stayed unanswered. This assembles that from
+   data the page already holds, and keeps the drill-down as an explicit action. */
+function toolDrawerHTML(t){
+  const rows=ROWS.filter(r=>r.entry_id===t.entry_id);
+  const byCls={};
+  for(const r of rows)byCls[r.cls]=(byCls[r.cls]||0)+1;
+  const vol={};
+  for(const r of rows)vol[r.vol]=(vol[r.vol]||0)+1;
+  const mech=[...new Set(rows.filter(r=>r.mechanism).map(r=>r.mechanism))];
+  const unv=rows.filter(r=>r.unverified).length;
+  const cs=CASES_BY_TOOL[t.entry_id]||[];
+  return `<div class="dhead"><b>${esc(t.tool)} <span class="mono"
+      style="color:var(--faint);font-size:11px">${esc(t.entry_id)}</span></b>
+    <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
+  <div class="dbody">
+    <div class="dsec">
+      <div class="badgerow">${riskBadge(t.risk,'risk')}${triageBadge(t.triage)}
+        ${confBadge(t.confidence)}
+        ${t.status&&t.status!=='active'?`<span class="statuspill">${esc(t.status)}</span>`:''}</div>
+      <div class="tverify" style="margin-top:8px">${t.verified?`last verified ${esc(t.verified)}`
+        :'never verified against a host or a current release'}</div>
+      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
+      <p>${esc(t.description||'')}</p>
+      <div class="tmeta">${esc(t.vendor||'')} &middot; ${esc(t.category||'')} &middot; ${
+        esc((t.os||[]).join(', '))}</div>
+      ${t.caps.length?`<div class="capchips">${t.caps.map(c=>`<i>${esc(c)}</i>`).join('')}</div>`:''}
+    </div>
+    <div class="dsec"><h4>What it leaves <span class="n">${rows.length}</span></h4>
+      <div class="clsgrid">${Object.entries(byCls).sort((a,b)=>b[1]-a[1]).map(([c,n])=>
+        `<button class="clsrow" data-cls="${esc(c)}"><b>${n}</b> ${esc(c)}</button>`).join('')}</div>
+      ${unv?`<p class="muted" style="margin:9px 0 0;font-size:12px">${unv} of these
+        ${unv===1?'is':'are'} flagged unverified.</p>`:''}
+      ${mech.length?`<p class="muted" style="margin:7px 0 0;font-size:12px">MCP is
+        defined by ${esc(mech.join(', '))}.</p>`:''}
+    </div>
+    <div class="dsec"><h4>Order of collection</h4>
+      <div class="badgerow">${['live','rotating','stable'].filter(v=>vol[v]).map(v=>
+        `<span class="badge vol v-${v}"><i>${vol[v]}</i>${v}</span>`).join('')}</div>
+      ${t.guidance?`<p style="margin-top:9px">${esc(t.guidance)}</p>`:''}</div>
+    ${t.abuse?`<div class="dsec"><h4>Abuse potential</h4>
+      <div class="alert">${esc(t.abuse)}</div></div>`:''}
+    ${cs.length?`<div class="dsec"><h4>Documented incidents <span class="n">${cs.length}</span></h4>
+      ${cs.map(c=>`<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
+    ${(t.techniques||[]).length?`<div class="dsec"><h4>Mapped techniques</h4>
+      <div class="tech">${t.techniques.map(x=>`<span class="tchip">${esc(x)}</span>`).join('')}</div></div>`:''}
+    ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
+      <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
+        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
+  </div>
+  <div class="dfoot">
+    <button class="btn primary" id="dAllRows">Show all ${rows.length} artifacts &#8594;</button>
+  </div>`;
+}
+function openToolDrawer(id,fromEl){
+  const t=TOOLMAP[id]; if(!t)return;
+  lastFocus=fromEl||document.activeElement;
+  const d=$('#drawer');
+  d.innerHTML=toolDrawerHTML(t);
+  d.hidden=false;
+  d.setAttribute('aria-label',t.tool+' overview');
+  $('#dClose').onclick=closeDrawer;
+  $('#dClose').focus();
+  const drill=cls=>{pushNav();closeDrawer();resetFilters();
+    filters.tool=[t.tool];if(cls)filters.cls=[cls];
+    view='catalog';update()};
+  $('#dAllRows').onclick=()=>drill(null);
+  $$('#drawer .clsrow').forEach(b=>b.onclick=()=>drill(b.dataset.cls));
+  $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
+    pushNav();closeDrawer();view='cases';update();
+    const el=document.getElementById('cs-'+b.dataset.cs);
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}
+  });
 }
 function openRuleDrawer(key,fromEl){
   const r=RULEMAP[key]||RULEFILE[key]; if(!r)return;
@@ -1564,6 +1844,21 @@ function openRuleDrawer(key,fromEl){
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
+  // Rule bodies are long lines in a short box. Wrap trades horizontal scrolling
+  // for height; expand drops the height cap. They are separate because a long
+  // condition wants wrapping and a long rule wants room, and they are rarely the
+  // same rule. Both preferences persist for the session.
+  const body=$('#ruleBody');
+  const sync=()=>{
+    body.classList.toggle('wrapped',codeWrap);
+    body.classList.toggle('grown',codeGrow);
+    $('#wrapBtn').setAttribute('aria-pressed',String(codeWrap));
+    $('#growBtn').setAttribute('aria-pressed',String(codeGrow));
+    $('#growBtn').textContent=codeGrow?'collapse':'expand';
+  };
+  $('#wrapBtn').onclick=()=>{codeWrap=!codeWrap;sync()};
+  $('#growBtn').onclick=()=>{codeGrow=!codeGrow;sync()};
+  sync();
   wireTechChips();
 }
 function wireTechChips(){
@@ -1581,13 +1876,24 @@ function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
 /* ---------- mappings ---------- */
 function indexHTML(title,sub,items,key){
   const max=Math.max(1,...items.map(i=>i.count));
+  // Which rules, not just how many. The count alone made every row a link to a
+  // filtered list you had to leave the page to read.
+  const rulesFor=id=>RULES.filter(r=>(r.owasp||[]).some(o=>o===id)).map(r=>r.file);
   return `<div class="idx"><h2>${esc(title)}</h2><p class="isub">${esc(sub)}</p>`+
-    items.map(i=>`<div class="irow" data-idx="${key}" data-v="${esc(i.id)}"
-        role="button" tabindex="0">
+    items.map(i=>{const files=rulesFor(i.id);return `<div class="iwrap">
+      <div class="irow" data-idx="${key}" data-v="${esc(i.id)}" data-x="${esc(i.id)}"
+        role="button" tabindex="0" aria-expanded="false">
+      <span class="cvcaret"></span>
       <span class="iid">${esc(i.raw)}</span><span class="ittl">${esc(i.title)}</span>
       <span class="icount">${i.count}</span>
       <span class="bar"><i style="width:${Math.round(i.count/max*100)}%"></i></span>
-    </div>`).join('')+'</div>';
+      </div>
+      <div class="idet" data-for="${esc(i.id)}" hidden>
+        ${files.length?files.map(f=>`<button class="cdchip" data-rule="${esc(f)}"
+          >${esc(f)}</button>`).join(''):'<p class="muted">No rule maps to this category.</p>'}
+        <button class="btn idrill" data-idx="${key}" data-v="${esc(i.id)}"
+          >Filter detections to this category &#8594;</button>
+      </div></div>`}).join('')+'</div>';
 }
 // Coverage across all three corpora, not just the rules.
 //
@@ -1604,17 +1910,23 @@ const PARENT=id=>String(id||'').split('.').slice(0,2).join('.');
 function coverageRows(){
   const by={};
   const touch=id=>{const p=PARENT(id);
-    return by[p]=by[p]||{id:p,title:'',subs:new Set(),rules:0,tools:0,cases:0,toolNames:[]}};
+    return by[p]=by[p]||{id:p,title:'',subs:new Set(),rules:0,tools:0,cases:0,
+      toolNames:[],ruleNames:[],caseNames:[]}};
   for(const i of ATLAS_INDEX){const r=touch(i.id);
     r.rules+=i.count; if(!r.title)r.title=i.title;
     if(PARENT(i.id)!==i.id)r.subs.add(i.id);
   }
+  // The index carries counts; the rule corpus carries which rules they were.
+  for(const rule of RULES)for(const a of rule.atlas||[]){
+    const r=touch(a); if(!r.ruleNames.includes(rule.file))r.ruleNames.push(rule.file);
+  }
   for(const t of TOOLS)for(const a of t.atlas||[]){
-    const r=touch(a); r.tools++; if(r.toolNames.length<3)r.toolNames.push(t.tool);
+    const r=touch(a); r.tools++; r.toolNames.push(t.tool);
     if(PARENT(a)!==a)r.subs.add(a);
   }
   for(const c of CASES)for(const a of c.atlas||[]){
-    const r=touch(a); r.cases++; if(PARENT(a)!==a)r.subs.add(a);
+    const r=touch(a); r.cases++; r.caseNames.push(c);
+    if(PARENT(a)!==a)r.subs.add(a);
   }
   // Exposure first: the techniques this catalog says the most tools exhibit are
   // the ones a reader should weigh their rule count against.
@@ -1647,8 +1959,9 @@ function coverageHTML(){
         <th class="num">Cases</th>
         <th class="cbhead"><i class="cbt"></i>tools <i class="cbr"></i>rules</th>
         </tr></thead><tbody>
-        ${rows.map(r=>`<tr class="covrow${thin(r)?' thin':''}">
-          <td><span class="iid">${esc(r.id)}</span>
+        ${rows.map(r=>`<tr class="covrow${thin(r)?' thin':''}" data-t="${esc(r.id)}"
+            role="button" tabindex="0" aria-expanded="false">
+          <td><span class="cvcaret"></span><span class="iid">${esc(r.id)}</span>
             <span class="ittl">${esc(r.title||'')}</span>
             ${r.subs.size?`<span class="subs">${[...r.subs].sort().map(x=>
               esc(x.split('.').slice(2).join('.'))).map(x=>'.'+x).join(' ')}</span>`:''}
@@ -1665,7 +1978,25 @@ function coverageHTML(){
               title="${r.tools} tool${r.tools===1?'':'s'} exhibit this, the most for any technique being ${maxT}"></i>
             <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"
               title="${r.rules} rule${r.rules===1?'':'s'} cover this, the most for any technique being ${maxR}"></i></span></td>
-        </tr>`).join('')}
+        </tr>
+        <tr class="covdet" data-for="${esc(r.id)}" hidden><td colspan="5">
+          <div class="cdgrid">
+            <div><h5>Rules <span class="n">${r.ruleNames.length}</span></h5>
+              ${r.ruleNames.length?r.ruleNames.map(f=>
+                `<button class="cdchip" data-rule="${esc(f)}">${esc(f)}</button>`).join('')
+                :'<p class="muted">None in this repo.</p>'}</div>
+            <div><h5>Tools <span class="n">${r.toolNames.length}</span></h5>
+              ${r.toolNames.length?r.toolNames.map(t=>
+                `<button class="cdchip" data-tool="${esc(t)}">${esc(t)}</button>`).join('')
+                :'<p class="muted">No catalogued tool maps to this.</p>'}</div>
+            <div><h5>Incidents <span class="n">${r.caseNames.length}</span></h5>
+              ${r.caseNames.length?r.caseNames.map(c=>
+                `<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')
+                :'<p class="muted">None documented here.</p>'}</div>
+          </div>
+          <a class="cdref" href="https://atlas.mitre.org/techniques/${esc(r.id)}"
+            target="_blank" rel="noopener">${esc(r.id)} on MITRE ATLAS &#8599;</a>
+        </td></tr>`).join('')}
       </tbody></table>
       <div class="covkey">Each bar is scaled against the largest value in its own
         column, so the two are compared with each other rather than to a shared
@@ -1726,7 +2057,8 @@ function caseStudiesHTML(){
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
             c.disclosed?' · disclosed '+esc(c.disclosed):''}</div>
           <div class="csmeta csaff">${known.length?esc(known.map(k=>k.tool).join(', ')):
-            c.affects?esc(c.affects):''}</div></div>
+            c.affects?esc(c.affects):''}</div>
+          <p class="csbrief">${esc(c.summary)}</p></div>
         <div class="cstally">
           ${n?`<span class="csn" title="published indicators">${n} IOC${n>1?'s':''}</span>`:''}
           ${(c.detections||[]).length?`<span class="csn" title="detection rules in this repo"
@@ -1827,53 +2159,91 @@ function renderMain(){
     });
     main.innerHTML=rulesHTML(rules);
     $$('#main .rule').forEach(el=>el.onclick=()=>openRuleDrawer(el.dataset.f,el));
-    renderTabs();renderToast();return;
+    renderTabs();renderToast();renderBack();return;
   }
   if(view==='mappings'){
     main.innerHTML=mappingsHTML();
     const go=el=>{
-      resetRuleFilters();
+      pushNav();resetRuleFilters();
       rfilters[el.dataset.idx]=[el.dataset.v];
       view='rules'; update();
     };
+    // The row expands; the button inside it is what jumps. Clicking a row used to
+    // be the only behaviour, which made "what is in this category" unanswerable
+    // without leaving the page first.
+    const toggleIdx=el=>{
+      const d=$(`#main .idet[data-for="${CSS.escape(el.dataset.x)}"]`);
+      const open=d.hidden;
+      d.hidden=!open;
+      el.setAttribute('aria-expanded',String(open));
+      el.classList.toggle('open',open);
+    };
     $$('#main .irow').forEach(el=>{
-      el.onclick=()=>go(el);
-      el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(el)}};
+      el.onclick=()=>toggleIdx(el);
+      el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleIdx(el)}};
+    });
+    $$('#main .idrill').forEach(b=>b.onclick=()=>{pushNav();go(b)});
+    $$('#main .idet .cdchip[data-rule]').forEach(b=>b.onclick=()=>{
+      pushNav();resetRuleFilters();view='rules';
+      $('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();update();
     });
     // Every count on a coverage row is a link into the corpus it counts, so the
     // table is a way in rather than a scoreboard. The rules filter matches
     // sub-techniques too, since that is the level rules are written at.
+    const toggleCov=tr=>{
+      const d=$(`#main .covdet[data-for="${CSS.escape(tr.dataset.t)}"]`);
+      const open=d.hidden;
+      d.hidden=!open;
+      tr.setAttribute('aria-expanded',String(open));
+      tr.classList.toggle('open',open);
+    };
+    $$('#main .covrow').forEach(tr=>{
+      tr.onclick=e=>{if(!e.target.closest('.covlink'))toggleCov(tr)};
+      tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCov(tr)}};
+    });
+    $$('#main .cdchip[data-rule]').forEach(b=>b.onclick=()=>{
+      pushNav();resetRuleFilters();view='rules';
+      $('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();update();
+    });
+    $$('#main .cdchip[data-tool]').forEach(b=>b.onclick=()=>{
+      pushNav();resetFilters();filters.tool=[b.dataset.tool];view='catalog';update();
+    });
+    $$('#main .cdchip[data-case]').forEach(b=>b.onclick=()=>{
+      pushNav();view='cases';update();
+      const el=document.getElementById('cs-'+b.dataset.case);
+      if(el){el.open=true;el.scrollIntoView({block:'start'})}
+    });
     $$('#main .covlink[data-atlas]').forEach(b=>b.onclick=()=>{
-      resetRuleFilters();view='rules';
+      pushNav();resetRuleFilters();view='rules';
       const p=b.dataset.atlas;
       rfilters.ratlas=ROPTIONS.ratlas.filter(v=>v===p||v.startsWith(p+'.'));
       update();
     });
     $$('#main .covlink[data-tooltech]').forEach(b=>b.onclick=()=>{
-      resetFilters();view='catalog';
+      pushNav();resetFilters();view='catalog';
       const p=b.dataset.tooltech;
       filters.tool=TOOLS.filter(t=>(t.atlas||[]).some(a=>a===p||a.startsWith(p+'.')))
         .map(t=>t.tool);
       update();
     });
     $$('#main .covlink[data-casetech]').forEach(b=>b.onclick=()=>{
-      const p=b.dataset.casetech;
+      pushNav();const p=b.dataset.casetech;
       view='cases';update();
       const hit=CASES.find(c=>(c.atlas||[]).some(a=>a===p||a.startsWith(p+'.')));
       if(hit){const d=document.getElementById('cs-'+hit.id);
         if(d){d.open=true;d.scrollIntoView({block:'start'})}}
     });
-    renderTabs();renderToast();return;
+    renderTabs();renderToast();renderBack();return;
   }
   if(view==='sources'){
     main.innerHTML=sourcesHTML();
     // Every stat on a source card is a way into the rows or the rules it
     // covers, so the page reads as one catalog rather than as a second one.
     $$('#main .srcstat[data-cls]').forEach(b=>b.onclick=()=>{
-      resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();
+      pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();
     });
     $$('#main .srcstat[data-rules]').forEach(b=>b.onclick=()=>{
-      resetRuleFilters();view='rules';
+      pushNav();resetRuleFilters();view='rules';
       ruleSet=new Set(SRCMAP[b.dataset.rules].rules);
       update();
     });
@@ -1884,7 +2254,7 @@ function renderMain(){
       sa.dataset.open=open?'1':'0';
       sa.textContent=open?'Collapse all':'Expand all';
     };
-    renderTabs();renderToast();return;
+    renderTabs();renderToast();renderBack();return;
   }
   if(view==='guide'){
     main.innerHTML=guideHTML();
@@ -1892,7 +2262,7 @@ function renderMain(){
     $$('#main .gbody h2,#main .gbody h3').forEach(h=>{
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
-    renderTabs();renderToast();return;
+    renderTabs();renderToast();renderBack();return;
   }
   if(view==='catalog'){
     const rows=filteredRows();
@@ -1921,14 +2291,14 @@ function renderMain(){
   }else if(view==='cases'){
     main.innerHTML=caseStudiesHTML();
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
-      resetFilters();filters.tool=[b.dataset.t];view='catalog';
+      pushNav();resetFilters();filters.tool=[b.dataset.t];view='catalog';
       history.replaceState(null,'','#'+b.dataset.id);
       update();
     });
     // Search rather than a filter facet: rule filenames are unique and the
     // detections rail facets by category and format, not by file.
     $$('#main .detchip').forEach(b=>b.onclick=()=>{
-      resetFilters();view='rules';$('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();
+      pushNav();resetFilters();view='rules';$('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();
       update();
     });
     const all=$('#csAll');
@@ -1940,19 +2310,42 @@ function renderMain(){
     };
   }else if(view==='tools'){
     main.innerHTML=toolsHTML();
-    $$('#main .tool').forEach(c=>c.onclick=()=>{
-      resetFilters();filters.tool=[c.dataset.t];view='catalog';
-      history.replaceState(null,'','#'+c.dataset.id);
-      update();
-    });
+    // A drawer, not a jump. Filtering the catalog by the tool discarded the
+    // grid you were reading and answered a narrower question than the card
+    // was asking - "what is this tool" rather than "list its paths". The
+    // drill-down is still one click, from inside the drawer, where it is a
+    // deliberate move rather than the only thing a click can do.
+    $$('#main .tool').forEach(c=>c.onclick=()=>openToolDrawer(c.dataset.id,c));
   }else{
     main.innerHTML=planHTML();
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
+    $$('#main .segbtn').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
+    const cl=$('#cpClear');
+    // Two-step, because a plan is assembled one tick at a time across the whole
+    // catalog and there is no undo for throwing it away.
+    if(cl)cl.onclick=()=>{
+      if(cl.dataset.armed!=='1'){cl.dataset.armed='1';cl.textContent='Clear all - sure?';
+        setTimeout(()=>{if(cl.isConnected){cl.dataset.armed='0';cl.textContent='Clear all'}},4000);
+        return}
+      picks.clear();savePicks();update();
+    };
     $$('#main .rm').forEach(b=>b.onclick=()=>{picks.delete(b.dataset.a);savePicks();update()});
   }
-  renderTabs();renderToast();
+  renderTabs();renderToast();renderBack();
+}
+function renderBack(){
+  const el=$('#backbar');
+  const s=navStack[navStack.length-1];
+  el.hidden=!s;
+  if(s)el.innerHTML=`<button class="backbtn" id="backBtn">&#8592; Back to ${
+    esc(VIEW_LABEL[s.view]||s.view)}</button>`;
+  const b=$('#backBtn');
+  if(b)b.onclick=()=>{history.back();
+    // popstate fires only if there is an entry to pop; if the page was loaded
+    // straight into a jump there may not be, so fall back to the stack.
+    setTimeout(()=>{if(navStack.length&&$('#backbar').firstChild===b)goBack()},60)};
 }
 function renderTabs(){
   $$('.tabs button').forEach(b=>{
@@ -2351,6 +2744,7 @@ def main():
     <div class="foldbody"></div></details>
 </aside>
 <main class="content">
+  <div id="backbar" hidden></div>
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."
