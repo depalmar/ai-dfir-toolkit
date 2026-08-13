@@ -717,34 +717,67 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 .bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
 
 /* ---- case studies ---- */
-.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
-/* --- case study accordion --- */
-details.csfull{padding:0;overflow:hidden}
-details.csfull>summary.cshead{display:flex;justify-content:space-between;gap:14px;
-  align-items:center;flex-wrap:wrap;padding:13px 16px 13px 34px;cursor:pointer;
-  list-style:none;position:relative;margin:0}
+/* --- case study grid + accordion ---
+   Tiles rather than full-width bars: 14 one-line rows made the eye travel the
+   whole page width for a title and left the right two thirds empty. Two or three
+   columns fit the viewport, and the open one spans every column so the detail
+   still gets full width to lay out its IOC and response columns in. */
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+  gap:10px}
+/* Deliberately not align-items:start. Letting each tile size to its own content
+   left the chip rows on different baselines across a row - a one-line "affects"
+   beside a two-line one - which is what makes a grid hard to scan. Stretching to
+   the row height and pushing the tally to the bottom lines them all up. */
+details.csfull{padding:0;overflow:hidden;margin:0;display:flex;flex-direction:column}
+details.csfull:not([open])>summary{flex:1}
+details.csfull[open]{grid-column:1/-1}
+details.csfull>summary.cshead{display:flex;flex-direction:column;gap:9px;
+  align-items:stretch;padding:12px 14px 12px 30px;cursor:pointer;
+  list-style:none;position:relative;margin:0;min-height:78px;
+  justify-content:space-between}
 details.csfull>summary::-webkit-details-marker{display:none}
-details.csfull>summary::before{content:'';position:absolute;left:15px;top:50%;
+details.csfull>summary::before{content:'';position:absolute;left:13px;top:17px;
   width:0;height:0;border:5px solid transparent;border-left-color:var(--faint);
-  transform:translateY(-50%);transition:transform .12s}
-details.csfull[open]>summary::before{transform:translateY(-50%) rotate(90deg)}
+  transition:transform .12s}
+details.csfull[open]>summary::before{transform:rotate(90deg)}
 details.csfull>summary:hover{background:var(--hover)}
-details.csfull[open]>summary{border-bottom:1px solid var(--line-soft)}
-.cstally{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.csn{font-size:11px;color:var(--muted);background:var(--panel-2);
-  border:1px solid var(--line);border-radius:20px;padding:1px 9px;white-space:nowrap}
+details.csfull[open]>summary{border-bottom:1px solid var(--line-soft);
+  min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px}
+details.csfull[open]>summary::before{top:50%;transform:translateY(-50%) rotate(90deg)}
+.cstop{min-width:0}
+.csname{font-size:13.5px;font-weight:600;line-height:1.35}
+.csaff{color:var(--accent);margin-top:1px}
+/* One line, always the same order, so the tiles read as a column of facts
+   rather than as ragged chip soup: indicators, rules, provenance, dispute. */
+.cstally{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.csn{font-size:10.5px;color:var(--muted);background:var(--panel-2);
+  border:1px solid var(--line);border-radius:20px;padding:1px 8px;white-space:nowrap}
 .csinner{padding:14px 16px 16px}
 .csinner .csjumps{margin-bottom:10px}
+@media(max-width:760px){.csgrid{grid-template-columns:1fr}}
 /* --- technique coverage --- */
 .covwrap{border:1px solid var(--line);border-radius:11px;background:var(--panel);
-  overflow:hidden;margin-bottom:18px}
-table.cov{width:100%;border-collapse:collapse;font-size:13px}
+  overflow:hidden;margin-bottom:18px;max-width:1120px}
+/* Fixed, or the technique column takes every spare pixel and opens a third of a
+   screen of nothing between a name and the numbers that belong to it. */
+table.cov{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+table.cov col.c-num{width:64px}
+table.cov col.c-exp{width:240px}
+.cbhead{white-space:nowrap;font-weight:inherit}
+.cbhead i{display:inline-block;width:14px;height:5px;border-radius:3px;
+  margin:0 5px 0 0;vertical-align:middle}
+.cbhead i.cbr{margin-left:14px}
+/* The fills were scoped to .cbar and .covkey, so the legend in the header
+   rendered as two invisible boxes and the column read as bare word soup. */
+.cbhead i.cbt{background:var(--conf-strong)}
+.cbhead i.cbr{background:var(--val-strong)}
 table.cov th{text-align:left;background:var(--panel-2);color:var(--muted);
   font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
   padding:8px 12px;border-bottom:1px solid var(--line)}
 table.cov td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
 table.cov tr:last-child td{border-bottom:0}
-table.cov .num{text-align:right;width:62px;font-family:ui-monospace,Menlo,monospace}
+table.cov .num{text-align:right;font-family:ui-monospace,Menlo,monospace}
+table.cov td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .covrow:hover{background:var(--hover)}
 .covrow .iid{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink);
   margin-right:8px}
@@ -766,13 +799,14 @@ table.cov .num{text-align:right;width:62px;font-family:ui-monospace,Menlo,monosp
    mode, where conf-mid #7e94ab and val-mid #6f9b96 are barely separable. */
 .cbar .cbt{top:1px;background:var(--conf-strong)}
 .cbar .cbr{top:8px;background:var(--val-strong)}
-.covkey{display:flex;gap:16px;padding:9px 12px;font-size:11.5px;color:var(--muted);
-  background:var(--panel-2);border-top:1px solid var(--line)}
+.covkey{padding:9px 12px;font-size:11.5px;color:var(--muted);
+  background:var(--panel-2);border-top:1px solid var(--line);max-width:84ch}
 .covkey i{display:inline-block;width:16px;height:5px;border-radius:3px;
   margin-right:5px;vertical-align:middle}
 .covkey .cbt{background:var(--conf-strong)}
 .covkey .cbr{background:var(--val-strong)}
-.covnote{font-size:12.5px;color:var(--muted);margin-top:6px}
+.covnote{font-size:12.5px;color:var(--muted);margin-top:6px;max-width:84ch}
+.gtop p{max-width:84ch}
 @media(max-width:640px){table.cov .ittl{display:none}}
 .cs{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px;
   display:flex;flex-direction:column;gap:10px}
@@ -1605,9 +1639,14 @@ function coverageHTML(){
     necessarily under-covered - one good rule can cover a whole class. It is
     where to look first.</p></div></div>
     <div class="covwrap">
-      <table class="cov"><thead><tr>
+      <table class="cov">
+      <colgroup><col><col class="c-num"><col class="c-num"><col class="c-num"
+        ><col class="c-exp"></colgroup>
+      <thead><tr>
         <th>Technique</th><th class="num">Rules</th><th class="num">Tools</th>
-        <th class="num">Cases</th><th>Exposure</th></tr></thead><tbody>
+        <th class="num">Cases</th>
+        <th class="cbhead"><i class="cbt"></i>tools <i class="cbr"></i>rules</th>
+        </tr></thead><tbody>
         ${rows.map(r=>`<tr class="covrow${thin(r)?' thin':''}">
           <td><span class="iid">${esc(r.id)}</span>
             <span class="ittl">${esc(r.title||'')}</span>
@@ -1621,12 +1660,17 @@ function coverageHTML(){
             >${r.tools}</button>`:'<span class="zero">0</span>'}</td>
           <td class="num">${r.cases?`<button class="covlink" data-casetech="${esc(r.id)}"
             >${r.cases}</button>`:'<span class="zero">0</span>'}</td>
-          <td><span class="cbar"><i class="cbt" style="width:${Math.round(r.tools/maxT*100)}%"></i>
-            <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"></i></span></td>
+          <td><span class="cbar"
+            ><i class="cbt" style="width:${Math.round(r.tools/maxT*100)}%"
+              title="${r.tools} tool${r.tools===1?'':'s'} exhibit this, the most for any technique being ${maxT}"></i>
+            <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"
+              title="${r.rules} rule${r.rules===1?'':'s'} cover this, the most for any technique being ${maxR}"></i></span></td>
         </tr>`).join('')}
       </tbody></table>
-      <div class="covkey"><span><i class="cbt"></i> tools exhibiting</span>
-        <span><i class="cbr"></i> rules covering</span></div>
+      <div class="covkey">Each bar is scaled against the largest value in its own
+        column, so the two are compared with each other rather than to a shared
+        scale - a technique with many tools and a short rules bar is the shape to
+        look at.</div>
     </div>`;
 }
 
@@ -1661,7 +1705,8 @@ function caseStudiesHTML(){
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
     <p class="csconf">Provenance: ${esc(tally)}</p></div>
-    <button class="btn" id="csAll" data-open="0">Expand all</button></div>`+
+    <button class="btn" id="csAll" data-open="0">Expand all</button></div>
+    <div class="csgrid">`+
   CASES.map(c=>{
     const groups=iocGroups(c.iocs||[]);
     const n=(c.iocs||[]).length;
@@ -1677,11 +1722,11 @@ function caseStudiesHTML(){
     return `
     <details class="csfull" id="cs-${esc(c.id)}">
       <summary class="cshead">
-        <div><div class="csname">${esc(c.title)}</div>
+        <div class="cstop"><div class="csname">${esc(c.title)}</div>
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
-            c.disclosed?' · disclosed '+esc(c.disclosed):''}${
-            known.length?' · '+esc(known.map(k=>k.tool).join(', ')):
-            c.affects?' · '+esc(c.affects):''}</div></div>
+            c.disclosed?' · disclosed '+esc(c.disclosed):''}</div>
+          <div class="csmeta csaff">${known.length?esc(known.map(k=>k.tool).join(', ')):
+            c.affects?esc(c.affects):''}</div></div>
         <div class="cstally">
           ${n?`<span class="csn" title="published indicators">${n} IOC${n>1?'s':''}</span>`:''}
           ${(c.detections||[]).length?`<span class="csn" title="detection rules in this repo"
@@ -1733,7 +1778,7 @@ function caseStudiesHTML(){
             rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
       </div>`:''}
       </div>
-    </details>`}).join('');
+    </details>`}).join('')+'</div>';
 }
 
 /* ---------- guide ---------- */
