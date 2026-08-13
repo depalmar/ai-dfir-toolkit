@@ -6,7 +6,7 @@ Detects compromise of MCP servers and clients including tool poisoning, configur
 
 | Threat | ATLAS | OWASP | Reference |
 |--------|-------|-------|-----------|
-| MCP tool poisoning (description hijack) | T0110 | LLM06 | Invariant Labs 2025 |
+| MCP tool poisoning (description hijack, published poisoned) | T0104 | LLM06 | Invariant Labs 2025 |
 | MCP rug pull (post-install tool mutation) | T0110 | LLM03 | Invariant Labs 2025 |
 | Malicious MCP config injection | T0010 | LLM06 | CVE-2025-59536 |
 | MCP credential exfiltration | T0086 | LLM02 | Cyata 2025 |

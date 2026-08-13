@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 43 rule files / 114 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 63 rule files / 142 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -25,7 +25,7 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `mcp_tool_poisoning.yar` | YARA | T0110, T0086 | LLM06, LLM02 | Invariant Labs 2025 |
+| `mcp_tool_poisoning.yar` | YARA | T0104, T0110, T0086 | LLM06, LLM02 | Invariant Labs 2025 |
 | `mcp_config_tampering.yml` | Sigma | T0010 | LLM03 | CVE-2025-59536 |
 | `mcp_credential_access.yml` | Sigma | T0086 | LLM02 | Cyata 2025 |
 | `mcp_outbound_unknown_domain.rules` | Suricata | T0011, T0086, T0110 | LLM02, LLM06 | CVE-2025-49596, CVE-2025-6514 |
@@ -81,35 +81,89 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 | `chroma_sqlite_unexpected_writer.yml` | Sigma | T0020 | LLM08 | ChromaDB architecture |
 | `vector_db_query_anomaly.yml` | Sigma | T0020, T0024 | LLM02, LLM08 | — |
 
+## 07 — Runtime AI-Malware
+
+Malware that calls an LLM API *during execution* to generate or mutate its own
+code ("just-in-time code creation", GTIG Nov 2025). The payload is not in the
+sample, so egress to the model provider and the host artifacts of the rewrite
+loop are the durable detection surface.
+
+| Rule | Format | ATLAS | OWASP | CVE / Reference |
+|------|--------|-------|-------|-----------------|
+| `script_interpreter_llm_api_dns.yml` | Sigma | T0096, T0086 | LLM06 | PROMPTFLUX / PROMPTSTEAL (GTIG Nov 2025) |
+| `promptflux_artifacts_fileevent.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX (GTIG Nov 2025) |
+| `powershell_llm_api_command_generation.yml` | Sigma | T0096 | LLM06 | FRUITSHELL / PROMPTSTEAL (GTIG Nov 2025) |
+| `runtime_ai_malware_correlation.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX kill-chain |
+| `promptflux_thinking_robot.yar` | YARA | T0096 | LLM01, LLM06 | PROMPTFLUX |
+| `promptsteal_lamehug.yar` | YARA | T0096 | LLM06 | PROMPTSTEAL / LAMEHUG (APT28) |
+| `llm_api_prompt_in_script_generic.yar` | YARA | T0096 | LLM01, LLM06 | Just-in-time code creation (class heuristic) |
+| `runtime_llm_api_c2.rules` | Suricata | T0096, T0086 | LLM06 | SesameOp-style AI-service C2 (AML.CS0042) |
+
+YARA string sets here are derived from public reporting rather than confirmed
+samples — see the category README before deploying them for blocking.
+
+## 08 — Endpoint (cross-tool)
+
+Cross-tool endpoint rules generated alongside the artifact catalog
+(`artifacts/detections/sigma/`). Scoped to agent behaviour on a host rather than
+to a single attack class, so they apply across every tool in the catalog.
+
+| Rule | Format | ATLAS | OWASP | CVE / Reference |
+|------|--------|-------|-------|-----------------|
+| `ai_agent_mcp_config_modification.yml` | Sigma | T0081 | LLM06 | — |
+| `ai_agent_spawning_shell.yml` | Sigma | T0053 | LLM06 | — |
+| `ai_agent_spawning_lolbin.yml` | Sigma | T0053 | LLM06 | LOLBAS via MCP marketplace audit 2025 |
+| `local_llm_listener_non_loopback.yml` | Sigma | T0024, T0029 | LLM10 | Pillar Security 2026 (Operation Bizarre Bazaar) |
+| `ai_agent_credential_file_access.yml` | Sigma | T0082 | LLM02 | — |
+| `ai_inference_endpoint_redirection.yml` | Sigma | T0024 | LLM02 | — |
+| `mcp_server_remote_code_fetch.yml` | Sigma | T0110 | LLM03 | postmark-mcp backdoor 2025 |
+| `browser_agent_session_state_capture.yml` | Sigma | T0086 | LLM02, LLM06 | — |
+| `ai_agent_autostart_persistence.yml` | Sigma | T0081 | LLM06 | — |
+| `langflow_rce_exploitation_attempt.yml` | Sigma | T0053 | LLM03 | CVE-2025-3248 (CISA KEV), CVE-2026-5027 |
+| `ai_agent_docker_socket_mount.yml` | Sigma | T0053 | LLM06 | OpenHands deployment docs |
+| `ai_model_file_written_to_endpoint.yml` | Sigma | T0010.003 | LLM03 | — |
+
+Also in this set: `artifacts/detections/osquery/ai-agent-artifacts.conf` — a
+six-query osquery pack for fleet inventory (running agents, listeners, MCP
+configs, plaintext credential files, model files, macOS autostart). It answers
+*which hosts have this*, which the Sigma rules cannot.
+
+
 ---
 
 ## ATLAS Technique Index
 
 | ATLAS ID | Title | Rule count |
 |----------|-------|------------|
-| T0010   | ML Supply Chain Compromise | 10 |
+| T0010    | ML Supply Chain Compromise | 8 |
 | T0010.002 | Software Supply Chain | 3 |
-| T0010.003 | Model Supply Chain | 2 |
-| T0011   | User Execution / Initial Access | 13 |
-| T0018   | Poison AI Model | 5 |
-| T0019   | Publish Poisoned Datasets | 1 |
-| T0020   | Poison Training Data / RAG Corpus | 4 |
-| T0024   | Exfiltration via API / Inference | 7 |
-| T0029   | Denial of ML Service / Resource Hijacking | 6 |
+| T0010.003 | Model Supply Chain | 3 |
+| T0011    | User Execution / Initial Access | 13 |
+| T0018    | Poison AI Model | 5 |
+| T0019    | Publish Poisoned Datasets | 1 |
+| T0020    | Poison Training Data / RAG Corpus | 3 |
+| T0024    | Exfiltration via API / Inference | 8 |
+| T0029    | Denial of ML Service / Resource Hijacking | 7 |
+| T0051    | LLM Prompt Injection | 2 |
 | T0051.000 | Direct Prompt Injection | 2 |
 | T0051.001 | Indirect Prompt Injection | 1 |
-| T0054   | LLM Jailbreak | 4 |
-| T0086   | Exfiltration via AI Agent Tool Invocation | 12 |
-| T0110   | AI Agent Tool Poisoning | 2 |
+| T0053    | AI Agent Tool Invocation | 4 |
+| T0054    | LLM Jailbreak | 4 |
+| T0081    | Modify AI Agent Configuration | 2 |
+| T0082    | RAG Credential Harvesting | 1 |
+| T0086    | Exfiltration via AI Agent Tool Invocation | 15 |
+| T0096    | AI Service API | 8 |
+| T0104    | Publish Poisoned AI Agent Tool | 1 |
+| T0110    | AI Agent Tool Poisoning | 3 |
 
 ## OWASP Top 10 for LLM Applications 2025 Index
 
 | OWASP | Title | Rule count |
 |-------|-------|------------|
-| LLM01 | Prompt Injection | 7 |
-| LLM02 | Sensitive Information Disclosure | 12 |
-| LLM03 | Supply Chain | 11 |
-| LLM06 | Excessive Agency | 5 |
-| LLM07 | System Prompt Leakage | 2 |
-| LLM08 | Vector and Embedding Weaknesses | 5 |
-| LLM10 | Unbounded Consumption | 3 |
+| LLM01    | Prompt Injection | 10 |
+| LLM02    | Sensitive Information Disclosure | 15 |
+| LLM03    | Supply Chain | 12 |
+| LLM06    | Excessive Agency | 18 |
+| LLM07    | System Prompt Leakage | 2 |
+| LLM08    | Vector and Embedding Weaknesses | 5 |
+| LLM10    | Unbounded Consumption | 3 |

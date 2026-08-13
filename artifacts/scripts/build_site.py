@@ -2,6 +2,7 @@
 """Build the browsable catalog site from the generated feeds.
 
     python scripts/build_site.py            # writes docs/site/
+    python scripts/build_site.py --check    # verify the data contract, write nothing
 
 The site is generated, never hand-edited. It reads docs/api/catalog.json, which
 scripts/export.py regenerates from the YAML entries, so the page cannot drift
@@ -71,6 +72,48 @@ def aslist(v):
     return [v] if v else []
 
 
+def evidence_for(kind, a):
+    """What a row proves, for the classes the schema does not carry it on.
+
+    Only diskArtifact declares evidence_type, which would leave every registry,
+    network and process row - 107 of 298 - with an empty "what it proves"
+    section. These derivations are deterministic from fields that already exist
+    and stay inside the schema's evidence_type vocabulary, so the site is
+    consistent with the feed rather than inventing a second one.
+
+    The durable fix is declaring evidence_type on those three artifact types in
+    the schema; until then a hand-authored artifact that proves something
+    unusual cannot say so. See docs/HANDOFF_REVIEW.md.
+    """
+    declared = aslist(a.get("evidence_type"))
+    if declared:
+        return declared
+
+    if kind == "registry":
+        # A Run key proves persistence; every other value still proves config.
+        return ["persistence", "configuration"] if a.get("persistence") else ["configuration"]
+
+    if kind == "network":
+        # A bound port proves the program is there and how it was configured.
+        # 'ingress-(loopback)' is a listener too, just a loopback-scoped one.
+        d = str(a.get("direction", "")).lower()
+        if d.startswith(("listener", "ingress")):
+            return ["program-presence", "configuration"]
+        return ["program-presence"]
+
+    if kind == "process":
+        ev = ["execution", "program-presence"]
+        # Free text, not an enum: 'None', 'None (user-invoked)' and
+        # 'None - PORTABLE SINGLE BINARY' all mean no persistence, so match on
+        # the leading word rather than the whole string.
+        p = str(a.get("persistence", "")).strip().lower()
+        if p and not p.startswith(("none", "no ", "-")):
+            ev.append("persistence")
+        return ev
+
+    return []
+
+
 def build_rows(entries):
     """Flatten the catalog into one row per artifact.
 
@@ -104,7 +147,7 @@ def build_rows(entries):
                     "os": aslist(a.get("os")),
                     "forensic_value": a.get("forensic_value", ""),
                     "confidence": a.get("confidence", ""),
-                    "evidence": aslist(a.get("evidence_type")),
+                    "evidence": evidence_for(kind, a),
                     "unverified": bool(a.get("unverified")),
                     "description": a.get("description", ""),
                 })
@@ -115,9 +158,14 @@ def build_rows(entries):
                 "os": aslist(c.get("os")),
                 "forensic_value": "high",
                 "confidence": c.get("confidence", ""),
-                "evidence": aslist(c.get("secret_type")),
+                # secret_type answers "what is it", not "what does it prove",
+                # and mixing the two vocabularies in one field is what makes a
+                # feed unfilterable. It moves into the description instead.
+                "evidence": ["credential-access"],
                 "unverified": bool(c.get("unverified")),
-                "description": c.get("description", ""),
+                "description": " · ".join(x for x in (
+                    ": ".join(y for y in (c.get("storage"), c.get("secret_type")) if y),
+                    c.get("description", "")) if x),
             })
         for m in (e.get("mcp") or []):
             loc = m.get("config_path", "")
@@ -254,9 +302,10 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 .tabs .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--line-soft);
   border-radius:20px;padding:1px 7px;color:var(--muted)}
-.tabs .guidelink{margin-left:auto;align-self:center;font-size:12.5px;text-decoration:none;
-  color:var(--muted);padding:9px 4px}
-.tabs .guidelink:hover,.tabs .guidelink[aria-current=true]{color:var(--accent)}
+/* Set apart visually - pushed right, no count - but it is a real tab, because a
+   link inside role=tablist breaks arrow-key navigation. */
+.tabs .guidelink{margin-left:auto;font-size:12.5px}
+.tabs .guidelink:hover{color:var(--accent)}
 .ghlink{font-size:12.5px;text-decoration:none;color:var(--muted);
   border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
 .ghlink:hover{color:var(--ink);border-color:var(--accent)}
@@ -612,7 +661,11 @@ const OPTIONS={
   tool:TOOLS.map(t=>t.tool).sort((a,b)=>a.localeCompare(b)),
 };
 
-const RULEMAP=Object.fromEntries(RULES.map(r=>[r.file,r]));
+// Keyed by repo-relative path: two rule directories could hold the same
+// filename, and a permalink that cannot tell them apart is a silent wrong
+// answer. RULEFILE keeps bare-filename links from before this change working.
+const RULEMAP=Object.fromEntries(RULES.map(r=>[r.path,r]));
+const RULEFILE=Object.fromEntries(RULES.map(r=>[r.file,r]));
 const RGROUPS={fmt:'Format',rcat:'Category',ratlas:'ATLAS technique',rowasp:'OWASP LLM'};
 const RFIELD={fmt:r=>[r.format],rcat:r=>[r.category],ratlas:r=>r.atlas,rowasp:r=>r.owasp};
 const ROPTIONS={
@@ -626,10 +679,14 @@ let view='catalog', query='', unvOnly=false, dense=false,
     sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
 const filters={cls:[],os:[],fv:[],conf:[],tool:[]};
 const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
-const PICKS_KEY='aiart-picks';
+// 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
+// into this repo. Read the old key once so anyone who saved picks under it
+// keeps them, then write only the current key from here on.
+const PICKS_KEY='aidfir-picks', PICKS_KEY_OLD='aiart-picks';
 const picks=new Set((()=>{
   try{
-    const v=JSON.parse(localStorage.getItem(PICKS_KEY)||'[]');
+    const raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD);
+    const v=JSON.parse(raw||'[]');
     // Anchors are stable across builds, row indexes are not - but an artifact
     // can still be removed from the catalog, so drop anchors that no longer resolve.
     return Array.isArray(v)?v.filter(a=>ROWMAP[a]):[];
@@ -910,7 +967,7 @@ function rulesHTML(rules){
   if(!rules.length)return `<div class="empty">No rules match those filters.
     <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
   return '<div class="rulegrid">'+rules.map(r=>`
-    <button class="rule" data-f="${esc(r.file)}">
+    <button class="rule" data-f="${esc(r.path)}">
       <div class="rtop"><div><div class="rname">${esc(r.title)}</div>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
@@ -938,22 +995,22 @@ function ruleDrawerHTML(r){
       <ul class="fplist">${r.falsepositives.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
     <div class="dsec"><h4>Detection logic</h4><pre class="yaml">${esc(r.body)}</pre></div>
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
-      <input readonly value="#rule/${esc(r.file)}" aria-label="Permalink">
-      <button class="btn" id="dCopyLink" data-v="${esc(base+'#rule/'+r.file)}">copy link</button></div></div>
+      <input readonly value="#rule/${esc(r.path)}" aria-label="Permalink">
+      <button class="btn" id="dCopyLink" data-v="${esc(base+'#rule/'+r.path)}">copy link</button></div></div>
   </div>
   <div class="dfoot">
     <a class="btn primary" href="${REPO_URL}/blob/main/${esc(r.path)}" target="_blank" rel="noopener">View on GitHub</a>
     <button class="btn" id="dCopyPath" data-v="${esc(r.path)}">copy path</button>
   </div>`;
 }
-function openRuleDrawer(file,fromEl){
-  const r=RULEMAP[file]; if(!r)return;
-  selRule=file; lastFocus=fromEl||document.activeElement;
+function openRuleDrawer(key,fromEl){
+  const r=RULEMAP[key]||RULEFILE[key]; if(!r)return;
+  selRule=r.path; lastFocus=fromEl||document.activeElement;
   const d=$('#drawer');
   d.innerHTML=ruleDrawerHTML(r);
   d.hidden=false;
   d.setAttribute('aria-label','Detection rule '+r.title);
-  history.replaceState(null,'','#rule/'+file);
+  history.replaceState(null,'','#rule/'+r.path);
   $('#dClose').onclick=closeDrawer;
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
@@ -1111,10 +1168,18 @@ function renderMain(){
 }
 function renderTabs(){
   $$('.tabs button').forEach(b=>{
-    b.setAttribute('aria-selected',String(b.dataset.v===view));
-    if(b.dataset.v==='plan')b.querySelector('.n').textContent=picks.size;
+    const on=b.dataset.v===view;
+    b.setAttribute('aria-selected',String(on));
+    // Roving tabindex: one stop for the whole tablist, arrows move within it.
+    b.tabIndex=on?0:-1;
+    b.id='tab-'+b.dataset.v;
+    b.setAttribute('aria-controls','main');
+    const n=b.querySelector('.n');
+    if(b.dataset.v==='plan'&&n)n.textContent=picks.size;
   });
-  $('#guideLink').setAttribute('aria-current',String(view==='guide'));
+  // All six views render into the one container, so the panel is labelled by
+  // whichever tab is currently selected rather than there being six panels.
+  $('#main').setAttribute('aria-labelledby','tab-'+view);
 }
 function renderToast(){
   const t=$('#toast');
@@ -1137,9 +1202,10 @@ function applyHash(){
   if(!h)return;
   if(h.startsWith('rule/')){
     const f=h.slice(5);
-    if(RULEMAP[f]){view='rules';update();openRuleDrawer(f,null)}
+    if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
     return;
   }
+  if(h==='guide'){view='guide';update();return}
   if(h.startsWith('g-')){view='guide';update();
     const el=document.getElementById(h);if(el)el.scrollIntoView();return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
@@ -1154,14 +1220,25 @@ $('#denseBtn').onclick=()=>{dense=!dense;
   $('#denseBtn').setAttribute('aria-pressed',String(dense));
   $('#denseBtn').textContent=dense?'Comfortable rows':'Compact rows';renderMain()};
 $$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
-$('#guideLink').onclick=e=>{e.preventDefault();view='guide';update()};
+// Arrow-key navigation, which role=tablist promises and a plain button row
+// does not provide on its own. Wrapping, plus Home/End, per the ARIA pattern.
+$('.tabs').addEventListener('keydown',e=>{
+  const keys={ArrowRight:1,ArrowLeft:-1,Home:0,End:0};
+  if(!(e.key in keys))return;
+  const tabs=$$('.tabs button'), i=tabs.indexOf(document.activeElement);
+  if(i<0)return;
+  e.preventDefault();
+  const next=e.key==='Home'?0:e.key==='End'?tabs.length-1
+    :(i+keys[e.key]+tabs.length)%tabs.length;
+  view=tabs[next].dataset.v;update();tabs[next].focus();
+});
 $('#railReset').onclick=e=>{e.preventDefault();resetAll()};
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
 $('#toastClear').onclick=()=>{picks.clear();savePicks();update()};
 $('#themeBtn').onclick=()=>{
   const cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=cur;
-  try{localStorage.setItem('aiart-theme',cur)}catch(e){}
+  try{localStorage.setItem('aidfir-theme',cur)}catch(e){}
   setThemeBtn();
 };
 function setThemeBtn(){
@@ -1178,9 +1255,78 @@ THEME_BOOT = (
     # Default to light for first-time visitors; a stored choice still wins, and
     # the toggle continues to persist. (The prefers-color-scheme CSS block only
     # applies as a no-JS fallback, when no data-theme attribute gets set.)
-    "(function(){try{var t=localStorage.getItem('aiart-theme')||'light';"
+    # 'aiart-' is the dropped AIRTIFACTS working name; fall back to it once so a
+    # returning visitor's stored theme survives the rename.
+    "(function(){try{var t=localStorage.getItem('aidfir-theme')"
+    "||localStorage.getItem('aiart-theme')||'light';"
     "document.documentElement.dataset.theme=t}catch(e){}})();"
 )
+
+
+def check(rows, tools, rules, guide):
+    """Assert the invariants the page depends on. Returns a problem count.
+
+    Runs on every pull request, while the page itself is only built on push to
+    main - so a change that breaks the data contract is caught before merge
+    rather than after deploy. Writes nothing.
+
+    Anchors are the load-bearing invariant: permalinks and saved picks are both
+    stored against them, so a duplicate or a fragment-unsafe character silently
+    sends a reader to the wrong row.
+    """
+    problems = []
+    ids = {t["entry_id"] for t in tools}
+
+    seen = {}
+    for r in rows:
+        seen.setdefault(r["anchor"], []).append(r)
+    for anchor, dupes in seen.items():
+        if len(dupes) > 1:
+            problems.append(f"[ANCHOR]  {anchor} used by {len(dupes)} rows")
+    for r in rows:
+        if not r["artifact"]:
+            problems.append(f"[EMPTY]   {r['entry_id']} {r['cls']} row has no locator")
+        if r["entry_id"] not in ids:
+            problems.append(f"[ORPHAN]  {r['anchor']} has no tool entry")
+        if re.search(r"[^A-Za-z0-9/_.\-]", r["anchor"]):
+            problems.append(f"[SLUG]    {r['anchor']} is not URL-fragment safe")
+
+    # "What it proves" is derived for the classes the schema does not declare it
+    # on, so both halves of that need guarding: every row says something, and
+    # nothing says it in a vocabulary the schema does not know.
+    enum = set()
+    schema = ROOT / "schema" / "artifact.schema.json"
+    if schema.exists():
+        defs = json.loads(schema.read_text(encoding="utf-8")).get("$defs", {})
+        ev = defs.get("diskArtifact", {}).get("properties", {}).get("evidence_type", {})
+        enum = set(ev.get("items", {}).get("enum", []))
+    for r in rows:
+        if not r["evidence"]:
+            problems.append(f"[PROVES]  {r['anchor']} has no evidence type")
+        for value in r["evidence"] if enum else []:
+            if value not in enum:
+                problems.append(f"[VOCAB]   {r['anchor']} evidence '{value}' is not in the schema enum")
+
+    # A rule that parses to no title means an extractor broke on a real file.
+    for rule in rules:
+        if not rule.get("title"):
+            problems.append(f"[RULE]    {rule.get('path', '?')} parsed without a title")
+
+    # render_diagrams.py writes content-addressed SVGs; an edited diagram that
+    # was never re-rendered would otherwise ship as raw mermaid source.
+    for h in guide.get("missing_diagrams") or []:
+        problems.append(f"[DIAGRAM] no rendered SVG for mermaid block {h}")
+
+    by_class = {}
+    for r in rows:
+        by_class[r["cls"]] = by_class.get(r["cls"], 0) + 1
+    print(f"rows {len(rows)} · anchors unique {len(seen)} · tools {len(tools)} · "
+          f"rules {len(rules)}")
+    print("by class: " + ", ".join(f"{k} {v}" for k, v in sorted(by_class.items())))
+    for line in problems:
+        print(line)
+    print(f"\n{len(problems)} problem(s).")
+    return len(problems)
 
 
 def main():
@@ -1193,6 +1339,9 @@ def main():
     rules = site_data.load_rules(mapping_rows)
     cases = site_data.load_case_studies()
     guide = site_data.load_guide()
+
+    if "--check" in sys.argv:
+        return 1 if check(rows, tools, rules, guide) else 0
 
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
@@ -1255,7 +1404,7 @@ def main():
     <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n">0</span></button>
-    <a class="guidelink" id="guideLink" href="#guide">Investigation guide &#8594;</a>
+    <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
   </nav>
 </div></div>
 
@@ -1276,7 +1425,7 @@ def main():
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"></span>
     <span id="chips" style="display:contents"></span></div>
-  <div id="main"></div>
+  <div id="main" role="tabpanel" tabindex="0"></div>
 </div>
 </div>
 
@@ -1327,4 +1476,4 @@ const GUIDE={json.dumps(guide, separators=(",", ":"))};
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

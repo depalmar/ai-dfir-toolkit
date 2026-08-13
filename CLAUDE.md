@@ -26,8 +26,16 @@ python scripts/validate.py                    # schema + sigma + confidence gate
 python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
 python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
+python scripts/build_site.py --check          # site data contract, writes nothing
+python scripts/build_site.py                  # regenerate docs/site (CI does this)
+python ../artifacts/scripts/validate_mappings.py   # run this one from the repo root
 python ../skills/agent-artifact-catalog/scripts/new_entry.py "Tool Name"
 ```
+
+CI runs `validate.py`, `validate_mappings.py` and `build_site.py --check` on
+every pull request. `validate_mappings.py` lives under `artifacts/scripts/` but
+walks the repository root to find the `0N-*` rule directories, so run it from
+there rather than from `artifacts/`.
 
 `validate.py` is the gate CI runs. Never commit while it reports problems.
 Always regenerate the feeds in the same commit as a catalog change, or CI fails
@@ -57,10 +65,25 @@ because the published CSV feed is meant to be filtered, and a field where `log`
 and `logs` and `logfile` coexist cannot be. If something genuinely does not fit,
 extend the schema, the template, and the skill together.
 
-**Detections are Sigma only.** No SPL, no KQL, no vendor dialect. One rule
-converts to any SIEM, and shipping a vendor dialect would both force a platform
-choice on everyone downstream and imply an affiliation this project does not
-have. Verify with `sigma convert -t splunk detections/sigma/<rule>.yml`.
+**Detections are Sigma only.** No SPL, no KQL, no XQL, no ES|QL, no EQL, no
+vendor dialect of any kind. One rule converts to any SIEM, and shipping a vendor
+dialect would both force a platform choice on everyone downstream and imply an
+affiliation this project does not have. Verify with
+`sigma convert -t splunk detections/sigma/<rule>.yml`.
+
+This is the one rule most likely to be argued with, because "just add native
+analytics for platform X" always looks like a free win to whoever uses platform
+X. It is not. The maintainer works for a security vendor, and the project's
+independence disclaimer (`README.md`) only holds while the detection content
+stays neutral — a native dialect for any one vendor reads as capture regardless
+of the rule's quality. pySigma already emits every dialect anyone needs, so the
+capability is not lost by refusing to ship it; only the appearance of neutrality
+would be. Do not name the employer anywhere in the repository either: the
+disclaimer says "any employer" deliberately.
+
+Converting to a specific backend inside CI is fine and is not shipping a
+dialect — `validate.yml` converts to Elastic/lucene and `artifacts.yml` to
+Splunk, purely to prove the rules parse. The backend choice there is arbitrary.
 
 **Defensive content only.** Document where artifacts live and what they prove.
 No exploit code, no working attack tooling, no step-by-step abuse instructions.
@@ -87,10 +110,35 @@ the entry and raise its confidence.
 ## Current state
 
 44 entries, 258 artifacts, 23 credential locations, 17 MCP config locations,
-12 Sigma rules, 3 case studies. Validation clean.
+12 endpoint Sigma rules, 3 case studies. Validation clean.
+
+Detection content totals 63 rule files / 142 signatures across the seven attack-class
+directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
 Confidence: 27 high, 13 medium, 4 low.
 Risk: 11 critical, 21 high, 10 medium, 2 low.
+
+## Site generation
+
+`build_site.py` emits one self-contained vanilla-JS HTML file. No framework, no
+CDN, no build step, never hand-edited. It is not committed; CI builds it at
+deploy time. `site_data.py` loads everything *outside* the catalog proper —
+detection rules, the ATLAS/OWASP indexes, case studies, the investigation guide
+— while `build_site.py` owns the catalog rows themselves.
+
+`docs/HANDOFF_REVIEW.md` records what was decided about the round-2 design
+handoff and why, including which findings were declined and the two places the
+review itself was wrong. Read it before re-opening any of those questions.
+
+Three things worth not relearning:
+
+- `docs/api/artifacts.csv` is a published feed. Never change an existing column
+  in place; add new ones. Display-only reshaping belongs in the site build.
+- Row **anchors**, not row indexes, are what picks and permalinks persist
+  against. `--check` enforces that they are unique and URL-safe.
+- "What it proves" is derived for registry, network and process rows, because
+  the schema only declares `evidence_type` on disk artifacts. Derive inside the
+  schema's enum, and prefer fixing the schema when it is next touched.
 
 ## What is next, in priority order
 
@@ -108,5 +156,7 @@ Risk: 11 critical, 21 high, 10 medium, 2 low.
 - `artifacts/README.md` — the catalog itself
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
+- `artifacts/docs/HANDOFF_REVIEW.md` — what was decided about the site design
+  handoff, what was declined, and why
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when
 - `CONTRIBUTING.md` — submission rules for entries, detections, and case studies
