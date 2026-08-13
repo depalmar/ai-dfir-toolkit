@@ -786,13 +786,21 @@ pre.yaml.grown{max-height:none}
 .idxwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:22px}
 .idx h2{margin:0 0 3px;font-size:15px}
 .idx .isub{margin:0 0 11px;font-size:12.5px;color:var(--muted)}
-.irow{display:grid;grid-template-columns:96px minmax(0,1fr) 36px;gap:10px;align-items:center;
+/* Four columns, not three. The expand caret was added as a new first child
+   without widening the grid, so every cell shifted one place: the ID took the
+   96px meant for it but the title landed in the 36px count column and wrapped
+   down the right edge, and the count fell onto the next row. Column count and
+   child count have to move together. */
+.irow{display:grid;grid-template-columns:16px 92px minmax(0,1fr) 44px;gap:10px;
+  align-items:center;
   padding:7px 9px;border-radius:8px;cursor:pointer;border:1px solid transparent}
 .irow:hover{background:var(--accent-soft);border-color:var(--accent-border)}
 .irow .iid{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--accent)}
 .irow .ittl{font-size:12.5px}
 .irow .icount{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
   text-align:right}
+.irow .cvcaret{margin-right:0}
+.irow.open .cvcaret{transform:rotate(90deg)}
 .bar{grid-column:1/-1;height:4px;border-radius:3px;background:var(--line-soft);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
 
@@ -2034,7 +2042,11 @@ function coverageHTML(){
 
 function mappingsHTML(){
   return coverageHTML()+`<div class="idxwrap">
-      ${indexHTML('OWASP Top 10 for LLM Applications 2025','Application-layer risk categories. Rule counts only - the catalog maps tools to ATLAS, not to OWASP.',OWASP_INDEX,'rowasp')}
+      ${indexHTML('OWASP Top 10 for LLM Applications 2025',
+        'Application-layer risk categories. Rule counts only - the catalog maps tools to ATLAS, not to OWASP. '+
+        'Note the year: OWASP published a 2026 revision on 4 August 2026 and these mappings have not been '+
+        'moved to it yet, so treat the IDs here as 2025 IDs rather than current ones.',
+        OWASP_INDEX,'rowasp')}
     </div>`;
 }
 
