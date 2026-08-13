@@ -1,0 +1,78 @@
+# AI agent artifact case study
+# AIRT-CS-0005 - SesameOp: OpenAI Assistants API as a C2 Relay
+
+id: AIRT-CS-0005
+title: "SesameOp - OpenAI Assistants API as a Covert C2 Relay"
+date_range: Jul 2025 (discovered) to 3 Nov 2025 (disclosed)
+disclosed: "2025-11-03"
+affects: OpenAI Assistants API - no catalogued endpoint tool
+confidence: high
+basis: >-
+  First-party incident response engagement by Microsoft's Detection and Response
+  Team, published with named artifacts, mutex names, file paths and configuration
+  layout. Nothing here is inferred from a sample alone.
+atlas:
+  - AML.T0096
+summary: >-
+  Microsoft DART found this backdoor during an intrusion where the actor had
+  persisted for months. It uses OpenAI's Assistants API not for inference but as
+  attacker-controlled storage inside a provider every enterprise already trusts.
+  An Eazfuscator.NET-obfuscated loader (Netapi64.dll) is injected into a legitimate
+  host executable through .NET AppDomainManager injection, locates a file ending in
+  Netapi64 under C:\Windows\Temp, XOR-decodes it and launches the OpenAIAgent.Netapi64
+  backdoor. The implant polls the assistants list and reads a verb - SLEEP, Payload
+  or Result - from the description field, takes the encrypted and compressed command
+  body from the instructions field, and returns output as a new message.
+iocs:
+  - type: file
+    value: Netapi64.dll
+    description: Eazfuscator.NET-obfuscated .NET loader
+  - type: file
+    value: 'C:\Windows\Temp\Netapi64.start'
+    description: Marker file written by the loader
+  - type: file
+    value: 'C:\Windows\Temp\Netapi64.Exception'
+    description: Exception log written by the loader
+  - type: file
+    value: 'C:\Windows\Temp\*.Netapi64'
+    description: Encoded payload the loader searches for and XOR-decodes
+  - type: file
+    value: "<host>.exe.config containing appDomainManagerAssembly"
+    description: The injection mechanism - a .config beside a trusted binary is the durable artifact
+  - type: process
+    value: OpenAIAgent.Netapi64
+    description: .NET backdoor component
+  - type: mutex
+    value: Netapi64
+    description: Loader mutex, prevents duplicate infection
+  - type: mutex
+    value: OpenAI APIS
+    description: Backdoor mutex
+  - type: domain
+    value: api.openai.com
+    description: C2 relay; the finding is the process making the request, not the destination
+  - type: config
+    value: "TextFile1 .NET resource holding <OpenAI_API_Key>|<Dictionary_Key_Name>|<Proxy>"
+    description: Embedded configuration; fields surface as OpenAIAgent.token, .aaazzz and .proxy
+  - type: pattern
+    value: SLEEP / Payload / Result verbs in the Assistants API description field
+    description: The command protocol, visible only in provider-side API records
+response_actions:
+  - "Inventory which processes on each host talk to api.openai.com. Microsoft's own hunting guidance is to count devices per InitiatingProcessFileName - a non-AI process is the finding."
+  - Sweep for .exe.config files carrying appDomainManagerAssembly next to trusted binaries; this survives removal of the DLL itself.
+  - Check C:\Windows\Temp for Netapi64.start, Netapi64.Exception and files ending in Netapi64.
+  - "Pull the tenant's OpenAI API records if the key is recoverable: the assistants list holds the operator's tasking, which is not present on the endpoint."
+  - Treat the OpenAI API key found in the TextFile1 resource as attacker-controlled infrastructure, and revoke any legitimate keys reachable from the host.
+lesson: >-
+  The C2 channel terminates at a provider every enterprise already trusts, so
+  reputation-based and IOC-based detection produce nothing - there is no suspicious
+  domain and no newly registered infrastructure. Detection has to key on the wrong
+  API path being used by the wrong process at a machine-regular cadence. That makes
+  AI provider traffic an evidence source rather than background noise, and it is a
+  pattern rather than an indicator list: OpenAI retires the Assistants API in
+  August 2026 and the tradecraft moves to its successor.
+references:
+  - title: "Microsoft Security Blog - SesameOp: Novel backdoor uses OpenAI Assistants API for command and control"
+    url: https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/
+  - title: "The Hacker News - Microsoft Detects SesameOp Backdoor Using OpenAI's API as a Stealth Command Channel"
+    url: https://thehackernews.com/2025/11/microsoft-detects-sesameop-backdoor.html

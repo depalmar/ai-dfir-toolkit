@@ -1,0 +1,65 @@
+# AI agent artifact case study
+# AIRT-CS-0009 - The MCP Vulnerability Cluster: RCE on Connect and the Rug-Pull
+
+id: AIRT-CS-0009
+title: "The MCP Vulnerability Cluster - RCE on Connect and the Rug-Pull"
+date_range: Jun 2025 to Aug 2025 (the three anchor CVEs)
+disclosed: "2025-07-09"
+affects:
+  - AIRT-0001
+  - AIRT-0002
+  - AIRT-0006
+  - AIRT-0011
+confidence: high
+basis: >-
+  Three assigned CVEs with published advisories, named discovering parties and
+  shipped fixes. Recorded from the CVE records rather than from aggregate counts.
+summary: >-
+  Model Context Protocol went from novelty to default integration layer, and a
+  vulnerability class followed it. mcp-remote (CVE-2025-6514, CVSS 9.6, JFrog)
+  achieved OS command injection on the client merely by connecting to a malicious
+  server, in versions 0.0.5 to 0.1.15 and with over 437,000 downloads at disclosure.
+  MCP Inspector (CVE-2025-49596, CVSS 9.4, Oligo) allowed unauthenticated RCE
+  between client and proxy, fixed in 0.14.1. MCPoison (CVE-2025-54136, CVSS 7.2,
+  Check Point) allowed an approved MCP server configuration in Cursor to be silently
+  redefined after approval and never re-validated - the rug-pull - fixed in Cursor 1.3.
+iocs:
+  - type: pattern
+    value: "mcp-remote 0.0.5 through 0.1.15"
+    description: Vulnerable range for CVE-2025-6514; fixed in 0.1.16
+  - type: pattern
+    value: "@modelcontextprotocol/inspector below 0.14.1"
+    description: Vulnerable range for CVE-2025-49596
+  - type: pattern
+    value: Cursor before 1.3
+    description: Vulnerable range for CVE-2025-54136 (MCPoison)
+  - type: config
+    value: MCP server entry pointing at a remote URL the organisation did not vet
+    description: Present in Claude Desktop, Claude Code, Cursor, VS Code and Windsurf configs
+  - type: behavior
+    value: MCP tool invocation whose arguments do not match the definition currently on disk
+    description: The rug-pull signature - config and execution disagree
+  - type: behavior
+    value: Child process spawned by an MCP client immediately after a server connection
+    description: Command injection on connect
+response_actions:
+  - "Enumerate the same server across every client that had it configured, not just the one that reported. Removing it from one client leaves the others live."
+  - "Treat the invocation trace as authoritative and the config as hearsay. Under a rug-pull the file on disk is not what executed, which inverts the usual instinct."
+  - Version-check mcp-remote, MCP Inspector and Cursor against the fixed versions above across the estate, including developer laptops outside the managed inventory.
+  - Pin MCP server versions rather than tracking latest, and record the approval decision alongside the definition hash so a later redefinition is detectable.
+  - Rotate OAuth tokens and credentials the affected servers were granted or proxied, since an MCP server sits inside the agent's trust boundary.
+lesson: >-
+  The rug-pull inverts a core investigative instinct: the configuration on disk is
+  not what executed, because an approved tool was silently redefined afterwards.
+  Only the invocation trace is authoritative. The second lesson is scope - the same
+  MCP server is usually configured in several clients on the same host, and
+  responders who remediate the one that alerted leave the rest running.
+references:
+  - title: "GitHub Advisory GHSA-6xpm-ggf7-wc3p - CVE-2025-6514, mcp-remote OS command injection"
+    url: https://github.com/advisories/GHSA-6xpm-ggf7-wc3p
+  - title: "JFrog - Critical mcp-remote RCE vulnerability (CVE-2025-6514)"
+    url: https://jfrog.com/blog/2025-6514-critical-mcp-remote-rce-vulnerability/
+  - title: "OSV - CVE-2025-49596, MCP Inspector RCE"
+    url: https://osv.dev/vulnerability/CVE-2025-49596
+  - title: "NVD - CVE-2025-54136 (MCPoison)"
+    url: https://nvd.nist.gov/vuln/detail/CVE-2025-54136

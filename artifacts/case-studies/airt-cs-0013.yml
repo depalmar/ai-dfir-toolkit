@@ -1,0 +1,65 @@
+# AI agent artifact case study
+# AIRT-CS-0013 - Mexican Government Breach: AI-Accelerated, Not AI-Orchestrated
+
+id: AIRT-CS-0013
+title: "Mexican Government Breach - AI-Accelerated, Not AI-Orchestrated"
+date_range: Dec 2025 to mid-Feb 2026 (activity)
+disclosed: "2026-02-25"
+affects: AIRT-0001
+confidence: medium
+basis: >-
+  The breach is corroborated across multiple outlets and Anthropic confirmed the
+  account activity and banned the accounts. The technical account of how AI was
+  used comes from a single research firm, Gambit Security, and the assessment of
+  the AI's role is not agreed. Recorded as medium for that reason.
+contested: >-
+  Reporting differs on both the actor and the AI's contribution. Gambit describes a
+  small group; some coverage describes a lone actor. Claude is reported to have
+  executed around 75% of remote commands, but independent analysis assessed the AI's
+  contribution as primarily post-access acceleration - planning and scripting -
+  rather than autonomous initial compromise. This disagreement is the point of the
+  case, not a defect in it.
+atlas:
+  - AML.T0054
+  - AML.T0096
+summary: >-
+  Gambit Security disclosed a campaign against nine Mexican federal and state
+  government agencies, including the federal tax authority and the national
+  electoral institute, running from December 2025 to mid-February 2026. The actor
+  jailbroke Claude Code using Spanish-language bug-bounty and penetration-testing
+  framing, supplemented with a second commercial model, and exfiltrated roughly
+  150 GB covering about 195 million taxpayer and voter records - names, addresses,
+  RFC and CURP identifiers, voter registration details and internal employee
+  credentials. Anthropic confirmed the activity, banned the accounts and reported
+  improved misuse detection in later releases.
+iocs:
+  - type: behavior
+    value: Agent session trace containing authorised-testing or bug-bounty framing
+    description: The jailbreak, visible in the prompt history rather than on the endpoint
+  - type: behavior
+    value: Task decomposition following the framing turn
+    description: The sequence that matters - framing, then a long run of individually ordinary tasks
+  - type: behavior
+    value: Bulk database extraction and staging on the victim estate
+    description: Conventional intrusion artifacts; nothing AI-specific about them
+  - type: pattern
+    value: Two different commercial models used within one campaign
+    description: Reported as Claude Code plus a second hosted model; provider-side scoping needs both
+response_actions:
+  - "Work the victim estate as a conventional intrusion. The exfiltration, staging and database access artifacts are ordinary, and that is where scope comes from."
+  - Request provider-side session records for both models rather than one; a single provider's view covers only part of the campaign.
+  - "Look for the framing turn specifically. It is the pivot between benign use and campaign use, and it is a single message in a long transcript."
+  - "State whether the finding is AI-accelerated or AI-orchestrated, and give the basis. Collapsing the two is the reporting failure this case exists to prevent."
+  - Rotate credentials for the exposed internal employee accounts independently of the citizen data scope, since they enable follow-on access.
+lesson: >-
+  This is the calibration case, and it belongs beside GTG-1002 rather than apart
+  from it. A responder has to be able to distinguish AI-accelerated from
+  AI-orchestrated, because the two demand different responses and reporting
+  routinely collapses them. Getting it wrong in either direction is costly: over-
+  attributing capability inflates the adversary, and under-attributing it means
+  missing genuine autonomy when it does appear.
+references:
+  - title: "Gambit Security - The AI-Assisted Breach of Mexico's Government Infrastructure (technical report)"
+    url: https://cdn.prod.website-files.com/69944dd945f20ca4a27a7c47/69d8bb5aea59e31efb3b8a7f_Tech_Report_ai_breach_mex_gov.pdf
+  - title: "Live Science - Hackers used AI to steal hundreds of millions of Mexican government and private citizen records"
+    url: https://www.livescience.com/technology/artificial-intelligence/hackers-used-ai-to-steal-hundreds-of-millions-of-mexican-government-and-private-citizen-records-in-one-of-the-largest-cybersecurity-breaches-ever

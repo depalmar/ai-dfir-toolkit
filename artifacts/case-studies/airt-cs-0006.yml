@@ -1,0 +1,69 @@
+# AI agent artifact case study
+# AIRT-CS-0006 - PROMPTFLUX: Malware That Asks an LLM to Rewrite Itself
+
+id: AIRT-CS-0006
+title: "PROMPTFLUX - Malware That Asks an LLM to Rewrite Itself"
+date_range: 2025 (samples) to 5 Nov 2025 (disclosed)
+disclosed: "2025-11-05"
+affects: Gemini API (generativelanguage.googleapis.com) - no catalogued endpoint tool
+confidence: medium
+basis: >-
+  Single-vendor disclosure by Google Threat Intelligence Group, corroborated widely
+  in the press but not independently analysed. GTIG assessed the samples as still in
+  development or testing, so the artifact list describes what the code does, not what
+  was recovered from a victim.
+contested: >-
+  GTIG assessed PROMPTFLUX as not yet capable of compromising a victim environment,
+  and the sample's own AttemptToUpdateSelf routine was commented out. Reporting that
+  presents it as an operational metamorphic threat overstates the evidence. What is
+  established is intent and a working LLM query path, not in-the-wild impact.
+atlas:
+  - AML.T0096
+summary: >-
+  A VBScript dropper whose "Thinking Robot" module queries Gemini on a timer with a
+  prompt asking for an obfuscated rewrite of its own source, so the script on disk is
+  never the script that was analysed. Responses are logged to a file in %TEMP%, and
+  regenerated variants are written to the per-user Startup folder for persistence.
+  One observed variant instructed the model hourly to act as an "expert VBScript
+  obfuscator" and rewrite the entire source. GTIG grouped it with a family of samples
+  exhibiting just-in-time code creation, and assessed it as in development.
+iocs:
+  - type: file
+    value: '%TEMP%\thinking_robot_log.txt'
+    description: The model's responses - effectively the attacker's tooling history, turn by turn
+  - type: directory
+    value: "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+    description: Regenerated script variants land here; contents differ on each iteration
+  - type: domain
+    value: generativelanguage.googleapis.com
+    description: Gemini API endpoint; the finding is wscript.exe or cscript.exe reaching it
+  - type: pattern
+    value: gemini-1.5-flash-latest referenced in a script body
+    description: Hard-coded model selector
+  - type: pattern
+    value: Hard-coded provider API key inside a script
+    description: Recoverable from the script and usable for provider-side scoping
+  - type: behavior
+    value: Propagation to removable drives and mapped network shares
+    description: Distribution mechanism described by GTIG
+response_actions:
+  - "Collect %TEMP%\\thinking_robot_log.txt first and treat it as the primary evidence: it records what the operator asked the model to produce, and it survives when the script has already rewritten itself."
+  - "Hunt on the egress rather than the hash: script interpreters (wscript.exe, cscript.exe) resolving or connecting to LLM API hosts is the durable signal."
+  - Snapshot the Startup folder rather than sampling it - two acquisitions minutes apart can legitimately differ.
+  - Extract any hard-coded provider key and pass it to the provider for abuse scoping; the key ties otherwise unlinkable variants together.
+  - "Do not scope by file hash. Hash-based scoping under-reports by design here; scope by log path, Startup entry and egress."
+lesson: >-
+  The malicious logic is not resident in the sample - it is fetched at execution
+  time, so two acquisitions of the same malware produce different files and
+  signature coverage degrades by design. The response log inverts the usual analysis
+  order and is a gift to the investigator: it is a transcript of the attacker's
+  intent. This is also the case that most rewards checking the primary source, since
+  the sample's self-update routine was commented out and the family was assessed as
+  in development.
+references:
+  - title: "GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)"
+    url: https://services.google.com/fh/files/misc/advances-in-threat-actor-usage-of-ai-tools-en.pdf
+  - title: "Help Net Security - Google uncovers malware using LLMs to operate and evade detection"
+    url: https://www.helpnetsecurity.com/2025/11/05/malware-using-llms/
+  - title: "Infosecurity Magazine - AI-Enabled Malware Now Actively Deployed, Says Google"
+    url: https://www.infosecurity-magazine.com/news/aienabled-malware-actively/

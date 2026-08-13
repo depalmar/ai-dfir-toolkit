@@ -1,0 +1,69 @@
+# AI agent artifact case study
+# AIRT-CS-0004 - GTG-1002 AI-Orchestrated Espionage Campaign
+
+id: AIRT-CS-0004
+title: GTG-1002 - AI-Orchestrated Espionage Campaign
+date_range: mid-Sep 2025 (detected) to 13 Nov 2025 (disclosed)
+disclosed: "2025-11-13"
+affects: AIRT-0001
+confidence: medium
+basis: >-
+  Single-vendor disclosure by the AI provider whose product was abused, with no
+  public IOCs and no independent technical corroboration. MITRE ATT&CK adopted it
+  as Campaign C0062, which corroborates that the campaign happened, not the
+  autonomy figures. Recorded as medium because the load-bearing claim - the
+  degree of AI autonomy - rests on one reporting party and is disputed.
+contested: >-
+  Multiple researchers, including Kevin Beaumont, publicly questioned whether the
+  campaign was as autonomous as reported. Anthropic's own report notes that Claude
+  "frequently overstated findings" and fabricated data during the operation, which
+  cuts against the autonomy narrative it is cited for. Treat the 80-90% figure as
+  a vendor assessment, not a measurement.
+atlas:
+  - AML.T0053
+  - AML.T0054
+  - AML.T0096
+summary: >-
+  Anthropic assessed with high confidence that a Chinese state-sponsored actor
+  built an autonomous attack framework around Claude Code driving MCP servers and
+  sub-agents, and used it against roughly thirty organisations, succeeding against
+  at least four. The framework ran reconnaissance, vulnerability discovery, exploit
+  development, credential harvesting, lateral movement and exfiltration, with human
+  operators reportedly intervening at only four to six decision points per campaign.
+  Guardrails were bypassed by role-playing as a defensive security firm conducting
+  authorised testing and decomposing the attack into individually innocuous
+  sub-tasks. No indicators of compromise were published.
+iocs:
+  - type: behavior
+    value: Agent session with tool_use/tool_result records spanning multiple kill-chain phases
+    description: Recon, exploitation, credential access and exfiltration inside one session is the signal; no single call is anomalous
+  - type: behavior
+    value: Sustained request cadence far above human working tempo
+    description: Reported in the thousands of requests per second; the exact rate is vendor-claimed
+  - type: behavior
+    value: Task framing that asserts authorised defensive testing
+    description: The documented guardrail bypass, visible in the prompt history rather than on the endpoint
+  - type: pattern
+    value: High ratio of agent actions to human decision points in one session
+    description: Reported as 4-6 human interventions per campaign
+response_actions:
+  - "Scope from the agent side first: pull session traces for the period and look for phase progression within a single session rather than for individual malicious commands."
+  - Correlate agent tool invocations against MCP server logs, so the arguments an agent passed are recoverable even where the agent trace was rotated.
+  - "Treat the target-side artifacts as an ordinary intrusion: the recon, credential-access and staging evidence is conventional, only the tempo is not."
+  - Preserve agent and MCP logs before rotation - they are usually the only record of the decomposition, and default retention is short.
+  - "Record the autonomy question as an open assessment in the report rather than adopting the vendor figure, since the distinction changes attribution and response."
+lesson: >-
+  Every individual tool call in this campaign was legitimate administrative
+  activity. The compromise is only visible as an emergent property of the session -
+  tempo, phase progression, target breadth, and the ratio of agent actions to human
+  decisions - which is not something a signature can express. It is also the case
+  that most strongly rewards reading the primary report critically: the same
+  document that supplies the autonomy figure also records the model fabricating
+  results.
+references:
+  - title: "Anthropic - Disrupting the first reported AI-orchestrated cyber espionage campaign"
+    url: https://www-cdn.anthropic.com/d7dd50dd1185f59be051b307150d877f2b82bd2c.pdf
+  - title: "MITRE ATT&CK - Campaign C0062, Anthropic AI-orchestrated Campaign"
+    url: https://attack.mitre.org/campaigns/C0062/
+  - title: "BleepingComputer - Anthropic claims of Claude AI-automated cyberattacks met with doubt"
+    url: https://www.bleepingcomputer.com/news/security/anthropic-claims-of-claude-ai-automated-cyberattacks-met-with-doubt/

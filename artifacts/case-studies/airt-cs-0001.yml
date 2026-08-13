@@ -6,6 +6,19 @@ title: GPT Pilot core/telemetry Supply-Chain Credential Stealer
 date_range: 2025-08-24 (commit) to 2026-06-11 (removed)
 disclosed: "2026-06-08"
 affects: AIRT-0016
+confidence: high
+basis: >-
+  Public repository evidence - the commit, the added files and their removal are all
+  observable in version control - with an independent write-up from StepSecurity
+  identifying the payload as a Shai-Hulud variant.
+contested: >-
+  The two dates in the record do not agree, and the disagreement is itself
+  forensically useful. The malicious commit carries an author date of 2025-08-24,
+  while StepSecurity reports that a co-founder's GitHub account was compromised and
+  the payload force-pushed on 2026-06-08. Commit dates are attacker-controlled;
+  scope from the push and the clone, not from the date in the object.
+atlas:
+  - AML.T0010
 summary: A credential-stealing worm was hidden in the GPT Pilot repository under core/telemetry/ via malicious commit 065ee8eb. Anyone who cloned and ran GPT Pilot from source between Aug 2025 and 11 Jun 2026 should assume credential compromise and rotate.
 iocs:
   - type: file
@@ -35,3 +48,8 @@ response_actions:
   - "Hunt for the bun binary and rt-* temp directories as post-compromise indicators."
   - Treat the repo-local .env and config.json as exposed.
 lesson: AI agent frameworks are installed from source far more often than typical enterprise software, which bypasses package-registry scanning entirely. A from-source clone is an unreviewed supply chain.
+references:
+  - title: "StepSecurity - Pythagora-io/gpt-pilot Compromised on GitHub: Shai-Hulud Credential Stealer Blocked by Python Linter"
+    url: https://www.stepsecurity.io/blog/pythagora-io-gpt-pilot-compromised-on-github-shai-hulud-credential-stealer-blocked-by-python-linter
+  - title: "SafeDep Threat Intelligence - Pythagora-io/gpt-pilot IOC record"
+    url: https://safedep.io/ti/ioc/github_repo/github_repo-5278c0f8c305/
