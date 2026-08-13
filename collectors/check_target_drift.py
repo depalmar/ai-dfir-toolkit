@@ -9,22 +9,31 @@ is the one that carries confidence ratings, secret types and forensic value. Two
 lists of the same facts drift, and here the drift is not cosmetic: it decides
 what a responder does or does not acquire.
 
-Deriving targets.yaml from docs/api/catalog.json is the real fix. Until that
-happens this makes the divergence visible on every run, which is the difference
-between known debt and a silent gap.
+The credential half of targets.yaml is now generated from the catalog by
+gen_credential_targets.py, so those cannot drift. This check covers what the
+generator does not: the hand-authored targets above the marker, and every way the
+two lists can still disagree.
 
-Three findings, only the first of which fails the build:
+Five findings. Only the first two fail the build:
 
-  MISSED-SECRET  the catalog documents a plaintext credential location that no
-                 collector target covers. The collector will not acquire the
-                 highest-value evidence class the catalog knows about.
-  UNMARKED       a collector target covers a path the catalog rates as a
-                 credential location, but the target is not sensitivity: secret,
-                 so the file would be copied whole rather than hashed. This is
-                 the one that can put a live token in a case directory.
+  MISSED-SECRET  the catalog documents a plaintext credential location, as a real
+                 filesystem path, that no collector target covers. The collector
+                 will not acquire the highest-value evidence class the catalog
+                 knows about.
+  UNMARKED       a target covers a path the catalog rates as a credential store,
+                 without sensitivity: secret, so the body would be copied rather
+                 than hashed. This is the one that puts a live token in a case
+                 directory.
+  MIXED          a target covers a path the catalog documents BOTH as a credential
+                 location and as an artifact or MCP config. The config is the
+                 evidence, so collecting it whole is correct - but the case
+                 directory then holds embedded secrets. Informational.
+  NOT-A-FILE     a catalogued credential that is an env var, a CLI flag, an OS
+                 keychain, a browser store or a database. Real evidence, acquired
+                 by other means; reported so it is not mistaken for coverage.
   CATALOG-GAP    the collector knows a path the catalog does not. Usually a real
                  gap in the catalog, sometimes deliberately out of its scope
-                 (vector stores, ML platforms), so it is reported, never failed.
+                 (vector stores, ML platforms). Informational.
 """
 from __future__ import annotations
 
@@ -56,17 +65,38 @@ def location_kind(location: str) -> str:
     var, which is meaningless, and would bury the genuine gaps in noise.
     """
     text = location.strip()
-    if "keychain" in text.lower() or "keyring" in text.lower() or \
-            "secretstorage" in text.lower().replace(" ", ""):
+    low = text.lower()
+    if "keychain" in low or "keyring" in low or "secretstorage" in low.replace(" ", ""):
         return "keychain"
+    if "browser local storage" in low or "credential manager" in low:
+        return "browser-store"
+    if low.startswith(("mysql database", "postgres database", "sqlite database")):
+        return "database"
     if text.startswith("-"):
         return "flag"
-    # ENV_VAR_NAME, or several separated by / or ,
-    if re.fullmatch(r"[A-Z][A-Z0-9_]{2,}(\s*[/,]\s*[A-Z][A-Z0-9_]{2,})*", text):
+    # One or more ENV_VAR names, separated by / , or |, with an optional trailing
+    # parenthetical such as "(and per-provider equivalents)".
+    stripped = re.sub(r"\s*\([^)]*\)\s*$", "", text).strip()
+    if re.fullmatch(r"[A-Z][A-Z0-9_]{2,}(\s*[/,|]\s*[A-Z][A-Z0-9_]{2,})*", stripped):
         return "env-var"
     if text.startswith(("~", "/", "%", "$", "<", ".")) or "/" in text or "\\" in text:
         return "path"
     return "other"
+
+
+def split_locations(location: str) -> list[str]:
+    """One catalog location can name several files, or carry a note.
+
+    Rows like "a.json  |  b.json" and "secrets.yaml (mode 0600)" have to be split
+    and trimmed the same way the generator does, or the comparison is against a
+    string no target will ever equal.
+    """
+    out = []
+    for part in re.split(r"\s+\|\s+", location):
+        part = re.sub(r"\s*\([^)]*\)\s*$", "", part).strip()
+        if part:
+            out.append(part)
+    return out or [location.strip()]
 
 
 def norm(path: str) -> str:
@@ -116,19 +146,42 @@ def main() -> int:
                               cred.get("storage", ""), cred.get("secret_type", "")))
                 catalog_paths.add(norm(cred["location"]))
 
+    non_credential_paths: dict[str, set] = {}
+    for entry in catalog:
+        s_ = set()
+        for a in (entry.get("artifacts") or {}).get("disk", []):
+            if a.get("path"):
+                s_.add(norm(a["path"]))
+        for m in entry.get("mcp", []):
+            if m.get("config_path"):
+                s_.add(norm(m["config_path"]))
+        non_credential_paths[entry["id"]] = s_
+
     target_paths = []     # (target_id, normalised path, sensitivity)
     for t in targets:
         for p in t.get("paths", []):
             target_paths.append((t["id"], norm(p), t.get("sensitivity", "normal")))
 
-    def covered_by(n: str):
-        return [(tid, sens) for tid, tp, sens in target_paths
-                if tp == n or n in tp or tp in n]
+    def same_path(a: str, b: str) -> bool:
+        """Equal, or one is a path-suffix of the other on a segment boundary.
 
-    missed, unmarked, uncollectable = [], [], []
+        Plain substring matching is wrong here: stripping a <install>/ placeholder
+        leaves a bare "config.json", which is a substring of
+        "claude_desktop_config.json" and would report GPT Pilot's config as
+        covered by the Claude Desktop target.
+        """
+        if a == b:
+            return True
+        return a.endswith("/" + b) or b.endswith("/" + a)
+
+    def covered_by(n: str):
+        return [(tid, sens) for tid, tp, sens in target_paths if same_path(tp, n)]
+
+    missed, unmarked, uncollectable, mixed_content = [], [], [], []
     for entry_id, location, storage, secret_type in creds:
-        n = norm(location)
-        hits = covered_by(n)
+        pieces = [norm(x) for x in split_locations(location)]
+        n = pieces[0]
+        hits = [h for piece in pieces for h in covered_by(piece)]
         kind = location_kind(location)
         if not hits:
             if storage != "plaintext":
@@ -142,24 +195,31 @@ def main() -> int:
                 uncollectable.append({"entry": entry_id, "location": location,
                                       "kind": kind, "secret_type": secret_type})
         else:
+            mixed = any(p in non_credential_paths.get(entry_id, set()) for p in pieces)
             for tid, sens in hits:
-                if sens != "secret":
-                    unmarked.append({"entry": entry_id, "location": location,
-                                     "target": tid, "sensitivity": sens,
-                                     "storage": storage})
+                if sens == "secret":
+                    continue
+                record = {"entry": entry_id, "location": location, "target": tid,
+                          "sensitivity": sens, "storage": storage}
+                # A path the catalog also documents as an artifact or MCP config is
+                # a config file that embeds a secret, not a secret store. The
+                # config is what a responder came for, so collecting it whole is
+                # correct - but the case directory then holds embedded secrets and
+                # should be handled accordingly.
+                (mixed_content if mixed else unmarked).append(record)
 
     catalog_gaps = []
     for t in targets:
-        if t["id"] in OUT_OF_SCOPE:
+        if t["id"] in OUT_OF_SCOPE or t["id"].startswith("cred_"):
             continue
-        if not any(norm(p) in catalog_paths or
-                   any(norm(p) in c or c in norm(p) for c in catalog_paths)
+        if not any(any(same_path(norm(p), c) for c in catalog_paths)
                    for p in t.get("paths", [])):
             catalog_gaps.append({"target": t["id"], "paths": t.get("paths", [])})
 
     if args.json:
         print(json.dumps({"missed_secret": missed, "unmarked": unmarked,
                           "uncollectable": uncollectable,
+                          "mixed_content": mixed_content,
                           "catalog_gap": catalog_gaps}, indent=2))
         return 1 if (missed or unmarked) else 0
 
@@ -187,6 +247,14 @@ def main() -> int:
         print("             they are collected by other means - do not read this as coverage.")
         for u in uncollectable:
             print(f"             {u['entry']}  [{u['kind']}] {u['location'][:62]}")
+
+    if mixed_content:
+        print(f"\n[MIXED] {len(mixed_content)} target(s) collect a config file that also "
+              f"embeds a credential (informational).")
+        print("        The config is the evidence, so it is collected whole - which means")
+        print("        the case directory will contain embedded secrets. Handle accordingly.")
+        for m in mixed_content:
+            print(f"        {m['target']:24} {m['location'][:52]}")
 
     if catalog_gaps:
         print(f"\n[CATALOG-GAP] {len(catalog_gaps)} in-scope collector target(s) the "

@@ -162,7 +162,29 @@ artifacts:
       service_or_daemon: "No"
       persistence: LaunchAgent (login items)
       confidence: high
-credentials: []
+credentials:
+  - location: 'claude_desktop_config.json -> mcpServers.<name>.env'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT third-party API keys, PATs and tokens embedded in MCP server
+      definitions, in a JSON file readable by any process running as the user. Same four
+      per-OS paths already listed in artifacts.disk, including the MSIX virtualized
+      %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\... path. Treat every literal value
+      as an exposed credential and rotate.
+    confidence: high
+  - location: '~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)'
+    os: [macos, windows, linux]
+    storage: encrypted
+    secret_type: oauth-token
+    description: >-
+      OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are
+      written into the application-data directory as ciphertext, encrypted using OS
+      secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext IS on disk here,
+      but is not usable without the key - see the keyring row. Vendor does not name the
+      specific file.
+    confidence: medium
 mcp:
   - config_path: "%APPDATA%\\Claude\\claude_desktop_config.json"
     config_key: "mcpServers.<name>.command + .args"

@@ -183,7 +183,84 @@ artifacts:
       service_or_daemon: "No"
       persistence: Run key (optional)
       confidence: high
-credentials: []
+credentials:
+  - location: ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
+    os: [macos]
+    storage: sqlite
+    secret_type: oauth-token
+    description: >-
+      Cursor IDE login session. The ItemTable rows cursorAuth/accessToken,
+      cursorAuth/refreshToken and cursorAuth/cachedEmail hold their values UNENCRYPTED
+      (PLAINTEXT JWTs) inside the SQLite database - the DB is not itself protected.
+      Copying the file transfers a logged-in session. Quit Cursor before acquisition so
+      the WAL journal is checkpointed.
+    confidence: medium
+  - location: ~/.config/Cursor/User/globalStorage/state.vscdb
+    os: [linux]
+    storage: sqlite
+    secret_type: oauth-token
+    description: >-
+      Linux path for the same Cursor IDE session store. ItemTable rows
+      cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the
+      SQLite DB.
+    confidence: medium
+  - location: '%APPDATA%\Cursor\User\globalStorage\state.vscdb'
+    os: [windows]
+    storage: sqlite
+    secret_type: oauth-token
+    description: >-
+      Windows path for the same Cursor IDE session store. ItemTable rows
+      cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the
+      SQLite DB.
+    confidence: medium
+  - location: ~/.cursor/mcp.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Global MCP server definitions. The per-server env block routinely carries
+      PLAINTEXT API keys and bearer tokens for whatever the agent was authorised to
+      call. Already declared as a secrets location by this catalog's own MCP block for
+      this entry.
+    confidence: high
+  - location: '<repo>/.cursor/mcp.json'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Project-scoped MCP server definitions with the same PLAINTEXT env block. TRAVELS
+      WITH THE REPO - collect per workspace the user opened, not just from home.
+    confidence: high
+  - location: ~/.config/cursor/auth.json
+    os: [linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      Cursor CLI (cursor-agent), NOT the IDE. PLAINTEXT JSON holding accessToken,
+      refreshToken and apiKey, written by 'cursor-agent login'; independently observed
+      at mode 600. Note it is ~/.config/cursor/, not ~/.cursor/.
+    confidence: medium
+  - location: 'macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token / cursor-api-key, account cursor-user'
+    os: [macos]
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      On macOS the Cursor CLI (cursor-agent) keeps its session in the login Keychain
+      rather than in a file - there is NO auth.json to collect on a Mac. If you are
+      looking for cursor-agent credentials on macOS, look in the Keychain.
+    confidence: medium
+  - location: 'macOS login Keychain: generic-password service ''Cursor Safe Storage'', account ''Cursor Key'''
+    os: [macos]
+    storage: os-keyring
+    secret_type: encryption-key
+    description: >-
+      Electron safeStorage master key for Cursor. It decrypts the VS Code SecretStorage
+      secret:// rows inside state.vscdb, so extension-held secrets are unreadable
+      without it. Sources disagree on whether Cursor's own IDE login uses it - at least
+      one holds that IDE login lives only in the cursorAuth/* ItemTable rows - so treat
+      it as the key for extension secrets, not as the session itself.
+    unverified: true
+    confidence: low
 mcp:
   - config_path: ~/.cursor/mcp.json
     config_key: mcpServers

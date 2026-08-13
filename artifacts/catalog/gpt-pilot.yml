@@ -22,7 +22,56 @@ risk: high
 confidence: low
 abuse_potential: Runs generated code on host. THIN PUBLIC SOURCING on canonical paths - inventory by Python process command line.
 artifacts: {}
-credentials: []
+credentials:
+  - location: '<install>/config.json'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PRIMARY credential file. PLAINTEXT JSON with llm.<provider>.api_key for openai /
+      anthropic / azure / groq. Created by the vendor's documented setup step "cp
+      example-config.json config.json"; the --config argument defaults to the bare
+      string "config.json", so it resolves relative to the working directory the agent
+      is launched from - normally the repo root. The same file's db.url carries an
+      embedded user:password when the operator switches from the default sqlite to
+      PostgreSQL. Listed in .gitignore, so it is present on disk but absent from the
+      repo.
+    confidence: high
+  - location: '<install>/pilot/.env'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      LEGACY plaintext env file from pre-rewrite gpt-pilot: OPENAI_API_KEY,
+      ANTHROPIC_API_KEY, GROQ_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY plus matching
+      *_ENDPOINT values. Still forensically live - the current build's importer reads
+      this path on startup when config.json does not yet exist and copies the keys into
+      config.json, so an upgraded host can hold the same live key in BOTH files. Collect
+      both.
+    confidence: high
+  - location: '<install>/data/database/pythagora.db'
+    os: [windows, macos, linux]
+    storage: sqlite
+    secret_type: jwt-signing-key
+    description: >-
+      Default project-state sqlite DB (confirms the VERIFICATION.md path correction).
+      Holds secrets, not just state: when the agent decides the application it is
+      scaffolding needs authentication it mints jwt_secret and refresh_token_secret - 32
+      random bytes hex each - and persists them into the knowledge_base.user_options
+      JSON column. These are the generated application's signing keys, stored inside the
+      agent's own database.
+    confidence: high
+  - location: 'OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Documented fallback: when llm.<provider>.api_key is null in config.json the
+      provider SDK reads its standard environment variable instead. A host with a
+      config.json full of nulls is not a host without credentials - check the
+      environment, shell rc files and any systemd/Docker env for the running python
+      process.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

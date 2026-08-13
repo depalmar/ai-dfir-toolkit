@@ -183,7 +183,102 @@ artifacts:
       service_or_daemon: "No"
       persistence: None (user-invoked)
       confidence: high
-credentials: []
+credentials:
+  - location: 'macOS login Keychain (~/Library/Keychains/login.keychain-db)'
+    os: [macos]
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      NOT A FILE on macOS. The /login OAuth credential lives in the encrypted login
+      Keychain, so it needs keychain acquisition rather than file collection. The
+      generic-password item is widely reported as 'Claude Code-credentials'.
+    confidence: high
+  - location: ~/.claude/.credentials.json
+    os: [linux, windows]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT OAuth credential file. Mode 0600 on Linux; on Windows the path is
+      %USERPROFILE%\.claude\.credentials.json and it inherits user-profile ACLs.
+      Vendor-documented for Linux and Windows only, not macOS.
+    confidence: high
+  - location: $CLAUDE_CONFIG_DIR/.credentials.json
+    os: [linux, windows]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT. When CLAUDE_CONFIG_DIR is set, .credentials.json lives under that
+      directory instead of ~/.claude. Check the variable before concluding no credential
+      file exists.
+    confidence: high
+  - location: ANTHROPIC_API_KEY
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT Anthropic API key read from the process environment; sent as the
+      X-Api-Key header. Ranks above the /login credential once approved, so it can
+      silently replace the interactive identity.
+    confidence: high
+  - location: ANTHROPIC_AUTH_TOKEN
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT bearer token read from the process environment; sent as the
+      Authorization: Bearer header when routing through an LLM gateway or proxy.
+      Outranks apiKeyHelper and the /login credential.
+    confidence: high
+  - location: CLAUDE_CODE_OAUTH_TOKEN
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT long-lived (one year) OAuth token minted by 'claude setup-token'.
+      Intended for CI and scripts, so expect it in pipeline secrets, shell profiles and
+      container env rather than on the user's disk.
+    confidence: high
+  - location: ~/.claude.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT third-party secrets embedded in local- and user-scoped MCP server
+      definitions: mcpServers.<name>.env values and mcpServers.<name>.headers (for
+      example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header
+      flags write the value straight into this file.
+    confidence: high
+  - location: '<project>/.mcp.json'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT third-party secrets in project-scoped MCP server definitions (env and
+      headers blocks). TRAVELS WITH THE REPO and is commonly committed, so treat any
+      literal value here as an exposed credential; ${VAR} expansion is optional, not
+      enforced.
+    confidence: high
+  - location: ~/.config/anthropic/configs/
+    os: [macos, linux]
+    storage: unknown
+    secret_type: oauth-token
+    description: >-
+      Anthropic profile configuration directory (Windows: %APPDATA%\Anthropic\configs\).
+      Holds named profiles written by 'ant auth login' (auth mode user_oauth) or set up
+      for Workload Identity Federation (oidc_federation). A named profile outranks the
+      /login credential, so this can be the credential actually in use. On-disk format
+      not stated by the vendor page - storage left unknown deliberately.
+    confidence: high
+  - location: 'macOS login Keychain (MCP remote-server OAuth credentials)'
+    os: [macos]
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      OAuth client secrets and tokens for remote (HTTP/SSE) MCP servers are held in the
+      system keychain, NOT in ~/.claude.json or .mcp.json - so an MCP config with no
+      visible secret does not mean no credential exists. Vendor names the keychain but
+      not the item; on Linux/Windows it says only 'a credentials file'.
+    confidence: high
 mcp:
   - config_path: ~/.claude.json
     config_key: mcpServers (user scope)

@@ -452,3 +452,1048 @@ targets:
       - "backend/data/.webui_secret_key"
       - "data/.webui_secret_key"
     notes: "SECRET - jwt-signing-key. Container path is /app/backend/data/.webui_secret_key; collected project-relative from a mounted volume."
+
+# >>> GENERATED CREDENTIAL TARGETS - do not edit by hand <<<
+# Regenerate with: python collectors/gen_credential_targets.py
+# Source: artifacts/docs/api/catalog.json (credentials[] with a filesystem
+# location). All are sensitivity: secret - metadata and hash only unless
+# --collect-secrets is passed.
+  - id: cred_airt_0001_claude_config_dir_credentials_json
+    name: "Claude Code credential store (AIRT-0001)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "$CLAUDE_CONFIG_DIR/.credentials.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0001_claude_credentials_json
+    name: "Claude Code credential store (AIRT-0001)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.claude/.credentials.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0001_claude_json
+    name: "Claude Code credential store (AIRT-0001)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.claude.json"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0001_config_anthropic_configs
+    name: "Claude Code credential store (AIRT-0001)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/anthropic/configs/"
+    notes: "unknown/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0001_project_mcp_json
+    name: "Claude Code credential store (AIRT-0001)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<project>/.mcp.json"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_appdata_cursor_user_globalstorage_state
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\Cursor\\User\\globalStorage\\state.vscdb"
+    notes: "sqlite/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_config_cursor_auth_json
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/cursor/auth.json"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_config_cursor_user_globalstorage_state_v
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/Cursor/User/globalStorage/state.vscdb"
+    notes: "sqlite/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_cursor_mcp_json
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.cursor/mcp.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_library_application_support_cursor_user
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/Library/Application Support/Cursor/User/globalStorage/state.vscdb"
+    notes: "sqlite/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0002_repo_cursor_mcp_json
+    name: "Cursor credential store (AIRT-0002)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<repo>/.cursor/mcp.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_config_github_copilot_apps_json
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/github-copilot/apps.json"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_config_github_copilot_hosts_json
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/github-copilot/hosts.json"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_copilot_config_json
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.copilot/config.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_copilot_mcp_oauth_config
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.copilot/mcp-oauth-config/"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_copilot_mcp_secrets
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.copilot/mcp-secrets/"
+    notes: "plaintext/unknown, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0003_localappdata_github_copilot_apps_json
+    name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%LOCALAPPDATA%\\github-copilot\\apps.json"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0004_aider_oauth_keys_env
+    name: "Aider credential store (AIRT-0004)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.aider/oauth-keys.env"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0004_home_gitroot_cwd_env
+    name: "Aider credential store (AIRT-0004)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<home|gitroot|cwd>/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_continue_auth_json
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.continue/auth.json"
+    notes: "plaintext/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_continue_config_json
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.continue/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_continue_config_yaml
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.continue/config.yaml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_continue_env
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.continue/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_repo_continue_env
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<repo>/.continue/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0005_vs_code_user_dir_globalstorage_continue
+    name: "Continue.dev credential store (AIRT-0005)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: glob
+    sensitivity: secret
+    paths:
+      - "<VS Code User dir>/globalStorage/continue.continue/*.bin"
+    notes: "encrypted/unknown, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_appdata_windsurf_user_globalstorage_stat
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\Windsurf\\User\\globalStorage\\state.vscdb"
+    notes: "sqlite/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_codeium_config_json
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.codeium/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_codeium_windsurf_mcp_config_json
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.codeium/windsurf/mcp_config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_config_windsurf_user_globalstorage_state
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/Windsurf/User/globalStorage/state.vscdb"
+    notes: "sqlite/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_library_application_support_windsurf_use
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb"
+    notes: "sqlite/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_nvim_stdpath_cache_codeium_config_json
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<nvim stdpath('cache')>/codeium/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0006_userprofile_codeium_windsurf_mcp_config
+    name: "Codeium / Windsurf credential store (AIRT-0006)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%USERPROFILE%\\.codeium\\windsurf\\mcp_config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0008_aws_sso_cache_json
+    name: "Amazon Q Developer (ex-CodeWhisperer) credential store (AIRT-0008)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: glob
+    sensitivity: secret
+    paths:
+      - "~/.aws/sso/cache/*.json"
+    notes: "plaintext/aws-sso-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0009_config_tabnine_refresh_token_v2
+    name: "Tabnine credential store (AIRT-0009)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, container]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/TabNine/.refresh_token_v2"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0010_project_supermaven_config_json
+    name: "Supermaven credential store (AIRT-0010)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<project>/.supermaven/config.json"
+    notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0010_supermaven_config_json
+    name: "Supermaven credential store (AIRT-0010)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.supermaven/config.json"
+    notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0011_library_application_support_claude
+    name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, windows, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/Library/Application Support/Claude/"
+    notes: "encrypted/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0012_install_env
+    name: "AutoGPT credential store (AIRT-0012)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/.env"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0013_install_docker_compose_yml
+    name: "AgentGPT credential store (AIRT-0013)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker, linux, macos, windows]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/docker-compose.yml"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0013_install_next_env
+    name: "AgentGPT credential store (AIRT-0013)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/next/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0013_install_platform_env
+    name: "AgentGPT credential store (AIRT-0013)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/platform/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0015_config_open_interpreter_profiles_default
+    name: "Open Interpreter credential store (AIRT-0015)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/open-interpreter/profiles/default.yaml"
+      - "~/Library/Application Support/open-interpreter/profiles/default.yaml"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0015_localappdata_open_interpreter_open_inter
+    name: "Open Interpreter credential store (AIRT-0015)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%LOCALAPPDATA%\\open-interpreter\\open-interpreter\\profiles\\default.yaml"
+    notes: "plaintext/api-key, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0015_openinterpreter_auth_json
+    name: "Open Interpreter credential store (AIRT-0015)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openinterpreter/auth.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0015_openinterpreter_credentials_json
+    name: "Open Interpreter credential store (AIRT-0015)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openinterpreter/.credentials.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0015_openinterpreter_secrets_codex_auth_age
+    name: "Open Interpreter credential store (AIRT-0015)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openinterpreter/secrets/codex_auth.age"
+      - "~/.openinterpreter/secrets/mcp_oauth.age"
+      - "~/.openinterpreter/secrets/local.age"
+    notes: "encrypted/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0016_install_config_json
+    name: "GPT Pilot credential store (AIRT-0016)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0016_install_data_database_pythagora_db
+    name: "GPT Pilot credential store (AIRT-0016)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/data/database/pythagora.db"
+    notes: "sqlite/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0016_install_pilot_env
+    name: "GPT Pilot credential store (AIRT-0016)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/pilot/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0017_ollama_id_ed25519
+    name: "Ollama credential store (AIRT-0017)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.ollama/id_ed25519"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0025_n8n_database_sqlite
+    name: "n8n (AI Agent / LangChain nodes) credential store (AIRT-0025)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.n8n/database.sqlite"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0026_project_langgraph_json
+    name: "LangChain / LangGraph credential store (AIRT-0026)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<project>/langgraph.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0027_autogenstudio_database_sqlite
+    name: "AutoGen credential store (AIRT-0027)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.autogenstudio/database.sqlite"
+    notes: "sqlite/api-key, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0027_autogenstudio_env
+    name: "AutoGen credential store (AIRT-0027)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.autogenstudio/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0029_install_docker_env
+    name: "Dify credential store (AIRT-0029)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/docker/.env"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0029_install_docker_volumes_app_storage_dify
+    name: "Dify credential store (AIRT-0029)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/docker/volumes/app/storage/.dify_secret_key"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0029_install_docker_volumes_app_storage_privk
+    name: "Dify credential store (AIRT-0029)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/docker/volumes/app/storage/privkeys/<tenant_id>/private.pem"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0029_install_docker_volumes_db_data
+    name: "Dify credential store (AIRT-0029)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/docker/volumes/db/data"
+    notes: "encrypted/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0030_flowise_database_sqlite
+    name: "Flowise credential store (AIRT-0030)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.flowise/database.sqlite"
+    notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0030_flowise_encryption_key
+    name: "Flowise credential store (AIRT-0030)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.flowise/encryption.key"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0030_home_node_flowise_encryption_key
+    name: "Flowise credential store (AIRT-0030)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "/home/node/.flowise/encryption.key"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0030_install_packages_server_env
+    name: "Flowise credential store (AIRT-0030)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/packages/server/.env"
+    notes: "plaintext/admin-credential, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0032_config_browseruse_cloud_auth_json
+    name: "Browser-Use credential store (AIRT-0032)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/browseruse/cloud_auth.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0032_config_browseruse_config_json
+    name: "Browser-Use credential store (AIRT-0032)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/browseruse/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0032_config_browseruse_gmail_credentials_json
+    name: "Browser-Use credential store (AIRT-0032)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/browseruse/gmail_credentials.json"
+      - "~/.config/browseruse/gmail_token.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0032_config_browseruse_profiles_default
+    name: "Browser-Use credential store (AIRT-0032)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/browseruse/profiles/default"
+    notes: "unknown/session-state, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0032_project_env
+    name: "Browser-Use credential store (AIRT-0032)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<project>/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0033_anthropic_api_key
+    name: "Claude Computer Use credential store (AIRT-0033)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker, container, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.anthropic/api_key"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0033_aws
+    name: "Claude Computer Use credential store (AIRT-0033)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker, container, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.aws"
+    notes: "plaintext/aws-sso-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0033_config_gcloud_application_default_creden
+    name: "Claude Computer Use credential store (AIRT-0033)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker, container, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/gcloud/application_default_credentials.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_data_credential_vault
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "/data/credential_vault"
+    notes: "encrypted/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_install_browser_sessions
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/browser_sessions/"
+    notes: "plaintext/session-state, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_install_skyvern_frontend_env
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<install>/skyvern-frontend/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_skyvern_credential_vault_creditem_bin
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: glob
+    sensitivity: secret
+    paths:
+      - "~/.skyvern/credential_vault/creditem_*.bin"
+    notes: "encrypted/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_skyvern_credential_vault_fernet_key
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.skyvern/credential_vault/.fernet_key"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_skyvern_data_db
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.skyvern/data.db"
+    notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0035_skyvern_env
+    name: "Skyvern credential store (AIRT-0035)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.skyvern/.env"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0036_codex_auth_json
+    name: "OpenAI Codex CLI credential store (AIRT-0036)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.codex/auth.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0037_gemini_env
+    name: "Google Gemini CLI credential store (AIRT-0037)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.gemini/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0037_gemini_google_accounts_json
+    name: "Google Gemini CLI credential store (AIRT-0037)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.gemini/google_accounts.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0037_gemini_oauth_creds_json
+    name: "Google Gemini CLI credential store (AIRT-0037)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.gemini/oauth_creds.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0038_config_githubcopilot_info_json
+    name: "Goose credential store (AIRT-0038)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<config>/githubcopilot/info.json"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0038_config_goose_secrets_yaml
+    name: "Goose credential store (AIRT-0038)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/goose/secrets.yaml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0041_aws_builder_id_iam_identity_center_token
+    name: "Kiro credential store (AIRT-0041)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "AWS Builder ID / IAM Identity Center token cache"
+    notes: "unknown/aws-sso-token, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0041_mcpservers_name_env_inside_kiro_settings
+    name: "Kiro credential store (AIRT-0041)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "mcpServers.<name>.env inside ~/.kiro/settings/mcp.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0042_app_backend_data_webui_secret_key
+    name: "Open WebUI credential store (AIRT-0042)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "/app/backend/data/.webui_secret_key"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0043_openhands_agent_settings_json
+    name: "OpenHands credential store (AIRT-0043)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows, docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openhands/agent_settings.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0043_openhands_secrets_json
+    name: "OpenHands credential store (AIRT-0043)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows, docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openhands/secrets.json"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0043_openhands_settings_json
+    name: "OpenHands credential store (AIRT-0043)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows, docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.openhands/settings.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0043_project_config_toml
+    name: "OpenHands credential store (AIRT-0043)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux, windows, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<project>/config.toml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0044_appdata_com_langflowdesktop_data_databas
+    name: "Langflow credential store (AIRT-0044)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\com.LangflowDesktop\\data\\database.db"
+    notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0044_langflow_config_dir_private_key_pem
+    name: "Langflow credential store (AIRT-0044)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<LANGFLOW_CONFIG_DIR>/private_key.pem"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0044_langflow_config_dir_secret_key
+    name: "Langflow credential store (AIRT-0044)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "<LANGFLOW_CONFIG_DIR>/secret_key"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0044_langflow_data_database_db
+    name: "Langflow credential store (AIRT-0044)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.langflow/data/database.db"
+    notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+# <<< END GENERATED CREDENTIAL TARGETS >>>

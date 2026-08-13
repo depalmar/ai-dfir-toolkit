@@ -114,7 +114,94 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
-credentials: []
+credentials:
+  - location: 'OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)'
+    os: [windows, macos, linux]
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      DEFAULT for Copilot CLI. Vendor: 'the CLI stores your OAuth token in your
+      operating system's keychain under the service name copilot-cli'. NOT a file -
+      requires keychain acquisition, not file collection.
+    confidence: high
+  - location: ~/.copilot/config.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT fallback for the Copilot CLI OAuth token. Vendor: when the system
+      keychain is unavailable (e.g. headless Linux without libsecret) the CLI prompts to
+      store the token in a plaintext configuration file here. The same file also holds
+      CLI-managed internal application state including authentication data. Relocated
+      wholesale if COPILOT_HOME is set.
+    confidence: high
+  - location: '~/.copilot/mcp-oauth-config/'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT. Vendor-documented Copilot CLI directory holding MCP OAuth token,
+      registration, and PKCE fallback files for MCP servers the agent connects to. Scope
+      is per-MCP-server, so this is where third-party service tokens land.
+    confidence: high
+  - location: '~/.copilot/mcp-secrets/'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: unknown
+    description: >-
+      PLAINTEXT. Vendor-documented Copilot CLI directory containing fallback file
+      storage and an index for MCP secret placeholders.
+    confidence: high
+  - location: COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT environment variables. Vendor-documented credential precedence for
+      Copilot CLI: these are checked in this order BEFORE the OS keychain, so an env-var
+      token overrides the keyring and leaves no file artifact. Collect process
+      environment, shell rc files and CI job definitions.
+    confidence: high
+  - location: COPILOT_PROVIDER_API_KEY
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT environment variable. BYOK provider API key. Vendor: when BYOK provider
+      env vars (COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY) are configured the
+      CLI uses them for model requests regardless of authentication status - so prompts
+      and code context go to whatever endpoint COPILOT_PROVIDER_BASE_URL names.
+    confidence: high
+  - location: '~/.config/github-copilot/apps.json'
+    os: [macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT. Copilot editor OAuth token written by the copilot-language-server used
+      by the VS Code, JetBrains and Neovim integrations. Distinct from the Copilot CLI
+      store. Not vendor-documented, but read as the canonical token location by numerous
+      independent projects.
+    confidence: medium
+  - location: '%LOCALAPPDATA%\github-copilot\apps.json'
+    os: [windows]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT. Windows location of the Copilot editor OAuth token (same file as the
+      Unix ~/.config/github-copilot/apps.json). Four independent implementations resolve
+      Windows via LOCALAPPDATA; one outlier uses AppData\Roaming, so check both if the
+      Local path is absent.
+    confidence: medium
+  - location: '~/.config/github-copilot/hosts.json'
+    os: [macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT. LEGACY predecessor of apps.json, still present on hosts authenticated
+      by older plugin versions. Consumers routinely check hosts.json and apps.json in
+      turn, so collect both. Windows equivalent sits in the same
+      %LOCALAPPDATA%\github-copilot\ directory.
+    confidence: medium
 mcp: []
 collection:
   triage_priority: p1

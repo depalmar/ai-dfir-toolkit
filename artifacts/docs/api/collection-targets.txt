@@ -1,9 +1,15 @@
+$CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\Claude\claude_desktop_config.json
 %APPDATA%\Claude\logs\mcp*.log
 %APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json
 %APPDATA%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json
+%APPDATA%\Cursor\User\globalStorage\state.vscdb
+%APPDATA%\Windsurf\User\globalStorage\state.vscdb
+%APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)
 %APPDATA%\goose\config.yaml
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
+%LOCALAPPDATA%\github-copilot\apps.json
+%LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml
 %USERPROFILE%\.codeium\windsurf\mcp_config.json
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
@@ -13,14 +19,39 @@
 /app/backend/data/config.json
 /app/backend/data/uploads/ and vector store directory
 /app/backend/data/webui.db
+/data/credential_vault
 /etc/gemini-cli/settings.json
+/home/node/.flowise/encryption.key
+<LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)
+<LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on Linux/Docker)
+<VS Code User dir>/globalStorage/continue.continue/*.bin
 <config>/githubcopilot/info.json
 <home|gitroot|cwd>/.env
 <install>/.env
+<install>/browser_sessions/
+<install>/config.json
+<install>/data/database/pythagora.db
+<install>/docker-compose.yml
+<install>/docker/.env
+<install>/docker/volumes/app/storage/.dify_secret_key
+<install>/docker/volumes/app/storage/privkeys/<tenant_id>/private.pem
+<install>/docker/volumes/db/data
+<install>/next/.env
+<install>/packages/server/.env
+<install>/pilot/.env
+<install>/platform/.env
+<install>/skyvern-frontend/.env
+<nvim stdpath('cache')>/codeium/config.json
 <project>/.env
+<project>/.env  (path passed to `langflow run --env-file`)
+<project>/.mcp.json
+<project>/.supermaven/config.json
+<project>/config.toml  ([llm] api_key)
+<project>/langgraph.json
 <repo>/.aider.chat.history.md
 <repo>/.aider.input.history
 <repo>/.claude/settings.local.json
+<repo>/.continue/.env
 <repo>/.cursor/mcp.json
 <repo>/.kiro/agents/
 <repo>/.kiro/hooks/*.kiro.hook
@@ -28,27 +59,75 @@
 <repo>/.kiro/steering/*.md
 <repo>/.mcp.json
 <repo>/.roo/mcp.json
+ANTHROPIC_API_KEY
+ANTHROPIC_AUTH_TOKEN
 AWS Builder ID / IAM Identity Center token cache
+AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
+BROWSER_USE_API_KEY
+Browser Local Storage, key "agentgpt-settings-storage-v2" (browser profile Local Storage LevelDB, AgentGPT origin - http://localhost:3000 self-hosted)
+CLAUDE_CODE_OAUTH_TOKEN
+CONTINUE_API_KEY
+COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
+COPILOT_PROVIDER_API_KEY
+FLOWISE_SECRETKEY_OVERWRITE
 Goose session logs
+INIT_PASSWORD
+INTERPRETER_API_KEY
+JWT_AUTH_TOKEN_SECRET
+JWT_SECRET
 Kiro - MCP Logs (View > Output channel)
+LANGFLOW_DATABASE_URL
+LANGFLOW_SECRET_KEY
 LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
+LLM_API_KEY
+LOCAL_CREDENTIAL_VAULT_KEY
+MySQL database "reworkd_platform", table Account (docker volume agentgpt_db -> /var/lib/mysql in container agentgpt_db)
 N8N_ENCRYPTION_KEY
+NEXTAUTH_SECRET  (set in <install>/next/.env)
+OAI_CONFIG_LIST  (JSON file in CWD, or env var of the same name)
 OAI_CONFIG_LIST  (JSON, CWD or env-specified path)
+OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  <model_providers.*.env_key>
+OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
+OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
+OPENAI_API_KEY / ANTHROPIC_API_KEY (and per-provider equivalents)
+OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY / NOVITA_API_KEY / AZURE_OPENAI_KEY
+OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
+OP_SERVICE_ACCOUNT_TOKEN
+OS keyring: service "Codex Auth", account "cli|<first 16 hex of SHA-256 of the resolved home path>"
+OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)
 OS keyring: service `goose`, username `secrets` (single JSON blob)
 POWER.md / plugin.json / dev.kiro/
+REWORKD_PLATFORM_SECRET_SIGNING_KEY  (read from <install>/platform/.env)
+SANDBOX_ENV_*  (e.g. SANDBOX_ENV_OPENAI_API_KEY)
+SECRET_KEY
+SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
 Tools and Functions Python source stored in webui.db
 VS Code SecretStorage -> OS keychain (state.vscdb)
 VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)
 WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
+claude_desktop_config.json -> mcpServers.<name>.env
 docker-compose.yml / docker run invocation
 ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
 journalctl -u ollama
+langflow.db  (pip install: <install>/lib/python3.x/site-packages/langflow/langflow.db ; git clone: <install>/src/backend/base/langflow/langflow.db ; <LANGFLOW_CONFIG_DIR>/langflow.db when LANGFLOW_SAVE_DB_IN_CONFIG_DIR=True)
+macOS login Keychain (MCP remote-server OAuth credentials)
+macOS login Keychain (~/Library/Keychains/login.keychain-db)
+macOS login Keychain: generic-password service 'Cursor Safe Storage', account 'Cursor Key'
+macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token / cursor-api-key, account cursor-user
 mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
+vscode.SecretStorage key 'dev.continue.continue' (OS-keyring backed on desktop VS Code)
 webui.db (user and API key tables)
 ~/.aider.conf.yml
 ~/.aider/oauth-keys.env
+~/.anthropic/api_key
+~/.autogenstudio/.env
+~/.autogenstudio/database.sqlite
+~/.aws
 ~/.aws/sso/cache/*.json
 ~/.claude.json
+~/.claude/.credentials.json
+~/.codeium/config.json
 ~/.codeium/windsurf/mcp_config.json
 ~/.codex/auth.json
 ~/.codex/config.toml
@@ -57,26 +136,61 @@ webui.db (user and API key tables)
 ~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl
 ~/.config/Claude/claude_desktop_config.json
 ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+~/.config/Cursor/User/globalStorage/state.vscdb
+~/.config/TabNine/.refresh_token_v2
+~/.config/Windsurf/User/globalStorage/state.vscdb
+~/.config/anthropic/configs/
+~/.config/browseruse/cloud_auth.json
+~/.config/browseruse/config.json
+~/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json
+~/.config/browseruse/profiles/default
+~/.config/cursor/auth.json
+~/.config/gcloud/application_default_credentials.json
+~/.config/github-copilot/apps.json
+~/.config/github-copilot/hosts.json
 ~/.config/goose/config.yaml
 ~/.config/goose/permission.yaml ; permissions/tool_permissions.json
 ~/.config/goose/secrets.yaml (mode 0600)
+~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml
+~/.continue/.env
+~/.continue/auth.json
 ~/.continue/config.json
 ~/.continue/config.ts
 ~/.continue/config.yaml
+~/.copilot/config.json
 ~/.copilot/mcp-config.json
+~/.copilot/mcp-oauth-config/
+~/.copilot/mcp-secrets/
 ~/.cursor/mcp.json
+~/.flowise/database.sqlite
+~/.flowise/encryption.key
 ~/.gemini/.env  (plus cwd-upward .env search)
 ~/.gemini/google_accounts.json
 ~/.gemini/oauth_creds.json
 ~/.gemini/settings.json
 ~/.kiro/settings/mcp.json
+~/.langflow/data/database.db  (Langflow Desktop)
 ~/.lmstudio/settings.json
 ~/.n8n/database.sqlite
 ~/.ollama/id_ed25519  |  id_ed25519.pub
+~/.openhands/agent_settings.json
 ~/.openhands/config.toml
+~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)
+~/.openhands/settings.json  (mounted to /.openhands/settings.json)
+~/.openinterpreter/.credentials.json
+~/.openinterpreter/auth.json
+~/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age
+~/.skyvern/.env
+~/.skyvern/credential_vault/.fernet_key
+~/.skyvern/credential_vault/creditem_*.bin
+~/.skyvern/data.db
+~/.supermaven/config.json
+~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
 ~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
+~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
 ~/Library/Logs/Claude/mcp*.log
 …/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
 …/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json

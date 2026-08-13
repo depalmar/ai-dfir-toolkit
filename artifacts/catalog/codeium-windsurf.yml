@@ -112,7 +112,73 @@ artifacts:
       service_or_daemon: "No"
       persistence: Run key (optional)
       confidence: high
-credentials: []
+credentials:
+  - location: ~/.codeium/config.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Codeium editor plugins persist the account API key here as PLAINTEXT JSON under
+      the 'apiKey' field, written directly by the plugin after registration. Also the
+      legacy and fallback location for the Windsurf editor's key. Honours
+      $XDG_DATA_HOME, so it becomes $XDG_DATA_HOME/.codeium/config.json when that is
+      set. This directory is already covered by this repo's shipped credential-access
+      Sigma rule.
+    confidence: high
+  - location: ~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
+    os: [macos]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Windsurf editor (VS Code fork). The ItemTable row keyed 'windsurfAuthStatus' holds
+      JSON containing the live Codeium/Windsurf apiKey UNENCRYPTED inside the SQLite DB.
+      This is the current location for modern Windsurf builds; ~/.codeium/config.json is
+      the older fallback.
+    confidence: medium
+  - location: ~/.config/Windsurf/User/globalStorage/state.vscdb
+    os: [linux]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Linux path for the same Windsurf editor store. ItemTable row 'windsurfAuthStatus'
+      holds JSON with the apiKey in the clear inside the SQLite DB.
+    confidence: medium
+  - location: '%APPDATA%\Windsurf\User\globalStorage\state.vscdb'
+    os: [windows]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Windows path for the same Windsurf editor store. ItemTable row
+      'windsurfAuthStatus' holds JSON with the apiKey in the clear inside the SQLite DB.
+    confidence: medium
+  - location: ~/.codeium/windsurf/mcp_config.json
+    os: [macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Windsurf / Cascade MCP server definitions. The per-server env block routinely
+      holds PLAINTEXT API keys and bearer tokens for stdio servers. Windsurf supports
+      ${env:VAR} interpolation as an alternative, so absence of a literal key here means
+      checking the process environment instead.
+    confidence: high
+  - location: '%USERPROFILE%\.codeium\windsurf\mcp_config.json'
+    os: [windows]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Windows path for the same Windsurf/Cascade MCP config, same PLAINTEXT env block
+      exposure.
+    confidence: high
+  - location: '<nvim stdpath(''cache'')>/codeium/config.json'
+    os: [macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      The Neovim Codeium/Windsurf plugin keeps its own PLAINTEXT config.json with the
+      account api_key, SEPARATE from ~/.codeium/. Defaults to
+      ~/.cache/nvim/codeium/config.json. A responder who only collects ~/.codeium/ will
+      miss a Neovim user's key entirely.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

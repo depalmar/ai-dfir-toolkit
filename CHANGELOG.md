@@ -8,6 +8,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **127 credential locations across 20 entries** that previously declared
+  `plaintext_credentials: true` and listed none. The catalog went from 23
+  credential locations to 150. Every row carries a vendor citation and went
+  through an adversarial verification pass that dropped 5 and downgraded 14;
+  provenance splits 104 `high` / 18 `medium` / 5 `low`, the last marked
+  `unverified: true`. The flagship case was `claude-code.yml`: it listed no
+  credential location while its own disk row named `.credentials.json`,
+  `CLAUDE.md` named that file as holding live tokens, and the repository shipped
+  a Sigma rule detecting reads of it. Verification also established that on macOS
+  the credential is in the login Keychain rather than that file, so the
+  file-access rule cannot fire on a stock macOS host — recorded as an
+  `os-keyring` row rather than left implied.
+- **`collectors/gen_credential_targets.py`** — the credential half of
+  `targets.yaml` is now generated from the catalog rather than hand-copied, with
+  a staleness check in CI. Only locations a file collector can actually open are
+  emitted; environment variables, CLI flags, keychains, browser stores and
+  databases are real evidence acquired by other means and are reported rather
+  than faked as paths.
+
 - **`collectors/` — forensically-sound acquisition.** Cross-platform collector
   driven by a declarative `targets.yaml`, plus read-only cloud pulls for Bedrock,
   Azure OpenAI, Vertex and M365 Copilot. Sources are opened read-only and copied
