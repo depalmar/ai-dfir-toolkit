@@ -476,7 +476,12 @@ details.railfold{display:none}
 .s-low{--str-line:var(--line);--str-ink:var(--faint);--str-bg:transparent}
 .clspill{display:inline-block;border:1px solid var(--line);border-radius:5px;
   background:var(--panel-2);color:var(--muted);font-size:11px;padding:1px 7px;white-space:nowrap}
-.unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--crit)}
+.unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;
+  color:var(--crit);cursor:help;border-bottom:1px dotted var(--crit)}
+.unvnote{margin:0 0 12px;padding:9px 12px;font-size:12.5px;line-height:1.5;
+  color:var(--muted);background:var(--alert-bg);border:1px solid var(--alert-line);
+  border-radius:8px;max-width:88ch}
+.unvwhy{margin:9px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
 
 /* Keyboard focus. There was one :focus-visible rule in the whole stylesheet -
    on table headers - so tabbing through a page built almost entirely of buttons,
@@ -1144,6 +1149,10 @@ const VOL_ORDER=Object.fromEntries(VOL_TIERS.map((v,i)=>[v,i]));
 // What each MCP mechanism means for collection. Written out rather than left as
 // a bare enum value, because 'cloud' has to read as "stop looking on this disk"
 // and 'in-code' as "there is no config file to find - read the source".
+const UNVERIFIED_MEANING='Single-sourced or inferred: the catalog could not '+
+  'corroborate this against a second source and nobody has confirmed it on a '+
+  'live host. It is not a claim that the path is wrong - it is a claim about '+
+  'how well it is evidenced.';
 const MECH_MEANING={
   'config-file':'A file on disk listing the servers. Collect it directly.',
   'database':"Registered through the tool's own UI or API and persisted to its database. The collection step is a query, not a file copy, and the database is usually a container volume.",
@@ -1379,7 +1388,7 @@ function tableHTML(rows){
       <td><span class="id">${esc(r.entry_id)}</span></td>
       <td>${esc(r.tool)}</td>
       <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td class="artcell"><span class="path">${esc(r.artifact)}</span>${r.unverified?' <span class="unv">unverified</span>':''}</td>
+      <td class="artcell"><span class="path">${esc(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
       <td>${esc(r.os.join(', '))}</td>
       <td>${fvBadge(r.forensic_value,true)}</td>
       <td>${confBadge(r.confidence,true)}</td>
@@ -1394,7 +1403,7 @@ function cardsHTML(rows){
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
         ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
       <span class="path">${esc(r.artifact)}</span>
-      <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?' &middot; <span class="unv">unverified</span>':''}</div>
+      <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
     </div>`).join('');
 }
 
@@ -1582,7 +1591,8 @@ function drawerHTML(r){
           aria-label="Copy locator">copy</button></div>
       <div class="badgerow">${fvBadge(r.forensic_value)}
       ${confBadge(r.confidence)}
-      ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div></div>
+      ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div>
+      ${r.unverified?`<p class="unvwhy">${esc(UNVERIFIED_MEANING)}</p>`:''}</div>
     <div class="dsec"><h4>What it proves</h4>
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
       ${r.description?`<p>${esc(r.description)}</p>`:''}
@@ -2285,6 +2295,7 @@ function renderMain(){
     const rows=filteredRows();
     $('#count').textContent=`${rows.length} of ${ROWS.length} shown`;
     $('#chips').innerHTML=chipsHTML();
+    $('#unvNote').hidden=!unvOnly;
     $$('#chips .chip').forEach(c=>c.onclick=()=>{
       if(c.dataset.unv){unvOnly=false;$('#unvBtn').setAttribute('aria-pressed','false')}
       else{const a=filters[c.dataset.g],i=a.indexOf(c.dataset.v);if(i>=0)a.splice(i,1)}
@@ -2421,6 +2432,8 @@ function applyHash(){
 }
 
 /* ---------- boot ---------- */
+$('#unvNote').textContent='Showing only unverified rows. '+UNVERIFIED_MEANING;
+$('#unvBtn').title=UNVERIFIED_MEANING;
 $('#q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();update()});
 $('#unvBtn').onclick=()=>{unvOnly=!unvOnly;$('#unvBtn').setAttribute('aria-pressed',String(unvOnly));update()};
 $('#denseBtn').onclick=()=>{dense=!dense;
@@ -2766,7 +2779,8 @@ def main():
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."
         aria-label="Search the catalog"></div>
-    <button class="tgl" id="unvBtn" type="button" aria-pressed="false">Unverified only
+    <button class="tgl" id="unvBtn" type="button" aria-pressed="false"
+      aria-describedby="unvNote">Unverified only
       <span class="n">{n_unv}</span></button>
     <button class="tgl plain" id="denseBtn" type="button" aria-pressed="false">Compact rows</button>
     <button class="tgl plain" id="pickAllBtn" type="button">Pick all shown</button>
@@ -2779,6 +2793,7 @@ def main():
   <div class="meta-row" id="metaRow"><span class="count" id="count"
     role="status" aria-live="polite" aria-atomic="true"></span>
     <span id="chips" style="display:contents"></span></div>
+  <p class="unvnote" id="unvNote" hidden></p>
   <div id="main" role="tabpanel" tabindex="0"></div>
 </main>
 </div>
