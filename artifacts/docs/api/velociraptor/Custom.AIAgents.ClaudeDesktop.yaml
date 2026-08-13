@@ -1,0 +1,44 @@
+name: Custom.AIAgents.ClaudeDesktop
+description: |
+  Desktop chat client that launches arbitrary local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js runtime.
+
+  Generated from the AI agent artifact catalog (AIRT-0011). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\logs\mcp*.log', 'C:\Users\*\Library\Application Support\Claude\ (Windows: %APPDATA%\Claude\, Linux: ~\.config\Claude\)', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json', 'C:\Users\*\.config\Claude\claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/Users/*/Library/Logs/Claude/mcp*.log', '/Users/*/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)', '/Users/*/.config/Claude/claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.config/Claude/claude_desktop_config.json', '/home/*/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

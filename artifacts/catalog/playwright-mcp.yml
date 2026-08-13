@@ -5,6 +5,9 @@
 
 id: AIRT-0031
 name: Playwright MCP
+aliases:
+  - playwright-mcp
+  - "@playwright/mcp"
 vendor: Microsoft (OSS)
 category: browser-agent
 description: "npx @playwright/mcp - gives any MCP client full browser control. Downloads browser binaries on first run."
@@ -20,7 +23,7 @@ capabilities:
   mcp_capable: true
 risk: critical
 confidence: high
-abuse_potential: "--caps=storage exposes cookie/localStorage tools. --storage-state replays AUTHENTICATED SESSIONS. Session-token theft and MFA-bypass surface."
+abuse_potential: "--caps=storage exposes cookie/localStorage tools. --storage-state replays authenticated sessions. Session-token theft and MFA-bypass surface."
 artifacts:
   disk:
     - path: "npx @playwright/mcp@latest"
@@ -29,7 +32,7 @@ artifacts:
         - macos
         - linux
       artifact_type: binary
-      description: RUNS WITHOUT INSTALL - npx cache only
+      description: Runs without install - npx cache only
       forensic_value: low
       evidence_type:
         - program-presence
@@ -81,7 +84,7 @@ artifacts:
     - direction: listener
       indicator: SSE/HTTP transport mode
       port: Configurable (PLAYWRIGHT_MCP_HOST)
-      description: 0.0.0.0 bind = REMOTE BROWSER CONTROL of the host
+      description: 0.0.0.0 bind = remote browser control of the host
       confidence: high
       default_bind: 127.0.0.1 (0.0.0.0 if set)
       authentication: NONE
@@ -110,13 +113,14 @@ credentials:
       - linux
     storage: plaintext
     secret_type: session-state
-    description: SERIALIZED COOKIES + localStorage = SESSION HIJACK ARTIFACT
+    description: Serialized cookies + localStorage = session hijack artifact
     confidence: high
 mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: PlaywrightMCP
+  velociraptor_artifact: Custom.AIAgents.PlaywrightMCP
 atlas_techniques:
   - AML.T0086
   - AML.T0053

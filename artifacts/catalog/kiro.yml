@@ -48,7 +48,7 @@ artifacts:
       os: [windows, macos, linux]
       artifact_type: mcp-config
       description: >-
-        Workspace-scope MCP servers. TRAVELS WITH THE REPO - a clone or PR can
+        Workspace-scope MCP servers. Travels with the repo - a clone or PR can
         introduce servers that launch on open.
       forensic_value: high
       evidence_type: [execution, persistence, configuration]
@@ -60,7 +60,7 @@ artifacts:
         JSON hook definitions. The when block sets the trigger (fileSaved,
         fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec
         task events) with a file pattern; the then block invokes the agent with a
-        prompt. A fileSaved hook is an AUTO-TRIGGERING EXECUTION PRIMITIVE that
+        prompt. A fileSaved hook is an auto-triggering execution primitive that
         needs no user interaction. Enumerate every hook during triage.
       forensic_value: high
       evidence_type: [execution, persistence, configuration]
@@ -125,14 +125,14 @@ artifacts:
     - direction: egress
       indicator: kiro.dev, AWS Kiro service endpoints
       port: 443/TCP
-      description: Agent inference and Power/MCP directory retrieval.
+      description: Agent inference and Power/MCP directory retrieval
       confidence: high
     - direction: egress
       indicator: "kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links"
       port: 443/TCP
       description: >-
         One-click MCP install deep links. Kiro shows a confirmation dialog listing
-        the command, args, and the NAMES of env vars (values stay hidden) before
+        the command, args, and the names of env vars (values stay hidden) before
         writing. A convincing link is a social-engineering path to MCP installation.
       confidence: high
   process:
@@ -172,7 +172,7 @@ mcp:
     persistence_trigger: Every session, and immediately on file save via hot-reload
     triage_priority: p1
     notes: >-
-      Entries carry an autoApprove array listing tools that execute WITHOUT user
+      Entries carry an autoApprove array listing tools that execute without user
       confirmation - read it first. Hot-reload means a tampered config applies at
       the next idle boundary with no restart, so file mtime is the change signal,
       not process start time.
@@ -182,7 +182,7 @@ mcp:
     secrets_location: env block
     persistence_trigger: Workspace open, and on save via hot-reload
     triage_priority: p1
-    notes: TRAVELS WITH THE REPO. Gate in CI alongside .kiro/hooks/.
+    notes: Travels with the repo. Gate in CI alongside .kiro/hooks/.
 
 collection:
   triage_priority: p1
@@ -194,6 +194,7 @@ collection:
     does not prove execution. Because config hot-reloads, correlate file mtimes
     against session activity rather than assuming changes took effect at startup.
   kape_target: Kiro
+  velociraptor_artifact: Custom.AIAgents.Kiro
 
 atlas_techniques: [AML.T0051, AML.T0053, AML.T0080, AML.T0081, AML.T0110]
 attack_techniques: [T1059, T1195.002, T1546, T1552.001]

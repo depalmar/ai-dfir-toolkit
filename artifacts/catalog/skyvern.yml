@@ -59,9 +59,9 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT Fernet key, written mode 0600, auto-generated on first vault use when
+      Plaintext Fernet key, written mode 0600, auto-generated on first vault use when
       LOCAL_CREDENTIAL_VAULT_KEY is unset. Decrypts every item in the local credential
-      vault. It is generated INTO THE SAME DIRECTORY as the encrypted credential files
+      vault. It is generated into the same directory as the encrypted credential files
       it protects, so anyone who can read the vault directory has both halves. Container
       path /data/credential_vault/.fernet_key.
     confidence: high
@@ -72,7 +72,7 @@ credentials:
     description: >-
       Fernet-encrypted credential items, one file per credential, mode 0600. These are
       the third-party website logins (usernames/passwords) and credit-card records that
-      Skyvern replays into target sites during automated logins - i.e. the
+      Skyvern replays into target sites during automated logins - i.e. The
       victim-relevant secrets, not Skyvern's own auth. This is the built-in vault used
       by default in the OSS docker-compose setup (CREDENTIAL_VAULT_TYPE=skyvern,
       ENABLE_LOCAL_CREDENTIAL_VAULT=true).
@@ -91,7 +91,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT env var supplying the vault Fernet key directly. When set, no
+      Plaintext env var supplying the vault Fernet key directly. When set, no
       .fernet_key file is generated - the key exists only in the process environment and
       in whatever .env or compose file provided it. Absence of .fernet_key alongside a
       populated vault means look here.
@@ -101,7 +101,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT backend env file at the repo/working root, created by `skyvern init` /
+      Plaintext backend env file at the repo/working root, created by `skyvern init` /
       `skyvern quickstart`. The CLI writes the generated SKYVERN_API_KEY into it
       directly, and it also carries the configured LLM provider keys (OPENAI_API_KEY,
       ANTHROPIC_API_KEY, GEMINI_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY,
@@ -113,7 +113,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT user-level backend env file (global scope). Skyvern layers a global
+      Plaintext user-level backend env file (global scope). Skyvern layers a global
       ~/.skyvern env under the project-scope and repo-root .env files; which of them is
       consulted depends on the resolution intent, so this one is not always present or
       authoritative. Worth collecting when the repo-root .env does not explain the
@@ -124,7 +124,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT frontend env file holding VITE_SKYVERN_API_KEY - the organization API
+      Plaintext frontend env file holding VITE_SKYVERN_API_KEY - the organization API
       key used by the UI. Vite bakes VITE_* values into the built bundle, so the key can
       also survive in the served JavaScript assets, not just this file.
     confidence: high
@@ -133,7 +133,7 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT Bitwarden vault master password in an env var, used when
+      Plaintext Bitwarden vault master password in an env var, used when
       CREDENTIAL_VAULT_TYPE=bitwarden. SKYVERN_AUTH_BITWARDEN_CLIENT_ID,
       SKYVERN_AUTH_BITWARDEN_CLIENT_SECRET and SKYVERN_AUTH_BITWARDEN_ORGANIZATION_ID
       sit beside it. Compromise reaches the entire linked Bitwarden collection, well
@@ -144,7 +144,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT 1Password service-account token in an env var, used when Skyvern is
+      Plaintext 1Password service-account token in an env var, used when Skyvern is
       configured against a 1Password vault. Same escalation consideration as the
       Bitwarden variables - it reaches an external vault.
     confidence: high
@@ -174,6 +174,7 @@ mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.Skyvern
 atlas_techniques:
   - AML.T0086
   - AML.T0053

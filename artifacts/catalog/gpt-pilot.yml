@@ -5,6 +5,9 @@
 
 id: AIRT-0016
 name: GPT Pilot
+aliases:
+  - gpt-pilot
+  - Pythagora
 vendor: Pythagora (OSS)
 category: agent-framework
 description: Python agent that scaffolds and runs full applications, executing generated code.
@@ -20,7 +23,7 @@ capabilities:
   mcp_capable: false
 risk: high
 confidence: low
-abuse_potential: Runs generated code on host. THIN PUBLIC SOURCING on canonical paths - inventory by Python process command line.
+abuse_potential: Runs generated code on host. Thin public sourcing on canonical paths - inventory by Python process command line.
 artifacts: {}
 credentials:
   - location: '<install>/config.json'
@@ -28,7 +31,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PRIMARY credential file. PLAINTEXT JSON with llm.<provider>.api_key for openai /
+      Primary credential file. Plaintext JSON with llm.<provider>.api_key for openai /
       anthropic / azure / groq. Created by the vendor's documented setup step "cp
       example-config.json config.json"; the --config argument defaults to the bare
       string "config.json", so it resolves relative to the working directory the agent
@@ -42,11 +45,11 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      LEGACY plaintext env file from pre-rewrite gpt-pilot: OPENAI_API_KEY,
+      Legacy plaintext env file from pre-rewrite gpt-pilot: OPENAI_API_KEY,
       ANTHROPIC_API_KEY, GROQ_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY plus matching
       *_ENDPOINT values. Still forensically live - the current build's importer reads
       this path on startup when config.json does not yet exist and copies the keys into
-      config.json, so an upgraded host can hold the same live key in BOTH files. Collect
+      config.json, so an upgraded host can hold the same live key in both files. Collect
       both.
     confidence: high
   - location: '<install>/data/database/pythagora.db'

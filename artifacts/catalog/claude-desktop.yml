@@ -5,6 +5,10 @@
 
 id: AIRT-0011
 name: Claude Desktop (MCP host)
+aliases:
+  - Claude Desktop
+  - claude-desktop
+  - Claude
 vendor: Anthropic
 category: mcp-host
 description: Desktop chat client that launches arbitrary local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js runtime.
@@ -20,14 +24,14 @@ capabilities:
   mcp_capable: true
 risk: critical
 confidence: high
-abuse_potential: THE key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.
+abuse_potential: The key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.
 artifacts:
   disk:
     - path: ~/Library/Application Support/Claude/claude_desktop_config.json
       os:
         - macos
       artifact_type: mcp-config
-      description: PRIMARY EXECUTION PRIMITIVE
+      description: Primary execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -39,7 +43,7 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: PRIMARY EXECUTION PRIMITIVE
+      description: Primary execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -51,7 +55,7 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.
+      description: Virtualized PATH - the app reads this one. Commonly missed by IR.
       forensic_value: high
       evidence_type:
         - execution
@@ -63,7 +67,7 @@ artifacts:
       os:
         - linux
       artifact_type: mcp-config
-      description: PRIMARY EXECUTION PRIMITIVE
+      description: Primary execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -77,7 +81,7 @@ artifacts:
         - macos
         - linux
       artifact_type: extension-bundle
-      description: ZIP archive containing server code + manifest - UNPACK AND REVIEW
+      description: ZIP archive containing server code + manifest - unpack and review
       forensic_value: medium
       evidence_type:
         - program-presence
@@ -116,7 +120,7 @@ artifacts:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       value: Claude
       type: REG_SZ
-      description: Auto-start - LAUNCHES ALL CONFIGURED MCP SERVERS ON LOGIN
+      description: Auto-start - launches all configured MCP servers on login
       persistence: true
       forensic_value: high
       confidence: medium
@@ -138,12 +142,12 @@ artifacts:
     - direction: egress
       indicator: api.anthropic.com, claude.ai
       port: 443/TCP
-      description: Plus ANY egress initiated by child MCP servers
+      description: Plus any egress initiated by child MCP servers
       confidence: high
     - direction: egress-(indirect)
       indicator: registry.npmjs.org (npx MCP server fetch)
       port: 443/TCP
-      description: "npx @scope/server@latest pulls and EXECUTES code at every launch - supply-chain risk"
+      description: "npx @scope/server@latest pulls and executes code at every launch - supply-chain risk"
       confidence: high
   process:
     - name: Claude.exe
@@ -168,10 +172,10 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT third-party API keys, PATs and tokens embedded in MCP server
+      Plaintext third-party API keys, PATs and tokens embedded in MCP server
       definitions, in a JSON file readable by any process running as the user. Same four
       per-OS paths already listed in artifacts.disk, including the MSIX virtualized
-      %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\... path. Treat every literal value
+      %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\... Path. Treat every literal value
       as an exposed credential and rotate.
     confidence: high
   - location: '~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)'
@@ -181,7 +185,7 @@ credentials:
     description: >-
       OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are
       written into the application-data directory as ciphertext, encrypted using OS
-      secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext IS on disk here,
+      secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here,
       but is not usable without the key - see the keyring row. Vendor does not name the
       specific file.
     confidence: medium
@@ -199,7 +203,7 @@ mcp:
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start
     triage_priority: p1
-    notes: "VIRTUALIZED - the app reads THIS. 'Edit Config' in the UI can open the WRONG file. Commonly missed in IR."
+    notes: "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
   - config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
     config_key: mcpServers
     spawn_mechanism: Child process at app launch
@@ -220,11 +224,12 @@ mcp:
     secrets_location: manifest user_config
     persistence_trigger: Every app start
     triage_priority: p1
-    notes: ZIP ARCHIVE - unpack and review server code before trusting
+    notes: ZIP archive - unpack and review server code before trusting
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: ClaudeDesktop
+  velociraptor_artifact: Custom.AIAgents.ClaudeDesktop
 atlas_techniques:
   - AML.T0053
   - AML.T0081

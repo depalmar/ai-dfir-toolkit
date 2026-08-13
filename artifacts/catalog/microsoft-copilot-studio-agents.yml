@@ -5,6 +5,8 @@
 
 id: AIRT-0014
 name: Microsoft Copilot Studio Agents
+aliases:
+  - microsoft-copilot-studio-agents
 vendor: Microsoft
 category: cloud-agent
 description: Low-code agent builder hosted in Microsoft cloud. Endpoint footprint is browser only.

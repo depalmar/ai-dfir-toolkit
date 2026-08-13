@@ -5,6 +5,8 @@
 
 id: AIRT-0042
 name: Open WebUI
+aliases:
+  - open-webui
 vendor: Open WebUI (OSS)
 category: llm-runtime
 description: >-
@@ -32,7 +34,7 @@ abuse_potential: >-
   over outright by whoever signs up first. Tools and Functions execute Python
   server-side. The OpenAI router exposes a catch-all proxy that forwards requests
   upstream using the admin-configured API key, turning an authenticated account
-  into free use of the organisation's inference spend. Multiple RCE, SSRF, and
+  into free use of the organisation's inference spend. Multiple RCE, ssrf, and
   information-disclosure CVEs have shipped against it.
 
 artifacts:
@@ -62,7 +64,7 @@ artifacts:
       artifact_type: credential-file
       description: >-
         Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not
-        set in the environment and reloaded on restart.
+        set in the environment and reloaded on restart
       forensic_value: high
       evidence_type: [credential-access]
       confidence: high
@@ -119,7 +121,7 @@ artifacts:
       port: 443/TCP, 11434/TCP
       description: >-
         Both are endpoint-override variables - a modified value silently redirects
-        all prompts and documents to an attacker-controlled proxy.
+        all prompts and documents to an attacker-controlled proxy
       confidence: high
     - direction: egress
       indicator: Direct Connections to user-supplied OpenAI-compatible servers
@@ -175,6 +177,7 @@ collection:
     whether persistence was configured. Record the version, since which CVEs apply
     is version-dependent. If .webui_secret_key may have been read, rotate it and
     force re-authentication.
+  velociraptor_artifact: Custom.AIAgents.OpenWebUI
 
 atlas_techniques: [AML.T0024, AML.T0029, AML.T0082]
 attack_techniques: [T1133, T1059, T1552.001, T1078, T1213]

@@ -29,7 +29,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: AGENT-GENERATED FILES - triage as unknown-origin content
+      description: Agent-generated files - triage as unknown-origin content
       forensic_value: low
       evidence_type:
         - program-presence

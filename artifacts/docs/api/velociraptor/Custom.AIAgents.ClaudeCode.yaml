@@ -1,0 +1,44 @@
+name: Custom.AIAgents.ClaudeCode
+description: |
+  Terminal-native agentic coding assistant. Reads/writes files, runs shell commands, invokes MCP servers.
+
+  Generated from the AI agent artifact catalog (AIRT-0001). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Roaming\npm\claude.cmd', 'C:\Users\*\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\**', 'C:\Users\*\.claude\**', 'C:\Users\*\.claude.json', 'C:\Users\*\.claude\.credentials.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.local/bin/claude', '/usr/local/bin/claude', '/Users/*/.claude/**', '/Users/*/.claude.json', '/Users/*/.config/anthropic/configs/**']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.local/bin/claude', '/usr/local/bin/claude', '/home/*/.claude/**', '/home/*/.claude.json', '/home/*/.claude/.credentials.json', '/home/*/.config/anthropic/configs/**']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

@@ -5,6 +5,9 @@
 
 id: AIRT-0022
 name: text-generation-webui (oobabooga)
+aliases:
+  - oobabooga
+  - text-generation-webui
 vendor: oobabooga (OSS)
 category: llm-runtime
 description: Gradio web UI for local models with an extension system.
@@ -20,7 +23,7 @@ capabilities:
   mcp_capable: false
 risk: high
 confidence: medium
-abuse_potential: Extensions execute arbitrary Python. Gradio --share creates a PUBLIC TUNNEL to the host - a covert ingress channel.
+abuse_potential: Extensions execute arbitrary Python. Gradio --share creates a public tunnel to the host - a covert ingress channel.
 artifacts:
   disk:
     - path: "text-generation-webui.exe  |  python server.py"
@@ -55,7 +58,7 @@ artifacts:
         - macos
         - linux
       artifact_type: install-dir
-      description: ARBITRARY PYTHON EXECUTION
+      description: Arbitrary Python execution
       forensic_value: low
       evidence_type:
         - program-presence
@@ -65,7 +68,7 @@ artifacts:
     - direction: listener
       indicator: Gradio UI / OpenAI-compatible API
       port: 7860/TCP, 5000/TCP
-      description: "--share creates a PUBLIC gradio.live TUNNEL - covert ingress"
+      description: "--share creates a public gradio.live tunnel - covert ingress"
       confidence: medium
       default_bind: "127.0.0.1"
       authentication: Optional

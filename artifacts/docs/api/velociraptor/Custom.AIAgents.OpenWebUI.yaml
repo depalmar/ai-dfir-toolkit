@@ -1,0 +1,24 @@
+name: Custom.AIAgents.OpenWebUI
+description: |
+  Self-hosted web interface for local and remote LLMs, formerly Ollama WebUI. Multi-user with RBAC, RAG document ingestion, and a Tools/Functions system that exec
+
+  Generated from the AI agent artifact catalog (AIRT-0042). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/app/backend/data/  (DATA_DIR; Docker volume open-webui)', '/app/backend/data/webui.db', '/app/backend/data/.webui_secret_key', '/app/backend/data/config.json', '/app/backend/data/uploads/ and vector store directory']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

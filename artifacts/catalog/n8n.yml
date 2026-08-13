@@ -5,6 +5,8 @@
 
 id: AIRT-0025
 name: n8n (AI Agent / LangChain nodes)
+aliases:
+  - n8n
 vendor: n8n GmbH
 category: workflow-engine
 description: Self-hostable workflow automation with native AI Agent / SQL Agent LangChain nodes and MCP support.
@@ -41,7 +43,7 @@ artifacts:
         - macos
         - linux
       artifact_type: env-var
-      description: HIGH-VALUE SECRET
+      description: High-value secret
       forensic_value: high
       evidence_type:
         - configuration
@@ -51,7 +53,7 @@ artifacts:
     - key: "HKCU\\Environment"
       value: N8N_ENCRYPTION_KEY
       type: REG_SZ
-      description: Decrypts ALL stored n8n credentials - CROWN JEWEL
+      description: Decrypts all stored n8n credentials - crown jewel
       persistence: false
       forensic_value: medium
       confidence: high
@@ -89,6 +91,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: n8n
+  velociraptor_artifact: Custom.AIAgents.n8n
 atlas_techniques:
   - AML.T0053
   - AML.T0081

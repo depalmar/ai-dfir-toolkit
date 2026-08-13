@@ -20,7 +20,7 @@ capabilities:
   mcp_capable: false
 risk: medium
 confidence: medium
-abuse_potential: Single portable .exe - trivially dropped and run without install. Named in Splunk STRT local-LLM analytics.
+abuse_potential: Single portable .exe - trivially dropped and run without install. Named in Splunk strt local-LLM analytics.
 artifacts:
   network:
     - direction: listener

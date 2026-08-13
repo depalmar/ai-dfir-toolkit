@@ -5,6 +5,10 @@
 
 id: AIRT-0026
 name: LangChain / LangGraph
+aliases:
+  - LangChain
+  - LangGraph
+  - langchain-langgraph
 vendor: LangChain Inc. (OSS)
 category: agent-framework
 description: Dominant agent-building library. Deployed as bespoke services - no fixed install path.
@@ -28,8 +32,8 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      LangGraph CLI project config. Its `env` field accepts an INLINE JSON object of
-      environment variables, so provider API keys are frequently stored PLAINTEXT inside
+      LangGraph CLI project config. Its `env` field accepts an inline JSON object of
+      environment variables, so provider API keys are frequently stored plaintext inside
       this file itself (vendor example shows an OPENAI_API_KEY entry under `env`).
       Present only for LangGraph CLI / Platform projects.
     confidence: high
@@ -38,7 +42,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT provider and LangSmith keys. Vendor README documents `"env": "./.env"`
+      Plaintext provider and LangSmith keys. Vendor README documents `"env": "./.env"`
       in langgraph.json; the CLI helper `_parse_env_from_config` resolves the `env`
       field or falls back to a .env file.
     confidence: high
@@ -47,7 +51,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT LangSmith tracing key in the process environment; LANGCHAIN_API_KEY is
+      Plaintext LangSmith tracing key in the process environment; LANGCHAIN_API_KEY is
       the legacy alias and is still read. Forensically important beyond the key itself:
       if tracing was enabled, full prompts and responses were shipped to LangSmith, so
       this key indicates an off-host copy of agent activity exists.
@@ -57,10 +61,10 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT provider keys read from the process environment by the langchain-*
-      partner packages. langchain_openai documents that the key "can be inferred from
+      Plaintext provider keys read from the process environment by the langchain-*
+      partner packages. Langchain_openai documents that the key "can be inferred from
       the OPENAI_API_KEY environment variable". LangChain ships no managed credential
-      file - the environment and .env ARE the credential store, so collect process
+      file - the environment and .env are the credential store, so collect process
       environment blocks.
     confidence: high
 mcp: []

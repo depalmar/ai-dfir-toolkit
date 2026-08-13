@@ -5,6 +5,11 @@
 
 id: AIRT-0037
 name: Google Gemini CLI
+aliases:
+  - google-gemini-cli
+  - gemini
+  - "@google/gemini-cli"
+  - gemini-cli
 vendor: Google
 category: coding-agent-cli
 description: "Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config."
@@ -52,7 +57,7 @@ artifacts:
       os:
         - linux
       artifact_type: config-file
-      description: SYSTEM-LEVEL policy - privileged tamper/persistence target
+      description: System-level policy - privileged tamper/persistence target
       forensic_value: high
       evidence_type:
         - execution
@@ -85,7 +90,7 @@ credentials:
       - linux
     storage: plaintext
     secret_type: oauth-token
-    description: PLAINTEXT access + refresh + id tokens, expiry, scope
+    description: Plaintext access + refresh + id tokens, expiry, scope
     confidence: high
   - location: ~/.gemini/google_accounts.json
     os:
@@ -94,7 +99,7 @@ credentials:
       - linux
     storage: plaintext
     secret_type: api-key
-    description: Bound Google account identity - USER ATTRIBUTION ARTIFACT
+    description: Bound Google account identity - user attribution artifact
     confidence: high
   - location: ~/.gemini/.env  (plus cwd-upward .env search)
     os:
@@ -110,6 +115,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: GoogleGeminiCLI
+  velociraptor_artifact: Custom.AIAgents.GoogleGeminiCLI
 atlas_techniques:
   - AML.T0051
   - AML.T0053

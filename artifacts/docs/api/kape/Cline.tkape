@@ -5,15 +5,15 @@ Id: 8e4ec409-49c7-5b9a-84f1-2b4b71edb850
 RecreateDirectories: true
 Targets:
     -
-        Name: 'EXECUTION PRIMITIVE'
+        Name: 'Execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Roaming\Code\User\globalStorage\saoudrizwan.claude-dev\settings\'
         FileMask: 'cline_mcp_settings.json'
-        Comment: 'AIRT-0039 | EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0039 | Execution primitive'
     -
-        Name: 'SINGLE-SOURCE - corroborate'
+        Name: 'Single-source - corroborate'
         Category: AIAgents
         Path: 'C:\Users\%user%\.cline\data\'
         FileMask: '*'
         Recursive: true
-        Comment: 'AIRT-0039 | [confidence: low] SINGLE-SOURCE - corroborate'
+        Comment: 'AIRT-0039 | [confidence: low] Single-source - corroborate'

@@ -45,7 +45,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT JSON holding `api_token` (an OAuth2 device-authorization-grant access
+      Plaintext JSON holding `api_token` (an OAuth2 device-authorization-grant access
       token for Browser Use Cloud), `user_id` and `authorized_at`. Written via json.dump
       by the cloud sync auth flow, which then attempts chmod 0600. Check existence and
       mode; do not read contents.
@@ -55,7 +55,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT LLM provider keys. The DB-style config holds LLMEntry records carrying
+      Plaintext LLM provider keys. The DB-style config holds LLMEntry records carrying
       an `api_key` field. Resolved as $XDG_CONFIG_HOME/browseruse/config.json,
       defaulting to ~/.config on every platform including Windows;
       BROWSER_USE_CONFIG_DIR overrides the directory.
@@ -76,7 +76,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      Optional Gmail integration (used to retrieve 2FA codes). gmail_credentials.json is
+      Optional Gmail integration (used to retrieve 2FA codes). Gmail_credentials.json is
       the Google OAuth client secret; gmail_token.json is the resulting access/refresh
       token. Default filenames inside the browser-use config dir; present only when that
       integration is configured. Their presence indicates the agent could read the
@@ -87,7 +87,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT Browser Use Cloud API key in the process environment, sent as the
+      Plaintext Browser Use Cloud API key in the process environment, sent as the
       X-Browser-Use-API-Key header. Documented in the vendor README and used by the
       cloud SDK when no argument is passed.
     confidence: high
@@ -96,7 +96,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT keys. The vendor README shows BROWSER_USE_API_KEY and provider keys
+      Plaintext keys. The vendor README shows BROWSER_USE_API_KEY and provider keys
       written to a project .env, and the shipped examples load it with dotenv.
     confidence: high
   - location: OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY / NOVITA_API_KEY / AZURE_OPENAI_KEY
@@ -104,7 +104,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT provider keys read from the process environment by
+      Plaintext provider keys read from the process environment by
       browser_use/config.py. Note the Azure variable is AZURE_OPENAI_KEY here (paired
       with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.
     confidence: high
@@ -112,6 +112,7 @@ mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.BrowserUse
 atlas_techniques:
   - AML.T0086
   - AML.T0053

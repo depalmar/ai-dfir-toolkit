@@ -12,11 +12,11 @@ Targets:
         Recursive: true
         Comment: 'AIRT-0003 | mcp-config.json, lsp-config.json, agents/'
     -
-        Name: 'EXECUTION PRIMITIVE'
+        Name: 'Execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\.copilot\'
         FileMask: 'mcp-config.json'
-        Comment: 'AIRT-0003 | EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0003 | Execution primitive'
     -
         Name: 'Custom autonomous agent definitions - review on clone'
         Category: AIAgents

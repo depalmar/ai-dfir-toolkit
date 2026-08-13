@@ -1,0 +1,24 @@
+name: Custom.AIAgents.vLLM
+description: |
+  High-throughput inference and serving engine for LLMs. `vllm serve` exposes an OpenAI-compatible HTTP API, which is how it is normally deployed.
+
+  Generated from the AI agent artifact catalog (AIRT-0045). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.cache/vllm', '/home/*/.config/vllm', '/home/*/.config/vllm/usage_stats.json', '/home/*/.cache/huggingface/hub']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

@@ -215,6 +215,11 @@ def build_tools(entries, rows):
             "entry_id": e["id"],
             "tool": e["name"],
             "slug": slugify(e["name"]),
+            # Former and alternate names. Carried on the tool rather than on
+            # each of its rows, because 45 entries is a much smaller payload
+            # than 434 rows and the row search can look it up.
+            "aliases": aslist(e.get("aliases")),
+            "status": e.get("status", ""),
             "vendor": e.get("vendor", ""),
             "category": e.get("category", ""),
             "risk": e.get("risk", ""),
@@ -240,7 +245,8 @@ CSS = """
   --accent-soft-2:#ecdfd4; --accent-border:#e0cfc1;
   --on-accent:#ffffff; --on-tone:#ffffff;
   --crit:#a12b2b; --high:#b4611c; --med:#8a7320; --low:#5c7a4a;
-  --str-strong:#3d5a80; --str-strong-bg:#eef2f7; --str-mid:#6b7f96;
+  --val-strong:#1f6f6a; --val-mid:#5d8f8b; --val-bg:#e8f2f0;
+  --conf-strong:#3d5a80; --conf-mid:#6b7f96; --conf-bg:#eef2f7;
   --alert-bg:#fdf6f2; --alert-line:#f0ded1;
   --toast-bg:#1c1b19; --toast-ink:#fbfbfa; --toast-muted:#a09b90;
   --shadow:rgba(28,27,25,.09); --shadow-soft:rgba(28,27,25,.05);
@@ -253,7 +259,8 @@ CSS = """
   --accent-soft-2:#3a2b20; --accent-border:#553a29;
   --on-accent:#1a1310; --on-tone:#151210;
   --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
-  --str-strong:#9ec0e0; --str-strong-bg:#1b2530; --str-mid:#7e94ab;
+  --val-strong:#7fd0c7; --val-mid:#6f9b96; --val-bg:#152a29;
+  --conf-strong:#9ec0e0; --conf-mid:#7e94ab; --conf-bg:#1b2530;
   --alert-bg:#251a16; --alert-line:#452a20;
   --toast-bg:#f1eee9; --toast-ink:#151210; --toast-muted:#6b6862;
   --shadow:rgba(0,0,0,.55); --shadow-soft:rgba(0,0,0,.4);
@@ -267,7 +274,8 @@ CSS = """
     --accent-soft-2:#3a2b20; --accent-border:#553a29;
     --on-accent:#1a1310; --on-tone:#151210;
     --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
-    --str-strong:#9ec0e0; --str-strong-bg:#1b2530; --str-mid:#7e94ab;
+    --val-strong:#7fd0c7; --val-mid:#6f9b96; --val-bg:#152a29;
+    --conf-strong:#9ec0e0; --conf-mid:#7e94ab; --conf-bg:#1b2530;
     --alert-bg:#251a16; --alert-line:#452a20;
     --toast-bg:#f1eee9; --toast-ink:#151210; --toast-muted:#6b6862;
     --shadow:rgba(0,0,0,.55); --shadow-soft:rgba(0,0,0,.4);
@@ -407,6 +415,10 @@ details.railfold{display:none}
   padding:1px 8px 1px 6px}
 .badge.str i{font-style:normal;color:var(--faint);font-size:10px;letter-spacing:.05em;
   text-transform:uppercase;margin-right:5px}
+.badge.str.sc-value{--str-strong:var(--val-strong);--str-mid:var(--val-mid);
+  --str-strong-bg:var(--val-bg)}
+.badge.str.sc-conf{--str-strong:var(--conf-strong);--str-mid:var(--conf-mid);
+  --str-strong-bg:var(--conf-bg)}
 .s-high{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:var(--str-strong-bg)}
 .s-med{--str-line:var(--str-mid);--str-ink:var(--str-mid);--str-bg:transparent}
 .s-low{--str-line:var(--line);--str-ink:var(--faint);--str-bg:transparent}
@@ -437,6 +449,10 @@ td .note{font-size:12.5px;color:var(--muted);max-width:38ch;display:inline-block
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
   font-size:12px;color:transparent;padding:0}
 .pick[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pick.all{border-style:dashed}
+.pick.all[aria-pressed=true]{border-style:solid}
+.pick:hover{border-color:var(--accent)}
+th .pick.all{vertical-align:middle}
 .empty{padding:44px 20px;text-align:center;color:var(--muted)}
 .empty button{display:block;margin:12px auto 0}
 
@@ -636,6 +652,11 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
   border:1px solid var(--line);border-radius:7px;padding:7px 9px;margin:0 0 6px;
   font-size:12.5px;color:var(--accent);cursor:pointer}
 .caselink:hover{border-color:var(--accent);background:var(--accent-soft)}
+.talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+  margin:0 0 6px;word-break:break-word}
+.statuspill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
+  border:1px solid var(--crit);color:var(--crit);border-radius:20px;padding:1px 8px;
+  white-space:nowrap}
 .casebadge{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
   background:var(--accent);color:var(--on-accent);border-radius:20px;padding:2px 8px;
   white-space:nowrap}
@@ -830,16 +851,17 @@ function badge(v,filled,prefix){
 }
 // Strength badges always carry their label. An unlabelled "medium" next to
 // another unlabelled "medium" is the ambiguity this is meant to remove.
-function sBadge(v,label,bare){
+function sBadge(v,label,bare,scale){
   if(!v)return'';
-  return `<span class="badge str ${STRENGTH[v]||''}" title="${esc(label)}: ${esc(v)}"
+  return `<span class="badge str ${scale||'sc-conf'} ${STRENGTH[v]||''}"
+    title="${esc(label)}: ${esc(v)}"
     >${bare?'':`<i>${esc(label)}</i>`}${esc(v)}</span>`;
 }
 // bare inside the table only: the column header already names the scale there,
 // and repeating it in every cell is noise. Everywhere else the badge travels
 // without a header, so it carries its own label.
-const fvBadge=(v,bare)=>sBadge(v,'value',bare);
-const confBadge=(v,bare)=>sBadge(v,'sourcing',bare);
+const fvBadge=(v,bare)=>sBadge(v,'value',bare,'sc-value');
+const confBadge=(v,bare)=>sBadge(v,'sourcing',bare,'sc-conf');
 const riskBadge=(v,p)=>badge(v,v==='critical',p);
 const triageBadge=v=>badge(v,true,'triage');
 
@@ -854,7 +876,11 @@ function rowMatches(r,skip){
     if(!have.some(v=>want.includes(v)))return false;
   }
   if(!query)return true;
-  const hay=(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+r.evidence.join(' ')).toLowerCase();
+  // Aliases come from the tool, so searching "oobabooga" or "OpenDevin" finds
+  // the rows for the entry that is now filed under a different name.
+  const t=TOOLMAP[r.entry_id];
+  const hay=(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+
+    r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):'')).toLowerCase();
   return hay.includes(query);
 }
 function filteredRows(){
@@ -931,8 +957,15 @@ const COLS=[['','pick'],['ID','entry_id'],['Tool','tool'],['Class','cls'],['Arti
 function tableHTML(rows){
   if(!rows.length)return `<div class="empty">Nothing matches those filters.
     <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  // Select-all sits at the head of the column it acts on, which is where a
+  // reader looks for it - not stranded at the right edge of the toolbar.
+  const anchors=rows.map(r=>r.anchor);
+  const allPicked=anchors.length&&anchors.every(a=>picks.has(a));
   return `<div class="tablescroll"><table><thead><tr>`+COLS.map(([l,k])=>{
-    if(k==='pick')return '<th aria-hidden="true"></th>';
+    if(k==='pick')return `<th><button class="pick all" id="pickAllCol"
+      aria-pressed="${allPicked}"
+      aria-label="${allPicked?'Remove all shown from':'Add all shown to'} the collection plan"
+      title="${allPicked?'Remove':'Pick'} all ${anchors.length} shown">&#10003;</button></th>`;
     const sorted=sortKey===k, dir=sorted?(sortDir>0?'ascending':'descending'):'none';
     return `<th data-k="${k}" tabindex="0" aria-sort="${dir}">${l}${sorted?`<span class="dir"> ${sortDir>0?'↑':'↓'}</span>`:''}</th>`;
   }).join('')+`</tr></thead><tbody>`+rows.map(r=>`
@@ -977,9 +1010,12 @@ function toolsHTML(){
     <button class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
       <div class="trow"><div><div class="tname">${esc(t.tool)}</div>
         <div class="tsub">${esc(t.vendor)} &middot; ${esc(t.category)}</div></div>
-        <div class="tbadges">${cs.length?`<span class="casebadge"
+        <div class="tbadges">${t.status&&t.status!=='active'?
+          `<span class="statuspill">${esc(t.status)}</span>`:''}${cs.length?`<span class="casebadge"
           title="${esc(cs.map(c=>c.title).join(' · '))}">${cs.length} case${
           cs.length>1?'s':''}</span>`:''}${riskBadge(t.risk,'risk')}</div></div>
+      ${t.aliases&&t.aliases.length?`<div class="talias">also ${
+        esc(t.aliases.join(' · '))}</div>`:''}
       <p>${esc(t.description)}</p>
       ${t.caps.length?`<div class="capchips">${t.caps.map(c=>`<i>${esc(c)}</i>`).join('')}</div>`:''}
       <div class="tfoot"><span>${t.n} artifacts</span>${t.triage?`<span>triage ${esc(t.triage)}</span>`:''}
@@ -1036,7 +1072,11 @@ function drawerHTML(r){
     <div class="dsec"><h4>What it proves</h4>
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
       ${r.description?`<p>${esc(r.description)}</p>`:''}</div>
-    <div class="dsec"><h4>Tool context</h4><p>${esc(t.description||'')}</p>
+    <div class="dsec"><h4>Tool context</h4>
+      ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
+        ><span class="statuspill">${esc(t.status)}</span></div>`:''}
+      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
+      <p>${esc(t.description||'')}</p>
       ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</div>
     ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
       ${CASES_BY_TOOL[r.entry_id].map(c=>
@@ -1277,7 +1317,7 @@ function caseStudiesHTML(){
       </div>
       <p class="cssum">${esc(c.summary)}</p>
       ${c.confidence?`<div class="csprov">
-        ${sBadge(c.confidence,'sourcing')}
+        ${confBadge(c.confidence)}
         ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
       </div>`:''}
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
@@ -1397,7 +1437,9 @@ function renderMain(){
       el.onclick=open;
       el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
     });
-    $$('#main .pick').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
+    $$('#main .pick:not(.all)').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
+    const pa=$('#pickAllCol');
+    if(pa)pa.onclick=e=>{e.stopPropagation();togglePickAll(e.currentTarget)};
   }else if(view==='cases'){
     main.innerHTML=caseStudiesHTML();
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
@@ -1526,14 +1568,15 @@ $('#jsonBtn').onclick=()=>{
 // Same corpus the export uses, so "pick all shown" and "export" always agree on
 // what "shown" means. Toggles: a second press on an already-complete selection
 // drops those rows again, which is the only sane undo for a 400-row add.
-$('#pickAllBtn').onclick=()=>{
+function togglePickAll(btn){
   const anchors=exportRows().map(r=>r.anchor);
   const allPicked=anchors.length&&anchors.every(a=>picks.has(a));
   anchors.forEach(a=>allPicked?picks.delete(a):picks.add(a));
   savePicks();
-  flash($('#pickAllBtn'), `${allPicked?'removed':'picked'} ${anchors.length}`);
+  if(btn)flash(btn, `${allPicked?'removed':'picked'} ${anchors.length}`);
   update();
-};
+}
+$('#pickAllBtn').onclick=e=>togglePickAll(e.currentTarget);
 
 $$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
 // Arrow-key navigation, which role=tablist promises and a plain button row
@@ -1801,12 +1844,12 @@ def main():
     <button class="tgl" id="unvBtn" type="button" aria-pressed="false">Unverified only
       <span class="n">{n_unv}</span></button>
     <button class="tgl plain" id="denseBtn" type="button" aria-pressed="false">Compact rows</button>
+    <button class="tgl plain" id="pickAllBtn" type="button">Pick all shown</button>
     <div class="exportgrp" role="group" aria-label="Export the filtered rows">
       <span class="exportlbl">Export</span>
       <button class="tgl plain" id="csvBtn" type="button">CSV</button>
       <button class="tgl plain" id="jsonBtn" type="button">JSON</button>
     </div>
-    <button class="tgl plain" id="pickAllBtn" type="button">Pick all shown</button>
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"
     role="status" aria-live="polite" aria-atomic="true"></span>

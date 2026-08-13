@@ -11,8 +11,8 @@ Targets:
         FileMask: 'config.yaml'
         Comment: 'AIRT-0038 | Config File for Goose'
     -
-        Name: 'Records which tools were authorized - CONSENT EVIDENCE'
+        Name: 'Records which tools were authorized - consent evidence'
         Category: AIAgents
         Path: 'C:\Users\%user%\.config\goose\permission.yaml ; permissions\'
         FileMask: 'tool_permissions.json'
-        Comment: 'AIRT-0038 | Records which tools were authorized - CONSENT EVIDENCE'
+        Comment: 'AIRT-0038 | Records which tools were authorized - consent evidence'

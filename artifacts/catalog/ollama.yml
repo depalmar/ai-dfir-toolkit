@@ -85,7 +85,7 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: Can embed SYSTEM prompts - jailbreak/backdoor vector
+      description: Can embed system prompts - jailbreak/backdoor vector
       forensic_value: low
       evidence_type:
         - configuration
@@ -95,7 +95,7 @@ artifacts:
       os:
         - linux
       artifact_type: service-config
-      description: PERSISTENCE + where OLLAMA_HOST=0.0.0.0 is usually set
+      description: Persistence + where OLLAMA_HOST=0.0.0.0 is usually set
       forensic_value: medium
       evidence_type:
         - persistence
@@ -106,7 +106,7 @@ artifacts:
       os:
         - linux
       artifact_type: data-dir
-      description: "SERVICE ACCOUNT HOME. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama MISSES ALL MODELS on a systemd install."
+      description: "Service account home. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama misses all models on a systemd install."
       forensic_value: medium
       evidence_type:
         - program-presence
@@ -117,7 +117,7 @@ artifacts:
       os:
         - linux
       artifact_type: log
-      description: Ollama writes no separate log file under systemd - journald is the only timeline source.
+      description: Ollama writes no separate log file under systemd - journald is the only timeline source
       forensic_value: high
       evidence_type:
         - timeline
@@ -135,14 +135,14 @@ artifacts:
     - key: "HKCU\\Environment"
       value: OLLAMA_HOST
       type: REG_SZ
-      description: Bind address override - VALUE OF 0.0.0.0 = NETWORK EXPOSURE
+      description: Bind address override - value of 0.0.0.0 = network exposure
       persistence: false
       forensic_value: medium
       confidence: high
     - key: "HKCU\\Environment"
       value: OLLAMA_MODELS / OLLAMA_ORIGINS
       type: REG_SZ
-      description: "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls"
+      description: "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls."
       persistence: false
       forensic_value: medium
       confidence: high
@@ -157,7 +157,7 @@ artifacts:
     - direction: listener
       indicator: Ollama OpenAI-compatible + native API
       port: 11434/TCP
-      description: NO DEFAULT AUTH. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.
+      description: No default auth. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.
       confidence: high
       default_bind: 127.0.0.1 (0.0.0.0 if OLLAMA_HOST set)
       authentication: NONE
@@ -207,6 +207,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Ollama
+  velociraptor_artifact: Custom.AIAgents.Ollama
 atlas_techniques:
   - AML.T0024
   - AML.T0029

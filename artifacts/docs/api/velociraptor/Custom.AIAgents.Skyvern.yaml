@@ -1,0 +1,44 @@
+name: Custom.AIAgents.Skyvern
+description: |
+  Open-source vision+DOM browser automation agent, commonly Docker-deployed with a web UI.
+
+  Generated from the AI agent artifact catalog (AIRT-0035). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.skyvern\credential_vault\.fernet_key', 'C:\Users\*\.skyvern\credential_vault\creditem_*.bin', 'C:\Users\*\.skyvern\.env', 'C:\Users\*\.skyvern\data.db']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.skyvern/credential_vault/.fernet_key', '/Users/*/.skyvern/credential_vault/creditem_*.bin', '/Users/*/.skyvern/.env', '/Users/*/.skyvern/data.db']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.skyvern/credential_vault/.fernet_key', '/home/*/.skyvern/credential_vault/creditem_*.bin', '/home/*/.skyvern/.env', '/home/*/.skyvern/data.db']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

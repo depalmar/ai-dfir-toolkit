@@ -12,14 +12,14 @@ Targets:
         Recursive: true
         Comment: 'AIRT-0006 | API key + downloaded language server'
     -
-        Name: 'EXECUTION PRIMITIVE'
+        Name: 'Execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\.codeium\windsurf\'
         FileMask: 'mcp_config.json'
-        Comment: 'AIRT-0006 | EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0006 | Execution primitive'
     -
-        Name: 'REMOTE BINARY DOWNLOAD - verify hash'
+        Name: 'Remote binary download - verify hash'
         Category: AIAgents
         Path: 'C:\Users\%user%\.codeium\<version>\'
         FileMask: 'language_server_*'
-        Comment: 'AIRT-0006 | [confidence: medium] REMOTE BINARY DOWNLOAD - verify hash'
+        Comment: 'AIRT-0006 | [confidence: medium] Remote binary download - verify hash'

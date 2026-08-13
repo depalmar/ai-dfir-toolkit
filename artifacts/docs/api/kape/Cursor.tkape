@@ -38,11 +38,11 @@ Targets:
         Recursive: true
         Comment: 'AIRT-0002 | settings.json, globalStorage, workspaceStorage'
     -
-        Name: 'Global MCP servers - EXECUTION PRIMITIVE'
+        Name: 'Global MCP servers - execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\.cursor\'
         FileMask: 'mcp.json'
-        Comment: 'AIRT-0002 | Global MCP servers - EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0002 | Global MCP servers - execution primitive'
     -
         Name: 'Custom agent skills'
         Category: AIAgents

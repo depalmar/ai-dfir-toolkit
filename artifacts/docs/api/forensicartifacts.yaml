@@ -1014,7 +1014,10 @@ urls: []
 ---
 name: RooCodeArtifacts
 doc: Roo Code (AIRT-0040) - VS Code extension ID rooveterinaryinc.roo-cline (Cline
-  fork). Multi-mode agent with project-scoped MCP.
+  fork). Multi-mode agent with project-scoped MCP. Discontinued - shutdown announced
+  2026-04-21 and the repository archived 2026-05-15, with the team moving to Roomote.
+  Still installed on hosts and still leaves every artifact below, so it remains in
+  scope for collection.
 sources:
 - type: FILE
   attributes:

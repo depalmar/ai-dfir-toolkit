@@ -5,6 +5,8 @@
 
 id: AIRT-0033
 name: Claude Computer Use
+aliases:
+  - claude-computer-use
 vendor: Anthropic
 category: computer-use-agent
 description: Vision-driven screenshot-to-coordinate GUI control loop. Reference implementation ships as a Docker container.
@@ -45,17 +47,17 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT Anthropic API key persisted by the reference implementation's Streamlit
+      Plaintext Anthropic API key persisted by the reference implementation's Streamlit
       UI, written with mode 0600. Lives at /home/computeruse/.anthropic/api_key inside
-      the container, which the documented docker run bind-mounts from the HOST at
-      $HOME/.anthropic - so the key SURVIVES container teardown on the host filesystem.
+      the container, which the documented docker run bind-mounts from the host at
+      $HOME/.anthropic - so the key survives container teardown on the host filesystem.
     confidence: high
   - location: ANTHROPIC_API_KEY
     os: [docker, container]
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT API key passed on the docker run command line (-e
+      Plaintext API key passed on the docker run command line (-e
       ANTHROPIC_API_KEY=...). Recoverable from container config metadata and from host
       shell history, independently of the container filesystem.
     confidence: high
@@ -64,7 +66,7 @@ credentials:
     storage: plaintext
     secret_type: aws-sso-token
     description: >-
-      The HOST AWS credential directory (credentials, config, sso/cache/) is
+      The host AWS credential directory (credentials, config, sso/cache/) is
       bind-mounted into the container at /home/computeruse/.aws in the documented
       Bedrock profile setup. Anything running in the container inherits the user's full
       AWS identity, so scope the blast radius to every profile in that directory, not
@@ -75,7 +77,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT AWS access key ID, secret access key and STS session token passed on the
+      Plaintext AWS access key ID, secret access key and STS session token passed on the
       docker run command line in the documented Bedrock access-key setup. Expect them in
       container config metadata and host shell history.
     confidence: high
@@ -84,14 +86,15 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT Google Application Default Credentials (refresh token / service-account
+      Plaintext Google Application Default Credentials (refresh token / service-account
       material) bind-mounted file-for-file from the host into the container in the
-      documented Vertex AI setup.
+      documented Vertex AI setup
     confidence: high
 mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.ClaudeComputerUse
 atlas_techniques:
   - AML.T0086
 attack_techniques:

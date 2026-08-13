@@ -20,7 +20,7 @@ capabilities:
   mcp_capable: false
 risk: medium
 confidence: low
-abuse_potential: Large context = large code egress per request. THIN PUBLIC SOURCING on canonical paths.
+abuse_potential: Large context = large code egress per request. Thin public sourcing on canonical paths.
 artifacts:
   disk:
     - path: Downloaded Supermaven agent binary (editor-managed)
@@ -29,7 +29,7 @@ artifacts:
         - macos
         - linux
       artifact_type: binary
-      description: THIN SOURCING - validate locally
+      description: Thin sourcing - validate locally
       forensic_value: medium
       evidence_type:
         - execution
@@ -62,7 +62,7 @@ credentials:
     storage: plaintext
     secret_type: unknown
     description: >-
-      PLAINTEXT account key written by the sm-agent binary. Field names observed in a
+      Plaintext account key written by the sm-agent binary. Field names observed in a
       real-world instance: api_key, api_key_obtained_at, link_id. ~/.supermaven is
       confirmed as Supermaven's data root by the vendor's own Neovim plugin (falls back
       to $XDG_DATA_HOME/supermaven when that variable is set, so check there too).
@@ -74,7 +74,7 @@ credentials:
     storage: plaintext
     secret_type: unknown
     description: >-
-      PLAINTEXT. Same config file, created RELATIVE TO THE WORKING DIRECTORY rather than
+      plaintext. Same config file, created relative to the working directory rather than
       under $HOME - reported on the vendor's own repo as sm-agent creating
       .supermaven/config.json in the project dir on startup. Forensically material
       because an account key can land inside a repo working tree and be committed. Worth
@@ -86,6 +86,7 @@ collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Supermaven
+  velociraptor_artifact: Custom.AIAgents.Supermaven
 atlas_techniques:
   - AML.T0024
 attack_techniques:

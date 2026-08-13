@@ -101,7 +101,7 @@ artifacts:
         - macos
         - linux
       artifact_type: mcp-config
-      description: Global MCP servers - EXECUTION PRIMITIVE
+      description: Global MCP servers - execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -190,8 +190,8 @@ credentials:
     secret_type: oauth-token
     description: >-
       Cursor IDE login session. The ItemTable rows cursorAuth/accessToken,
-      cursorAuth/refreshToken and cursorAuth/cachedEmail hold their values UNENCRYPTED
-      (PLAINTEXT JWTs) inside the SQLite database - the DB is not itself protected.
+      cursorAuth/refreshToken and cursorAuth/cachedEmail hold their values unencrypted
+      (plaintext JWTs) inside the SQLite database - the DB is not itself protected.
       Copying the file transfers a logged-in session. Quit Cursor before acquisition so
       the WAL journal is checkpointed.
     confidence: medium
@@ -201,7 +201,7 @@ credentials:
     secret_type: oauth-token
     description: >-
       Linux path for the same Cursor IDE session store. ItemTable rows
-      cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the
+      cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the
       SQLite DB.
     confidence: medium
   - location: '%APPDATA%\Cursor\User\globalStorage\state.vscdb'
@@ -210,7 +210,7 @@ credentials:
     secret_type: oauth-token
     description: >-
       Windows path for the same Cursor IDE session store. ItemTable rows
-      cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the
+      cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the
       SQLite DB.
     confidence: medium
   - location: ~/.cursor/mcp.json
@@ -219,7 +219,7 @@ credentials:
     secret_type: api-key
     description: >-
       Global MCP server definitions. The per-server env block routinely carries
-      PLAINTEXT API keys and bearer tokens for whatever the agent was authorised to
+      plaintext API keys and bearer tokens for whatever the agent was authorised to
       call. Already declared as a secrets location by this catalog's own MCP block for
       this entry.
     confidence: high
@@ -228,15 +228,15 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Project-scoped MCP server definitions with the same PLAINTEXT env block. TRAVELS
-      WITH THE REPO - collect per workspace the user opened, not just from home.
+      Project-scoped MCP server definitions with the same plaintext env block. Travels
+      with the repo - collect per workspace the user opened, not just from home.
     confidence: high
   - location: ~/.config/cursor/auth.json
     os: [linux]
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      Cursor CLI (cursor-agent), NOT the IDE. PLAINTEXT JSON holding accessToken,
+      Cursor CLI (cursor-agent), not the IDE. Plaintext JSON holding accessToken,
       refreshToken and apiKey, written by 'cursor-agent login'; independently observed
       at mode 600. Note it is ~/.config/cursor/, not ~/.cursor/.
     confidence: medium
@@ -246,7 +246,7 @@ credentials:
     secret_type: oauth-token
     description: >-
       On macOS the Cursor CLI (cursor-agent) keeps its session in the login Keychain
-      rather than in a file - there is NO auth.json to collect on a Mac. If you are
+      rather than in a file - there is no auth.json to collect on a Mac. If you are
       looking for cursor-agent credentials on macOS, look in the Keychain.
     confidence: medium
   - location: 'macOS login Keychain: generic-password service ''Cursor Safe Storage'', account ''Cursor Key'''
@@ -275,11 +275,12 @@ mcp:
     secrets_location: env block
     persistence_trigger: Every workspace open
     triage_priority: p1
-    notes: TRAVELS WITH THE REPO
+    notes: Travels with the repo
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Cursor
+  velociraptor_artifact: Custom.AIAgents.Cursor
 atlas_techniques:
   - AML.T0051
   - AML.T0053

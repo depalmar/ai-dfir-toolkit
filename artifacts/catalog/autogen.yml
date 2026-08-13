@@ -29,7 +29,7 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: PLAINTEXT api_key values
+      description: Plaintext api_key values
       forensic_value: high
       evidence_type:
         - configuration
@@ -41,7 +41,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: AGENT-GENERATED CODE executed on host
+      description: Agent-generated code executed on host
       forensic_value: low
       evidence_type:
         - program-presence
@@ -64,7 +64,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT JSON list of model configs, each carrying an `api_key` field. Vendor
+      Plaintext JSON list of model configs, each carrying an `api_key` field. Vendor
       docs state AutoGen looks for the keys in the OAI_CONFIG_LIST file in the current
       working directory, or in the OAI_CONFIG_LIST environment variable - so the
       variable may hold the JSON itself, not just a path. Collect the process
@@ -75,7 +75,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT provider keys in the process environment. autogen-ext's OpenAI client
+      Plaintext provider keys in the process environment. Autogen-ext's OpenAI client
       documents api_key as "Required if 'OPENAI_API_KEY' is not found in the environment
       variables"; the Studio gallery builder enumerates all three names. This is the
       fallback path when no OAI_CONFIG_LIST is present.
@@ -97,7 +97,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT env file in the AutoGen Studio appdir. web/initialization.py calls
+      Plaintext env file in the AutoGen Studio appdir. Web/initialization.py calls
       load_dotenv() on it at startup, and the vendor README states .env files in that
       directory are used to set environment variables for the app. Follows --appdir /
       AUTOGENSTUDIO_APPDIR if relocated.
@@ -106,6 +106,7 @@ mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.AutoGen
 atlas_techniques:
   - AML.T0053
   - AML.T0086

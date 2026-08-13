@@ -5,6 +5,9 @@
 
 id: AIRT-0018
 name: LM Studio
+aliases:
+  - lm-studio
+  - lmstudio
 vendor: LM Studio (Element Labs)
 category: llm-runtime
 description: GUI local model runner with OpenAI-compatible server, CLI (lms), and daemon (llmster). MCP host capable.
@@ -94,7 +97,7 @@ artifacts:
     - key: "HKCU\\Environment"
       value: LMS_SERVER_HOST
       type: REG_SZ
-      description: 0.0.0.0 = NETWORK EXPOSURE of the OpenAI-compatible API
+      description: 0.0.0.0 = network exposure of the OpenAI-compatible API
       persistence: false
       forensic_value: medium
       confidence: medium
@@ -127,6 +130,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: LMStudio
+  velociraptor_artifact: Custom.AIAgents.LMStudio
 atlas_techniques:
   - AML.T0024
   - AML.T0029

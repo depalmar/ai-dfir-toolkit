@@ -1,0 +1,34 @@
+name: Custom.AIAgents.RooCode
+description: |
+  VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP. Discontinued - shutdown announced 2026-04-21 and the rep
+
+  Generated from the AI agent artifact catalog (AIRT-0040). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Roaming\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

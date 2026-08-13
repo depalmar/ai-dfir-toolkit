@@ -17,8 +17,8 @@ Targets:
         FileMask: 'config.json'
         Comment: 'AIRT-0005 | Legacy format'
     -
-        Name: 'Advanced - EXECUTES TYPESCRIPT'
+        Name: 'Advanced - executes TypeScript'
         Category: AIAgents
         Path: 'C:\Users\%user%\.continue\'
         FileMask: 'config.ts'
-        Comment: 'AIRT-0005 | [confidence: medium] Advanced - EXECUTES TYPESCRIPT'
+        Comment: 'AIRT-0005 | [confidence: medium] Advanced - executes TypeScript'

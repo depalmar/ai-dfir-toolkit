@@ -5,6 +5,10 @@
 
 id: AIRT-0034
 name: OpenAI Operator / CUA
+aliases:
+  - OpenAI Operator
+  - CUA
+  - openai-operator-cua
 vendor: OpenAI
 category: computer-use-agent
 description: Cloud-hosted computer-using agent operating a remote browser.

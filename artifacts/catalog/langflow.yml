@@ -29,7 +29,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: Config and database root.
+      description: Config and database root
       forensic_value: medium
       evidence_type:
         - program-presence
@@ -53,7 +53,7 @@ artifacts:
         - macos
         - linux
       artifact_type: env-var
-      description: When true, the instance requires NO LOGIN. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.
+      description: When true, the instance requires no login. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.
       forensic_value: medium
       evidence_type:
         - configuration
@@ -65,7 +65,7 @@ artifacts:
         - macos
         - linux
       artifact_type: env-var
-      description: Superuser bootstrap credentials, commonly left plaintext in compose files.
+      description: Superuser bootstrap credentials, commonly left plaintext in compose files
       forensic_value: high
       evidence_type:
         - configuration
@@ -77,7 +77,7 @@ artifacts:
         - macos
         - linux
       artifact_type: project-artifact
-      description: Flow exports embed credentials and custom Python component code.
+      description: Flow exports embed credentials and custom Python component code
       forensic_value: low
       evidence_type:
         - user-activity
@@ -88,7 +88,7 @@ artifacts:
     - direction: listener
       indicator: Langflow web UI + API
       port: 7860/TCP
-      description: MASS-EXPLOITED. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.
+      description: mass-exploited. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.
       confidence: high
       default_bind: "0.0.0.0"
       authentication: None when LANGFLOW_AUTO_LOGIN=true
@@ -115,8 +115,8 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT Fernet master key, auto-generated and persisted on startup when
-      LANGFLOW_SECRET_KEY is not set. THE highest-value artifact for this tool: Langflow
+      Plaintext Fernet master key, auto-generated and persisted on startup when
+      LANGFLOW_SECRET_KEY is not set. The highest-value artifact for this tool: Langflow
       source calls it 'the Fernet master key (secret_key)' and states that reading it
       'would disclose every tenant's stored credentials' - it decrypts the api_key
       table, credential-type global variables, and encrypted MCP server settings in the
@@ -129,7 +129,7 @@ credentials:
     storage: plaintext
     secret_type: jwt-signing-key
     description: >-
-      PLAINTEXT RSA private key used to sign session JWTs, auto-generated and persisted
+      Plaintext RSA private key used to sign session JWTs, auto-generated and persisted
       into the config dir on startup when LANGFLOW_ALGORITHM is RS256/RS512. Vendor
       docs: 'Langflow creates and persists the keys in LANGFLOW_CONFIG_DIR on startup'.
       Not created under the default HS256 algorithm - absence of these files is itself a
@@ -141,7 +141,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT env var that supplies the Fernet key instead of the on-disk secret_key
+      Plaintext env var that supplies the Fernet key instead of the on-disk secret_key
       file. Vendor docs describe it as 'a secret key used for encrypting sensitive data
       like API keys and for JWT signing when using the HS256 algorithm'. Commonly left
       in a .env or compose file. Vendor guidance is to rotate it if compromised;
@@ -153,7 +153,7 @@ credentials:
     storage: plaintext
     secret_type: admin-credential
     description: >-
-      PLAINTEXT superuser bootstrap credentials. Vendor docs: these 'specify the
+      Plaintext superuser bootstrap credentials. Vendor docs: these 'specify the
       username and password for the Langflow server's superuser'; the password is
       required when LANGFLOW_AUTO_LOGIN=False, and the username defaults to 'langflow'.
       Routinely left in .env files, compose files, and Kubernetes manifests. Note the
@@ -165,7 +165,7 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT aggregation point. Vendor CLI reference documents --env-file as 'the
+      Plaintext aggregation point. Vendor CLI reference documents --env-file as 'the
       path to the .env file containing Langflow environment variables', and vendor
       guides consistently start the server as `langflow run --env-file .env`. In
       practice this one file carries LANGFLOW_SECRET_KEY, LANGFLOW_SUPERUSER_PASSWORD,
@@ -177,10 +177,10 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT database connection string. When Langflow is pointed at external
+      Plaintext database connection string. When Langflow is pointed at external
       Postgres the documented format embeds the database username and password directly
       in the value (postgresql://user:password@host:5432/langflow). Also tells the
-      responder that flows, users, and encrypted credentials are NOT in a local SQLite
+      responder that flows, users, and encrypted credentials are not in a local SQLite
       file for this deployment.
     confidence: high
   - location: 'langflow.db  (pip install: <install>/lib/python3.x/site-packages/langflow/langflow.db ; git clone: <install>/src/backend/base/langflow/langflow.db ; <LANGFLOW_CONFIG_DIR>/langflow.db when LANGFLOW_SAVE_DB_IN_CONFIG_DIR=True)'
@@ -190,10 +190,10 @@ credentials:
     description: >-
       SQLite database for Langflow OSS. Holds Langflow API keys (api_key table),
       credential-type global variables, MCP server settings, and user records. These
-      values are ENCRYPTED at rest with the Fernet key, not plaintext - but the key file
+      values are encrypted at rest with the Fernet key, not plaintext - but the key file
       lives in the config dir, and in the LANGFLOW_SAVE_DB_IN_CONFIG_DIR deployment it
       is the DB's own directory sibling, so DB + secret_key together are a full
-      credential compromise. Note the default path is inside the venv or the clone, NOT
+      credential compromise. Note the default path is inside the venv or the clone, not
       ~/.langflow as the current catalog disk row states.
     confidence: high
   - location: ~/.langflow/data/database.db  (Langflow Desktop)
@@ -221,6 +221,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Langflow
+  velociraptor_artifact: Custom.AIAgents.Langflow
 atlas_techniques: []
 attack_techniques: []
 references: []

@@ -1,0 +1,44 @@
+name: Custom.AIAgents.n8n
+description: |
+  Self-hostable workflow automation with native AI Agent / SQL Agent LangChain nodes and MCP support.
+
+  Generated from the AI agent artifact catalog (AIRT-0025). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.n8n\  (Docker: \home\node\.n8n)', 'C:\Users\*\.n8n\database.sqlite']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.n8n/  (Docker: /home/node/.n8n)', '/Users/*/.n8n/database.sqlite']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.n8n/  (Docker: /home/node/.n8n)', '/home/*/.n8n/database.sqlite']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

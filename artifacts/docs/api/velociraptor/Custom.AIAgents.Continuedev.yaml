@@ -1,0 +1,44 @@
+name: Custom.AIAgents.Continuedev
+description: |
+  VS Code / JetBrains extension with agent mode, custom models, and MCP support.
+
+  Generated from the AI agent artifact catalog (AIRT-0005). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.continue\config.yaml', 'C:\Users\*\.continue\config.json', 'C:\Users\*\.continue\config.ts', 'C:\Users\*\.continue\.env', 'C:\Users\*\.continue\auth.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.continue/config.yaml', '/Users/*/.continue/config.json', '/Users/*/.continue/config.ts', '/Users/*/.continue/.env', '/Users/*/.continue/auth.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.continue/config.yaml', '/home/*/.continue/config.json', '/home/*/.continue/config.ts', '/home/*/.continue/.env', '/home/*/.continue/auth.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

@@ -28,8 +28,8 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      CANONICAL env file, PLAINTEXT (confirms the VERIFICATION.md correction).
-      docker-compose bind-mounts it into the frontend container and passes it to the
+      Canonical env file, plaintext (confirms the VERIFICATION.md correction).
+      Docker-compose bind-mounts it into the frontend container and passes it to the
       backend as env_file. Contents: REWORKD_PLATFORM_OPENAI_API_KEY,
       REWORKD_PLATFORM_SERP_API_KEY, REWORKD_PLATFORM_REPLICATE_API_KEY,
       GOOGLE/GITHUB/DISCORD_CLIENT_SECRET, NEXTAUTH_SECRET, and the MySQL user, password
@@ -40,7 +40,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      SECOND FULL COPY of the same plaintext secrets. The setup CLI writes
+      Second full copy of the same plaintext secrets. The setup CLI writes
       byte-identical content to next/.env and platform/.env, and the FastAPI backend's
       pydantic Settings independently reads env_file ".env" from its own directory
       (env_prefix REWORKD_PLATFORM_). A collection step that takes only next/.env leaves
@@ -72,7 +72,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      CLIENT-SIDE, not on the server. The user's own OpenAI key entered in the Settings
+      Client-side, not on the server. The user's own OpenAI key entered in the Settings
       dialog (ModelSettings.customApiKey) is persisted by a zustand persist store into
       browser localStorage, and the store's partialize spreads the whole modelSettings
       object so the key is included. It therefore lives unencrypted in the browser
@@ -85,8 +85,8 @@ credentials:
     secret_type: oauth-token
     description: >-
       NextAuth Account table stores third-party provider refresh_token, access_token and
-      id_token in UNENCRYPTED TEXT columns for every user who signed in with Google,
-      GitHub or Discord. mysql:8.0 container named agentgpt_db, named docker volume
+      id_token in unencrypted text columns for every user who signed in with Google,
+      GitHub or Discord. Mysql:8.0 container named agentgpt_db, named docker volume
       agentgpt_db, MYSQL_TCP_PORT 3307 published on host 3308.
     confidence: high
   - location: 'REWORKD_PLATFORM_SECRET_SIGNING_KEY  (read from <install>/platform/.env)'

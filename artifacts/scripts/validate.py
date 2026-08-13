@@ -121,6 +121,35 @@ def main() -> int:
         elif rule_id:
             seen_rule_ids[rule_id] = name
 
+    # Note style. Four styles had accumulated across 363 captions - sentence
+    # case, ALL-CAPS, a shouted leading token, bare lowercase - with a terminal
+    # period on about half. They render in one table column and one CSV field,
+    # so the drift is visible to every reader. Gate it here rather than trusting
+    # the next author to match a convention nobody wrote down.
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from normalize_notes import clean, clean_prose, each_note
+    except ImportError:
+        clean = None
+    if clean:
+        drift = 0
+        for path in files:
+            doc = yaml.safe_load(Path(path).read_text())
+            for holder, key in each_note(doc):
+                before = holder.get(key) or ""
+                if clean(before) != before:
+                    if drift < 5:
+                        print(f"[NOTE]   {Path(path).name}: {before[:70]}")
+                    drift += 1
+            prose = doc.get("abuse_potential") or ""
+            if clean_prose(prose) != prose:
+                print(f"[NOTE]   {Path(path).name}: abuse_potential is off style")
+                drift += 1
+        if drift:
+            print(f"[NOTE]   {drift} note(s) are off style - run "
+                  f"scripts/normalize_notes.py")
+            failures += drift
+
     print(f"\n{len(files)} entries + {len(sigma_files)} sigma rules checked, "
           f"{failures} problem(s).")
     return 1 if failures else 0
