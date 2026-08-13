@@ -131,7 +131,19 @@ vendor documentation. `medium` means multiple independent third-party sources
 agree. `low` means single-source or inferred - and must carry `unverified: true`.
 
 The validator enforces this: a `confidence: high` entry cannot contain an
-unmarked low-confidence artifact.
+unmarked low-confidence row — in **any** class. Disk, registry, network, process
+and credential rows all accept `unverified: true` and are all checked. (The gate
+covered only disk artifacts until August 2026, and three of those classes could
+not even carry the flag, so the rule was unenforceable rather than merely
+unenforced.)
+
+It also rejects `capabilities.plaintext_credentials: true` alongside an empty
+`credentials:` block. Announcing that a tool stores plaintext secrets and then
+listing nowhere to look is worse than silence — it is the exact question the
+catalog exists to answer, left blank. If you genuinely cannot source a location,
+drop the capability claim rather than leaving the block empty; and remember that
+`storage: os-keyring` is a real answer, because "not on disk, look in the
+keychain" is what a responder needs to hear.
 
 ### 7. Validate before every commit
 

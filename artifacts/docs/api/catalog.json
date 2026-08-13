@@ -3277,6 +3277,7 @@
         "storage": "unknown",
         "secret_type": "aws-sso-token",
         "description": "Kiro authenticates via AWS identity. The exact cache path was not confirmed; check ~/.aws/sso/cache/ and the Kiro config root before asserting a location.",
+        "unverified": true,
         "confidence": "low"
       },
       {

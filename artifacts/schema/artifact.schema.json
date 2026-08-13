@@ -386,6 +386,10 @@
         "forensic_value": {
           "$ref": "#/$defs/forensicValue"
         },
+        "unverified": {
+          "type": "boolean",
+          "description": "Set true when the artifact is single-source or otherwise not independently corroborated. Required to carry a low-confidence artifact inside a high-confidence entry."
+        },
         "confidence": {
           "$ref": "#/$defs/confidence"
         }
@@ -468,6 +472,10 @@
         "persistence": {
           "type": "string"
         },
+        "unverified": {
+          "type": "boolean",
+          "description": "Set true when the artifact is single-source or otherwise not independently corroborated. Required to carry a low-confidence artifact inside a high-confidence entry."
+        },
         "confidence": {
           "$ref": "#/$defs/confidence"
         }
@@ -515,6 +523,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "unverified": {
+          "type": "boolean",
+          "description": "Set true when the artifact is single-source or otherwise not independently corroborated. Required to carry a low-confidence artifact inside a high-confidence entry."
         },
         "confidence": {
           "$ref": "#/$defs/confidence"

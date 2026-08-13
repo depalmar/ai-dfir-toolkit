@@ -66,13 +66,34 @@ def main() -> int:
         # Honesty gate: a low-confidence field must not sit inside a
         # high-confidence entry without being marked, because a catalog that
         # overstates certainty is worse than one with gaps.
+        #
+        # This used to check artifacts.disk only, which left registry, network,
+        # process and credential rows able to hide an unmarked low-confidence
+        # claim inside a high-confidence entry. Three of those classes could not
+        # even carry the flag until the schema declared it.
         if doc.get("confidence") == "high":
-            for artifact in doc.get("artifacts", {}).get("disk", []):
-                if artifact.get("confidence") == "low" and not artifact.get("unverified"):
-                    print(f"[TRUST]  {name}: entry confidence=high but artifact "
-                          f"{artifact.get('path')!r} is low and unmarked. Either "
-                          f"verify it, set unverified: true, or downgrade the entry.")
+            rows = [(a.get("path"), a) for a in doc.get("artifacts", {}).get("disk", [])]
+            rows += [(a.get("key"), a) for a in doc.get("artifacts", {}).get("registry", [])]
+            rows += [(a.get("indicator"), a) for a in doc.get("artifacts", {}).get("network", [])]
+            rows += [(a.get("name"), a) for a in doc.get("artifacts", {}).get("process", [])]
+            rows += [(c.get("location"), c) for c in doc.get("credentials", []) or []]
+            for locator, row in rows:
+                if row.get("confidence") == "low" and not row.get("unverified"):
+                    print(f"[TRUST]  {name}: entry confidence=high but {locator!r} "
+                          f"is low and unmarked. Either verify it, set "
+                          f"unverified: true, or downgrade the entry.")
                     failures += 1
+
+        # A tool documented as storing plaintext credentials, with no credential
+        # locations listed, tells a responder the secret exists and gives them
+        # nowhere to look. That is worse than saying nothing: it is the exact
+        # question the catalog exists to answer, left blank.
+        if (doc.get("capabilities") or {}).get("plaintext_credentials") is True \
+                and not (doc.get("credentials") or []):
+            print(f"[CREDS]  {name}: capabilities.plaintext_credentials is true but "
+                  f"credentials is empty. List where the secret lives, or drop the "
+                  f"capability claim.")
+            failures += 1
 
     # Sigma rules ship as detection content, so they get checked too - a rule
     # that does not parse is worse than no rule, because nobody notices.
