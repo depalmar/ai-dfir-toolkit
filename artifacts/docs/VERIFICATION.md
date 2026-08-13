@@ -128,3 +128,19 @@ The search index simply does not return it.
 should confirm a disappearance against a second source before recording it. The
 same caution applied to `AIRT-0022` produced the opposite result - there the
 absence was real, and the repository had been renamed.
+
+### Live-host check, same day
+
+`scripts/verify_host.py` was run on the Linux container this pass was done from,
+which has Claude Code installed. Two `AIRT-0001` paths confirmed present with
+their modes:
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0001` | `~/.claude/` | documented | **confirmed present, `drwxr-xr-x`** | Verified on Linux 6.18.5, 2026-08-13, via `scripts/verify_host.py`. Existence and mode only; no contents read. |
+| `AIRT-0001` | `~/.claude.json` | documented | **confirmed present, `-rw-------`** | Same run. Mode 0600 as a credential-bearing file should be, which is worth knowing: a wider mode on this file is itself a finding. |
+
+Everything else missed on this host, which means only that the tools are not
+installed here - `verify_host.py` cannot distinguish a wrong path from an absent
+tool and does not try. That distinction needs the tool installed and run at least
+once, because several of these paths are created lazily on first use.

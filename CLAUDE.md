@@ -29,6 +29,7 @@ python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
 python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
 python scripts/export_velociraptor.py         # Velociraptor artifacts (--check likewise)
 python scripts/normalize_notes.py             # note style (--check reports, writes nothing)
+python scripts/verify_host.py                 # check catalogued paths on THIS machine
 python ../collectors/gen_credential_targets.py     # collector targets, also CI-gated
 python scripts/build_site.py --check          # site data contract, writes nothing
 python scripts/build_site.py                  # regenerate docs/site (CI does this)
@@ -135,7 +136,13 @@ Avoid: `cat` on anything holding a token
 
 When a documented path and reality disagree, that is the interesting result.
 Record it in `docs/VERIFICATION.md` with the basis for the change, then update
-the entry and raise its confidence.
+the entry and raise its confidence, and set `last_verified` to the date you
+checked. `docs/HOST_VERIFICATION.md` is the runbook and `scripts/verify_host.py`
+does the sweep - it stats paths and never opens them, so it cannot leak a token.
+
+A MISS from that script is not evidence a path is wrong. It cannot tell a wrong
+path from an absent tool, and many of these paths are created lazily on first
+run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
@@ -148,7 +155,10 @@ directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
 Confidence: 28 high, 17 medium, 4 low.
 Provenance: 48/49 entries carry a reference - `validate.py` names the holdout
-(AIRT-0034 OpenAI Operator) on every run. 28/49 carry aliases.
+(AIRT-0034 OpenAI Operator) on every run. 28/49 carry aliases. 37/49 carry
+`last_verified`; the 12 without it are vendor-hosted entries that the first
+lifecycle sweep could not check through a repository API, and `validate.py`
+lists them as never verified rather than letting them look fresh.
 Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation
@@ -191,6 +201,7 @@ Three things worth not relearning:
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
 - `artifacts/docs/REVERIFICATION.md` — the quarterly re-verification checklist
+- `artifacts/docs/HOST_VERIFICATION.md` — how to verify paths on a real machine
 - `artifacts/docs/HANDOFF_REVIEW.md` — what was decided about the site design
   handoff, what was declined, and why
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when
