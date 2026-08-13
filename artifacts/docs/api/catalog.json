@@ -95,6 +95,24 @@
           "persistence": false,
           "confidence": "medium"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python) and CommandLine contains agent-framework-libraries",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -436,6 +454,24 @@
           "persistence": "None",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with aider / python",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -591,6 +627,24 @@
           "service_or_daemon": "No",
           "persistence": "None",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node (aws-lsp-codewhisperer-token-binary.js)) and CommandLine contains amazon-q-developer",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -748,6 +802,24 @@
           "description": "Points at the JSON file holding model endpoints and their API keys, so the variable locates the credential rather than being one",
           "forensic_value": "medium",
           "persistence": false,
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python) and CommandLine contains autogen",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -959,6 +1031,24 @@
           "description": "Cloud credential set persistently for the user",
           "forensic_value": "medium",
           "persistence": false,
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python) and CommandLine contains browser-use",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -1315,6 +1405,24 @@
           "service_or_daemon": "No",
           "persistence": "None (user-invoked)",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node.exe (claude)) and CommandLine contains claude-code",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -1855,6 +1963,24 @@
           "persistence": "LaunchAgent (login items)",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with Claude.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -2087,6 +2213,24 @@
           "persistence": "None",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node (extension host)) and CommandLine contains cline",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -2288,6 +2432,24 @@
           "service_or_daemon": "No",
           "persistence": "Run key (optional)",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with Windsurf.exe, language_server_windows_x64.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -2547,6 +2709,24 @@
           "persistence": false,
           "confidence": "medium"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node (extension host)) and CommandLine contains continue-dev",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -2770,6 +2950,24 @@
           "typical_children": "python, sh",
           "service_or_daemon": "No",
           "persistence": "None",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python / crewai) and CommandLine contains crewai",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -3051,6 +3249,24 @@
           "service_or_daemon": "No",
           "persistence": "Run key (optional)",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with Cursor.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -3473,6 +3689,24 @@
           "confidence": "low",
           "unverified": true
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with model-runner",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [],
@@ -3553,6 +3787,24 @@
           "typical_children": "node",
           "service_or_daemon": "Optional",
           "persistence": "pm2 / systemd / Docker",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node (flowise)) and CommandLine contains flowise",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -3836,6 +4088,24 @@
           "persistence": false,
           "confidence": "medium"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with copilot-language-server / node",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -4090,6 +4360,24 @@
           "persistence": "None",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with gemini / node",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -4285,6 +4573,24 @@
           "service_or_daemon": "No",
           "persistence": "None",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with goose / goosed",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -4563,6 +4869,24 @@
           "typical_children": "-",
           "service_or_daemon": "No",
           "persistence": "None",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with chat.exe / gpt4all.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -4927,6 +5251,24 @@
           "persistence": "Hooks and MCP config re-arm on workspace open",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with kiro (IDE); kiro (CLI)",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -5068,6 +5410,24 @@
           "typical_children": "-",
           "service_or_daemon": "No",
           "persistence": "None - PORTABLE SINGLE BINARY",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with koboldcpp.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -5360,6 +5720,24 @@
           "service_or_daemon": "Optional",
           "persistence": "Docker restart policy or systemd",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python (langflow run) / uvicorn) and CommandLine contains langflow",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -5719,6 +6097,24 @@
           "persistence": "User-created service = SUSPICIOUS",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with llama-server, llama-cli, llama-run",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [],
@@ -5911,6 +6307,24 @@
           "service_or_daemon": "llmster daemon",
           "persistence": "Run key (optional)",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with LM Studio.exe, llmster.exe, lms.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -6458,6 +6872,24 @@
           "persistence": "~/Library/LaunchAgents",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with ollama.exe, ollama app.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -6627,6 +7059,24 @@
           "description": "Provider credentials set persistently for the user",
           "forensic_value": "medium",
           "persistence": false,
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with interpreter / python",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]
@@ -7203,6 +7653,24 @@
           "persistence": false,
           "confidence": "medium"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with codex / node",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -7763,6 +8231,24 @@
           "persistence": "Persists via the MCP config of its host client",
           "confidence": "high"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (npx -> node (@playwright/mcp)) and CommandLine contains playwright-mcp",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -7906,6 +8392,24 @@
           "service_or_daemon": "No",
           "persistence": "None",
           "confidence": "high"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node (extension host)) and CommandLine contains roo-code",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
         }
       ]
     },
@@ -8446,6 +8950,24 @@
           "persistence": false,
           "confidence": "medium"
         }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with TabNine.exe / TabNine-deep-local.exe",
+          "description": "Proves the agent ran, which disk presence does not. The child processes of this event are what the agent actually did, and the parent tells you whether a human started it or something else did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
       ]
     },
     "credentials": [
@@ -8588,6 +9110,24 @@
           "typical_children": "python (extensions)",
           "service_or_daemon": "No",
           "persistence": "None",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (python (server.py), text-generation-webui.exe) and CommandLine contains text-generation-webui",
+          "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
           "confidence": "medium"
         }
       ]

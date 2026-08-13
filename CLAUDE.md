@@ -90,6 +90,12 @@ Vendor disclosure of an incident is not the same as vendor documentation of a
 path: an incident claim nobody else has corroborated is `medium`, whatever the
 vendor's reputation.
 
+**Every artifact class is a closed shape.** `artifacts.eventlog` shipped as
+`array of object` with no `$defs` behind it, which meant the first rows written
+would have set the convention by accident - the same way `artifact_type` reached
+52 ad-hoc values before it was locked down. `eventlogArtifact` is now defined
+like the other five. If you add a sixth class, define it before you populate it.
+
 **Controlled vocabularies.** `artifact_type`, `evidence_type`, `secret_type`,
 and `storage` are closed enums in `schema/artifact.schema.json`. They exist
 because the published CSV feed is meant to be filtered, and a field where `log`
@@ -146,7 +152,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-49 entries, 283 artifacts, 154 credential locations, 17 MCP config
+49 entries, 313 artifacts, 154 credential locations, 30 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
 Velociraptor artifacts. Validation clean.
 

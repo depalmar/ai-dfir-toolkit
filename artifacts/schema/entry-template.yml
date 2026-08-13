@@ -68,6 +68,24 @@ artifacts:
 # rejects that claim with an empty block. "This tool stores plaintext secrets"
 # with no location tells a responder the secret exists and gives them nowhere
 # to look. os-keyring is a finding too: it says stop looking on disk.
+  # Windows event log records. These prove the tool RAN; the disk rows only
+  # prove it is installed. Omit the block entirely if you cannot name a channel
+  # and an event ID.
+  eventlog:
+    - channel: Microsoft-Windows-Sysmon/Operational
+      event_id: "1"
+      selector: Image ends with example.exe
+      description: What this event proves that disk presence does not
+      requires: >-
+        What has to be switched on for the event to exist at all - Sysmon
+        deployed, or command line auditing enabled for Security 4688
+      evidence_type:
+        - execution
+        - timeline
+      os:
+        - windows
+      forensic_value: high
+      confidence: medium
 credentials:
   - location: ~/.example/auth.json
     os: [macos, linux]
