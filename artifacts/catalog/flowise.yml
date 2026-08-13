@@ -142,6 +142,16 @@ credentials:
       indicator the instance predates 3.0.1.
     confidence: medium
 mcp: []
+mcp:
+  - mechanism: "database"
+    indicator: "Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)"
+    config_key: "flow node config"
+    spawn_mechanism: "Child process or outbound connection when the flow executes"
+    secrets_location: "Held with the flow definition in the same database"
+    persistence_trigger: "Every flow or agentflow run that reaches the node"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "The Custom MCP node connects to any server the author names, so the flow definition is the authorisation record. In a container the database is on a mounted volume and is lost with the container if it never had one."
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -160,6 +170,12 @@ references:
     accessed: "2026-08-13"
   - title: "Flowise getting started"
     url: https://docs.flowiseai.com/getting-started
+    accessed: "2026-08-13"
+  - title: "Flowise docs - tools and MCP"
+    url: https://docs.flowiseai.com/tutorials/tools-and-mcp
+    accessed: "2026-08-13"
+  - title: "Flowise docs - databases"
+    url: https://docs.flowiseai.com/configuration/databases
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

@@ -130,6 +130,25 @@ credentials:
       Codespaces/Gitpod host has it in two places.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: "config-file"
+    config_path: "<repo>/.tabnine/mcp_servers.json"
+    config_key: "mcpServers"
+    spawn_mechanism: "Child process for a stdio server when the agent starts"
+    secrets_location: "env block (plaintext)"
+    persistence_trigger: "Every agent start - the vendor notes MCP changes need a CLI restart"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Project-scoped, so it travels with the repo. A project folder has to be open for the list to load, which means the file is only live for whoever opens that clone."
+  - mechanism: "config-file"
+    config_path: "~/.tabnine/mcp_servers.json"
+    config_key: "mcpServers"
+    spawn_mechanism: "Child process for a stdio server when the agent starts"
+    secrets_location: "env block (plaintext)"
+    persistence_trigger: "Every agent start"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Collect alongside the already-catalogued ~/.tabnine/agent/settings.json, which records whether the server is actually enabled. Tabnine also ships team-level MCP governance, so an enterprise policy may permit or deny entries this file names."
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -143,5 +162,11 @@ attack_techniques:
 references:
   - title: "Tabnine documentation"
     url: https://docs.tabnine.com/main
+    accessed: "2026-08-13"
+  - title: "Tabnine docs - understanding MCP servers"
+    url: https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup
+    accessed: "2026-08-13"
+  - title: "Tabnine docs - MCP governance"
+    url: https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance
     accessed: "2026-08-13"
 last_modified: "2026-08-11"

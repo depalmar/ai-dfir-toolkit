@@ -161,9 +161,15 @@ def main() -> int:
     # exists and gives them nowhere to look. The MCP config records what the agent
     # was authorised to execute, and under a rug-pull it is the only authoritative
     # record - so this is the exact question the catalog exists to answer, left
-    # blank. Reported rather than failed while the backlog is worked down; the
-    # credential version of this check is already a hard gate, and this should
-    # become one once the count reaches zero.
+    # blank. This was a report while the backlog of 25 was worked down. The count
+    # reached zero on 2026-08-13, so it is a hard gate now, on the same footing as
+    # the credential check - a report nobody has to act on drifts straight back up.
+    #
+    # Closing it is not always a matter of finding the path. Three of the 25 were
+    # claiming a capability the tool does not have: Ollama is an inference server
+    # that needs a bridge, Aider has open requests asking for MCP support, and the
+    # computer-use demo is a plain agent loop. Ask whether the tool hosts MCP at
+    # all before going looking for its config.
     no_mcp = []
     for path in files:
         doc = yaml.safe_load(Path(path).read_text())
@@ -172,9 +178,12 @@ def main() -> int:
             no_mcp.append(f"{doc.get('id')} {doc.get('name')}")
     if no_mcp:
         print(f"[MCP]    {len(no_mcp)} entr(ies) declare mcp_capable with no MCP "
-              f"location. Either record where the config lives, or drop the claim:")
+              f"location. Either record where the config lives, or drop the claim. "
+              f"mechanism has five values - a tool with no config file is "
+              f"in-code, server, database or cloud, not an empty block:")
         for m in no_mcp:
             print(f"[MCP]      {m}")
+        failures += len(no_mcp)
 
     # Data source coverage. Every row class, every Sigma logsource category and
     # every event log channel in the corpus has to map to a defined telemetry

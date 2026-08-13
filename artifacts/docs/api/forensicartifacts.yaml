@@ -288,6 +288,7 @@ supported_os:
 - Linux
 urls:
 - https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool
+- https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo
 ---
 name: ClaudeDesktopMcpHostArtifacts
 doc: Claude Desktop (MCP host) (AIRT-0011) - Desktop chat client that launches arbitrary
@@ -562,6 +563,7 @@ supported_os:
 urls:
 - https://github.com/FlowiseAI/Flowise
 - https://docs.flowiseai.com/getting-started
+- https://docs.flowiseai.com/tutorials/tools-and-mcp
 ---
 name: GithubCopilotAgentModeCliArtifacts
 doc: GitHub Copilot (Agent Mode / CLI) (AIRT-0003) - copilot-language-server binary
@@ -1253,6 +1255,8 @@ supported_os:
 - Windows
 urls:
 - https://github.com/Skyvern-AI/skyvern
+- https://docs.skyvern.com/integrations/mcp
+- https://github.com/Skyvern-AI/skyvern/tree/main/integrations/mcp
 ---
 name: SupermavenArtifacts
 doc: Supermaven (AIRT-0010) - Low-latency completion agent with very large context
@@ -1294,13 +1298,32 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/TabNine/.refresh_token_v2'
+    - '%%users.homedir%%/.tabnine/mcp_servers.json'
     separator: /
   supported_os:
   - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.tabnine/mcp_servers.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.tabnine/mcp_servers.json'
+    separator: \
+  supported_os:
+  - Windows
 supported_os:
+- Darwin
 - Linux
+- Windows
 urls:
 - https://docs.tabnine.com/main
+- https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup
+- https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance
 ---
 name: VllmArtifacts
 doc: vLLM (AIRT-0045) - High-throughput inference and serving engine for LLMs. `vllm

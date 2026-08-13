@@ -991,7 +991,20 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "MCP integrations connected in the AutoGPT Platform UI and persisted in the platform's own store, not in a file beside the agent",
+        "config_key": "integrations",
+        "spawn_mechanism": "Outbound connection made by the platform backend when a block runs",
+        "secrets_location": "OAuth grants held in the platform's integrations store",
+        "persistence_trigger": "Every graph run that reaches the block",
+        "triage_priority": "p2",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "This belongs to the Platform rather than to the classic self-prompting loop this entry was first written for, so a host running only the old agent has none of it"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -1008,6 +1021,11 @@
       {
         "title": "Significant-Gravitas/AutoGPT",
         "url": "https://github.com/Significant-Gravitas/AutoGPT",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Significant-Gravitas/AutoGPT - platform releases",
+        "url": "https://github.com/Significant-Gravitas/AutoGPT/releases",
         "accessed": "2026-08-13"
       }
     ],
@@ -1684,7 +1702,7 @@
       "local_code_execution": true,
       "local_listener": true,
       "plaintext_credentials": true,
-      "mcp_capable": true
+      "mcp_capable": false
     },
     "risk": "high",
     "confidence": "high",
@@ -1799,6 +1817,11 @@
       {
         "title": "Computer use tool - Claude Platform Docs",
         "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "anthropics/anthropic-quickstarts - computer-use-demo",
+        "url": "https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo",
         "accessed": "2026-08-13"
       }
     ],
@@ -4015,7 +4038,19 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)",
+        "config_key": "flow node config",
+        "spawn_mechanism": "Child process or outbound connection when the flow executes",
+        "secrets_location": "Held with the flow definition in the same database",
+        "persistence_trigger": "Every flow or agentflow run that reaches the node",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "The Custom MCP node connects to any server the author names, so the flow definition is the authorisation record. In a container the database is on a mounted volume and is lost with the container if it never had one."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -4040,6 +4075,16 @@
       {
         "title": "Flowise getting started",
         "url": "https://docs.flowiseai.com/getting-started",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Flowise docs - tools and MCP",
+        "url": "https://docs.flowiseai.com/tutorials/tools-and-mcp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Flowise docs - databases",
+        "url": "https://docs.flowiseai.com/configuration/databases",
         "accessed": "2026-08-13"
       }
     ],
@@ -6645,7 +6690,30 @@
       ]
     },
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "<models path>/<model>.yaml",
+        "config_key": "mcp",
+        "spawn_mechanism": "LocalAI connects to the configured servers and executes tool calls server-side, then re-runs inference with the results",
+        "secrets_location": "The model YAML itself, alongside the rest of the model definition",
+        "persistence_trigger": "Every inference request against that model",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Unusual placement worth knowing: the server list lives inside a model definition rather than in one MCP config, so every model YAML in the models directory has to be read. The agent loop is bounded by agent.max_iterations, default 10."
+      },
+      {
+        "mechanism": "server",
+        "indicator": "Client-side MCP in the LocalAI WebUI - the browser connects to the MCP server directly, so the connection never appears in LocalAI's own process tree",
+        "spawn_mechanism": "Opened by the browser, not by the LocalAI backend",
+        "secrets_location": "Browser-side, not in the model YAML",
+        "persistence_trigger": "Every WebUI session that uses it",
+        "triage_priority": "p2",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Runs alongside the server-side path rather than replacing it, so host telemetry showing no MCP child process does not mean no MCP was used"
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -6665,6 +6733,11 @@
       {
         "title": "mudler/LocalAI",
         "url": "https://github.com/mudler/LocalAI",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "LocalAI docs - Model Context Protocol",
+        "url": "https://localai.io/features/mcp/",
         "accessed": "2026-08-13"
       }
     ],
@@ -9035,7 +9108,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "server",
+        "indicator": "python -m skyvern run mcp in a process tree, and a skyvern entry inside another tool's MCP config",
+        "config_key": "mcpServers entry in the client's config",
+        "spawn_mechanism": "Started over stdio by whichever MCP client lists it",
+        "secrets_location": "SKYVERN_API_KEY and SKYVERN_BASE_URL in the client's env block",
+        "persistence_trigger": "Every start of the client that lists it",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Grants browser control to the client that loads it, and SKYVERN_BASE_URL decides whether that drives a local server or Skyvern Cloud - which changes where the browsing evidence lives"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -9054,6 +9139,16 @@
       {
         "title": "Skyvern-AI/skyvern",
         "url": "https://github.com/Skyvern-AI/skyvern",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Skyvern docs - MCP server",
+        "url": "https://docs.skyvern.com/integrations/mcp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Skyvern-AI/skyvern - integrations/mcp",
+        "url": "https://github.com/Skyvern-AI/skyvern/tree/main/integrations/mcp",
         "accessed": "2026-08-13"
       }
     ],
@@ -9335,7 +9430,30 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "<repo>/.tabnine/mcp_servers.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process for a stdio server when the agent starts",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every agent start - the vendor notes MCP changes need a CLI restart",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Project-scoped, so it travels with the repo. A project folder has to be open for the list to load, which means the file is only live for whoever opens that clone."
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.tabnine/mcp_servers.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process for a stdio server when the agent starts",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every agent start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Collect alongside the already-catalogued ~/.tabnine/agent/settings.json, which records whether the server is actually enabled. Tabnine also ships team-level MCP governance, so an enterprise policy may permit or deny entries this file names."
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -9353,6 +9471,16 @@
       {
         "title": "Tabnine documentation",
         "url": "https://docs.tabnine.com/main",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Tabnine docs - understanding MCP servers",
+        "url": "https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Tabnine docs - MCP governance",
+        "url": "https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance",
         "accessed": "2026-08-13"
       }
     ],

@@ -46,6 +46,17 @@ credentials:
     description: OPENAI_API_KEY plaintext
     confidence: medium
 mcp: []
+mcp:
+  - mechanism: "database"
+    indicator: "MCP integrations connected in the AutoGPT Platform UI and persisted in the platform's own store, not in a file beside the agent"
+    config_key: "integrations"
+    spawn_mechanism: "Outbound connection made by the platform backend when a block runs"
+    secrets_location: "OAuth grants held in the platform's integrations store"
+    persistence_trigger: "Every graph run that reaches the block"
+    triage_priority: "p2"
+    confidence: "medium"
+    unverified: true
+    notes: "This belongs to the Platform rather than to the classic self-prompting loop this entry was first written for, so a host running only the old agent has none of it"
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -58,6 +69,9 @@ attack_techniques:
 references:
   - title: "Significant-Gravitas/AutoGPT"
     url: https://github.com/Significant-Gravitas/AutoGPT
+    accessed: "2026-08-13"
+  - title: "Significant-Gravitas/AutoGPT - platform releases"
+    url: https://github.com/Significant-Gravitas/AutoGPT/releases
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"
