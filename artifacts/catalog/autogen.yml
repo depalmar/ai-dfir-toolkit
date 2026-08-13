@@ -8,7 +8,7 @@ name: AutoGen
 vendor: Microsoft (OSS)
 status: legacy
 category: agent-framework
-description: Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no new features, superseded by Microsoft Agent Framework.
+description: Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode since October 2025 - bug and security fixes only, community managed, last feature release September 2025. Microsoft Agent Framework is the successor (1.0 GA April 2026). The original authors forked the project as AG2 and control the original PyPI packages, so what `pip install` puts on disk may not be Microsoft's AutoGen - check the installed distribution, not the import name.
 supported_os:
   - windows
   - macos

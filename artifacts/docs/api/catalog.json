@@ -632,7 +632,7 @@
     "vendor": "Microsoft (OSS)",
     "status": "legacy",
     "category": "agent-framework",
-    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no new features, superseded by Microsoft Agent Framework.",
+    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode since October 2025 - bug and security fixes only, community managed, last feature release September 2025. Microsoft Agent Framework is the successor (1.0 GA April 2026). The original authors forked the project as AG2 and control the original PyPI packages, so what `pip install` puts on disk may not be Microsoft's AutoGen - check the installed distribution, not the import name.",
     "supported_os": [
       "windows",
       "macos",
@@ -6305,11 +6305,12 @@
     "name": "Open Interpreter",
     "aliases": [
       "open-interpreter",
+      "openinterpreter",
       "interpreter"
     ],
     "vendor": "Open Interpreter (OSS)",
     "category": "code-execution-agent",
-    "description": "Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).",
+    "description": "Natural-language to executed code on the host. Supports --local via llamafile (no API key needed). Everything below is the classic Python build (pip install open-interpreter). A Rust successor, also called Open Interpreter, now lives at openinterpreter/openinterpreter and is built on Codex; its artifact locations have not been verified and are not recorded here, so a host running the Rust build will not match these paths.",
     "supported_os": [
       "windows",
       "macos",
@@ -8218,11 +8219,13 @@
     "name": "text-generation-webui (oobabooga)",
     "aliases": [
       "oobabooga",
+      "textgen",
+      "TextGen",
       "text-generation-webui"
     ],
     "vendor": "oobabooga (OSS)",
     "category": "llm-runtime",
-    "description": "Gradio web UI for local models with an extension system.",
+    "description": "Gradio UI for local models with an extension system. Renamed to TextGen in 2026 and now ships a native Electron desktop app alongside the browser UI (v4.7.3, 2026-05-03); the repository moved to oobabooga/textgen and the old URL redirects. The paths below were catalogued against the web UI - the desktop build may add Electron app-data locations that are not recorded here.",
     "supported_os": [
       "windows",
       "macos",
@@ -8339,7 +8342,7 @@
     "references": [
       {
         "title": "oobabooga/text-generation-webui",
-        "url": "https://github.com/oobabooga/text-generation-webui",
+        "url": "https://github.com/oobabooga/textgen",
         "accessed": "2026-08-13"
       }
     ],

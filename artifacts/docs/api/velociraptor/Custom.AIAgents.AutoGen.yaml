@@ -1,6 +1,6 @@
 name: Custom.AIAgents.AutoGen
 description: |
-  Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no n
+  Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode since October 2025 - bug and securit
 
   Generated from the AI agent artifact catalog (AIRT-0027). Every glob below is
   derived from a location the catalog has already verified.

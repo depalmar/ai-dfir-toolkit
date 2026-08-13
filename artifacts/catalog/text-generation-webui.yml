@@ -7,10 +7,12 @@ id: AIRT-0022
 name: text-generation-webui (oobabooga)
 aliases:
   - oobabooga
+  - textgen
+  - TextGen
   - text-generation-webui
 vendor: oobabooga (OSS)
 category: llm-runtime
-description: Gradio web UI for local models with an extension system.
+description: Gradio UI for local models with an extension system. Renamed to TextGen in 2026 and now ships a native Electron desktop app alongside the browser UI (v4.7.3, 2026-05-03); the repository moved to oobabooga/textgen and the old URL redirects. The paths below were catalogued against the web UI - the desktop build may add Electron app-data locations that are not recorded here.
 supported_os:
   - windows
   - macos
@@ -100,6 +102,6 @@ attack_techniques:
   - T1590
 references:
   - title: "oobabooga/text-generation-webui"
-    url: https://github.com/oobabooga/text-generation-webui
+    url: https://github.com/oobabooga/textgen
     accessed: "2026-08-13"
 last_modified: "2026-08-11"

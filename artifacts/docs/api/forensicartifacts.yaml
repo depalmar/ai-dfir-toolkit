@@ -113,8 +113,12 @@ urls:
 ---
 name: AutogenArtifacts
 doc: AutoGen (AIRT-0027) - Multi-agent conversation framework with LocalCommandLineCodeExecutor
-  and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed,
-  no new features, superseded by Microsoft Agent Framework.
+  and DockerCommandLineCodeExecutor. In maintenance mode since October 2025 - bug
+  and security fixes only, community managed, last feature release September 2025.
+  Microsoft Agent Framework is the successor (1.0 GA April 2026). The original authors
+  forked the project as AG2 and control the original PyPI packages, so what `pip install`
+  puts on disk may not be Microsoft's AutoGen - check the installed distribution,
+  not the import name.
 sources:
 - type: FILE
   attributes:
@@ -965,7 +969,11 @@ urls:
 ---
 name: OpenInterpreterArtifacts
 doc: Open Interpreter (AIRT-0015) - Natural-language to executed code on the host.
-  Supports --local via llamafile (no API key needed).
+  Supports --local via llamafile (no API key needed). Everything below is the classic
+  Python build (pip install open-interpreter). A Rust successor, also called Open
+  Interpreter, now lives at openinterpreter/openinterpreter and is built on Codex;
+  its artifact locations have not been verified and are not recorded here, so a host
+  running the Rust build will not match these paths.
 sources:
 - type: FILE
   attributes:
