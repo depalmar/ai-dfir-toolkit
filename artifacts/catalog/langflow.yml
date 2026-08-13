@@ -239,6 +239,25 @@ credentials:
       and users.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: "database"
+    indicator: "MCP server registrations added in Settings - MCP Servers, persisted in langflow.db under ~/.langflow/"
+    config_key: "mcp servers"
+    spawn_mechanism: "Child process for a stdio server, or an outbound HTTP/SSE connection"
+    secrets_location: "OAuth credentials encrypted in the Langflow database, alongside the flow credentials already catalogued there"
+    persistence_trigger: "Every flow run that reaches the component"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Collecting langflow.db answers both which servers were reachable and which credentials they held"
+  - mechanism: "server"
+    indicator: "Langflow projects published as MCP tools - each project is added to Langflow's own MCP server automatically on creation"
+    config_key: "project MCP tool exposure"
+    spawn_mechanism: "Served over streamable HTTP or SSE to any client that connects"
+    secrets_location: "Whatever the exposed flows themselves hold"
+    persistence_trigger: "Continuous while Langflow is running"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Exposure is opt-out rather than opt-in: creating a project publishes its flows as tools, so the tool surface grows without anyone configuring it"
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -249,6 +268,12 @@ attack_techniques: []
 references:
   - title: "langflow-ai/langflow"
     url: https://github.com/langflow-ai/langflow
+    accessed: "2026-08-13"
+  - title: "Langflow docs - use Langflow as an MCP client"
+    url: https://docs.langflow.org/mcp-client
+    accessed: "2026-08-13"
+  - title: "Langflow docs - use Langflow as an MCP server"
+    url: https://docs.langflow.org/mcp-server
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

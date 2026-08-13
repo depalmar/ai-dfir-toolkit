@@ -167,6 +167,26 @@ credentials:
       This is exactly what CVE-2026-70491 exposed to non-admin users.
     confidence: high
 
+mcp:
+  - mechanism: database
+    indicator: Tool server registrations in webui.db - added per user in Settings or globally in Admin Settings
+    config_key: tool servers
+    spawn_mechanism: HTTP call to the proxy, not a child process - Open WebUI reaches MCP through mcpo rather than speaking it directly
+    secrets_location: Tool server auth in webui.db; the MCP servers' own secrets sit in the mcpo config
+    persistence_trigger: Every chat that invokes the tool
+    triage_priority: p1
+    confidence: medium
+    notes: Registration is per user as well as global, so an admin view of the tool list is not the whole list
+  - mechanism: config-file
+    config_path: <mcpo config> (Claude Desktop format, path set at mcpo launch)
+    config_key: mcpServers
+    spawn_mechanism: mcpo spawns each MCP server over stdio and republishes it as REST
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every mcpo start, and on hot reload
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: Separate process from Open WebUI, frequently a separate container - collecting the Open WebUI volume alone misses it entirely
 collection:
   triage_priority: p1
   guidance: >-
@@ -201,5 +221,11 @@ references:
   - title: CVE-2025-64496 - Direct Connections account takeover to RCE (Cato CTRL)
     url: https://www.catonetworks.com/blog/cato-ctrl-vulnerability-discovered-open-webui-cve-2025-64496/
     accessed: '2026-08-11'
+  - title: "Open WebUI docs - MCP support"
+    url: https://docs.openwebui.com/features/extensibility/mcp/
+    accessed: "2026-08-13"
+  - title: "open-webui/mcpo - MCP-to-OpenAPI proxy"
+    url: https://github.com/open-webui/mcpo
+    accessed: "2026-08-13"
 
 last_modified: '2026-08-11'

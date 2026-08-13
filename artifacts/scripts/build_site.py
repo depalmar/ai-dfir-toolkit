@@ -201,17 +201,22 @@ def build_rows(entries):
                 "retention": "",
             })
         for m in (e.get("mcp") or []):
-            loc = m.get("config_path", "")
-            if m.get("config_key"):
+            # Only a config-file row has a path. A database, in-code, server or
+            # cloud row carries an indicator instead - what to grep for or ask
+            # for - and reading config_path alone gave those rows a locator of
+            # " -> mcpServers", which is an arrow pointing at nothing.
+            loc = m.get("config_path") or m.get("indicator") or ""
+            if m.get("config_key") and m.get("config_path"):
                 loc += " → " + str(m["config_key"])
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "mcp-config",
                 "artifact": loc,
                 "os": entry_os,
                 "forensic_value": "high",
-                "confidence": "high",
+                "confidence": m.get("confidence", "high"),
                 "evidence": ["execution", "persistence"],
-                "unverified": False,
+                "unverified": bool(m.get("unverified")),
+                "mechanism": m.get("mechanism", ""),
                 "description": m.get("notes", ""),
                 "vol": data_sources.volatility_of("mcp-config", m),
                 "retention": "",
@@ -894,15 +899,28 @@ const TOOLMAP=Object.fromEntries(TOOLS.map(t=>[t.entry_id,t]));
 const ROWMAP=Object.fromEntries(ROWS.map(r=>[r.anchor,r]));
 const SRCMAP=Object.fromEntries(SOURCES.map(s=>[s.id,s]));
 const VOL_ORDER=Object.fromEntries(VOL_TIERS.map((v,i)=>[v,i]));
+// What each MCP mechanism means for collection. Written out rather than left as
+// a bare enum value, because 'cloud' has to read as "stop looking on this disk"
+// and 'in-code' as "there is no config file to find - read the source".
+const MECH_MEANING={
+  'config-file':'A file on disk listing the servers. Collect it directly.',
+  'database':"Registered through the tool's own UI or API and persisted to its database. The collection step is a query, not a file copy, and the database is usually a container volume.",
+  'in-code':'Instantiated by a script. There is no config file to collect - the server list is a literal in the source, so read the source and its history.',
+  'server':"This tool IS an MCP server, so it has no config of its own. The finding is the client config that names it - go and find that.",
+  'cloud':'Configured tenant-side. Nothing on the endpoint answers this; the record comes from the account.',
+};
 // class -> the sources that make it visible, so a row can name its own
 // dependencies without the catalog carrying a second copy of the mapping.
 const SOURCES_FOR=(()=>{const m={};
   for(const s of SOURCES)for(const c of s.covers.classes||[])(m[c]=m[c]||[]).push(s.id);
   return m})();
-const GROUPS={cls:'Artifact class',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
-const FIELD={cls:r=>[r.cls],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
+const GROUPS={cls:'Artifact class',mech:'MCP mechanism',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
+const FIELD={cls:r=>[r.cls],mech:r=>[r.mechanism],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
 const OPTIONS={
   cls:[...new Set(ROWS.map(r=>r.cls))].sort(),
+  // How the servers are defined, which decides what collection even means:
+  // copy a file, query a database, read source, or ask the tenant.
+  mech:['config-file','database','in-code','server','cloud'],
   // Collection order, not alphabetical: this facet is the one place the page
   // states which rows stop existing first.
   vol:VOL_TIERS,
@@ -928,7 +946,7 @@ const ROPTIONS={
 
 let view='catalog', query='', unvOnly=false, dense=false,
     sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
-const filters={cls:[],vol:[],os:[],fv:[],conf:[],tool:[]};
+const filters={cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
 const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
 // 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
 // into this repo. Read the old key once so anyone who saved picks under it
@@ -1223,7 +1241,9 @@ function drawerHTML(r){
     <div class="dsec"><h4>What it proves</h4>
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
       ${r.description?`<p>${esc(r.description)}</p>`:''}
-      ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}</div>
+      ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}
+      ${r.mechanism?`<div class="requires"><b>How it is defined.</b> ${
+        esc(MECH_MEANING[r.mechanism]||r.mechanism)}</div>`:''}</div>
     <div class="dsec"><h4>Tool context</h4>
       <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
         :'never verified against a host or a current release'}</div>

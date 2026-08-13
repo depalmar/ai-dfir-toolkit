@@ -221,7 +221,8 @@ credentials:
       existing sessions.
     confidence: high
 mcp:
-  - config_path: ~/.openhands/config.toml
+  - mechanism: config-file
+    config_path: ~/.openhands/config.toml
     config_key: "[mcp] section"
     spawn_mechanism: Child process at agent start
     secrets_location: config.toml plaintext

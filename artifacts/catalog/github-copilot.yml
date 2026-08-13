@@ -240,7 +240,8 @@ credentials:
       %LOCALAPPDATA%\github-copilot\ directory.
     confidence: medium
 mcp:
-  - config_path: "~/.copilot/mcp-config.json"
+  - mechanism: config-file
+    config_path: "~/.copilot/mcp-config.json"
     config_key: mcpServers
     spawn_mechanism: Child process at CLI start
     secrets_location: env block
@@ -250,7 +251,8 @@ mcp:
       Copilot CLI, read natively by the agent host. COPILOT_HOME relocates the
       whole directory, so a responder checking only the default path misses a
       moved config - read the environment before concluding there is none.
-  - config_path: "<repo>/.mcp.json"
+  - mechanism: config-file
+    config_path: "<repo>/.mcp.json"
     config_key: mcpServers
     spawn_mechanism: Child process at CLI start in the workspace
     secrets_location: env block

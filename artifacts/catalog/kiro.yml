@@ -186,7 +186,8 @@ credentials:
     confidence: high
 
 mcp:
-  - config_path: ~/.kiro/settings/mcp.json
+  - mechanism: config-file
+    config_path: ~/.kiro/settings/mcp.json
     config_key: mcpServers
     spawn_mechanism: stdio child process; hot-reloaded by file watcher
     secrets_location: env block (explicit approval required for expansion)
@@ -197,7 +198,8 @@ mcp:
       confirmation - read it first. Hot-reload means a tampered config applies at
       the next idle boundary with no restart, so file mtime is the change signal,
       not process start time.
-  - config_path: <repo>/.kiro/settings/mcp.json
+  - mechanism: config-file
+    config_path: <repo>/.kiro/settings/mcp.json
     config_key: mcpServers
     spawn_mechanism: stdio child process; hot-reloaded by file watcher
     secrets_location: env block

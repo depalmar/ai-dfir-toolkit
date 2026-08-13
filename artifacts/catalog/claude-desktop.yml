@@ -211,35 +211,40 @@ credentials:
       specific file.
     confidence: medium
 mcp:
-  - config_path: "%APPDATA%\\Claude\\claude_desktop_config.json"
+  - mechanism: config-file
+    config_path: "%APPDATA%\\Claude\\claude_desktop_config.json"
     config_key: "mcpServers.<name>.command + .args"
     spawn_mechanism: Child process at app launch
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start (+ Run key)
     triage_priority: p1
     notes: Standard EXE-installer path
-  - config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
+  - mechanism: config-file
+    config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
     config_key: mcpServers
     spawn_mechanism: Child process at app launch
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start
     triage_priority: p1
     notes: "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
-  - config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
+  - mechanism: config-file
+    config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
     config_key: mcpServers
     spawn_mechanism: Child process at app launch
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start (LaunchAgent)
     triage_priority: p1
     notes: ""
-  - config_path: ~/.config/Claude/claude_desktop_config.json
+  - mechanism: config-file
+    config_path: ~/.config/Claude/claude_desktop_config.json
     config_key: mcpServers
     spawn_mechanism: Child process at app launch
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start
     triage_priority: p1
     notes: ""
-  - config_path: "*.mcpb / *.dxt bundle files"
+  - mechanism: config-file
+    config_path: "*.mcpb / *.dxt bundle files"
     config_key: manifest.json inside archive
     spawn_mechanism: Installed then spawned
     secrets_location: manifest user_config

@@ -17,7 +17,7 @@ capabilities:
   local_code_execution: true
   local_listener: true
   plaintext_credentials: true
-  mcp_capable: true
+  mcp_capable: false
 risk: high
 confidence: high
 abuse_potential: Chat history files (.aider.chat.history.md) are a source-code exfil goldmine. OAuth flow opens transient localhost listener 8484-8584.
@@ -181,6 +181,9 @@ attack_techniques:
 references:
   - title: "Aider-AI/aider"
     url: https://github.com/Aider-AI/aider
+    accessed: "2026-08-13"
+  - title: "Aider-AI/aider#4506 - request for native MCP support in the CLI"
+    url: https://github.com/Aider-AI/aider/issues/4506
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

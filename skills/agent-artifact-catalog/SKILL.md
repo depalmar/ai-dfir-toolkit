@@ -204,6 +204,29 @@ an unsourced claim about somebody's estate is a guess.
 
 ## MCP entries need extra care
 
+**Pick the mechanism before you look for a path.** `config-file` is only one of
+five, and reaching for it by default is what produced 25 entries claiming MCP
+capability with nowhere to look:
+
+- `config-file` - a file listing servers. Give `config_path`.
+- `database` - registered through the tool's own UI or API and persisted to its
+  database. Nearly every self-hosted workflow engine works this way. Give an
+  `indicator` naming the table or the node type to search for; the collection
+  step is a query against a container volume, not a file copy.
+- `in-code` - a literal in a script. Give the import or client class. There is no
+  artifact to collect, and saying so is the answer - the source file and its
+  history are the record of what the agent could reach.
+- `server` - the tool *is* an MCP server and has no config of its own. The
+  finding is whichever client config names it, so point the reader there.
+- `cloud` - configured tenant-side. Recording this stops somebody searching a
+  disk that was never going to hold it.
+
+Before filling any of them in, check the claim itself. Ollama and Aider both
+declared `mcp_capable: true` and neither is an MCP client; a request open on the
+vendor's own tracker asking for MCP support is stronger evidence of absence than
+a third-party blog claiming presence.
+
+
 An MCP config is simultaneously a persistence mechanism and an execution
 primitive - it launches a child process with inherited environment on every app
 start. When documenting one, always capture:

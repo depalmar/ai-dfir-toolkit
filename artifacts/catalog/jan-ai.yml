@@ -78,6 +78,17 @@ artifacts:
       confidence: medium
 credentials: []
 mcp: []
+mcp:
+  - mechanism: config-file
+    config_path: <Jan data dir>/mcp_config.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app start
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every app start
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: Claude Desktop format, and the vendor documents importing that file directly. The data directory root differs between the stable and beta builds, so resolve it from the install rather than assuming.
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -95,6 +106,9 @@ attack_techniques:
 references:
   - title: "janhq/jan"
     url: https://github.com/janhq/jan
+    accessed: "2026-08-13"
+  - title: "janhq/jan#4859 - Jan as an MCP client host"
+    url: https://github.com/janhq/jan/pull/4859
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

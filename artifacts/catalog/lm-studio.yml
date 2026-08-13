@@ -147,6 +147,26 @@ artifacts:
       confidence: medium
 credentials: []
 mcp: []
+mcp:
+  - mechanism: config-file
+    config_path: ~/.lmstudio/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app start, and on save - the file is hot reloaded
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every app start
+    triage_priority: p1
+    confidence: high
+    notes: Cursor's mcp.json notation. This is the documented path; see the row below before concluding it is absent.
+  - mechanism: config-file
+    config_path: ~/.cache/lm-studio/mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at app start
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every app start
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: Where the file actually was on macOS in an open vendor bug report, against a documented ~/.lmstudio. Check both before recording a miss.
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -170,6 +190,9 @@ references:
     accessed: "2026-08-13"
   - title: "lmstudio-ai/docs"
     url: https://github.com/lmstudio-ai/docs
+    accessed: "2026-08-13"
+  - title: "lmstudio-ai/lmstudio-bug-tracker#1371 - incorrect mcp.json location on macOS"
+    url: https://github.com/lmstudio-ai/lmstudio-bug-tracker/issues/1371
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

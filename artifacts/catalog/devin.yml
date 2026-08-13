@@ -59,6 +59,16 @@ artifacts:
       confidence: medium
 credentials: []
 mcp: []
+mcp:
+  - mechanism: cloud
+    indicator: Tenant-side configuration in the Devin web UI and API - not present on the endpoint
+    spawn_mechanism: Runs in Devin's cloud workspace, not on the user's host
+    secrets_location: Vendor-side, retrievable only through the account
+    persistence_trigger: Every session in the hosted workspace
+    triage_priority: p3
+    confidence: medium
+    unverified: true
+    notes: Recorded so a responder stops looking on disk. Everything that matters here comes from the account, under whatever preservation process applies to a third-party service.
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

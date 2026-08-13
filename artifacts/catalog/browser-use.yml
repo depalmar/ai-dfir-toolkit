@@ -140,6 +140,16 @@ credentials:
       with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: server
+    indicator: uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config
+    config_key: mcpServers entry in the client's config
+    spawn_mechanism: Started by whichever MCP client lists it, not by itself
+    secrets_location: env block in the client's config - the LLM API key is supplied there
+    persistence_trigger: Every start of the client that lists it
+    triage_priority: p1
+    confidence: medium
+    notes: Grants full browser control to whatever client loads it, so the question is which client's config names it - find that config rather than looking for one here
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -154,6 +164,9 @@ attack_techniques:
 references:
   - title: "browser-use/browser-use"
     url: https://github.com/browser-use/browser-use
+    accessed: "2026-08-13"
+  - title: "Browser Use docs - MCP server"
+    url: https://docs.browser-use.com/open-source/customize/integrations/mcp-server
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

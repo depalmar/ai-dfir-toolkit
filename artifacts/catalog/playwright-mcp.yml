@@ -138,6 +138,16 @@ credentials:
     description: Serialized cookies + localStorage = session hijack artifact
     confidence: high
 mcp: []
+mcp:
+  - mechanism: server
+    indicator: npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config
+    config_key: mcpServers entry in the client's config
+    spawn_mechanism: Started by whichever MCP client lists it
+    secrets_location: None of its own - it inherits the client's environment
+    persistence_trigger: Every start of the client that lists it
+    triage_priority: p1
+    confidence: high
+    notes: This entry is the server, not a host, so it has no config of its own. The finding is the client config that names it, and every client config in this catalog is worth checking for it.
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

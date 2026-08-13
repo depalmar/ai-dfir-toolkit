@@ -133,7 +133,8 @@ credentials:
     description: state.vscdb is a collectible SQLite artifact
     confidence: high
 mcp:
-  - config_path: …/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+  - mechanism: config-file
+    config_path: …/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
     config_key: mcpServers
     spawn_mechanism: Child process at IDE start
     secrets_location: env block (plaintext)

@@ -79,6 +79,16 @@ credentials:
       environment blocks.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: in-code
+    indicator: Import of langchain_mcp_adapters.client.MultiServerMCPClient, or the langchain-mcp-adapters dependency in requirements.txt / pyproject.toml / package.json
+    config_key: server dict passed to the client constructor
+    spawn_mechanism: Child process per stdio server when the script constructs the client
+    secrets_location: The script itself, or the environment it inherits
+    persistence_trigger: Every script run - there is no config file to disable, so removing the server means editing code
+    triage_priority: p2
+    confidence: high
+    notes: No config artifact exists. The server list is a literal in the source, so the source file and its version history are the record of what the agent could reach.
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -94,6 +104,9 @@ references:
     accessed: "2026-08-13"
   - title: "langchain-ai/langchain"
     url: https://github.com/langchain-ai/langchain
+    accessed: "2026-08-13"
+  - title: "langchain-ai/langchain-mcp-adapters"
+    url: https://github.com/langchain-ai/langchain-mcp-adapters
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

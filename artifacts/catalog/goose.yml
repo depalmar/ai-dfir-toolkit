@@ -138,7 +138,8 @@ credentials:
     description: GitHub Copilot token cache
     confidence: medium
 mcp:
-  - config_path: ~/.config/goose/config.yaml
+  - mechanism: config-file
+    config_path: ~/.config/goose/config.yaml
     config_key: extensions
     spawn_mechanism: Child process at agent start
     secrets_location: OS keyring (or secrets.yaml fallback)

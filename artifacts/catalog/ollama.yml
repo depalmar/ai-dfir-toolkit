@@ -17,7 +17,7 @@ capabilities:
   local_code_execution: true
   local_listener: true
   plaintext_credentials: null
-  mcp_capable: true
+  mcp_capable: false
 risk: critical
 confidence: high
 abuse_potential: "LLMjacking: ~175,000 exposed hosts across 130 countries observed by SentinelLABS+Censys (Jan 2026); ~50% tool-calling enabled. Free compute for offensive agentic tooling."
@@ -241,6 +241,9 @@ attack_techniques:
 references:
   - title: "ollama/ollama"
     url: https://github.com/ollama/ollama
+    accessed: "2026-08-13"
+  - title: "Ollama docs - API reference (no MCP client surface)"
+    url: https://github.com/ollama/ollama/blob/main/docs/api.md
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

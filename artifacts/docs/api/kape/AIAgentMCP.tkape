@@ -90,8 +90,32 @@ Targets:
         FileMask: 'mcp.json'
         Comment: 'AIRT-0041 | Kiro: mcpServers'
     -
+        Name: 'LM Studio: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0018 | LM Studio: mcpServers'
+    -
+        Name: 'LM Studio: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cache\lm-studio\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0018 | LM Studio: mcpServers'
+    -
+        Name: 'Open Interpreter: mcp'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.openinterpreter\'
+        FileMask: 'config.toml'
+        Comment: 'AIRT-0015 | Open Interpreter: mcp'
+    -
         Name: 'OpenAI Codex CLI: [mcp_servers.<name>] command + args, or url for HTTP servers'
         Category: AIAgents
         Path: 'C:\Users\%user%\.codex\'
         FileMask: 'config.toml'
         Comment: 'AIRT-0036 | OpenAI Codex CLI: [mcp_servers.<name>] command + args, or url for HTTP servers'
+    -
+        Name: 'Warp: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.warp_cli\'
+        FileMask: '.mcp.json'
+        Comment: 'AIRT-0046 | Warp: mcpServers'

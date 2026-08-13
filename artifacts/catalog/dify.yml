@@ -98,6 +98,17 @@ credentials:
       collected and handled together.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: "database"
+    indicator: "MCP servers added under Tools - MCP in the workspace, persisted in the Dify application database rather than in a file on the host"
+    config_key: "workspace tools"
+    spawn_mechanism: "Outbound HTTP to the server URL - Dify registers HTTP transport servers only, so there is no local child process"
+    secrets_location: "Server auth held with the workspace tool record"
+    persistence_trigger: "Every app run that invokes the tool"
+    triage_priority: "p1"
+    confidence: "medium"
+    unverified: true
+    notes: "No stdio transport means no spawned process to catch on the endpoint, and the whole record is inside the deployment's database"
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -115,6 +126,9 @@ references:
     accessed: "2026-08-13"
   - title: "langgenius/dify-docs"
     url: https://github.com/langgenius/dify-docs
+    accessed: "2026-08-13"
+  - title: "Dify docs - use MCP tools"
+    url: https://docs.dify.ai/en/cloud/use-dify/build/mcp
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

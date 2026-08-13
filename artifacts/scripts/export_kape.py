@@ -325,6 +325,10 @@ def main() -> int:
                 cred_rows.append((e["id"], full, f"{e['name']}: {c.get('description', 'credential store')}"))
         # themed: mcp configs (field is `config_path`; repo-relative paths cannot be templated)
         for m in e.get("mcp") or []:
+            # config-file rows only - the other four mechanisms have no path to
+            # collect. See export_forensicartifacts.py for the full reasoning.
+            if m.get("mechanism", "config-file") != "config-file":
+                continue
             raw = str(m.get("config_path", ""))
             if raw.startswith("<") or "<repo>" in raw:
                 stats["mcp_repo_relative"] += 1
