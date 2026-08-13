@@ -1,0 +1,258 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--f692a0d6-6f35-4d76-b33e-2dd80fb852df",
+  "name": "AI-DFIR: Coding Agent Session Forensics",
+  "description": "Investigate a potentially compromised or abused coding agent (Claude Code, Cursor, Copilot, Windsurf). Acquires session traces and agent configuration read-only, scores the traces for AI-orchestrated intrusion behaviour, and produces indicators. Implements the CoSAI AI Incident Response Framework v1.0 forensic-investigation guidance over the tool_calls / prompt / completion telemetry classes, and preserves evidence before any remediation so the EU AI Act Article 73 non-alteration duty is satisfied.",
+  "playbook_types": [
+    "investigation"
+  ],
+  "playbook_activities": [
+    "scan-system",
+    "analyze-collected-data",
+    "identify-indicators"
+  ],
+  "playbook_processing_summary": {
+    "if_logic": true,
+    "data_markings": true
+  },
+  "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+  "created": "2026-08-12T00:00:00.000Z",
+  "modified": "2026-08-12T00:00:00.000Z",
+  "valid_from": "2026-08-12T00:00:00.000Z",
+  "priority": 20,
+  "severity": 70,
+  "impact": 5,
+  "labels": [
+    "ai-dfir",
+    "coding-agent",
+    "claude-code",
+    "mcp",
+    "gtg-1002",
+    "cosai"
+  ],
+  "external_references": [
+    {
+      "name": "Anthropic - Disrupting the first reported AI-orchestrated cyber espionage campaign (GTG-1002)",
+      "source": "Anthropic, 13 November 2025",
+      "url": "https://www.anthropic.com/news/disrupting-AI-espionage"
+    },
+    {
+      "name": "CoSAI AI Incident Response Framework V1.0",
+      "source": "Coalition for Secure AI / OASIS Open, 18 November 2025",
+      "url": "https://www.coalitionforsecureai.org/wp-content/uploads/2026/03/AI-Incident-Response-1.pdf"
+    },
+    {
+      "name": "MITRE ATLAS AML.T0096 - AI Service API",
+      "source": "MITRE ATLAS",
+      "url": "https://atlas.mitre.org/techniques/AML.T0096"
+    }
+  ],
+  "markings": [
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9"
+  ],
+  "playbook_variables": {
+    "__case_id__": {
+      "type": "string",
+      "description": "Incident case identifier used for the evidence directory.",
+      "value": "IR-0000-000",
+      "external": true
+    },
+    "__suspect_host__": {
+      "type": "string",
+      "description": "Hostname of the endpoint running the coding agent.",
+      "value": "CHANGEME",
+      "external": true
+    },
+    "__project_dir__": {
+      "type": "string",
+      "description": "Repository or project directory to include for project-scoped artifacts.",
+      "value": "/path/to/project",
+      "external": true
+    },
+    "__evidence_root__": {
+      "type": "string",
+      "description": "Read-only-safe destination root for the case directory.",
+      "value": "/evidence/cases"
+    },
+    "__orchestration_score__": {
+      "type": "integer",
+      "description": "Composite score 0-100 returned by analyze_agent_traces.py.",
+      "value": "0"
+    }
+  },
+  "workflow_start": "start--99512de8-f59d-4570-baba-a8b4327e4670",
+  "workflow": {
+    "start--99512de8-f59d-4570-baba-a8b4327e4670": {
+      "type": "start",
+      "name": "Start - coding agent session forensics",
+      "on_completion": "action--2a8504df-2d98-4e38-bf36-ce276b999adf"
+    },
+    "action--2a8504df-2d98-4e38-bf36-ce276b999adf": {
+      "type": "action",
+      "name": "Freeze the agent without destroying state",
+      "description": "Do NOT re-run or continue the agent session: re-execution mutates session state and can re-trigger attacker-controlled tool calls. Suspend the agent process and leave files in place. EU AI Act Article 73 forbids altering the AI system before notifying competent authorities where the incident is reportable.",
+      "on_completion": "action--2d403848-b617-42b8-afc3-fbac409e1a88",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "targets": [
+        "linux-system--7ec75822-89b3-40ee-8cba-32bdbd5be497"
+      ],
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Suspend, do not kill, the agent process; do not clear terminal scrollback; do not delete the session directory.",
+          "command": "Suspend the coding agent process on __suspect_host__:value. Do not resume, re-run, or close the session. Record the process ID and the wall-clock time of suspension in the case notes.",
+          "playbook_activity": "scan-system"
+        }
+      ]
+    },
+    "action--2d403848-b617-42b8-afc3-fbac409e1a88": {
+      "type": "action",
+      "name": "Acquire agent artifacts read-only with chain of custody",
+      "description": "Runs the toolkit collector. Sources are opened read-only and copied with mtime preserved; every artifact is SHA-256 hashed into a manifest that records operator, host, UTC window and a self-hash of the collector. Secrets (.env, HF token) are recorded as hash+metadata only unless explicitly authorized.",
+      "on_success": "action--3ba8a310-bf4e-4e00-97e3-782b47ae584e",
+      "on_failure": "action--72533d4a-a0eb-4a1b-816a-d6df1a546176",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "targets": [
+        "linux-system--7ec75822-89b3-40ee-8cba-32bdbd5be497"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__project_dir__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Read-only acquisition of Claude Code JSONL, MCP configs, IDE agent rules and project-scoped artifacts.",
+          "command": "python3 collectors/collect_ai_artifacts.py --case-id __case_id__:value --project-dir __project_dir__:value --output __evidence_root__:value --operator \"$(id -un)\"",
+          "playbook_activity": "scan-system"
+        },
+        {
+          "type": "bash",
+          "description": "Verify the manifest hash matches its sidecar before analysis begins.",
+          "command": "sha256sum -c __evidence_root__:value/__case_id__:value/collection_manifest.sha256",
+          "playbook_activity": "scan-system"
+        }
+      ]
+    },
+    "action--3ba8a310-bf4e-4e00-97e3-782b47ae584e": {
+      "type": "action",
+      "name": "Score traces for AI-orchestrated intrusion behaviour",
+      "description": "Runs the behavioural analytic across the acquired session traces. Scores tempo, killchain phase progression, target breadth, autonomy ratio, exfiltration data-flow shape, and false-authorization role-play framing. Returns a composite 0-100 with ATLAS mappings and evidence excerpts keyed by session id.",
+      "on_completion": "if-condition--575d61f6-8a62-4da9-aa71-0a0c098b2f31",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "targets": [
+        "linux-system--7ec75822-89b3-40ee-8cba-32bdbd5be497"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__evidence_root__"
+      ],
+      "out_args": [
+        "__orchestration_score__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Emit machine-readable findings for SOAR/timeline handoff and a human-readable analyst report.",
+          "command": "python3 08-agentic-orchestration/analyze_agent_traces.py --case __evidence_root__:value/__case_id__:value --json __evidence_root__:value/__case_id__:value/findings.json --report __evidence_root__:value/__case_id__:value/orchestration_report.txt",
+          "playbook_activity": "analyze-collected-data"
+        }
+      ]
+    },
+    "if-condition--575d61f6-8a62-4da9-aa71-0a0c098b2f31": {
+      "type": "if-condition",
+      "name": "Composite score at or above the escalation threshold?",
+      "description": "A composite of 70 or greater is the HIGH verdict band: behaviour consistent with AI-orchestrated intrusion. Below that, findings are documented but the session is not escalated on the analytic alone - no single signal can escalate by itself, and authorized penetration-testing engagements legitimately score in the low band.",
+      "condition": "__orchestration_score__:value >= 70",
+      "on_true": "action--de8ca68a-5a6a-4132-90bd-2f1b79e4e151",
+      "on_false": "action--334dcd62-b619-4059-95d2-0be138d7ffc4"
+    },
+    "action--de8ca68a-5a6a-4132-90bd-2f1b79e4e151": {
+      "type": "action",
+      "name": "Extract indicators and escalate to incident response",
+      "description": "Pull the concrete indicators the analytic surfaced - targets touched, tool-invocation sequences, credential-access artifacts, exfiltration destinations - and hand off to IR with the preserved evidence directory.",
+      "on_completion": "end--f784240b-bd32-4490-8759-91d584958d9b",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "targets": [
+        "linux-system--7ec75822-89b3-40ee-8cba-32bdbd5be497"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Extract distinct targets and ATLAS techniques asserted by the analytic.",
+          "command": "python3 -c \"import json,sys; d=json.load(open(sys.argv[1])); f=d['findings'][0]; print('score', f['composite_score']); print('atlas', sorted({t for s in f['signals'].values() for t in s['atlas']})); print('targets', f['signals']['breadth']['detail'].get('top_targets'))\" __evidence_root__:value/__case_id__:value/findings.json",
+          "playbook_activity": "identify-indicators"
+        },
+        {
+          "type": "manual",
+          "description": "Escalate with preserved evidence.",
+          "command": "Open an IR ticket for __suspect_host__:value referencing case __case_id__:value. Attach findings.json, orchestration_report.txt and the collection manifest. Flag whether the incident is reportable under EU AI Act Article 73 and start the notification clock if so.",
+          "playbook_activity": "identify-indicators"
+        }
+      ]
+    },
+    "action--334dcd62-b619-4059-95d2-0be138d7ffc4": {
+      "type": "action",
+      "name": "Document below-threshold findings and close",
+      "description": "Record the score and per-signal breakdown so repeat low-band sessions can be baselined. Low scores are expected for legitimate engagements and bulk automation; retain for trend analysis rather than discarding.",
+      "on_completion": "end--f784240b-bd32-4490-8759-91d584958d9b",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Baseline entry.",
+          "command": "Append the composite score and signal breakdown for case __case_id__:value to the agent-behaviour baseline. Note any signal scoring above 50 in isolation as a tuning candidate.",
+          "playbook_activity": "identify-indicators"
+        }
+      ]
+    },
+    "action--72533d4a-a0eb-4a1b-816a-d6df1a546176": {
+      "type": "action",
+      "name": "Acquisition failure handling",
+      "description": "Collection failed or the manifest hash did not verify. Do not proceed to analysis on unverified evidence.",
+      "on_completion": "end--f784240b-bd32-4490-8759-91d584958d9b",
+      "agent": "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10",
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Preserve failure state.",
+          "command": "Record the collector stderr and the skipped-target list from the manifest. If artifacts were inaccessible due to permissions, escalate for privileged acquisition or image the host rather than retrying ad hoc.",
+          "playbook_activity": "identify-indicators"
+        }
+      ]
+    },
+    "end--f784240b-bd32-4490-8759-91d584958d9b": {
+      "type": "end",
+      "name": "End - coding agent session forensics"
+    }
+  },
+  "agent_definitions": {
+    "individual--d116d1c3-47fe-49e5-aade-9fc46c3faf10": {
+      "type": "individual",
+      "name": "DFIR analyst",
+      "description": "Responder executing acquisition and analysis with read-only credentials on the suspect host."
+    }
+  },
+  "target_definitions": {
+    "linux-system--7ec75822-89b3-40ee-8cba-32bdbd5be497": {
+      "type": "linux-system",
+      "name": "Suspect endpoint running the coding agent",
+      "description": "Endpoint hosting the coding agent session under investigation."
+    }
+  },
+  "data_marking_definitions": {
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9": {
+      "type": "marking-tlp",
+      "id": "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9",
+      "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+      "created": "2026-08-12T00:00:00.000Z",
+      "tlpv2_level": "TLP:CLEAR"
+    }
+  }
+}

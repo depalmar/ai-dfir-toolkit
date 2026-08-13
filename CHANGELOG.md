@@ -8,6 +8,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **`collectors/` — forensically-sound acquisition.** Cross-platform collector
+  driven by a declarative `targets.yaml`, plus read-only cloud pulls for Bedrock,
+  Azure OpenAI, Vertex and M365 Copilot. Sources are opened read-only and copied
+  with mtime preserved; every artifact is SHA-256 hashed into a manifest that
+  records operator, host, UTC window, and a self-hash of the collector.
+  `VALIDATION.md` records the non-alteration evidence and is explicit that atime
+  is outside the tool's control.
+- **`collectors/check_target_drift.py`** — `targets.yaml` is a second list of
+  artifact paths and the catalog is the first. Until the former is derived from
+  the latter, this fails when the catalog documents a plaintext credential that
+  no collector target covers, or that a target covers without marking it secret
+  (which would copy a live token whole into a case directory). It found 9 real
+  gaps on the first run, including `~/.codex/auth.json` and
+  `~/.gemini/oauth_creds.json` — both named in this repo's own Sigma and osquery
+  content. Credential coverage went from 0 of 23 to complete.
+- **`playbooks/` — three CACAO v2.0 response playbooks** (coding-agent session
+  forensics, MCP compromise containment, cloud LLM log triage) with a conformance
+  validator wired into CI. Each acquires evidence before any containment step.
+- **`08-agentic-orchestration/analyze_agent_traces.py`** — behavioural scoring
+  over agent traces, the primary detection for a class where every individual
+  tool call is legitimate.
+
 - **`08-agentic-orchestration/` — 3 rule files / 12 signatures.** The adversary
   using an agent as the operator (GTG-1002, Anthropic Nov 2025) and AI provider
   APIs abused as covert C2 (SesameOp, Microsoft DART Nov 2025). Different in kind

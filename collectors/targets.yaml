@@ -1,0 +1,454 @@
+# targets.yaml — AI forensic artifact registry for collect_ai_artifacts.py
+#
+# Single source of truth for WHERE AI/LLM evidence lives. The collector resolves only targets whose `os`
+# includes the running platform. Path tokens: `~` (home), `$APPDATA`/`$LOCALAPPDATA`/`$USERPROFILE`
+# (Windows), `$XDG_CONFIG_HOME`/`$XDG_DATA_HOME` (Linux). `scope: user` resolves against the operator's
+# home; `scope: project` resolves against each --project-dir passed to the collector.
+#
+# Fields per target:
+#   id          unique key
+#   name        human label
+#   repo_cat    originating detection category (01-07) or 'cross'
+#   cosai       CoSAI telemetry class(es) this artifact yields
+#   os          [macos, linux, windows]
+#   scope       user | project
+#   type        file | dir | glob
+#   sensitivity normal | secret   (secret => metadata+hash only unless --collect-secrets)
+#   large       true => under a big blob store; manifests/metadata only unless --collect-blobs
+#   paths       list of tokenized paths (globs allowed when type: glob)
+#   notes       investigator context
+
+version: 1
+
+targets:
+
+  # ---------------- Coding agents / IDE assistants ----------------
+  - id: claude_code_sessions
+    name: Claude Code session transcripts (JSONL)
+    repo_cat: "05"
+    cosai: [prompt_logs, model_output, tool_calls, trace_id]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.claude/projects/**/*.jsonl"
+      - "~/.claude/history.jsonl"
+    notes: "tool_use/tool_result blocks + prompts/completions; primary coding-agent evidence."
+
+  - id: claude_code_config
+    name: Claude Code settings / config
+    repo_cat: "05"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.claude/settings.json"
+      - "~/.claude.json"
+    notes: "MCP servers, permissions, hooks."
+
+  - id: cursor_mcp_user
+    name: Cursor MCP config (user)
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.cursor/mcp.json"
+
+  - id: cursor_project
+    name: Cursor project rules / MCP (.cursorrules, .cursor/mcp.json)
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - ".cursorrules"
+      - ".cursor/mcp.json"
+      - ".cursor/rules/**/*"
+    notes: "Rules-File-Backdoor lives here (see 05-*)."
+
+  - id: windsurf_config
+    name: Windsurf / Codeium config + rules
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.codeium/windsurf/**/*.json"
+      - "~/.windsurfrules"
+
+  - id: windsurf_project_rules
+    name: Windsurf project rules
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - ".windsurfrules"
+
+  - id: vscode_copilot_settings
+    name: VS Code settings (Copilot/MCP)
+    repo_cat: "05"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Code/User/settings.json"      # macos
+      - "~/.config/Code/User/settings.json"                          # linux
+      - "$APPDATA/Code/User/settings.json"                           # windows
+      - "~/.vscode/mcp.json"
+      - "$APPDATA/Code/User/mcp.json"
+
+  - id: mcp_json_generic
+    name: Generic project MCP manifest (.mcp.json)
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - ".mcp.json"
+
+  # ---------------- Desktop AI clients ----------------
+  - id: claude_desktop_config
+    name: Claude Desktop config (MCP servers)
+    repo_cat: "02"
+    cosai: [tool_calls]
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Claude/claude_desktop_config.json"   # macos
+      - "$APPDATA/Claude/claude_desktop_config.json"                        # windows
+      - "~/.config/Claude/claude_desktop_config.json"                       # linux
+
+  - id: claude_desktop_logs
+    name: Claude Desktop logs
+    repo_cat: "02"
+    cosai: [tool_calls, trace_id]
+    os: [macos, linux, windows]
+    scope: user
+    type: dir
+    sensitivity: normal
+    paths:
+      - "~/Library/Logs/Claude"          # macos
+      - "$APPDATA/Claude/logs"           # windows
+
+  - id: chatgpt_desktop
+    name: ChatGPT desktop app data
+    repo_cat: "05"
+    cosai: [prompt_logs, model_output]
+    os: [macos, windows]
+    scope: user
+    type: dir
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/com.openai.chat"   # macos
+      - "$APPDATA/OpenAI"                                 # windows
+
+  # ---------------- Local inference servers ----------------
+  - id: ollama_logs
+    name: Ollama server logs
+    repo_cat: "04"
+    cosai: [inference_activity]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.ollama/logs/*.log"
+      - "/usr/share/ollama/.ollama/logs/*.log"    # linux systemd service
+      - "$LOCALAPPDATA/Ollama/*.log"              # windows
+
+  - id: ollama_manifests
+    name: Ollama model manifests (pulled models)
+    repo_cat: "03"
+    cosai: [inference_activity]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.ollama/models/manifests/**/*"
+    notes: "Which models were pulled and from where; small JSON manifests (not blobs)."
+
+  - id: vllm_logs
+    name: vLLM logs
+    repo_cat: "04"
+    cosai: [inference_activity]
+    os: [linux, macos]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.vllm/**/*.log"
+    notes: "Also check journald/container logs for vllm serve."
+
+  - id: lmstudio
+    name: LM Studio app data / logs
+    repo_cat: "04"
+    cosai: [prompt_logs, inference_activity]
+    os: [macos, linux, windows]
+    scope: user
+    type: dir
+    sensitivity: normal
+    paths:
+      - "~/.lmstudio"
+      - "$USERPROFILE/.lmstudio"
+
+  - id: jan_app
+    name: Jan app data (threads/models)
+    repo_cat: "04"
+    cosai: [prompt_logs, model_output]
+    os: [macos, linux, windows]
+    scope: user
+    type: dir
+    sensitivity: normal
+    paths:
+      - "~/jan"
+      - "~/.jan"
+
+  - id: gpt4all
+    name: GPT4All chats / models
+    repo_cat: "04"
+    cosai: [prompt_logs, model_output]
+    os: [macos, linux, windows]
+    scope: user
+    type: dir
+    sensitivity: normal
+    paths:
+      - "~/.local/share/nomic.ai/GPT4All"
+      - "$APPDATA/nomic.ai/GPT4All"
+
+  # ---------------- Model / ML supply chain ----------------
+  - id: hf_cache
+    name: Hugging Face hub cache (metadata)
+    repo_cat: "03"
+    cosai: [inference_activity]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    large: true
+    paths:
+      - "~/.cache/huggingface/hub/**/*.json"
+      - "~/.cache/huggingface/hub/**/refs/**/*"
+    notes: "Provenance of downloaded models; blobs skipped unless --collect-blobs."
+
+  - id: hf_token
+    name: Hugging Face access token
+    repo_cat: "03"
+    cosai: []
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.cache/huggingface/token"
+      - "~/.huggingface/token"
+    notes: "SECRET - metadata+hash only unless --collect-secrets."
+
+  - id: mlflow_store
+    name: MLflow tracking store
+    repo_cat: "03"
+    cosai: [inference_activity]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "mlruns/**/*"
+      - "mlflow.db"
+    notes: "Keras Lambda / model-load provenance; see 03-*."
+
+  # ---------------- Vector / RAG stores ----------------
+  - id: chroma_store
+    name: Chroma vector store
+    repo_cat: "06"
+    cosai: [retrieved_docs, embeddings]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "chroma.sqlite3"
+      - "chroma/**/*"
+      - "~/.chroma/**/*"
+    notes: "Query/collection integrity; poisoning indicators (see 06-*)."
+
+  - id: qdrant_store
+    name: Qdrant storage
+    repo_cat: "06"
+    cosai: [retrieved_docs, embeddings]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    large: true
+    paths:
+      - "qdrant_storage/**/*"
+      - "~/.qdrant/**/*"
+
+  - id: faiss_index
+    name: FAISS index files
+    repo_cat: "06"
+    cosai: [embeddings]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "**/*.faiss"
+      - "**/*.index"
+
+  - id: lancedb
+    name: LanceDB store
+    repo_cat: "06"
+    cosai: [retrieved_docs, embeddings]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    large: true
+    paths:
+      - "**/*.lance/**/*"
+
+  # ---------------- Secrets / environment ----------------
+  - id: dotenv
+    name: Project .env (API keys / provider config)
+    repo_cat: "cross"
+    cosai: []
+    os: [macos, linux, windows]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - ".env"
+      - ".env.local"
+    notes: "SECRET - provider keys often here; metadata+hash only unless --collect-secrets."
+
+  # ---------------- Catalogued credential stores ----------------
+  # Derived from artifacts/docs/api/catalog.json - every location there with
+  # storage: plaintext that is a real filesystem path. Kept in sync by
+  # check_target_drift.py, which fails when the catalog documents a plaintext
+  # credential no target covers. All are sensitivity: secret, so they are
+  # recorded as metadata + hash and never copied unless --collect-secrets.
+  #
+  # These are the highest-value rows the collector acquires: for most of them the
+  # forensic question is "does this exist, and what mode is it" - a token file
+  # that is group- or world-readable is a finding on its own.
+  - id: codex_auth
+    name: OpenAI Codex CLI OAuth token (AIRT-0036)
+    repo_cat: "05"
+    cosai: []
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.codex/auth.json"
+    notes: "SECRET - oauth-token. Named in this repo's own Sigma and osquery detection content."
+
+  - id: gemini_cli_creds
+    name: Gemini CLI OAuth credentials and account map (AIRT-0037)
+    repo_cat: "05"
+    cosai: []
+    os: [macos, linux, windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.gemini/oauth_creds.json"
+      - "~/.gemini/google_accounts.json"
+    notes: "SECRET - oauth-token plus the account map that says whose token it is."
+
+  - id: goose_secrets
+    name: Goose secrets store (AIRT-0038)
+    repo_cat: "05"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/goose/secrets.yaml"
+    notes: "SECRET - api-key. Documented mode 0600; anything looser is a finding."
+
+  - id: goose_copilot_info
+    name: Goose GitHub Copilot token cache (AIRT-0038)
+    repo_cat: "05"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/githubcopilot/info.json"
+      - "~/.config/goose/githubcopilot/info.json"
+    notes: "SECRET - api-key. Catalog records this as <config>/githubcopilot/info.json."
+
+  - id: aws_sso_cache
+    name: AWS SSO / IAM Identity Center token cache (AIRT-0008)
+    repo_cat: "05"
+    cosai: []
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: secret
+    paths:
+      - "~/.aws/sso/cache/*.json"
+    notes: "SECRET - aws-sso-token. Shared by Amazon Q and Kiro."
+
+  - id: n8n_db
+    name: n8n database holding the credential encryption key (AIRT-0025)
+    repo_cat: "cross"
+    cosai: []
+    os: [macos, linux, windows, docker]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.n8n/database.sqlite"
+      - "~/.n8n/config"
+    notes: "SECRET - encryption-key. The DB holds stored credentials; the key that decrypts them sits beside it."
+
+  - id: ollama_host_keys
+    name: Ollama host identity keypair (AIRT-0017)
+    repo_cat: "04"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.ollama/id_ed25519"
+      - "/usr/share/ollama/.ollama/id_ed25519"
+    notes: "SECRET - private key. On systemd installs Ollama runs as its own user, so the key is under /usr/share/ollama, not the invoking user's home."
+
+  - id: openwebui_secret
+    name: Open WebUI JWT signing key (AIRT-0042)
+    repo_cat: "cross"
+    cosai: []
+    os: [linux, docker]
+    scope: project
+    type: file
+    sensitivity: secret
+    paths:
+      - "backend/data/.webui_secret_key"
+      - "data/.webui_secret_key"
+    notes: "SECRET - jwt-signing-key. Container path is /app/backend/data/.webui_secret_key; collected project-relative from a mounted volume."

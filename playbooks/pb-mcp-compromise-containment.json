@@ -1,0 +1,270 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2c300330-018d-434b-9e94-cb0418380266",
+  "name": "AI-DFIR: MCP Server Compromise Containment",
+  "description": "Contain a compromised, poisoned, or rug-pulled Model Context Protocol server. Preserves MCP configuration and tool-invocation evidence first, then removes the malicious server from every agent client, revokes credentials the server could reach, and blocks its egress. Covers the tool-poisoning and silent-redefinition (MCPoison, CVE-2025-54136) class as well as MCP server RCE (mcp-remote CVE-2025-6514, MCP Inspector CVE-2025-49596). Maps to MITRE ATLAS AML.T0104 Publish Poisoned AI Agent Tool and AML.T0086 Exfiltration via AI Agent Tool Invocation.",
+  "playbook_types": [
+    "mitigation"
+  ],
+  "playbook_activities": [
+    "restrict-access",
+    "eliminate-risk",
+    "disconnect-system"
+  ],
+  "playbook_processing_summary": {
+    "parallel_processing": true,
+    "data_markings": true
+  },
+  "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+  "created": "2026-08-12T00:00:00.000Z",
+  "modified": "2026-08-12T00:00:00.000Z",
+  "valid_from": "2026-08-12T00:00:00.000Z",
+  "priority": 10,
+  "severity": 85,
+  "impact": 45,
+  "labels": [
+    "ai-dfir",
+    "mcp",
+    "tool-poisoning",
+    "mcpoison",
+    "atlas-aml-t0104",
+    "cosai"
+  ],
+  "external_references": [
+    {
+      "name": "MITRE ATLAS AML.T0104 - Publish Poisoned AI Agent Tool",
+      "source": "MITRE ATLAS v5.4.0, February 2026",
+      "url": "https://atlas.mitre.org/techniques/AML.T0104"
+    },
+    {
+      "name": "A Timeline of MCP Security Breaches",
+      "source": "AuthZed",
+      "url": "https://authzed.com/blog/timeline-mcp-breaches"
+    },
+    {
+      "name": "Model Context Protocol - Security Best Practices",
+      "source": "Model Context Protocol project (originated by Anthropic); living document, accessed 12 August 2026",
+      "url": "https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices"
+    }
+  ],
+  "markings": [
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9"
+  ],
+  "playbook_variables": {
+    "__case_id__": {
+      "type": "string",
+      "description": "Incident case identifier.",
+      "value": "IR-0000-000",
+      "external": true
+    },
+    "__mcp_server_name__": {
+      "type": "string",
+      "description": "Name of the suspect MCP server as it appears in agent client configuration.",
+      "value": "CHANGEME",
+      "external": true
+    },
+    "__mcp_egress_host__": {
+      "type": "string",
+      "description": "Outbound host the MCP server communicates with, to be blocked.",
+      "value": "CHANGEME",
+      "external": true
+    },
+    "__evidence_root__": {
+      "type": "string",
+      "description": "Destination root for the case directory.",
+      "value": "/evidence/cases"
+    }
+  },
+  "workflow_start": "start--c58af615-5d2c-4467-80de-a1c44d170a71",
+  "workflow": {
+    "start--c58af615-5d2c-4467-80de-a1c44d170a71": {
+      "type": "start",
+      "name": "Start - MCP compromise containment",
+      "on_completion": "action--bd362092-f2d5-4529-9cce-fce45dda8b4d"
+    },
+    "action--bd362092-f2d5-4529-9cce-fce45dda8b4d": {
+      "type": "action",
+      "name": "Preserve MCP configuration and invocation evidence before containment",
+      "description": "Containment destroys the evidence of what the poisoned tool actually did. Acquire configuration and tool-invocation traces first. A rug-pull attack changes the tool definition after approval, so the CURRENT config may not be what executed - the session traces are the authoritative record of the definition at invocation time.",
+      "on_completion": "action--b0c37daa-9246-402c-827b-096a56a21ef9",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "targets": [
+        "linux-system--7caac71b-2512-4fa5-8761-a84b8eba1e24"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Acquire MCP client configs and agent session traces read-only with chain of custody.",
+          "command": "python3 collectors/collect_ai_artifacts.py --case-id __case_id__:value --include-category 02 05 --output __evidence_root__:value --operator \"$(id -un)\"",
+          "playbook_activity": "restrict-access"
+        }
+      ]
+    },
+    "action--b0c37daa-9246-402c-827b-096a56a21ef9": {
+      "type": "action",
+      "name": "Determine blast radius of the poisoned tool",
+      "description": "Establish what the server could reach: which agent clients had it configured, which credentials and scopes it was granted, and every tool invocation it serviced. Confused-deputy and token-passthrough are the documented MCP anti-patterns - assume any token the server could see is compromised.",
+      "on_completion": "parallel--be77d2e4-f57e-446e-ba3c-5c48a78d95b7",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "targets": [
+        "linux-system--7caac71b-2512-4fa5-8761-a84b8eba1e24"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__mcp_server_name__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Enumerate every invocation of the suspect server across acquired session traces.",
+          "command": "grep -R --include='*.jsonl' -h \"__mcp_server_name__:value\" __evidence_root__:value/__case_id__:value/artifacts/ | head -n 500",
+          "playbook_activity": "eliminate-risk"
+        },
+        {
+          "type": "manual",
+          "description": "Scope credentials.",
+          "command": "List every credential, API key, and OAuth scope the MCP server __mcp_server_name__:value could access, including tokens passed through from the agent client. Treat all of them as compromised pending rotation.",
+          "playbook_activity": "eliminate-risk"
+        }
+      ]
+    },
+    "parallel--be77d2e4-f57e-446e-ba3c-5c48a78d95b7": {
+      "type": "parallel",
+      "name": "Contain on all fronts simultaneously",
+      "description": "Removal, credential rotation, and egress blocking are executed in parallel because a live poisoned server can continue to act while any one of them is pending.",
+      "on_completion": "action--be123994-74a2-4201-8429-23f6e8a0a1fa",
+      "next_steps": [
+        "action--409eeb45-b97b-42a4-936e-39d91a2b0640",
+        "action--4d8ef617-e7d3-4295-a602-dc7e46bc3b36",
+        "action--d544242b-5668-4200-8ad2-c357d067d2ae"
+      ]
+    },
+    "action--409eeb45-b97b-42a4-936e-39d91a2b0640": {
+      "type": "action",
+      "name": "Remove the MCP server from every agent client",
+      "description": "Remove from all client configurations, not just the one that alerted: the same server entry is commonly replicated across Claude Desktop, Claude Code, Cursor, VS Code and Windsurf.",
+      "on_completion": "end--101267b2-e97c-460c-93f0-c1c53573cc5b",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "targets": [
+        "linux-system--7caac71b-2512-4fa5-8761-a84b8eba1e24"
+      ],
+      "in_args": [
+        "__mcp_server_name__"
+      ],
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Config removal across all clients.",
+          "command": "Remove the __mcp_server_name__:value entry from every MCP client configuration on the host (claude_desktop_config.json, ~/.claude.json, ~/.cursor/mcp.json, .mcp.json, VS Code settings, Windsurf config). Copies were preserved in the evidence directory in the previous step - edit the live files only.",
+          "playbook_activity": "eliminate-risk"
+        }
+      ]
+    },
+    "action--4d8ef617-e7d3-4295-a602-dc7e46bc3b36": {
+      "type": "action",
+      "name": "Revoke and rotate every credential in reach",
+      "description": "Rotate all credentials the server could access. Revoke first, then reissue - reissuing first leaves a window where the old token is still valid.",
+      "on_completion": "end--101267b2-e97c-460c-93f0-c1c53573cc5b",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Credential rotation.",
+          "command": "Revoke every API key, OAuth token, and service credential enumerated in the blast-radius step, then issue replacements. Include provider keys found in .env files and the agent client keychain. Record revocation timestamps in the case notes.",
+          "playbook_activity": "eliminate-risk"
+        }
+      ]
+    },
+    "action--d544242b-5668-4200-8ad2-c357d067d2ae": {
+      "type": "action",
+      "name": "Block MCP server egress at the perimeter",
+      "description": "Blocks the outbound channel the poisoned tool used for exfiltration or command retrieval, covering any instance that has not yet been removed from a client.",
+      "on_completion": "end--101267b2-e97c-460c-93f0-c1c53573cc5b",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "targets": [
+        "http-api--be77d2e4-f57e-446e-ba3c-5c48a78d95b8"
+      ],
+      "in_args": [
+        "__mcp_egress_host__"
+      ],
+      "commands": [
+        {
+          "type": "http-api",
+          "description": "Perimeter block of the MCP egress destination. Replace the path with your firewall or secure web gateway API.",
+          "command": "POST /api/v1/policy/block?destination=__mcp_egress_host__:value&reason=mcp-compromise-containment",
+          "playbook_activity": "disconnect-system"
+        }
+      ]
+    },
+    "end--101267b2-e97c-460c-93f0-c1c53573cc5b": {
+      "type": "end",
+      "name": "End of containment branch"
+    },
+    "action--be123994-74a2-4201-8429-23f6e8a0a1fa": {
+      "type": "action",
+      "name": "Verify containment and record residual risk",
+      "description": "Confirm the server is gone from every client, the credentials no longer authenticate, and no further egress is observed. Record what the poisoned tool accessed before containment - that is the reportable impact, and mitigation does not undo it.",
+      "on_completion": "end--4d8ef617-e7d3-4295-a602-dc7e46bc3b37",
+      "agent": "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf",
+      "targets": [
+        "linux-system--7caac71b-2512-4fa5-8761-a84b8eba1e24"
+      ],
+      "in_args": [
+        "__mcp_server_name__",
+        "__mcp_egress_host__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Confirm no residual configuration references the removed server.",
+          "command": "grep -RIl \"__mcp_server_name__:value\" \"$HOME\" 2>/dev/null | grep -v '/evidence/' || echo 'no residual references'",
+          "playbook_activity": "eliminate-risk"
+        },
+        {
+          "type": "manual",
+          "description": "Residual risk and reportability.",
+          "command": "Document what data and systems the poisoned tool reached before containment. Assess whether the incident is reportable under EU AI Act Article 73 and, if so, confirm evidence was preserved before any alteration.",
+          "playbook_activity": "eliminate-risk"
+        }
+      ]
+    },
+    "end--4d8ef617-e7d3-4295-a602-dc7e46bc3b37": {
+      "type": "end",
+      "name": "End - MCP compromise containment"
+    }
+  },
+  "agent_definitions": {
+    "individual--5648517d-d210-4e26-a0f6-0a4b9f3f8ccf": {
+      "type": "individual",
+      "name": "Incident responder",
+      "description": "Responder with authority to remove agent configuration, rotate credentials, and request perimeter blocks."
+    }
+  },
+  "target_definitions": {
+    "linux-system--7caac71b-2512-4fa5-8761-a84b8eba1e24": {
+      "type": "linux-system",
+      "name": "Host running the affected MCP client",
+      "description": "Endpoint or server with the compromised MCP server configured."
+    },
+    "http-api--be77d2e4-f57e-446e-ba3c-5c48a78d95b8": {
+      "type": "http-api",
+      "name": "Perimeter enforcement API",
+      "description": "Firewall or secure web gateway management API used to block MCP egress."
+    }
+  },
+  "data_marking_definitions": {
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9": {
+      "type": "marking-tlp",
+      "id": "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9",
+      "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+      "created": "2026-08-12T00:00:00.000Z",
+      "tlpv2_level": "TLP:CLEAR"
+    }
+  }
+}
