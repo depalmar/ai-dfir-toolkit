@@ -224,6 +224,7 @@ def build_tools(entries, rows):
             "refs": [{"title": str(r.get("title", "")), "url": str(r.get("url", ""))}
                      for r in (e.get("references") or []) if isinstance(r, dict)],
             "status": e.get("status", ""),
+            "verified": e.get("last_verified", ""),
             "vendor": e.get("vendor", ""),
             "category": e.get("category", ""),
             "risk": e.get("risk", ""),
@@ -660,6 +661,8 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 .drefs li{margin:0 0 5px;color:var(--muted)}
 .dsec h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.tverify{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+  margin:0 0 6px}
 .talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
   margin:0 0 6px;word-break:break-word}
 .statuspill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
@@ -1081,6 +1084,8 @@ function drawerHTML(r){
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
       ${r.description?`<p>${esc(r.description)}</p>`:''}</div>
     <div class="dsec"><h4>Tool context</h4>
+      <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
+        :'never verified against a host or a current release'}</div>
       ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
         ><span class="statuspill">${esc(t.status)}</span></div>`:''}
       ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}

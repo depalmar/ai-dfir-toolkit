@@ -7,6 +7,7 @@ Exit code 1 on any failure, so it gates merges.
 import glob
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
 try:
@@ -156,15 +157,43 @@ def main() -> int:
     # and closing it needs research, not a commit - but reported on every run so
     # it stays visible and shrinks instead of being forgotten.
     unsourced = []
+    # Verification age, on the quarterly cadence docs/REVERIFICATION.md sets.
+    # last_modified tracks edits and answers the wrong question - a typo fix moves
+    # it and verifies nothing - so staleness is measured from last_verified, and
+    # an entry that has never been checked says so rather than looking fresh.
+    stale, never = [], []
+    today = date.today()
     for path in files:
         doc = yaml.safe_load(Path(path).read_text())
+        label = f"{doc.get('id')} {doc.get('name')}"
         if not (doc.get("references") or []):
-            unsourced.append(f"{doc.get('id')} {doc.get('name')}")
+            unsourced.append(label)
+        seen = doc.get("last_verified")
+        if not seen:
+            never.append(label)
+            continue
+        try:
+            age = (today - date.fromisoformat(str(seen))).days
+        except ValueError:
+            print(f"[STALE]  {Path(path).name}: last_verified {seen!r} is not a date")
+            failures += 1
+            continue
+        if age > 90:
+            stale.append((age, label))
+
     if unsourced:
         print(f"[REFS]   {len(files) - len(unsourced)}/{len(files)} entries carry a "
               f"reference. Still unsourced:")
         for u in unsourced:
             print(f"[REFS]     {u}")
+    if never or stale:
+        checked = len(files) - len(never)
+        print(f"[STALE]  {checked}/{len(files)} entries have been verified; "
+              f"{len(stale)} are past the 90-day cadence.")
+        for age, label in sorted(stale, reverse=True):
+            print(f"[STALE]    {age:4}d  {label}")
+        for label in never:
+            print(f"[STALE]    never  {label}")
 
     print(f"\n{len(files)} entries + {len(sigma_files)} sigma rules checked, "
           f"{failures} problem(s).")
