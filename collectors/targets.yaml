@@ -1915,4 +1915,48 @@ targets:
     paths:
       - "~/.config/vllm/usage_stats.json"
     notes: "log, forensic_value high, catalog confidence high."
+  - id: art_airt_0046_library_group_containers_2bby89mbsn_dev
+    name: "Warp artifact (AIRT-0046)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
+    notes: "database, forensic_value high, catalog confidence medium."
+  - id: art_airt_0046_local_state_warp_terminal_warp_sqlite
+    name: "Warp artifact (AIRT-0046)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.local/state/warp-terminal/warp.sqlite"
+    notes: "database, forensic_value high, catalog confidence medium."
+  - id: art_airt_0047_letta
+    name: "Letta artifact (AIRT-0047)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.letta/"
+    notes: "data-dir, forensic_value high, catalog confidence medium."
+  - id: art_airt_0047_letta_persist_pgdata
+    name: "Letta artifact (AIRT-0047)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.letta/.persist/pgdata"
+    notes: "database, forensic_value high, catalog confidence medium."
 # <<< END GENERATED CREDENTIAL TARGETS >>>

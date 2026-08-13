@@ -29,6 +29,7 @@ python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
 python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
 python scripts/export_velociraptor.py         # Velociraptor artifacts (--check likewise)
 python scripts/normalize_notes.py             # note style (--check reports, writes nothing)
+python ../collectors/gen_credential_targets.py     # collector targets, also CI-gated
 python scripts/build_site.py --check          # site data contract, writes nothing
 python scripts/build_site.py                  # regenerate docs/site (CI does this)
 python ../artifacts/scripts/validate_mappings.py   # run this one from the repo root
@@ -42,7 +43,11 @@ there rather than from `artifacts/`.
 
 `validate.py` is the gate CI runs. Never commit while it reports problems.
 Always regenerate the feeds in the same commit as a catalog change, or CI fails
-the staleness check.
+the staleness check. "The feeds" is five scripts, not two: `export.py`,
+`export_forensicartifacts.py`, `export_kape.py`, `export_velociraptor.py` and
+`collectors/gen_credential_targets.py`. The last one is easy to forget because it
+lives outside `artifacts/` — an entry that adds a credential location and skips it
+passes every local check and fails CI.
 
 ## Rules that are not negotiable
 
