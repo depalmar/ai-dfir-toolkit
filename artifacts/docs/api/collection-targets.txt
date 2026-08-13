@@ -10,6 +10,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
 %LOCALAPPDATA%\github-copilot\apps.json
 %LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml
+%LOCALAPPDATA%\warp\Warp\data\warp.sqlite
 %USERPROFILE%\.codeium\windsurf\mcp_config.json
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
@@ -81,6 +82,7 @@ LANGFLOW_DATABASE_URL
 LANGFLOW_SECRET_KEY
 LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
 LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
+LETTA_PG_URI
 LLM_API_KEY
 LOCAL_CREDENTIAL_VAULT_KEY
 MySQL database "reworkd_platform", table Account (docker volume agentgpt_db -> /var/lib/mysql in container agentgpt_db)
@@ -94,6 +96,7 @@ OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
 OPENAI_API_KEY / ANTHROPIC_API_KEY (and per-provider equivalents)
 OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY / NOVITA_API_KEY / AZURE_OPENAI_KEY
 OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
+OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
 OP_SERVICE_ACCOUNT_TOKEN
 OS keyring: service "Codex Auth", account "cli|<first 16 hex of SHA-256 of the resolved home path>"
 OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)
@@ -173,7 +176,10 @@ webui.db (user and API key tables)
 ~/.gemini/settings.json
 ~/.kiro/settings/mcp.json
 ~/.langflow/data/database.db  (Langflow Desktop)
+~/.letta/
+~/.letta/.persist/pgdata
 ~/.lmstudio/settings.json
+~/.local/state/warp-terminal/warp.sqlite
 ~/.n8n/database.sqlite
 ~/.ollama/id_ed25519  |  id_ed25519.pub
 ~/.openhands/agent_settings.json
@@ -194,6 +200,7 @@ webui.db (user and API key tables)
 ~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
 ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
 ~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
+~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite
 ~/Library/Logs/Claude/mcp*.log
 …/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
 …/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json

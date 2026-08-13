@@ -31,5 +31,11 @@ atlas_techniques:
   - AML.T0024
 attack_techniques:
   - T1071.001
-references: []
+references:
+  - title: "Microsoft Copilot Studio documentation"
+    url: https://learn.microsoft.com/en-us/microsoft-copilot-studio/
+    accessed: "2026-08-13"
+  - title: "What is Copilot Studio"
+    url: https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

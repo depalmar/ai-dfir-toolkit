@@ -134,17 +134,17 @@ the entry and raise its confidence.
 
 ## Current state
 
-45 entries, 265 artifacts, 152 credential locations, 17 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 28 KAPE targets, 35
+49 entries, 283 artifacts, 154 credential locations, 17 MCP config
+locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
 Velociraptor artifacts. Validation clean.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
-Confidence: 28 high, 13 medium, 4 low.
-Provenance: 35/45 entries carry a reference; `validate.py` names the other ten
-on every run. 24/45 carry aliases.
-Risk: 11 critical, 22 high, 10 medium, 2 low.
+Confidence: 28 high, 17 medium, 4 low.
+Provenance: 48/49 entries carry a reference - `validate.py` names the holdout
+(AIRT-0034 OpenAI Operator) on every run. 28/49 carry aliases.
+Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation
 

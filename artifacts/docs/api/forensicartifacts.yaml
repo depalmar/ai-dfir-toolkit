@@ -5,6 +5,43 @@
 # Only high-forensic-value file artifacts are exported; registry, network, and
 # process artifacts have no clean equivalent in the FILE source type.
 ---
+name: AgentFrameworkLibrariesArtifacts
+doc: Agent framework libraries (AIRT-0049) - One entry for the class of agent frameworks
+  that are imported libraries rather than installed applications - Semantic Kernel,
+  PydanticAI, Smolagents, the OpenAI Agents SDK, Strands and their peers. They leave
+  no dot-directory, no listener and no credential store of their own, so they are
+  inventoried by pattern rather than by path.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://github.com/microsoft/semantic-kernel
+- https://github.com/pydantic/pydantic-ai
+- https://github.com/huggingface/smolagents
+---
 name: AiderArtifacts
 doc: Aider (AIRT-0004) - Python pair-programming agent operating directly on git repos.
   Auto-commits changes.
@@ -70,7 +107,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/
+- https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html
 ---
 name: AutogenArtifacts
 doc: AutoGen (AIRT-0027) - Multi-agent conversation framework with LocalCommandLineCodeExecutor
@@ -234,7 +273,8 @@ sources:
 supported_os:
 - Darwin
 - Linux
-urls: []
+urls:
+- https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool
 ---
 name: ClaudeDesktopMcpHostArtifacts
 doc: Claude Desktop (MCP host) (AIRT-0011) - Desktop chat client that launches arbitrary
@@ -780,6 +820,46 @@ supported_os:
 urls:
 - https://github.com/langflow-ai/langflow
 ---
+name: LettaArtifacts
+doc: Letta (AIRT-0047) - Stateful agent framework. Agents live inside a Letta server
+  and their memory is persisted to a database, so state survives process restarts
+  and conversation resets - which makes it a persistence mechanism as well as a data
+  store.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.letta/'
+    - '%%users.homedir%%/.letta/.persist/pgdata'
+    - LETTA_PG_URI
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.letta/'
+    - '%%users.homedir%%/.letta/.persist/pgdata'
+    - LETTA_PG_URI
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - LETTA_PG_URI
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://docs.letta.com/server/pip
+- https://docs.letta.com/v1-sdk/docker
+- https://hub.docker.com/r/letta/letta
+---
 name: LmStudioArtifacts
 doc: LM Studio (AIRT-0018) - GUI local model runner with OpenAI-compatible server,
   CLI (lms), and daemon (llmster). MCP host capable.
@@ -809,7 +889,10 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://lmstudio.ai/docs/app
+- https://lmstudio.ai/docs/cli
+- https://github.com/lmstudio-ai/docs
 ---
 name: N8nAiAgentLangchainNodesArtifacts
 doc: n8n (AI Agent / LangChain nodes) (AIRT-0025) - Self-hostable workflow automation
@@ -929,7 +1012,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/OpenInterpreter/open-interpreter/releases
 ---
 name: OpenWebuiArtifacts
 doc: Open WebUI (AIRT-0042) - Self-hosted web interface for local and remote LLMs,
@@ -1076,7 +1160,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/RooCodeInc/Roo-Code
+- https://github.com/RooCodeInc/Roo-Code-Docs
 ---
 name: SkyvernArtifacts
 doc: Skyvern (AIRT-0035) - Open-source vision+DOM browser automation agent, commonly
@@ -1157,7 +1243,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/supermaven-inc/supermaven-nvim
 ---
 name: TabnineArtifacts
 doc: Tabnine (AIRT-0009) - Completion + agent platform. Editor plugin spawns and supervises
@@ -1172,7 +1259,8 @@ sources:
   - Linux
 supported_os:
 - Linux
-urls: []
+urls:
+- https://docs.tabnine.com/main
 ---
 name: VllmArtifacts
 doc: vLLM (AIRT-0045) - High-throughput inference and serving engine for LLMs. `vllm
@@ -1193,3 +1281,38 @@ urls:
 - https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html
 - https://nvd.nist.gov/vuln/detail/CVE-2025-32444
 - https://pypi.org/project/vllm/0.27.1/
+---
+name: WarpArtifacts
+doc: Warp (AIRT-0046) - Agentic terminal. Every command, its output, exit code, working
+  directory and timing is recorded in a local SQLite database rather than in a shell
+  history file, and an in-terminal agent can propose and run commands.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.local/state/warp-terminal/warp.sqlite'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application
+      Support/dev.warp.Warp-Stable/warp.sqlite'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.localappdata%%\warp\Warp\data\warp.sqlite'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://docs.warp.dev/terminal/settings/file-locations/
+- https://docs.warp.dev/terminal/entry/command-history/

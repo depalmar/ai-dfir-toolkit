@@ -1,5 +1,138 @@
 [
   {
+    "id": "AIRT-0049",
+    "name": "Agent framework libraries",
+    "aliases": [
+      "Semantic Kernel",
+      "PydanticAI",
+      "Smolagents",
+      "OpenAI Agents SDK",
+      "Strands"
+    ],
+    "vendor": "Various (Microsoft, Pydantic, Hugging Face, OpenAI, AWS)",
+    "category": "agent-framework",
+    "description": "One entry for the class of agent frameworks that are imported libraries rather than installed applications - Semantic Kernel, PydanticAI, Smolagents, the OpenAI Agents SDK, Strands and their peers. They leave no dot-directory, no listener and no credential store of their own, so they are inventoried by pattern rather than by path.",
+    "status": "active",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Imported library; agent loop and tool execution run inside the calling process",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "These frameworks give arbitrary application code an agent loop with tool execution, without any of the install-time signals a packaged agent produces. A script that imports one and points it at a provider key has the same reach as a catalogued coding agent and none of its footprint. The credential is the caller's provider key rather than anything the framework owns, so credential theft here is theft of an environment variable.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "<site-packages>/semantic_kernel/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Presence in site-packages is the inventory signal for this class. It is evidence the library is available, not that an agent ran - absence of a dot-directory is expected here rather than suspicious. The same check applies to pydantic_ai, smolagents, agents (OpenAI Agents SDK) and strands.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "pip install semantic-kernel",
+          "confidence": "medium"
+        },
+        {
+          "path": "<project>/requirements.txt | <project>/pyproject.toml | <project>/uv.lock",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "project-artifact",
+          "description": "Dependency manifests and lockfiles name the framework and pin its version, and they travel with the repository. Usually the fastest way to answer \"was an agent framework in use here\" across an estate, because it can be answered from source control rather than from endpoints.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "configuration"
+          ],
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Model provider API endpoints (api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, api-inference.huggingface.co, bedrock-runtime.*.amazonaws.com)",
+          "description": "Often the only network-visible signal, and the only one that distinguishes an installed library from a running agent. The destination identifies the provider; it does not identify which framework called it.",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "python",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "A shell, a scheduler, a CI runner or a service manager",
+          "typical_children": "Whatever the agent's tools invoke - shells, interpreters, package managers. The child processes are the execution evidence, because the framework itself leaves none.",
+          "persistence": "None - persistence belongs to whatever schedules the calling script",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "secret_type": "api-key",
+        "storage": "plaintext",
+        "description": "The credential belongs to the calling code, not to the framework, and is almost always an environment variable or a .env file beside the script. This is shared across every framework in this class, which is why one entry covers them all.",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Inventory by pattern, not by path. Search dependency manifests and lockfiles first - it answers the question across an estate from source control without touching an endpoint. On a host, check site-packages for the module names and the process table for a Python process whose children are shells or package managers. Treat library presence as availability, not use: the evidence that an agent actually ran is the egress and the child processes, not the import. Collect the .env or environment beside the calling script, because the provider key there is the credential artifact for this whole class."
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0011"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [
+      {
+        "title": "microsoft/semantic-kernel",
+        "url": "https://github.com/microsoft/semantic-kernel",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "pydantic/pydantic-ai",
+        "url": "https://github.com/pydantic/pydantic-ai",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "huggingface/smolagents",
+        "url": "https://github.com/huggingface/smolagents",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_modified": "2026-08-13"
+  },
+  {
     "id": "AIRT-0013",
     "name": "AgentGPT",
     "vendor": "Reworkd (OSS)",
@@ -479,7 +612,18 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Amazon Q Developer User Guide",
+        "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Amazon Q Developer in the AWS Toolkit for VS Code",
+        "url": "https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -1418,7 +1562,13 @@
       "T1185",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Computer use tool - Claude Platform Docs",
+        "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3010,7 +3160,13 @@
     "attack_techniques": [
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Devin documentation",
+        "url": "https://docs.devin.ai/get-started/devin-intro",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3143,6 +3299,100 @@
       }
     ],
     "last_modified": "2026-08-11"
+  },
+  {
+    "id": "AIRT-0048",
+    "name": "Docker Model Runner",
+    "aliases": [
+      "model-runner",
+      "docker model"
+    ],
+    "vendor": "Docker, Inc.",
+    "category": "llm-runtime",
+    "description": "Local model runner that ships with Docker Desktop and also runs standalone in Docker CE. Serves an OpenAI-compatible API. Unlike every other runtime in this catalog it can be present on a host where nobody chose to install a local LLM - it arrives with a tool the developer installed for unrelated reasons.",
+    "website": "https://www.docker.com",
+    "status": "active",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux",
+      "docker"
+    ],
+    "execution_model": "Local inference served through the Docker socket, optionally on a host TCP port",
+    "capabilities": {
+      "local_code_execution": false,
+      "local_listener": true,
+      "plaintext_credentials": false,
+      "mcp_capable": false
+    },
+    "risk": "medium",
+    "confidence": "medium",
+    "abuse_potential": "Reached through the Docker socket by default, so anything already able to talk to the socket can use it for free local inference without opening a port. When host-side TCP is enabled it becomes an unauthenticated OpenAI-compatible endpoint on the host. For shadow-AI inventory the question it raises is not \"who installed a runtime\" but \"which of our Docker Desktop machines can serve models right now\".",
+    "artifacts": {
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "OpenAI-compatible API, host TCP mode",
+          "port": "12434/TCP",
+          "authentication": "none",
+          "exposure_risk": "medium",
+          "description": "Present only when host-side TCP is enabled - `docker desktop enable model-runner --tcp 12434`. The /engines/v1, /models and /engines endpoints are served here. Absence of the port does not mean the runner is disabled, because the default path is the Docker socket instead.",
+          "confidence": "medium"
+        },
+        {
+          "direction": "listener",
+          "indicator": "Docker socket (/var/run/docker.sock)",
+          "authentication": "none",
+          "exposure_risk": "high",
+          "description": "Default access path. Anything with socket access can drive the runner, and socket access is already host-root-equivalent, so this is an escalation of an existing exposure rather than a new one.",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "model-runner",
+          "os": [
+            "linux",
+            "macos",
+            "windows"
+          ],
+          "service_or_daemon": "Standalone container in Docker CE, a Docker Desktop component elsewhere. On Desktop it sits inside the Desktop VM, so a host process listing may show nothing at all.",
+          "persistence": "Starts with Docker Desktop",
+          "confidence": "low",
+          "unverified": true
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p2",
+      "guidance": "Establish first whether the runner is enabled at all and whether host TCP is on, because the two have completely different exposure. Model storage is a named Docker volume, not a host path - enumerate it with `docker model ls` or the /models endpoint rather than looking for files. On Docker Desktop the runner lives inside the VM, so host process and file collection will miss it; the Docker API is the collection interface. Models live in a dedicated named volume rather than on the host filesystem - deliberate, so the runner can be uninstalled without re-pulling them, but it also means a filesystem sweep finds nothing."
+    },
+    "atlas_techniques": [
+      "AML.T0011"
+    ],
+    "attack_techniques": [
+      "T1133"
+    ],
+    "references": [
+      {
+        "title": "docker/model-runner",
+        "url": "https://github.com/docker/model-runner",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "model-runner README",
+        "url": "https://github.com/docker/model-runner/blob/main/README.md",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Docker - Run LLMs locally, a quickstart guide to Model Runner",
+        "url": "https://www.docker.com/blog/run-llms-locally/",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_modified": "2026-08-13"
   },
   {
     "id": "AIRT-0030",
@@ -5050,6 +5300,144 @@
     "last_modified": "2026-08-11"
   },
   {
+    "id": "AIRT-0047",
+    "name": "Letta",
+    "aliases": [
+      "MemGPT",
+      "letta"
+    ],
+    "vendor": "Letta (formerly MemGPT project, OSS)",
+    "category": "agent-framework",
+    "description": "Stateful agent framework. Agents live inside a Letta server and their memory is persisted to a database, so state survives process restarts and conversation resets - which makes it a persistence mechanism as well as a data store.",
+    "website": "https://www.letta.com",
+    "status": "active",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux",
+      "docker"
+    ],
+    "execution_model": "Server-hosted agents with persistent memory, local or remote inference",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": true,
+      "plaintext_credentials": true,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Persistent agent memory is a persistence mechanism: an instruction written into an agent's memory survives conversation resets and server restarts, and keeps executing until the memory is purged. MITRE ATLAS tracks this as AI Agent Context Poisoning - Memory. The store may also contain whatever the agent was working on, which can include source code, retrieved documents and conversation content, so it carries handling implications of its own.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.letta/",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Server data directory. The default pip installation uses SQLite here; a Docker deployment mounts .persist/pgdata for PostgreSQL instead. Either way this directory is where agent state lives between runs.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access",
+            "persistence",
+            "timeline"
+          ],
+          "install_method": "pip install letta",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.letta/.persist/pgdata",
+          "os": [
+            "macos",
+            "linux",
+            "docker"
+          ],
+          "artifact_type": "database",
+          "description": "PostgreSQL data directory in the documented Docker deployment. This is the agent memory store - collect it before the container is removed, because a container teardown destroys the only copy of what the agent knew.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access",
+            "persistence"
+          ],
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "listener",
+          "indicator": "Letta server REST API",
+          "port": "8283/TCP",
+          "authentication": "none",
+          "exposure_risk": "high",
+          "description": "The server exposes /v1 on port 8283. An instance reachable beyond loopback gives anyone who finds it the ability to read and rewrite agent memory, which is both a data-disclosure and a persistence problem.",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "letta",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "uvicorn, started by `letta server`",
+          "persistence": "None (user-invoked) unless run as a service or container",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "LETTA_PG_URI",
+        "os": [
+          "windows",
+          "macos",
+          "linux",
+          "docker"
+        ],
+        "secret_type": "embedded-credentials",
+        "storage": "plaintext",
+        "description": "PostgreSQL connection string, including its password, passed as an environment variable. Recoverable from the process environment and from whatever set it - a compose file, a shell profile, or a systemd unit.",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect the memory store before touching the deployment. Memory is a persistence mechanism here, and a container teardown or a database reset destroys the record of what the agent knew and when it learned it. Read the memory contents for injected standing instructions, not only for data - an agent cleaned everywhere else will re-execute an instruction that survived in memory. Check whether 8283 is reachable beyond loopback.",
+      "kape_target": "Letta",
+      "velociraptor_artifact": "Custom.AIAgents.Letta"
+    },
+    "atlas_techniques": [
+      "AML.T0080",
+      "AML.T0080.000",
+      "AML.T0053"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001"
+    ],
+    "references": [
+      {
+        "title": "Run Letta with pip",
+        "url": "https://docs.letta.com/server/pip",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Deploy a Letta server with Docker",
+        "url": "https://docs.letta.com/v1-sdk/docker",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "letta/letta on Docker Hub",
+        "url": "https://hub.docker.com/r/letta/letta",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_modified": "2026-08-13"
+  },
+  {
     "id": "AIRT-0021",
     "name": "llama.cpp",
     "aliases": [
@@ -5348,7 +5736,23 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "LM Studio app docs",
+        "url": "https://lmstudio.ai/docs/app",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "lms - LM Studio CLI",
+        "url": "https://lmstudio.ai/docs/cli",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "lmstudio-ai/docs",
+        "url": "https://github.com/lmstudio-ai/docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -5446,7 +5850,18 @@
     "attack_techniques": [
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Microsoft Copilot Studio documentation",
+        "url": "https://learn.microsoft.com/en-us/microsoft-copilot-studio/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "What is Copilot Studio",
+        "url": "https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -6125,7 +6540,13 @@
     "attack_techniques": [
       "T1059"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "OpenInterpreter/open-interpreter releases",
+        "url": "https://github.com/OpenInterpreter/open-interpreter/releases",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7283,7 +7704,18 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "RooCodeInc/Roo-Code",
+        "url": "https://github.com/RooCodeInc/Roo-Code",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "RooCodeInc/Roo-Code-Docs",
+        "url": "https://github.com/RooCodeInc/Roo-Code-Docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7625,7 +8057,13 @@
       "T1071.001",
       "T1105"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "supermaven-inc/supermaven-nvim",
+        "url": "https://github.com/supermaven-inc/supermaven-nvim",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7767,7 +8205,13 @@
       "T1071.001",
       "T1105"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Tabnine documentation",
+        "url": "https://docs.tabnine.com/main",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -8067,6 +8511,157 @@
       {
         "title": "vllm 0.27.1 package source - envs.py (VLLM_API_KEY, VLLM_CACHE_ROOT, VLLM_CONFIG_ROOT, VLLM_USAGE_STATS_SERVER) and usage_lib.py (usage_stats.json, do_not_track)",
         "url": "https://pypi.org/project/vllm/0.27.1/",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_modified": "2026-08-13"
+  },
+  {
+    "id": "AIRT-0046",
+    "name": "Warp",
+    "aliases": [
+      "warp-terminal",
+      "Warp Terminal"
+    ],
+    "vendor": "Warp Dev, Inc.",
+    "category": "coding-agent-cli",
+    "description": "Agentic terminal. Every command, its output, exit code, working directory and timing is recorded in a local SQLite database rather than in a shell history file, and an in-terminal agent can propose and run commands.",
+    "website": "https://www.warp.dev",
+    "status": "active",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud inference + local command execution in the user's shell",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "The command database is a near-complete narrative of operator activity on the host, including commands typed into a pane and never saved to shell history, which makes it a collection target for an attacker as well as for a responder. The agent can also propose and execute commands, so a prompt-injection surface exists wherever it reads untrusted output.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "database",
+          "description": "Command history, output, exit codes, working directories and timings. This is the highest-value artifact the tool produces and it has no shell-history equivalent - commands run in Warp do not reach .zsh_history. Collect the -wal and -shm siblings with it or recent activity is lost.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "execution",
+            "timeline"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\warp\\Warp\\data\\warp.sqlite",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "database",
+          "description": "Windows location of the command database. Same contents as the macOS path.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "execution",
+            "timeline"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.local/state/warp-terminal/warp.sqlite",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "database",
+          "description": "Linux location of the command database, under XDG_STATE_HOME when that is set. The warp.sqlite-wal beside it holds writes not yet checkpointed.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "execution",
+            "timeline"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\warp\\Warp\\config\\settings.toml",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Settings, including any configured AI and MCP behaviour",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.config/warp-terminal/settings.toml",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Settings on Linux. The macOS equivalent lives inside the group container above.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "app.warp.dev",
+          "description": "Cloud sync and inference endpoint. Traffic from the terminal process is expected; the forensic question is what was synced, which is answered server-side rather than on the host.",
+          "confidence": "low",
+          "unverified": true
+        }
+      ],
+      "process": [
+        {
+          "name": "warp",
+          "os": [
+            "linux",
+            "macos"
+          ],
+          "typical_children": "The user's shell and every command run in it",
+          "persistence": "None (user-invoked)",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [],
+    "mcp": [],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect warp.sqlite together with its -wal and -shm siblings before the application is closed or the host is rebooted, or the most recent commands are lost. Treat the database as the primary execution timeline for this host - it records commands that never reach shell history. Cloud sync means the local copy may not be the whole record; scope the account as well as the endpoint.",
+      "kape_target": "Warp",
+      "velociraptor_artifact": "Custom.AIAgents.Warp"
+    },
+    "atlas_techniques": [
+      "AML.T0053"
+    ],
+    "attack_techniques": [
+      "T1059"
+    ],
+    "references": [
+      {
+        "title": "Warp file and folder locations",
+        "url": "https://docs.warp.dev/terminal/settings/file-locations/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Warp command history",
+        "url": "https://docs.warp.dev/terminal/entry/command-history/",
         "accessed": "2026-08-13"
       }
     ],

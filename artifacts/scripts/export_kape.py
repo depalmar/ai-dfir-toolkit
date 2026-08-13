@@ -293,6 +293,9 @@ def main() -> int:
         arts = windows_artifacts(e)
         if not arts:
             stats["skipped_no_windows"] += 1
+            declared = ((e.get("collection") or {}).get("kape_target") or "").strip()
+            if declared:
+                mismatches.append((e["id"], declared, "(nothing emitted)"))
             if "windows" in [o.lower() for o in (e.get("supported_os") or [])]:
                 stats["windows_declared_no_paths"] += 1
                 gaps.append(e)
