@@ -311,8 +311,14 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
   border-radius:20px;padding:1px 7px;color:var(--muted)}
 /* Set apart visually - pushed right, no count - but it is a real tab, because a
    link inside role=tablist breaks arrow-key navigation. */
-.tabs .guidelink{margin-left:auto;font-size:12.5px}
-.tabs .guidelink:hover{color:var(--accent)}
+.tabs .guidelink{margin-left:auto;font-size:12.5px;border:1px solid var(--accent-border);
+  background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 14px;
+  align-self:center;font-weight:600}
+.tabs .guidelink:hover{background:var(--accent-soft-2);border-color:var(--accent)}
+.tabs .guidelink[aria-selected=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--on-accent);border-bottom-color:var(--accent)}
+.exportgrp{display:flex;align-items:center;gap:6px;margin-left:auto}
+.exportlbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
 .ghlink{font-size:12.5px;text-decoration:none;color:var(--muted);
   border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
 .ghlink:hover{color:var(--ink);border-color:var(--accent)}
@@ -1226,6 +1232,49 @@ $('#unvBtn').onclick=()=>{unvOnly=!unvOnly;$('#unvBtn').setAttribute('aria-press
 $('#denseBtn').onclick=()=>{dense=!dense;
   $('#denseBtn').setAttribute('aria-pressed',String(dense));
   $('#denseBtn').textContent=dense?'Comfortable rows':'Compact rows';renderMain()};
+/* ---------- export ---------- */
+// Exports what is on screen, filters and sort included. A responder narrows to
+// the tool and OS they are working and wants that list, not the whole catalog.
+// Column order matches docs/api/artifacts.csv so the two read the same way, but
+// this is a view export and is deliberately not that published feed.
+const EXPORT_COLS=['entry_id','tool','cls','artifact','os','forensic_value',
+                   'confidence','evidence','unverified','description'];
+function csvCell(v){
+  const s=Array.isArray(v)?v.join('|'):(v===undefined||v===null?'':String(v));
+  // Quote when the value could otherwise break the row, and double any quote.
+  return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+}
+function download(name,text,mime){
+  const blob=new Blob([text],{type:mime+';charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  // Revoke on the next tick: revoking synchronously can cancel the download.
+  setTimeout(()=>URL.revokeObjectURL(url),0);
+}
+function stamp(){return new Date().toISOString().slice(0,10)}
+function flash(btn,msg){
+  const old=btn.textContent; btn.textContent=msg;
+  setTimeout(()=>{btn.textContent=old},1600);
+}
+function exportRows(){return filteredRows()}
+$('#csvBtn').onclick=()=>{
+  const rows=exportRows();
+  const body=rows.map(r=>EXPORT_COLS.map(c=>csvCell(r[c])).join(',')).join('\n');
+  download(`ai-dfir-catalog-${stamp()}.csv`, EXPORT_COLS.join(',')+'\n'+body+'\n','text/csv');
+  flash($('#csvBtn'), `${rows.length} rows`);
+};
+$('#jsonBtn').onclick=()=>{
+  const rows=exportRows();
+  download(`ai-dfir-catalog-${stamp()}.json`, JSON.stringify({
+    source:REPO_URL, exported:new Date().toISOString(),
+    note:'Filtered view export from the catalog site. The published feed is docs/api/artifacts.csv.',
+    count:rows.length, rows
+  },null,2),'application/json');
+  flash($('#jsonBtn'), `${rows.length} rows`);
+};
+
 $$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
 // Arrow-key navigation, which role=tablist promises and a plain button row
 // does not provide on its own. Wrapping, plus Home/End, per the ARIA pattern.
@@ -1430,7 +1479,7 @@ def main():
       <button id="themeBtn" type="button"></button></div>
   </div>
   <nav class="tabs" role="tablist">
-    <button role="tab" data-v="catalog">Artifacts <span class="n">{len(rows)}</span></button>
+    <button role="tab" data-v="catalog">Catalog <span class="n">{len(rows)}</span></button>
     <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
     <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
@@ -1453,6 +1502,11 @@ def main():
         aria-label="Search the catalog"></div>
     <button class="tgl" id="unvBtn" type="button" aria-pressed="false">Unverified only</button>
     <button class="tgl plain" id="denseBtn" type="button" aria-pressed="false">Compact rows</button>
+    <div class="exportgrp" role="group" aria-label="Export the filtered rows">
+      <span class="exportlbl">Export</span>
+      <button class="tgl plain" id="csvBtn" type="button">CSV</button>
+      <button class="tgl plain" id="jsonBtn" type="button">JSON</button>
+    </div>
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"></span>
     <span id="chips" style="display:contents"></span></div>

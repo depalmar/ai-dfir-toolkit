@@ -8,6 +8,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **CSV and JSON export of the filtered view.** Exports what is on screen —
+  filters, search and sort included — because a responder narrowing to one tool
+  and OS wants that list, not the whole catalog. Column order matches
+  `docs/api/artifacts.csv` so the two read alike, but this is a view export and
+  is deliberately not that published feed.
+
 - **`09-agent-memory-forensics/` — 2 rule files / 5 signatures**, plus an
   analytic that parses memory stores and reports poisoning findings. Agent memory
   is a persistence mechanism: an instruction written there survives conversation
@@ -162,6 +168,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   did not.
 
 ### Changed
+
+- **The Artifacts tab is now the Catalog tab.** It holds artifacts, credentials
+  and MCP configs, so labelling it "Artifacts" put two different numbers under
+  one word: the tab counted 434 rows while the header stat counted 265. Both were
+  right and the pair looked broken. Renamed, the header now reads as a
+  decomposition of it — 265 artifacts + 152 credentials + 17 MCP configs = 434.
+- **The investigation guide is a pill rather than a quiet link.** Next to five
+  tabs it read as a sixth tab that happened to be greyer, when it is the only
+  long-form document on the site. It stays a real tab, so arrow-key navigation
+  and `aria-selected` still work.
 
 - **`AML.T0104` and `AML.T0110` are now distinguished** in the MCP category. A
   third-party pack proposed replacing `T0110` with `T0104` throughout, on the
