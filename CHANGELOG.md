@@ -54,9 +54,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   backend cannot express them at all; `validate.yml` now skips them in the
   per-file pass and validates each containing directory as a collection instead.
 
-- **`MAPPINGS.md` section 07 — Endpoint (cross-tool)**: the 12 endpoint Sigma
-  rules under `artifacts/detections/sigma/` are now indexed, along with the
-  osquery inventory pack. Documented scope moves from 43 rule files / 114
+- **`MAPPINGS.md` Endpoint (cross-tool) section**: the 12 endpoint Sigma rules
+  under `artifacts/detections/sigma/` are now indexed, along with the osquery
+  inventory pack. Documented scope moves from 43 rule files / 114
   signatures to **55 rule files / 126 signatures**.
 - **`artifacts/scripts/validate_mappings.py`**: fails when `MAPPINGS.md`
   references a rule file that does not exist, or when a rule file on disk is
@@ -105,9 +105,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   `mcp_tool_poisoning.yar` carries both, because it matches a poisoned
   description wherever it lands and cannot tell the two apart. Basis recorded in
   `artifacts/docs/VERIFICATION.md`.
-- The cross-tool Endpoint section moved from `07` to `08` in `MAPPINGS.md`, so
-  numbered sections mirror numbered directories and the non-directory endpoint
-  set sorts last.
+- The cross-tool Endpoint section in `MAPPINGS.md` is no longer numbered. It was
+  bumped once per new category (07 → 08) because it competed for numbers with the
+  rule directories while not being one; unnumbering it ends that permanently and
+  lets numbered sections mirror numbered directories.
 - The Investigation guide header entry is a real tab rather than a link inside
   `role="tablist"`, which had broken arrow-key navigation. The tablist now has
   roving tabindex, arrow/Home/End keys, and `aria-controls` onto a
