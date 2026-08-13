@@ -144,3 +144,54 @@ Everything else missed on this host, which means only that the tools are not
 installed here - `verify_host.py` cannot distinguish a wrong path from an absent
 tool and does not try. That distinction needs the tool installed and run at least
 once, because several of these paths are created lazily on first use.
+
+## 2026-08-13 - MCP capability sweep
+
+25 entries declared `capabilities.mcp_capable: true` and carried an empty `mcp`
+block. That is the same defect as `plaintext_credentials` with no credential
+locations: it tells a responder the config exists and gives them nowhere to look.
+
+The cause turned out to be the schema, not the authors. `mcpConfig` required
+`config_path`, which assumed the only mechanism was a file on disk. Four of the
+five real mechanisms cannot supply one, so the honest options were to leave the
+block empty or to invent a path. `mechanism` is now a closed enum -
+`config-file`, `database`, `in-code`, `server`, `cloud` - with the locator field
+required conditionally, so each row can say what is true.
+
+### Capability claims corrected
+
+Two entries claimed a capability the tool does not have. Both are now
+`mcp_capable: false`.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0017` Ollama | `capabilities.mcp_capable` | `true` | **`false`** | Ollama is an inference server exposing a chat API with tool calling; it is not an MCP client and has no MCP configuration surface. Reaching MCP servers from Ollama requires a separate bridge (MCPHost, ollmcp, oterm). Multiple independent third-party sources agree and the vendor documents no MCP client behaviour. |
+| `AIRT-0004` Aider | `capabilities.mcp_capable` | `true` | **`false`** | No native MCP support. The vendor's own tracker carries open feature requests asking for it - Aider-AI/aider #2525, #3314 and #4506, the last explicitly stating the CLI "does not natively support the Model Context Protocol". A request open on the vendor's tracker is stronger evidence of absence than a third-party claim of presence. |
+
+This is the more valuable half of the sweep. A missing MCP block is a visible
+gap; a wrong capability flag reads as a fact, and someone would have gone looking
+for an Ollama MCP config that has never existed.
+
+### Locations recorded
+
+17 entries gained an `mcp` block. Two are worth calling out:
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0018` LM Studio | MCP config path | not recorded | **`~/.lmstudio/mcp.json`, plus `~/.cache/lm-studio/mcp.json` on macOS** | The vendor documents the first for all three platforms. An open vendor bug report (lmstudio-ai/lmstudio-bug-tracker#1371) says the documented directory does not exist on macOS and the file is in the cache directory instead. Both rows are recorded, the second `medium` and `unverified`, because a responder who checks only the documented path on a Mac may record a false miss. |
+| `AIRT-0044` Langflow | MCP exposure | not recorded | **flows auto-published as MCP tools** | Creating a Langflow project adds it to Langflow's own MCP server and publishes its flows as tools. The exposure is opt-out, so the tool surface grows without anyone configuring it - which is a finding rather than a configuration detail. |
+
+### Still open
+
+Six entries still declare `mcp_capable` with no location: AIRT-0009 Tabnine,
+AIRT-0012 AutoGPT, AIRT-0024 LocalAI, AIRT-0030 Flowise, AIRT-0033 Claude
+Computer Use, AIRT-0035 Skyvern. Tabnine is confirmed MCP-capable by vendor
+documentation but the config path could not be sourced. The other five were not
+reached in this pass, and each needs the same question asked first: does the tool
+host MCP at all, or is this another claim to withdraw?
+
+Note on method: this environment's egress policy blocks most vendor
+documentation domains, so several of these rows rest on search-engine summaries
+of vendor pages rather than on pages read directly. Those are rated `medium` and
+flagged `unverified`, and the URL is recorded so the next pass can confirm them
+from a host that can reach it.

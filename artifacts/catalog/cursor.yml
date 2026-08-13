@@ -283,14 +283,16 @@ credentials:
     unverified: true
     confidence: low
 mcp:
-  - config_path: ~/.cursor/mcp.json
+  - mechanism: config-file
+    config_path: ~/.cursor/mcp.json
     config_key: mcpServers
     spawn_mechanism: Child process at IDE start
     secrets_location: env block
     persistence_trigger: Every IDE start
     triage_priority: p1
     notes: Global scope
-  - config_path: "<repo>/.cursor/mcp.json"
+  - mechanism: config-file
+    config_path: "<repo>/.cursor/mcp.json"
     config_key: mcpServers
     spawn_mechanism: Child process on workspace open
     secrets_location: env block

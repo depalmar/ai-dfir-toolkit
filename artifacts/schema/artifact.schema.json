@@ -544,14 +544,31 @@
     },
     "mcpConfig": {
       "type": "object",
+      "description": "How a tool's MCP servers are defined, and therefore what a responder collects. Four mechanisms, because requiring config_path assumed the only one - which is why 25 mcp_capable entries carried an empty block rather than an honest answer.",
       "required": [
-        "config_path",
+        "mechanism",
         "triage_priority"
       ],
       "additionalProperties": false,
       "properties": {
+        "mechanism": {
+          "type": "string",
+          "enum": [
+            "config-file",
+            "database",
+            "in-code",
+            "server",
+            "cloud"
+          ],
+          "description": "config-file: a file listing servers, collected directly. database: registered through the tool's own UI or API and persisted to its database - the self-hosted workflow engines all work this way, and the collection instruction is a query rather than a file copy. in-code: instantiated by a script - the artifact is the source file and the import, not a path. server: the tool IS an MCP server, so its definition lives in some other tool's config and that is what to go and find. cloud: configured tenant-side, with nothing on the endpoint - say so rather than leaving the block blank."
+        },
         "config_path": {
-          "type": "string"
+          "type": "string",
+          "description": "Required for mechanism: config-file. Omit for the others - a path invented to satisfy a required field is the failure this enum exists to prevent."
+        },
+        "indicator": {
+          "type": "string",
+          "description": "Required for every mechanism except config-file: what a responder actually greps for or asks for. A table and column for database, an import or client class for in-code, the package or argv signature for server, the tenant-side admin surface for cloud."
         },
         "config_key": {
           "type": "string"
@@ -573,10 +590,57 @@
             "p3"
           ]
         },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "unverified": {
+          "type": "boolean"
+        },
         "notes": {
           "type": "string"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "const": "config-file"
+              }
+            },
+            "required": [
+              "mechanism"
+            ]
+          },
+          "then": {
+            "required": [
+              "config_path"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mechanism": {
+                "enum": [
+                  "database",
+                  "in-code",
+                  "server",
+                  "cloud"
+                ]
+              }
+            },
+            "required": [
+              "mechanism"
+            ]
+          },
+          "then": {
+            "required": [
+              "indicator"
+            ]
+          }
+        }
+      ]
     },
     "eventlogArtifact": {
       "type": "object",

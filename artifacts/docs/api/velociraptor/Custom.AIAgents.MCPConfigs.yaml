@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.aws\amazonq\default.json', 'C:\Users\*\.aws\amazonq\mcp.json', 'C:\Users\*\.claude.json', 'C:\Users\*\.codeium\windsurf\mcp_config.json', 'C:\Users\*\.codex\config.toml', 'C:\Users\*\.config\Claude\claude_desktop_config.json', 'C:\Users\*\.config\goose\config.yaml', 'C:\Users\*\.continue\config.yaml', 'C:\Users\*\.continue\mcpServers\**', 'C:\Users\*\.copilot\mcp-config.json', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\.gemini\settings.json', 'C:\Users\*\.kiro\settings\mcp.json', 'C:\Users\*\.openhands\config.toml', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json']
+      LET Globs = ['C:\Users\*\.aws\amazonq\default.json', 'C:\Users\*\.aws\amazonq\mcp.json', 'C:\Users\*\.cache\lm-studio\mcp.json', 'C:\Users\*\.claude.json', 'C:\Users\*\.codeium\windsurf\mcp_config.json', 'C:\Users\*\.codex\config.toml', 'C:\Users\*\.config\Claude\claude_desktop_config.json', 'C:\Users\*\.config\goose\config.yaml', 'C:\Users\*\.continue\config.yaml', 'C:\Users\*\.continue\mcpServers\**', 'C:\Users\*\.copilot\mcp-config.json', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\.gemini\settings.json', 'C:\Users\*\.kiro\settings\mcp.json', 'C:\Users\*\.lmstudio\mcp.json', 'C:\Users\*\.openhands\config.toml', 'C:\Users\*\.openinterpreter\config.toml', 'C:\Users\*\.warp_cli\.mcp.json', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.aws/amazonq/default.json', '/Users/*/.aws/amazonq/mcp.json', '/Users/*/.claude.json', '/Users/*/.codeium/windsurf/mcp_config.json', '/Users/*/.codex/config.toml', '/Users/*/.config/Claude/claude_desktop_config.json', '/Users/*/.config/goose/config.yaml', '/Users/*/.continue/config.yaml', '/Users/*/.continue/mcpServers/**', '/Users/*/.copilot/mcp-config.json', '/Users/*/.cursor/mcp.json', '/Users/*/.gemini/settings.json', '/Users/*/.kiro/settings/mcp.json', '/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/etc/codex/config.toml']
+      LET Globs = ['/Users/*/.aws/amazonq/default.json', '/Users/*/.aws/amazonq/mcp.json', '/Users/*/.cache/lm-studio/mcp.json', '/Users/*/.claude.json', '/Users/*/.codeium/windsurf/mcp_config.json', '/Users/*/.codex/config.toml', '/Users/*/.config/Claude/claude_desktop_config.json', '/Users/*/.config/goose/config.yaml', '/Users/*/.continue/config.yaml', '/Users/*/.continue/mcpServers/**', '/Users/*/.copilot/mcp-config.json', '/Users/*/.cursor/mcp.json', '/Users/*/.gemini/settings.json', '/Users/*/.kiro/settings/mcp.json', '/Users/*/.lmstudio/mcp.json', '/Users/*/.openinterpreter/config.toml', '/Users/*/.warp_cli/.mcp.json', '/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/etc/codex/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/etc/codex/config.toml', '/home/*/.aws/amazonq/default.json', '/home/*/.aws/amazonq/mcp.json', '/home/*/.claude.json', '/home/*/.codeium/windsurf/mcp_config.json', '/home/*/.codex/config.toml', '/home/*/.config/Claude/claude_desktop_config.json', '/home/*/.config/goose/config.yaml', '/home/*/.continue/config.yaml', '/home/*/.continue/mcpServers/**', '/home/*/.copilot/mcp-config.json', '/home/*/.cursor/mcp.json', '/home/*/.gemini/settings.json', '/home/*/.kiro/settings/mcp.json', '/home/*/.openhands/config.toml', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
+      LET Globs = ['/etc/codex/config.toml', '/home/*/.aws/amazonq/default.json', '/home/*/.aws/amazonq/mcp.json', '/home/*/.cache/lm-studio/mcp.json', '/home/*/.claude.json', '/home/*/.codeium/windsurf/mcp_config.json', '/home/*/.codex/config.toml', '/home/*/.config/Claude/claude_desktop_config.json', '/home/*/.config/goose/config.yaml', '/home/*/.continue/config.yaml', '/home/*/.continue/mcpServers/**', '/home/*/.copilot/mcp-config.json', '/home/*/.cursor/mcp.json', '/home/*/.gemini/settings.json', '/home/*/.kiro/settings/mcp.json', '/home/*/.lmstudio/mcp.json', '/home/*/.openhands/config.toml', '/home/*/.openinterpreter/config.toml', '/home/*/.warp_cli/.mcp.json', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

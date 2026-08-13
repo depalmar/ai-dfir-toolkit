@@ -109,6 +109,27 @@ artifacts:
       confidence: medium
 credentials: []
 mcp: []
+mcp:
+  - mechanism: config-file
+    config_path: ~/.warp_cli/.mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process at agent start
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every agent start
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: Warp also reads MCP definitions belonging to other installed agents, so a server never configured in Warp can still run under it
+  - mechanism: config-file
+    config_path: <repo>/.warp/.mcp.json
+    config_key: mcpServers
+    spawn_mechanism: Child process on workspace open
+    secrets_location: env block
+    persistence_trigger: Every workspace open
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: Travels with the repo - review on clone
 collection:
   triage_priority: p1
   guidance: >-
@@ -129,6 +150,9 @@ references:
     accessed: "2026-08-13"
   - title: "Warp command history"
     url: https://docs.warp.dev/terminal/entry/command-history/
+    accessed: "2026-08-13"
+  - title: "Warp docs - customizing the Warp Agent CLI"
+    url: https://docs.warp.dev/agents/cli/configuration/
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-13"

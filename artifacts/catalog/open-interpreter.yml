@@ -225,6 +225,16 @@ credentials:
       INTERPRETER_API_KEY set accepts any caller.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: config-file
+    config_path: ~/.openinterpreter/config.toml
+    config_key: mcp
+    spawn_mechanism: Child process when the interpreter session starts
+    secrets_location: Server credentials via interpreter mcp login
+    persistence_trigger: Every interpreter session
+    triage_priority: p1
+    confidence: medium
+    notes: Managed by interpreter mcp list / get / remove / login, so the CLI history is a second source for what was registered
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -238,6 +248,9 @@ attack_techniques:
 references:
   - title: "OpenInterpreter/open-interpreter releases"
     url: https://github.com/OpenInterpreter/open-interpreter/releases
+    accessed: "2026-08-13"
+  - title: "Open Interpreter docs - MCP servers"
+    url: https://www.openinterpreter.com/docs/terminal/mcp
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

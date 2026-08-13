@@ -56,6 +56,14 @@ def main() -> int:
                 if os_name in SUPPORTED_OS:
                     paths_by_os.setdefault(os_name, []).append(normalise(cred["location"]))
         for mcp in entry.get("mcp", []):
+            # config-file rows only. This format collects paths, and the other
+            # four mechanisms have none to give - a database row wants a query,
+            # an in-code row wants a source grep, a server row points at some
+            # other tool's config, and a cloud row is not on the host at all.
+            # Substituting the indicator would emit an import name as a file
+            # path and quietly poison the feed.
+            if mcp.get("mechanism", "config-file") != "config-file":
+                continue
             for os_name in ("windows", "macos", "linux"):
                 paths_by_os.setdefault(os_name, []).append(normalise(mcp["config_path"]))
 

@@ -100,6 +100,17 @@ credentials:
       whatever set it - a compose file, a shell profile, or a systemd unit.
     confidence: medium
 mcp: []
+mcp:
+  - mechanism: database
+    indicator: MCP server registrations created through the Letta server API, persisted in the SQLite database under ~/.letta/ or the Docker PostgreSQL volume
+    config_key: mcp servers
+    spawn_mechanism: Connection opened by the Letta server when an agent uses the tool
+    secrets_location: Server credentials in the same database
+    persistence_trigger: Every agent step that reaches the tool
+    triage_priority: p1
+    confidence: medium
+    unverified: true
+    notes: State lives in the server rather than on the client, so this survives a client uninstall and is not collectable from the workstation that used it
 collection:
   triage_priority: p1
   guidance: >-
@@ -126,6 +137,9 @@ references:
     accessed: "2026-08-13"
   - title: "letta/letta on Docker Hub"
     url: https://hub.docker.com/r/letta/letta
+    accessed: "2026-08-13"
+  - title: "Letta docs - create MCP server"
+    url: https://docs.letta.com/api/resources/mcp_servers/methods/create
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-13"

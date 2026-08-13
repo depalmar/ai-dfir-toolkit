@@ -220,14 +220,16 @@ credentials:
       sufficient.
     confidence: medium
 mcp:
-  - config_path: "~/.continue/config.yaml"
+  - mechanism: config-file
+    config_path: "~/.continue/config.yaml"
     config_key: mcpServers (name, command, args, cwd, env)
     spawn_mechanism: Child process at IDE start
     secrets_location: env block
     persistence_trigger: Every IDE start
     triage_priority: p1
     notes: YAML not JSON
-  - config_path: "~/.continue/mcpServers/"
+  - mechanism: config-file
+    config_path: "~/.continue/mcpServers/"
     config_key: One JSON file per server, in the format other clients use
     spawn_mechanism: Child process at IDE start
     secrets_location: env block inside each file

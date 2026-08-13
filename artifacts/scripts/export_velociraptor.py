@@ -156,6 +156,10 @@ def collect(entry: dict) -> dict[str, list[tuple[str, str]]]:
         rows.append((path_like(str(cred.get("location", ""))), cred,
                      cred.get("description", "")))
     for mcp in entry.get("mcp") or []:
+        # config-file rows only - the other four mechanisms have no path to
+        # collect. See export_forensicartifacts.py for the full reasoning.
+        if mcp.get("mechanism", "config-file") != "config-file":
+            continue
         rows.append((path_like(str(mcp.get("config_path", ""))), mcp,
                      mcp.get("description", "")))
     for raw, holder, note in rows:
@@ -340,6 +344,8 @@ def main() -> int:
                     if g:
                         creds.setdefault(os_name, []).append(g)
         for mcp in e.get("mcp") or []:
+            if mcp.get("mechanism", "config-file") != "config-file":
+                continue
             for one in split_paths(path_like(str(mcp.get("config_path", "")))):
                 for os_name in artifact_os(mcp, e):
                     g = to_glob(one, os_name)

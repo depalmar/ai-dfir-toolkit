@@ -114,6 +114,23 @@ not supply. The second half matters as much as the first: an over-claiming
 source makes an estate look better instrumented than it is. `validate.py` and
 `build_site.py --check` both run it.
 
+**An MCP block has five shapes, not one.** `mcpConfig` required `config_path`,
+which assumed the only mechanism was a file on disk - and that is precisely why
+25 `mcp_capable` entries carried an empty block. `mechanism` is now a closed
+enum: `config-file` (collect the file), `database` (the self-hosted engines
+register servers through their own UI and persist them - the collection step is
+a query), `in-code` (a literal in a script; read the source, there is nothing to
+collect), `server` (the tool *is* an MCP server, so go find the client config
+that names it), `cloud` (tenant-side; stop looking on this disk). The locator
+field is conditionally required, so a non-file row cannot ship without something
+to grep for. Exporters that emit paths - forensicartifacts, KAPE, Velociraptor -
+must skip everything except `config-file`, or an import name ships as a file path.
+
+A `mcp_capable: true` claim with no block is not always a gap to fill. Ask
+whether the tool hosts MCP at all first: Ollama and Aider both carried the claim
+and neither is an MCP client. A wrong capability flag reads as a fact and is
+worse than a visible hole.
+
 **Controlled vocabularies.** `artifact_type`, `evidence_type`, `secret_type`,
 and `storage` are closed enums in `schema/artifact.schema.json`. They exist
 because the published CSV feed is meant to be filtered, and a field where `log`
@@ -170,7 +187,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-49 entries, 313 artifacts, 154 credential locations, 30 MCP config
+49 entries, 313 artifacts, 154 credential locations, 51 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
 Velociraptor artifacts, 9 telemetry sources. Validation clean.
 

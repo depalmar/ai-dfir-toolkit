@@ -24,6 +24,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 /etc/codex/config.toml
 /etc/gemini-cli/settings.json
 /home/node/.flowise/encryption.key
+<Jan data dir>/mcp_config.json
 <LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)
 <LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on Linux/Docker)
 <VS Code User dir>/globalStorage/continue.continue/*.bin
@@ -43,6 +44,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <install>/pilot/.env
 <install>/platform/.env
 <install>/skyvern-frontend/.env
+<mcpo config> (Claude Desktop format, path set at mcpo launch)
 <nvim stdpath('cache')>/codeium/config.json
 <project>/.env
 <project>/.env  (path passed to `langflow run --env-file`)
@@ -64,6 +66,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <repo>/.kiro/steering/*.md
 <repo>/.mcp.json
 <repo>/.roo/mcp.json
+<repo>/.warp/.mcp.json
 ANTHROPIC_API_KEY
 ANTHROPIC_AUTH_TOKEN
 AWS Builder ID / IAM Identity Center token cache
@@ -75,10 +78,14 @@ CONTINUE_API_KEY
 COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
 COPILOT_PROVIDER_API_KEY
 FLOWISE_SECRETKEY_OVERWRITE
+Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself
 Goose session logs
 HF_TOKEN
 INIT_PASSWORD
 INTERPRETER_API_KEY
+Import of MCPServerAdapter from crewai_tools, usually alongside StdioServerParameters from mcp
+Import of autogen_ext.tools.mcp - McpWorkbench, StdioServerParams, StdioMcpToolAdapter
+Import of langchain_mcp_adapters.client.MultiServerMCPClient, or the langchain-mcp-adapters dependency in requirements.txt / pyproject.toml / package.json
 JWT_AUTH_TOKEN_SECRET
 JWT_SECRET
 Kiro - MCP Logs (View > Output channel)
@@ -89,6 +96,10 @@ LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
 LETTA_PG_URI
 LLM_API_KEY
 LOCAL_CREDENTIAL_VAULT_KEY
+Langflow projects published as MCP tools - each project is added to Langflow's own MCP server automatically on creation
+MCP server registrations added in Settings - MCP Servers, persisted in langflow.db under ~/.langflow/
+MCP server registrations created through the Letta server API, persisted in the SQLite database under ~/.letta/ or the Docker PostgreSQL volume
+MCP servers added under Tools - MCP in the workspace, persisted in the Dify application database rather than in a file on the host
 MySQL database "reworkd_platform", table Account (docker volume agentgpt_db -> /var/lib/mysql in container agentgpt_db)
 N8N_ENCRYPTION_KEY
 NEXTAUTH_SECRET  (set in <install>/next/.env)
@@ -110,11 +121,15 @@ REWORKD_PLATFORM_SECRET_SIGNING_KEY  (read from <install>/platform/.env)
 SANDBOX_ENV_*  (e.g. SANDBOX_ENV_OPENAI_API_KEY)
 SECRET_KEY
 SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
+Tenant-side configuration in the Copilot Studio maker portal and the Power Platform admin centre - not present on the endpoint
+Tenant-side configuration in the Devin web UI and API - not present on the endpoint
+Tool server registrations in webui.db - added per user in Settings or globally in Admin Settings
 Tools and Functions Python source stored in webui.db
 VLLM_API_KEY
 VS Code SecretStorage -> OS keychain (state.vscdb)
 VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)
 WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
+Workflow JSON in database.sqlite containing node type n8n-nodes-langchain.toolmcp or n8n-nodes-langchain.mcptrigger
 claude_desktop_config.json -> mcpServers.<name>.env
 docker-compose.yml / docker run invocation
 ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
@@ -125,6 +140,8 @@ macOS login Keychain (~/Library/Keychains/login.keychain-db)
 macOS login Keychain: generic-password service 'Cursor Safe Storage', account 'Cursor Key'
 macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token / cursor-api-key, account cursor-user
 mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
+npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config
+uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config
 vscode.SecretStorage key 'dev.continue.continue' (OS-keyring backed on desktop VS Code)
 webui.db (user and API key tables)
 ~/.aider.conf.yml
@@ -136,6 +153,7 @@ webui.db (user and API key tables)
 ~/.aws/amazonq/default.json
 ~/.aws/amazonq/mcp.json
 ~/.aws/sso/cache/*.json
+~/.cache/lm-studio/mcp.json
 ~/.claude.json
 ~/.claude/.credentials.json
 ~/.codeium/config.json
@@ -185,6 +203,7 @@ webui.db (user and API key tables)
 ~/.langflow/data/database.db  (Langflow Desktop)
 ~/.letta/
 ~/.letta/.persist/pgdata
+~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
 ~/.local/state/warp-terminal/warp.sqlite
 ~/.n8n/database.sqlite
@@ -195,12 +214,14 @@ webui.db (user and API key tables)
 ~/.openhands/settings.json  (mounted to /.openhands/settings.json)
 ~/.openinterpreter/.credentials.json
 ~/.openinterpreter/auth.json
+~/.openinterpreter/config.toml
 ~/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age
 ~/.skyvern/.env
 ~/.skyvern/credential_vault/.fernet_key
 ~/.skyvern/credential_vault/creditem_*.bin
 ~/.skyvern/data.db
 ~/.supermaven/config.json
+~/.warp_cli/.mcp.json
 ~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json

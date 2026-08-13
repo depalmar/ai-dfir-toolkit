@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.config\Open Interpreter\**', 'C:\Users\*\AppData\Roaming\Open Interpreter\**', 'C:\Users\*\.openinterpreter\auth.json', 'C:\Users\*\.openinterpreter\.credentials.json', 'C:\Users\*\.openinterpreter\secrets\codex_auth.age', 'C:\Users\*\.openinterpreter\secrets\mcp_oauth.age', 'C:\Users\*\.openinterpreter\secrets\local.age', 'C:\Users\*\AppData\Local\open-interpreter\open-interpreter\profiles\default.yaml']
+      LET Globs = ['C:\Users\*\.config\Open Interpreter\**', 'C:\Users\*\AppData\Roaming\Open Interpreter\**', 'C:\Users\*\.openinterpreter\auth.json', 'C:\Users\*\.openinterpreter\.credentials.json', 'C:\Users\*\.openinterpreter\secrets\codex_auth.age', 'C:\Users\*\.openinterpreter\secrets\mcp_oauth.age', 'C:\Users\*\.openinterpreter\secrets\local.age', 'C:\Users\*\AppData\Local\open-interpreter\open-interpreter\profiles\default.yaml', 'C:\Users\*\.openinterpreter\config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.config/Open Interpreter/**', '/Users/*/.openinterpreter/auth.json', '/Users/*/.openinterpreter/.credentials.json', '/Users/*/.openinterpreter/secrets/codex_auth.age', '/Users/*/.openinterpreter/secrets/mcp_oauth.age', '/Users/*/.openinterpreter/secrets/local.age', '/Users/*/.config/open-interpreter/profiles/default.yaml', '/Users/*/Library/Application Support/open-interpreter/profiles/default.yaml']
+      LET Globs = ['/Users/*/.config/Open Interpreter/**', '/Users/*/.openinterpreter/auth.json', '/Users/*/.openinterpreter/.credentials.json', '/Users/*/.openinterpreter/secrets/codex_auth.age', '/Users/*/.openinterpreter/secrets/mcp_oauth.age', '/Users/*/.openinterpreter/secrets/local.age', '/Users/*/.config/open-interpreter/profiles/default.yaml', '/Users/*/Library/Application Support/open-interpreter/profiles/default.yaml', '/Users/*/.openinterpreter/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.config/Open Interpreter/**', '/home/*/.openinterpreter/auth.json', '/home/*/.openinterpreter/.credentials.json', '/home/*/.openinterpreter/secrets/codex_auth.age', '/home/*/.openinterpreter/secrets/mcp_oauth.age', '/home/*/.openinterpreter/secrets/local.age', '/home/*/.config/open-interpreter/profiles/default.yaml', '/home/*/Library/Application Support/open-interpreter/profiles/default.yaml']
+      LET Globs = ['/home/*/.config/Open Interpreter/**', '/home/*/.openinterpreter/auth.json', '/home/*/.openinterpreter/.credentials.json', '/home/*/.openinterpreter/secrets/codex_auth.age', '/home/*/.openinterpreter/secrets/mcp_oauth.age', '/home/*/.openinterpreter/secrets/local.age', '/home/*/.config/open-interpreter/profiles/default.yaml', '/home/*/Library/Application Support/open-interpreter/profiles/default.yaml', '/home/*/.openinterpreter/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

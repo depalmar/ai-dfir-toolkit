@@ -24,6 +24,16 @@ abuse_potential: Primary telemetry is M365/Purview audit, not endpoint. CrowdStr
 artifacts: {}
 credentials: []
 mcp: []
+mcp:
+  - mechanism: cloud
+    indicator: Tenant-side configuration in the Copilot Studio maker portal and the Power Platform admin centre - not present on the endpoint
+    spawn_mechanism: Runs in the Microsoft cloud, not on the user's host
+    secrets_location: Power Platform connection references, tenant-side
+    persistence_trigger: Every agent invocation
+    triage_priority: p3
+    confidence: medium
+    unverified: true
+    notes: The endpoint footprint is browser only, so the audit trail is a tenant-side export rather than a host collection
 collection:
   triage_priority: p3
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

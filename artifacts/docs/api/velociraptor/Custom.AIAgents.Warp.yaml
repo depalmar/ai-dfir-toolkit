@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\AppData\Local\warp\Warp\data\warp.sqlite', 'C:\Users\*\AppData\Local\warp\Warp\config\settings.toml']
+      LET Globs = ['C:\Users\*\AppData\Local\warp\Warp\data\warp.sqlite', 'C:\Users\*\AppData\Local\warp\Warp\config\settings.toml', 'C:\Users\*\.warp_cli\.mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite']
+      LET Globs = ['/Users/*/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite', '/Users/*/.warp_cli/.mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.local/state/warp-terminal/warp.sqlite', '/home/*/.config/warp-terminal/settings.toml']
+      LET Globs = ['/home/*/.local/state/warp-terminal/warp.sqlite', '/home/*/.config/warp-terminal/settings.toml', '/home/*/.warp_cli/.mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

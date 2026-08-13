@@ -129,7 +129,19 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "in-code",
+        "indicator": "Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself",
+        "config_key": "Server parameters as literals in the source",
+        "spawn_mechanism": "Child process per stdio server when the script runs",
+        "secrets_location": "The script, or the environment it inherits",
+        "persistence_trigger": "Every script run",
+        "triage_priority": "p2",
+        "confidence": "medium",
+        "notes": "These are imported libraries rather than installed applications, so there is no path to collect. Search project source and dependency manifests instead."
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Inventory by pattern, not by path. Search dependency manifests and lockfiles first - it answers the question across an estate from source control without touching an endpoint. On a host, check site-packages for the module names and the process table for a Python process whose children are shells or package managers. Treat library presence as availability, not use: the evidence that an agent actually ran is the egress and the child processes, not the import. Collect the .env or environment beside the calling script, because the provider key there is the credential artifact for this whole class."
@@ -313,7 +325,7 @@
       "local_code_execution": true,
       "local_listener": true,
       "plaintext_credentials": true,
-      "mcp_capable": true
+      "mcp_capable": false
     },
     "risk": "high",
     "confidence": "high",
@@ -522,6 +534,11 @@
         "title": "Aider-AI/aider",
         "url": "https://github.com/Aider-AI/aider",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Aider-AI/aider#4506 - request for native MCP support in the CLI",
+        "url": "https://github.com/Aider-AI/aider/issues/4506",
+        "accessed": "2026-08-13"
       }
     ],
     "last_verified": "2026-08-13",
@@ -664,6 +681,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.aws/amazonq/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start",
@@ -673,6 +691,7 @@
         "notes": "Global scope. The CLI reads this and the workspace file together and takes the union, so checking one path alone under-reports what the agent could run."
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.amazonq/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start in the workspace",
@@ -682,6 +701,7 @@
         "notes": "Workspace scope. Travels with the repo."
       },
       {
+        "mechanism": "config-file",
         "config_path": "~/.aws/amazonq/default.json",
         "config_key": "Agent configuration, global scope in the IDE",
         "spawn_mechanism": "Child process at IDE start",
@@ -875,7 +895,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "in-code",
+        "indicator": "Import of autogen_ext.tools.mcp - McpWorkbench, StdioServerParams, StdioMcpToolAdapter",
+        "config_key": "StdioServerParams command and args",
+        "spawn_mechanism": "Child process per stdio server, started by the script",
+        "secrets_location": "StdioServerParams env, so the script or its environment",
+        "persistence_trigger": "Every script run",
+        "triage_priority": "p2",
+        "confidence": "high",
+        "notes": "The vendor documents StdioServerParams as executing commands in the local environment and warns to connect only to trusted servers, which makes the parameter literal in the source the thing to read"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -893,6 +925,11 @@
       {
         "title": "microsoft/autogen",
         "url": "https://github.com/microsoft/autogen",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "AutoGen reference - autogen_ext.tools.mcp",
+        "url": "https://microsoft.github.io/autogen/stable//reference/python/autogen_ext.tools.mcp.html",
         "accessed": "2026-08-13"
       }
     ],
@@ -1139,7 +1176,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "server",
+        "indicator": "uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config",
+        "config_key": "mcpServers entry in the client's config",
+        "spawn_mechanism": "Started by whichever MCP client lists it, not by itself",
+        "secrets_location": "env block in the client's config - the LLM API key is supplied there",
+        "persistence_trigger": "Every start of the client that lists it",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Grants full browser control to whatever client loads it, so the question is which client's config names it - find that config rather than looking for one here"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -1158,6 +1207,11 @@
       {
         "title": "browser-use/browser-use",
         "url": "https://github.com/browser-use/browser-use",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Browser Use docs - MCP server",
+        "url": "https://docs.browser-use.com/open-source/customize/integrations/mcp-server",
         "accessed": "2026-08-13"
       }
     ],
@@ -1552,6 +1606,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.claude.json",
         "config_key": "mcpServers (user scope)",
         "spawn_mechanism": "Child process on CLI start",
@@ -1561,6 +1616,7 @@
         "notes": "User-scoped, applies to all projects"
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.mcp.json",
         "config_key": "mcpServers (project scope)",
         "spawn_mechanism": "Child process on CLI start in repo",
@@ -1570,6 +1626,7 @@
         "notes": "Travels with the repo - review on every clone/PR"
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.claude/settings.local.json",
         "config_key": "enabledMcpjsonServers",
         "spawn_mechanism": "Approval gate for .mcp.json",
@@ -2011,6 +2068,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "%APPDATA%\\Claude\\claude_desktop_config.json",
         "config_key": "mcpServers.<name>.command + .args",
         "spawn_mechanism": "Child process at app launch",
@@ -2020,6 +2078,7 @@
         "notes": "Standard EXE-installer path"
       },
       {
+        "mechanism": "config-file",
         "config_path": "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at app launch",
@@ -2029,6 +2088,7 @@
         "notes": "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
       },
       {
+        "mechanism": "config-file",
         "config_path": "~/Library/Application Support/Claude/claude_desktop_config.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at app launch",
@@ -2038,6 +2098,7 @@
         "notes": ""
       },
       {
+        "mechanism": "config-file",
         "config_path": "~/.config/Claude/claude_desktop_config.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at app launch",
@@ -2047,6 +2108,7 @@
         "notes": ""
       },
       {
+        "mechanism": "config-file",
         "config_path": "*.mcpb / *.dxt bundle files",
         "config_key": "manifest.json inside archive",
         "spawn_mechanism": "Installed then spawned",
@@ -2249,6 +2311,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
@@ -2531,6 +2594,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.codeium/windsurf/mcp_config.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
@@ -2832,6 +2896,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.continue/config.yaml",
         "config_key": "mcpServers (name, command, args, cwd, env)",
         "spawn_mechanism": "Child process at IDE start",
@@ -2841,6 +2906,7 @@
         "notes": "YAML not JSON"
       },
       {
+        "mechanism": "config-file",
         "config_path": "~/.continue/mcpServers/",
         "config_key": "One JSON file per server, in the format other clients use",
         "spawn_mechanism": "Child process at IDE start",
@@ -2986,7 +3052,19 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "in-code",
+        "indicator": "Import of MCPServerAdapter from crewai_tools, usually alongside StdioServerParameters from mcp",
+        "config_key": "StdioServerParameters command, args and env",
+        "spawn_mechanism": "Child process opened by the adapter context manager",
+        "secrets_location": "The script itself, or the environment it inherits",
+        "persistence_trigger": "Every crew run",
+        "triage_priority": "p2",
+        "confidence": "high",
+        "notes": "The adapter is normally used as a context manager, so the server runs only for the duration of the crew and leaves no resident process to find afterwards"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -3003,6 +3081,16 @@
       {
         "title": "crewAIInc/crewAI",
         "url": "https://github.com/crewAIInc/crewAI",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "CrewAI docs - MCP servers as tools",
+        "url": "https://docs.crewai.com/en/mcp/overview",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "crewAIInc/crewAI-tools - MCP adapter",
+        "url": "https://github.com/crewAIInc/crewAI-tools/blob/main/crewai_tools/adapters/mcp_adapter.py",
         "accessed": "2026-08-13"
       }
     ],
@@ -3359,6 +3447,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.cursor/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
@@ -3368,6 +3457,7 @@
         "notes": "Global scope"
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.cursor/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process on workspace open",
@@ -3476,7 +3566,19 @@
       ]
     },
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "cloud",
+        "indicator": "Tenant-side configuration in the Devin web UI and API - not present on the endpoint",
+        "spawn_mechanism": "Runs in Devin's cloud workspace, not on the user's host",
+        "secrets_location": "Vendor-side, retrievable only through the account",
+        "persistence_trigger": "Every session in the hosted workspace",
+        "triage_priority": "p3",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Recorded so a responder stops looking on disk. Everything that matters here comes from the account, under whatever preservation process applies to a third-party service."
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -3598,7 +3700,20 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "MCP servers added under Tools - MCP in the workspace, persisted in the Dify application database rather than in a file on the host",
+        "config_key": "workspace tools",
+        "spawn_mechanism": "Outbound HTTP to the server URL - Dify registers HTTP transport servers only, so there is no local child process",
+        "secrets_location": "Server auth held with the workspace tool record",
+        "persistence_trigger": "Every app run that invokes the tool",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "No stdio transport means no spawned process to catch on the endpoint, and the whole record is inside the deployment's database"
+      }
+    ],
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -3622,6 +3737,11 @@
       {
         "title": "langgenius/dify-docs",
         "url": "https://github.com/langgenius/dify-docs",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Dify docs - use MCP tools",
+        "url": "https://docs.dify.ai/en/cloud/use-dify/build/mcp",
         "accessed": "2026-08-13"
       }
     ],
@@ -4222,6 +4342,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.copilot/mcp-config.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start",
@@ -4231,6 +4352,7 @@
         "notes": "Copilot CLI, read natively by the agent host. COPILOT_HOME relocates the whole directory, so a responder checking only the default path misses a moved config - read the environment before concluding there is none."
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start in the workspace",
@@ -4420,6 +4542,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.gemini/settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start",
@@ -4429,6 +4552,7 @@
         "notes": "User scope"
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.gemini/settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at CLI start in the workspace",
@@ -4635,6 +4759,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.config/goose/config.yaml",
         "config_key": "extensions",
         "spawn_mechanism": "Child process at agent start",
@@ -5020,7 +5145,20 @@
       ]
     },
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "<Jan data dir>/mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Claude Desktop format, and the vendor documents importing that file directly. The data directory root differs between the stable and beta builds, so resolve it from the install rather than assuming."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -5042,6 +5180,11 @@
       {
         "title": "janhq/jan",
         "url": "https://github.com/janhq/jan",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "janhq/jan#4859 - Jan as an MCP client host",
+        "url": "https://github.com/janhq/jan/pull/4859",
         "accessed": "2026-08-13"
       }
     ],
@@ -5301,6 +5444,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.kiro/settings/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "stdio child process; hot-reloaded by file watcher",
@@ -5310,6 +5454,7 @@
         "notes": "Entries carry an autoApprove array listing tools that execute without user confirmation - read it first. Hot-reload means a tampered config applies at the next idle boundary with no restart, so file mtime is the change signal, not process start time."
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.kiro/settings/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "stdio child process; hot-reloaded by file watcher",
@@ -5556,7 +5701,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "in-code",
+        "indicator": "Import of langchain_mcp_adapters.client.MultiServerMCPClient, or the langchain-mcp-adapters dependency in requirements.txt / pyproject.toml / package.json",
+        "config_key": "server dict passed to the client constructor",
+        "spawn_mechanism": "Child process per stdio server when the script constructs the client",
+        "secrets_location": "The script itself, or the environment it inherits",
+        "persistence_trigger": "Every script run - there is no config file to disable, so removing the server means editing code",
+        "triage_priority": "p2",
+        "confidence": "high",
+        "notes": "No config artifact exists. The server list is a literal in the source, so the source file and its version history are the record of what the agent could reach."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -5578,6 +5735,11 @@
       {
         "title": "langchain-ai/langchain",
         "url": "https://github.com/langchain-ai/langchain",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "langchain-ai/langchain-mcp-adapters",
+        "url": "https://github.com/langchain-ai/langchain-mcp-adapters",
         "accessed": "2026-08-13"
       }
     ],
@@ -5855,7 +6017,30 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "MCP server registrations added in Settings - MCP Servers, persisted in langflow.db under ~/.langflow/",
+        "config_key": "mcp servers",
+        "spawn_mechanism": "Child process for a stdio server, or an outbound HTTP/SSE connection",
+        "secrets_location": "OAuth credentials encrypted in the Langflow database, alongside the flow credentials already catalogued there",
+        "persistence_trigger": "Every flow run that reaches the component",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Collecting langflow.db answers both which servers were reachable and which credentials they held"
+      },
+      {
+        "mechanism": "server",
+        "indicator": "Langflow projects published as MCP tools - each project is added to Langflow's own MCP server automatically on creation",
+        "config_key": "project MCP tool exposure",
+        "spawn_mechanism": "Served over streamable HTTP or SSE to any client that connects",
+        "secrets_location": "Whatever the exposed flows themselves hold",
+        "persistence_trigger": "Continuous while Langflow is running",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Exposure is opt-out rather than opt-in: creating a project publishes its flows as tools, so the tool surface grows without anyone configuring it"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -5868,6 +6053,16 @@
       {
         "title": "langflow-ai/langflow",
         "url": "https://github.com/langflow-ai/langflow",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Langflow docs - use Langflow as an MCP client",
+        "url": "https://docs.langflow.org/mcp-client",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Langflow docs - use Langflow as an MCP server",
+        "url": "https://docs.langflow.org/mcp-server",
         "accessed": "2026-08-13"
       }
     ],
@@ -5977,7 +6172,20 @@
         "confidence": "medium"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "MCP server registrations created through the Letta server API, persisted in the SQLite database under ~/.letta/ or the Docker PostgreSQL volume",
+        "config_key": "mcp servers",
+        "spawn_mechanism": "Connection opened by the Letta server when an agent uses the tool",
+        "secrets_location": "Server credentials in the same database",
+        "persistence_trigger": "Every agent step that reaches the tool",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "State lives in the server rather than on the client, so this survives a client uninstall and is not collectable from the workstation that used it"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect the memory store before touching the deployment. Memory is a persistence mechanism here, and a container teardown or a database reset destroys the record of what the agent knew and when it learned it. Read the memory contents for injected standing instructions, not only for data - an agent cleaned everywhere else will re-execute an instruction that survived in memory. Check whether 8283 is reachable beyond loopback.",
@@ -6006,6 +6214,11 @@
       {
         "title": "letta/letta on Docker Hub",
         "url": "https://hub.docker.com/r/letta/letta",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Letta docs - create MCP server",
+        "url": "https://docs.letta.com/api/resources/mcp_servers/methods/create",
         "accessed": "2026-08-13"
       }
     ],
@@ -6330,7 +6543,31 @@
       ]
     },
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.lmstudio/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app start, and on save - the file is hot reloaded",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "notes": "Cursor's mcp.json notation. This is the documented path; see the row below before concluding it is absent."
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.cache/lm-studio/mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at app start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every app start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Where the file actually was on macOS in an open vendor bug report, against a documented ~/.lmstudio. Check both before recording a miss."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -6362,6 +6599,11 @@
       {
         "title": "lmstudio-ai/docs",
         "url": "https://github.com/lmstudio-ai/docs",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "lmstudio-ai/lmstudio-bug-tracker#1371 - incorrect mcp.json location on macOS",
+        "url": "https://github.com/lmstudio-ai/lmstudio-bug-tracker/issues/1371",
         "accessed": "2026-08-13"
       }
     ],
@@ -6453,7 +6695,19 @@
     "abuse_potential": "Primary telemetry is M365/Purview audit, not endpoint. CrowdStrike ships AIDR for Copilot Studio Agents.",
     "artifacts": {},
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "cloud",
+        "indicator": "Tenant-side configuration in the Copilot Studio maker portal and the Power Platform admin centre - not present on the endpoint",
+        "spawn_mechanism": "Runs in the Microsoft cloud, not on the user's host",
+        "secrets_location": "Power Platform connection references, tenant-side",
+        "persistence_trigger": "Every agent invocation",
+        "triage_priority": "p3",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "The endpoint footprint is browser only, so the audit trail is a tenant-side export rather than a host collection"
+      }
+    ],
     "collection": {
       "triage_priority": "p3",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
@@ -6589,7 +6843,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "Workflow JSON in database.sqlite containing node type n8n-nodes-langchain.toolmcp or n8n-nodes-langchain.mcptrigger",
+        "config_key": "workflow nodes",
+        "spawn_mechanism": "Connection opened when the workflow executes",
+        "secrets_location": "n8n credential store, encrypted with ~/.n8n/encryptionKey",
+        "persistence_trigger": "Every workflow execution, including schedule and webhook triggers",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "The MCP Server Trigger node makes the n8n instance an MCP server as well as a client, so the same database answers both directions"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -6616,6 +6882,16 @@
         "title": "n8n-io/n8n-docs",
         "url": "https://github.com/n8n-io/n8n-docs",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "n8n docs - MCP Client Tool node",
+        "url": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "n8n docs - MCP Server Trigger node",
+        "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger",
+        "accessed": "2026-08-13"
       }
     ],
     "last_verified": "2026-08-13",
@@ -6637,7 +6913,7 @@
       "local_code_execution": true,
       "local_listener": true,
       "plaintext_credentials": null,
-      "mcp_capable": true
+      "mcp_capable": false
     },
     "risk": "critical",
     "confidence": "high",
@@ -6930,6 +7206,11 @@
         "title": "ollama/ollama",
         "url": "https://github.com/ollama/ollama",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Ollama docs - API reference (no MCP client surface)",
+        "url": "https://github.com/ollama/ollama/blob/main/docs/api.md",
+        "accessed": "2026-08-13"
       }
     ],
     "last_verified": "2026-08-13",
@@ -7190,7 +7471,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.openinterpreter/config.toml",
+        "config_key": "mcp",
+        "spawn_mechanism": "Child process when the interpreter session starts",
+        "secrets_location": "Server credentials via interpreter mcp login",
+        "persistence_trigger": "Every interpreter session",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Managed by interpreter mcp list / get / remove / login, so the CLI history is a second source for what was registered"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -7208,6 +7501,11 @@
       {
         "title": "OpenInterpreter/open-interpreter releases",
         "url": "https://github.com/OpenInterpreter/open-interpreter/releases",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Open Interpreter docs - MCP servers",
+        "url": "https://www.openinterpreter.com/docs/terminal/mcp",
         "accessed": "2026-08-13"
       }
     ],
@@ -7422,6 +7720,31 @@
         "confidence": "high"
       }
     ],
+    "mcp": [
+      {
+        "mechanism": "database",
+        "indicator": "Tool server registrations in webui.db - added per user in Settings or globally in Admin Settings",
+        "config_key": "tool servers",
+        "spawn_mechanism": "HTTP call to the proxy, not a child process - Open WebUI reaches MCP through mcpo rather than speaking it directly",
+        "secrets_location": "Tool server auth in webui.db; the MCP servers' own secrets sit in the mcpo config",
+        "persistence_trigger": "Every chat that invokes the tool",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Registration is per user as well as global, so an admin view of the tool list is not the whole list"
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "<mcpo config> (Claude Desktop format, path set at mcpo launch)",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "mcpo spawns each MCP server over stdio and republishes it as REST",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every mcpo start, and on hot reload",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Separate process from Open WebUI, frequently a separate container - collecting the Open WebUI volume alone misses it entirely"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication.",
@@ -7469,6 +7792,16 @@
         "title": "CVE-2025-64496 - Direct Connections account takeover to RCE (Cato CTRL)",
         "url": "https://www.catonetworks.com/blog/cato-ctrl-vulnerability-discovered-open-webui-cve-2025-64496/",
         "accessed": "2026-08-11"
+      },
+      {
+        "title": "Open WebUI docs - MCP support",
+        "url": "https://docs.openwebui.com/features/extensibility/mcp/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "open-webui/mcpo - MCP-to-OpenAPI proxy",
+        "url": "https://github.com/open-webui/mcpo",
+        "accessed": "2026-08-13"
       }
     ],
     "last_modified": "2026-08-11"
@@ -7690,6 +8023,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.codex/config.toml",
         "config_key": "[mcp_servers.<name>] command + args, or url for HTTP servers",
         "spawn_mechanism": "stdio child process at CLI start",
@@ -7699,6 +8033,7 @@
         "notes": "User scope. TOML not JSON."
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.codex/config.toml",
         "config_key": "[mcp_servers.<name>]",
         "spawn_mechanism": "stdio child process at CLI start in the project",
@@ -7708,6 +8043,7 @@
         "notes": "Project scope, applied only to trusted projects. Travels with the repo, so review it on every clone."
       },
       {
+        "mechanism": "config-file",
         "config_path": "/etc/codex/config.toml",
         "config_key": "[mcp_servers.<name>]",
         "spawn_mechanism": "stdio child process at CLI start",
@@ -8071,6 +8407,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "~/.openhands/config.toml",
         "config_key": "[mcp] section",
         "spawn_mechanism": "Child process at agent start",
@@ -8266,7 +8603,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "server",
+        "indicator": "npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config",
+        "config_key": "mcpServers entry in the client's config",
+        "spawn_mechanism": "Started by whichever MCP client lists it",
+        "secrets_location": "None of its own - it inherits the client's environment",
+        "persistence_trigger": "Every start of the client that lists it",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "notes": "This entry is the server, not a host, so it has no config of its own. The finding is the client config that names it, and every client config in this catalog is worth checking for it."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
@@ -8430,6 +8779,7 @@
     ],
     "mcp": [
       {
+        "mechanism": "config-file",
         "config_path": "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
@@ -8439,6 +8789,7 @@
         "notes": ""
       },
       {
+        "mechanism": "config-file",
         "config_path": "<repo>/.roo/mcp.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process on workspace open",
@@ -9454,7 +9805,32 @@
       ]
     },
     "credentials": [],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.warp_cli/.mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at agent start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every agent start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Warp also reads MCP definitions belonging to other installed agents, so a server never configured in Warp can still run under it"
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "<repo>/.warp/.mcp.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process on workspace open",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every workspace open",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "unverified": true,
+        "notes": "Travels with the repo - review on clone"
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect warp.sqlite together with its -wal and -shm siblings before the application is closed or the host is rebooted, or the most recent commands are lost. Treat the database as the primary execution timeline for this host - it records commands that never reach shell history. Cloud sync means the local copy may not be the whole record; scope the account as well as the endpoint.",
@@ -9476,6 +9852,11 @@
       {
         "title": "Warp command history",
         "url": "https://docs.warp.dev/terminal/entry/command-history/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Warp docs - customizing the Warp Agent CLI",
+        "url": "https://docs.warp.dev/agents/cli/configuration/",
         "accessed": "2026-08-13"
       }
     ],

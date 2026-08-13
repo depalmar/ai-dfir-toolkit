@@ -132,7 +132,8 @@ credentials:
     description: GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY
     confidence: high
 mcp:
-  - config_path: "~/.gemini/settings.json"
+  - mechanism: config-file
+    config_path: "~/.gemini/settings.json"
     config_key: mcpServers
     spawn_mechanism: Child process at CLI start
     secrets_location: >-
@@ -141,7 +142,8 @@ mcp:
     persistence_trigger: Every CLI invocation
     triage_priority: p1
     notes: User scope
-  - config_path: "<repo>/.gemini/settings.json"
+  - mechanism: config-file
+    config_path: "<repo>/.gemini/settings.json"
     config_key: mcpServers
     spawn_mechanism: Child process at CLI start in the workspace
     secrets_location: env block

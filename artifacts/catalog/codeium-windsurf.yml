@@ -205,7 +205,8 @@ credentials:
       miss a Neovim user's key entirely.
     confidence: high
 mcp:
-  - config_path: "~/.codeium/windsurf/mcp_config.json"
+  - mechanism: config-file
+    config_path: "~/.codeium/windsurf/mcp_config.json"
     config_key: mcpServers
     spawn_mechanism: Child process at IDE start
     secrets_location: env block

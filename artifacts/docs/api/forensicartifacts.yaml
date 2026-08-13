@@ -76,6 +76,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/Aider-AI/aider
+- https://github.com/Aider-AI/aider/issues/4506
 ---
 name: AmazonQDeveloperExCodewhispererArtifacts
 doc: Amazon Q Developer (ex-CodeWhisperer) (AIRT-0008) - AWS coding assistant. Node-based
@@ -159,6 +160,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/microsoft/autogen
+- https://microsoft.github.io/autogen/stable//reference/python/autogen_ext.tools.mcp.html
 ---
 name: BrowserUseArtifacts
 doc: Browser-Use (AIRT-0032) - Python library giving LLM agents DOM-level browser
@@ -209,6 +211,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/browser-use/browser-use
+- https://docs.browser-use.com/open-source/customize/integrations/mcp-server
 ---
 name: ClaudeCodeArtifacts
 doc: Claude Code (AIRT-0001) - Terminal-native agentic coding assistant. Reads/writes
@@ -516,6 +519,7 @@ supported_os:
 urls:
 - https://github.com/langgenius/dify
 - https://github.com/langgenius/dify-docs
+- https://docs.dify.ai/en/cloud/use-dify/build/mcp
 ---
 name: FlowiseArtifacts
 doc: Flowise (AIRT-0030) - Drag-and-drop LangChain flow builder. Default port 3000,
@@ -795,6 +799,7 @@ supported_os:
 urls:
 - https://github.com/langchain-ai/langgraph
 - https://github.com/langchain-ai/langchain
+- https://github.com/langchain-ai/langchain-mcp-adapters
 ---
 name: LangflowArtifacts
 doc: Langflow (AIRT-0044) - Low-code visual builder for LLM agents and workflows,
@@ -833,6 +838,8 @@ supported_os:
 - Windows
 urls:
 - https://github.com/langflow-ai/langflow
+- https://docs.langflow.org/mcp-client
+- https://docs.langflow.org/mcp-server
 ---
 name: LettaArtifacts
 doc: Letta (AIRT-0047) - Stateful agent framework. Agents live inside a Letta server
@@ -881,6 +888,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.cache/lm-studio/mcp.json'
+    - '%%users.homedir%%/.lmstudio/mcp.json'
     - '%%users.homedir%%/.lmstudio/settings.json'
     separator: /
   supported_os:
@@ -888,6 +897,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.cache/lm-studio/mcp.json'
+    - '%%users.homedir%%/.lmstudio/mcp.json'
     - '%%users.homedir%%/.lmstudio/settings.json'
     separator: /
   supported_os:
@@ -895,6 +906,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.cache/lm-studio/mcp.json'
+    - '%%users.homedir%%/.lmstudio/mcp.json'
     - '%%users.homedir%%/.lmstudio/settings.json'
     separator: \
   supported_os:
@@ -943,6 +956,7 @@ supported_os:
 urls:
 - https://github.com/n8n-io/n8n
 - https://github.com/n8n-io/n8n-docs
+- https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp
 ---
 name: OllamaArtifacts
 doc: Ollama (AIRT-0017) - Most widely deployed local LLM server. OpenAI-compatible
@@ -976,6 +990,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/ollama/ollama
+- https://github.com/ollama/ollama/blob/main/docs/api.md
 ---
 name: OpenInterpreterArtifacts
 doc: Open Interpreter (AIRT-0015) - Natural-language to executed code on the host.
@@ -992,6 +1007,7 @@ sources:
       Support/open-interpreter/profiles/default.yaml'
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/config.toml'
     - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
     - INTERPRETER_API_KEY
     - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
@@ -1006,6 +1022,7 @@ sources:
       Support/open-interpreter/profiles/default.yaml'
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/config.toml'
     - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
     - INTERPRETER_API_KEY
     - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
@@ -1018,6 +1035,7 @@ sources:
     paths:
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/config.toml'
     - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
     - '%%users.localappdata%%\open-interpreter\open-interpreter\profiles\default.yaml'
     - INTERPRETER_API_KEY
@@ -1032,6 +1050,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/OpenInterpreter/open-interpreter/releases
+- https://www.openinterpreter.com/docs/terminal/mcp
 ---
 name: OpenWebuiArtifacts
 doc: Open WebUI (AIRT-0042) - Self-hosted web interface for local and remote LLMs,
@@ -1312,12 +1331,14 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.local/state/warp-terminal/warp.sqlite'
+    - '%%users.homedir%%/.warp_cli/.mcp.json'
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.warp_cli/.mcp.json'
     - '%%users.homedir%%/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application
       Support/dev.warp.Warp-Stable/warp.sqlite'
     separator: /
@@ -1326,6 +1347,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.warp_cli/.mcp.json'
     - '%%users.localappdata%%\warp\Warp\data\warp.sqlite'
     separator: \
   supported_os:
@@ -1337,3 +1359,4 @@ supported_os:
 urls:
 - https://docs.warp.dev/terminal/settings/file-locations/
 - https://docs.warp.dev/terminal/entry/command-history/
+- https://docs.warp.dev/agents/cli/configuration/

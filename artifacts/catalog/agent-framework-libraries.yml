@@ -137,6 +137,16 @@ credentials:
       covers them all.
     confidence: medium
 mcp: []
+mcp:
+  - mechanism: in-code
+    indicator: Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself
+    config_key: Server parameters as literals in the source
+    spawn_mechanism: Child process per stdio server when the script runs
+    secrets_location: The script, or the environment it inherits
+    persistence_trigger: Every script run
+    triage_priority: p2
+    confidence: medium
+    notes: These are imported libraries rather than installed applications, so there is no path to collect. Search project source and dependency manifests instead.
 collection:
   triage_priority: p2
   guidance: >-

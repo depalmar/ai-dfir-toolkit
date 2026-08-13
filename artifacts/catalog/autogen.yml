@@ -136,6 +136,16 @@ credentials:
       AUTOGENSTUDIO_APPDIR if relocated.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: in-code
+    indicator: Import of autogen_ext.tools.mcp - McpWorkbench, StdioServerParams, StdioMcpToolAdapter
+    config_key: StdioServerParams command and args
+    spawn_mechanism: Child process per stdio server, started by the script
+    secrets_location: StdioServerParams env, so the script or its environment
+    persistence_trigger: Every script run
+    triage_priority: p2
+    confidence: high
+    notes: The vendor documents StdioServerParams as executing commands in the local environment and warns to connect only to trusted servers, which makes the parameter literal in the source the thing to read
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -149,6 +159,9 @@ attack_techniques:
 references:
   - title: "microsoft/autogen"
     url: https://github.com/microsoft/autogen
+    accessed: "2026-08-13"
+  - title: "AutoGen reference - autogen_ext.tools.mcp"
+    url: https://microsoft.github.io/autogen/stable//reference/python/autogen_ext.tools.mcp.html
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

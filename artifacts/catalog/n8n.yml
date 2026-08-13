@@ -87,6 +87,16 @@ credentials:
     description: Credentials encrypted with N8N_ENCRYPTION_KEY - key theft = full cred compromise
     confidence: high
 mcp: []
+mcp:
+  - mechanism: database
+    indicator: Workflow JSON in database.sqlite containing node type n8n-nodes-langchain.toolmcp or n8n-nodes-langchain.mcptrigger
+    config_key: workflow nodes
+    spawn_mechanism: Connection opened when the workflow executes
+    secrets_location: n8n credential store, encrypted with ~/.n8n/encryptionKey
+    persistence_trigger: Every workflow execution, including schedule and webhook triggers
+    triage_priority: p1
+    confidence: medium
+    notes: The MCP Server Trigger node makes the n8n instance an MCP server as well as a client, so the same database answers both directions
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -106,6 +116,12 @@ references:
     accessed: "2026-08-13"
   - title: "n8n-io/n8n-docs"
     url: https://github.com/n8n-io/n8n-docs
+    accessed: "2026-08-13"
+  - title: "n8n docs - MCP Client Tool node"
+    url: https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp
+    accessed: "2026-08-13"
+  - title: "n8n docs - MCP Server Trigger node"
+    url: https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

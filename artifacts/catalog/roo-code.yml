@@ -115,14 +115,16 @@ credentials:
     description: ""
     confidence: high
 mcp:
-  - config_path: …/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
+  - mechanism: config-file
+    config_path: …/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
     config_key: mcpServers
     spawn_mechanism: Child process at IDE start
     secrets_location: env block (plaintext)
     persistence_trigger: Every IDE start
     triage_priority: p1
     notes: ""
-  - config_path: "<repo>/.roo/mcp.json"
+  - mechanism: config-file
+    config_path: "<repo>/.roo/mcp.json"
     config_key: mcpServers
     spawn_mechanism: Child process on workspace open
     secrets_location: env block

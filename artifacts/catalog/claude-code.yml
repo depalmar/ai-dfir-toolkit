@@ -305,21 +305,24 @@ credentials:
       not the item; on Linux/Windows it says only 'a credentials file'.
     confidence: high
 mcp:
-  - config_path: ~/.claude.json
+  - mechanism: config-file
+    config_path: ~/.claude.json
     config_key: mcpServers (user scope)
     spawn_mechanism: Child process on CLI start
     secrets_location: env block
     persistence_trigger: Every CLI invocation
     triage_priority: p1
     notes: User-scoped, applies to all projects
-  - config_path: "<repo>/.mcp.json"
+  - mechanism: config-file
+    config_path: "<repo>/.mcp.json"
     config_key: mcpServers (project scope)
     spawn_mechanism: Child process on CLI start in repo
     secrets_location: env block
     persistence_trigger: Every CLI invocation in repo
     triage_priority: p1
     notes: Travels with the repo - review on every clone/PR
-  - config_path: "<repo>/.claude/settings.local.json"
+  - mechanism: config-file
+    config_path: "<repo>/.claude/settings.local.json"
     config_key: enabledMcpjsonServers
     spawn_mechanism: Approval gate for .mcp.json
     secrets_location: "-"

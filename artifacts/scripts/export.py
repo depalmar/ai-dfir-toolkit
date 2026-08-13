@@ -91,11 +91,11 @@ for e in entries:
         rows.append({
             "entry_id": e["id"], "tool": e["name"], "category": e["category"],
             "entry_risk": e["risk"], "artifact_class": "mcp-config",
-            "artifact": m["config_path"], "os": "",
+            "artifact": m.get("config_path") or m.get("indicator", ""), "os": "",
             "forensic_value": "high",
             "evidence_type": "execution|persistence",
             "description": m.get("notes", ""),
-            "confidence": "high",
+            "confidence": m.get("confidence", "high"),
             "volatility": volatility_of("mcp-config", m),
             "retention": "",
         })

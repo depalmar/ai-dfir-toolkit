@@ -93,6 +93,16 @@ credentials:
     description: Provider keys via LiteLLM
     confidence: medium
 mcp: []
+mcp:
+  - mechanism: in-code
+    indicator: Import of MCPServerAdapter from crewai_tools, usually alongside StdioServerParameters from mcp
+    config_key: StdioServerParameters command, args and env
+    spawn_mechanism: Child process opened by the adapter context manager
+    secrets_location: The script itself, or the environment it inherits
+    persistence_trigger: Every crew run
+    triage_priority: p2
+    confidence: high
+    notes: The adapter is normally used as a context manager, so the server runs only for the duration of the crew and leaves no resident process to find afterwards
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -105,6 +115,12 @@ attack_techniques:
 references:
   - title: "crewAIInc/crewAI"
     url: https://github.com/crewAIInc/crewAI
+    accessed: "2026-08-13"
+  - title: "CrewAI docs - MCP servers as tools"
+    url: https://docs.crewai.com/en/mcp/overview
+    accessed: "2026-08-13"
+  - title: "crewAIInc/crewAI-tools - MCP adapter"
+    url: https://github.com/crewAIInc/crewAI-tools/blob/main/crewai_tools/adapters/mcp_adapter.py
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"
