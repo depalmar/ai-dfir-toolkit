@@ -8,6 +8,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **Case studies get their own tab, expanded.** They previously rendered as
+  three small cards below 45 tool cards at the bottom of the Tools view, where
+  nobody would find them. The full view groups indicators by kind — file,
+  directory, binary, commit — because a responder hunts one class at a time with
+  one tool, and a flat list of mixed strings makes them do the sorting. Response
+  actions sit beside the indicators rather than under them, since "what to look
+  for" and "what to do" are read separately. Where the catalog knows the affected
+  tool, its name is a button through to that tool's rows.
+
 - **CSV and JSON export of the filtered view.** Exports what is on screen —
   filters, search and sort included — because a responder narrowing to one tool
   and OS wants that list, not the whole catalog. Column order matches
@@ -116,6 +125,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   why.
 
 ### Fixed
+
+- **`AIRT-CS-0001` referenced a dead entry id.** It pointed at `LOLAI-0016`, from
+  the naming scheme retired when the catalog was renamed, so the case study could
+  not be cross-linked to the tool it describes. Both ids are GPT Pilot; corrected
+  to `AIRT-0016` and logged in `VERIFICATION.md`.
+- **The site discarded indicator types.** `site_data.py` kept only an indicator's
+  value and description and dropped its `type`, so the page could not tell a
+  malicious commit hash from a file path from a binary name.
 
 - **The site under-reported detections by 13 and hid three whole categories.**
   `site_data.py` discovered rule directories from a hardcoded list of six, so

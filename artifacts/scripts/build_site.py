@@ -558,6 +558,32 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
   border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;color:var(--ink);
   word-break:break-all}
 .cs ol{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}
+
+/* ---- case studies, full view ---- */
+.csfull{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  padding:20px 22px;margin:0 0 16px}
+.csfull .cshead{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:14px;margin:0 0 10px;flex-wrap:wrap}
+.csfull .csname{font-size:16px;font-weight:600}
+.csfull .csjump{flex:none;white-space:nowrap}
+.cssum{margin:0 0 16px;font-size:13.5px;color:var(--ink);max-width:88ch}
+/* Two columns because indicators and response answer different questions - what
+   to look for, and what to do - and a responder reads one or the other. */
+.csbody{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px}
+.csbody h5{margin:0 0 9px;display:flex;align-items:center;gap:7px}
+.csbody h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.iocgrp{margin:0 0 11px}
+.iockind{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 4px}
+.csfull .iocs{flex-direction:column;align-items:flex-start;gap:4px}
+.csfull .ioc{display:block;width:100%;word-break:break-all;padding:5px 9px;line-height:1.35}
+.csfull .ioc em{display:block;font-style:normal;font-family:system-ui,sans-serif;
+  font-size:11px;color:var(--muted);margin-top:2px}
+.csact{margin:0;padding-left:18px;font-size:12.5px;color:var(--ink)}
+.csact li{margin:0 0 6px}
+.muted{margin:0;font-size:12.5px;color:var(--muted)}
+@media(max-width:820px){.csbody{grid-template-columns:minmax(0,1fr);gap:16px}}
 .lesson{background:var(--alert-bg);border:1px solid var(--alert-line);
   border-left:3px solid var(--accent);border-radius:8px;padding:10px;font-size:12.5px;
   color:var(--muted)}
@@ -1063,20 +1089,58 @@ function mappingsHTML(){
 }
 
 /* ---------- case studies ---------- */
+// Indicators grouped by kind. A responder hunts one class at a time - files with
+// a scanner, commits in version control, network indicators in a proxy log - so a
+// flat list of mixed strings makes them do the sorting themselves.
+const IOC_ORDER=['file','directory','binary','process','commit','domain','ip','url','hash','other'];
+function iocGroups(iocs){
+  const by={};
+  for(const i of iocs){const k=(i.type||'other').toLowerCase(); (by[k]=by[k]||[]).push(i)}
+  return Object.keys(by)
+    .sort((a,b)=>{const x=IOC_ORDER.indexOf(a),y=IOC_ORDER.indexOf(b);
+      return (x<0?99:x)-(y<0?99:y)||a.localeCompare(b)})
+    .map(k=>({kind:k,items:by[k]}));
+}
 function caseStudiesHTML(){
-  if(!CASES.length)return'';
-  return `<h2 class="sechead">Case studies</h2><div class="csgrid">`+CASES.map(c=>`
-    <div class="cs">
-      <div class="cshead"><div><div class="csname">${esc(c.title)}</div>
-        <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}</div></div></div>
-      ${c.affects?`<div class="csmeta">affects: ${esc(c.affects)}</div>`:''}
-      <p>${esc(c.summary)}</p>
-      ${c.iocs.length?`<h5>Indicators</h5><div class="iocs">${c.iocs.map(i=>
-        `<span class="ioc" title="${esc(i.description)}">${esc(i.value)}</span>`).join('')}</div>`:''}
-      ${c.response_actions.length?`<h5>Response</h5><ol>${c.response_actions.map(a=>
-        `<li>${esc(a)}</li>`).join('')}</ol>`:''}
+  if(!CASES.length)return`<div class="empty">No case studies.</div>`;
+  return `<div class="gtop"><div><h2>Case studies</h2>
+    <p>Documented incidents against the tools in this catalog, with the indicators
+    each left behind and what responders did about it.</p></div></div>`+
+  CASES.map(c=>{
+    const groups=iocGroups(c.iocs||[]);
+    const n=(c.iocs||[]).length;
+    // The affected tool is a link when the catalog knows it, because the useful
+    // next move is always "show me every artifact this tool leaves".
+    const known=TOOLS.find(t=>t.entry_id===c.affects);
+    return `
+    <article class="csfull">
+      <div class="cshead">
+        <div><div class="csname">${esc(c.title)}</div>
+          <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
+            c.disclosed?' · disclosed '+esc(c.disclosed):''}</div></div>
+        ${known?`<button class="btn csjump" data-t="${esc(known.tool)}" data-id="${esc(known.entry_id)}"
+          >${esc(known.tool)} artifacts &#8594;</button>`
+        :c.affects?`<span class="fmt">${esc(c.affects)}</span>`:''}
+      </div>
+      <p class="cssum">${esc(c.summary)}</p>
+      <div class="csbody">
+        <div class="cscol">
+          <h5>Indicators <span class="n">${n}</span></h5>
+          ${n?groups.map(g=>`<div class="iocgrp">
+            <div class="iockind">${esc(g.kind)}</div>
+            <div class="iocs">${g.items.map(i=>
+              `<span class="ioc" title="${esc(i.description||'')}">${esc(i.value)}${
+                i.description?`<em>${esc(i.description)}</em>`:''}</span>`).join('')}</div>
+          </div>`).join(''):`<p class="muted">None published.</p>`}
+        </div>
+        <div class="cscol">
+          <h5>Response</h5>
+          ${(c.response_actions||[]).length?`<ol class="csact">${c.response_actions.map(a=>
+            `<li>${esc(a)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
+        </div>
+      </div>
       ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
-    </div>`).join('')+'</div>';
+    </article>`}).join('');
 }
 
 /* ---------- guide ---------- */
@@ -1163,8 +1227,15 @@ function renderMain(){
       el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
     });
     $$('#main .pick').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
+  }else if(view==='cases'){
+    main.innerHTML=caseStudiesHTML();
+    $$('#main .csjump').forEach(b=>b.onclick=()=>{
+      resetFilters();filters.tool=[b.dataset.t];view='catalog';
+      history.replaceState(null,'','#'+b.dataset.id);
+      update();
+    });
   }else if(view==='tools'){
-    main.innerHTML=toolsHTML()+caseStudiesHTML();
+    main.innerHTML=toolsHTML();
     $$('#main .tool').forEach(c=>c.onclick=()=>{
       resetFilters();filters.tool=[c.dataset.t];view='catalog';
       history.replaceState(null,'','#'+c.dataset.id);
@@ -1474,6 +1545,7 @@ def main():
     <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
     <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
+    <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n">0</span></button>
     <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
   </nav>
