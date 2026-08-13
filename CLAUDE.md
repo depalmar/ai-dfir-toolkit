@@ -26,6 +26,7 @@ python scripts/validate.py                    # schema + sigma + confidence gate
 python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
 python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
+python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
 python scripts/build_site.py --check          # site data contract, writes nothing
 python scripts/build_site.py                  # regenerate docs/site (CI does this)
 python ../artifacts/scripts/validate_mappings.py   # run this one from the repo root
@@ -121,7 +122,7 @@ the entry and raise its confidence.
 ## Current state
 
 45 entries, 265 artifacts, 152 credential locations, 17 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies. Validation clean.
+locations, 12 endpoint Sigma rules, 14 case studies, 28 KAPE targets. Validation clean.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.

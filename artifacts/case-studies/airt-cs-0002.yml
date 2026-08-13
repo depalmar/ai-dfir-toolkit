@@ -30,6 +30,11 @@ response_actions:
   - Treat all email processed through the server during the window as disclosed.
   - "Audit MCP configs for @latest version specifiers, which would have pulled the backdoor automatically."
 lesson: An MCP server sits inside the trust boundary of the agent and inherits its credentials. Version-pinning MCP servers is not hygiene, it is a control.
+detections:
+  - mcp_tool_poisoning.yar
+  - mcp_config_tampering.yml
+  - ai_agent_mcp_config_modification.yml
+  - mcp_outbound_unknown_domain.rules
 references:
   - title: "The Hacker News - First Malicious MCP Server Found Stealing Emails in Rogue Postmark-MCP Package"
     url: https://thehackernews.com/2025/09/first-malicious-mcp-server-found.html

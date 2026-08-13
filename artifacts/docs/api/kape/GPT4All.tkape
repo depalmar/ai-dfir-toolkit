@@ -1,0 +1,19 @@
+Description: 'GPT4All - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 39d242bd-6cd4-558e-b7c1-9e9ff9d0647c
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Models + LocalDocs index; env GPT4ALL_HOME overrides'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.local\share\nomic.ai\GPT4All\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0020 | Models + LocalDocs index; env GPT4ALL_HOME overrides'
+    -
+        Name: 'Binary for GPT4All'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\gpt4all\bin\'
+        FileMask: 'chat.exe'
+        Comment: 'AIRT-0020 | [confidence: medium] Binary for GPT4All'

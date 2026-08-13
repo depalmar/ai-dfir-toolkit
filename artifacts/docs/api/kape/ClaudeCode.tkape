@@ -1,0 +1,32 @@
+Description: 'Claude Code - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: d258d335-503b-5a6e-8309-10c5dbe3d7e0
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'npm global bin shim'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\npm\'
+        FileMask: 'claude.cmd'
+        Comment: 'AIRT-0001 | npm global bin shim'
+    -
+        Name: 'Package root'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0001 | Package root'
+    -
+        Name: 'settings.json, settings.local.json, CLAUDE.md, .credentials.json, statsig/'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.claude\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0001 | settings.json, settings.local.json, CLAUDE.md, .credentials.json, statsig/'
+    -
+        Name: 'Runtime auth state + user-scoped MCP servers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\'
+        FileMask: '.claude.json'
+        Comment: 'AIRT-0001 | Runtime auth state + user-scoped MCP servers'

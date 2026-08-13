@@ -240,6 +240,7 @@ CSS = """
   --accent-soft-2:#ecdfd4; --accent-border:#e0cfc1;
   --on-accent:#ffffff; --on-tone:#ffffff;
   --crit:#a12b2b; --high:#b4611c; --med:#8a7320; --low:#5c7a4a;
+  --str-strong:#3d5a80; --str-strong-bg:#eef2f7; --str-mid:#6b7f96;
   --alert-bg:#fdf6f2; --alert-line:#f0ded1;
   --toast-bg:#1c1b19; --toast-ink:#fbfbfa; --toast-muted:#a09b90;
   --shadow:rgba(28,27,25,.09); --shadow-soft:rgba(28,27,25,.05);
@@ -252,6 +253,7 @@ CSS = """
   --accent-soft-2:#3a2b20; --accent-border:#553a29;
   --on-accent:#1a1310; --on-tone:#151210;
   --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
+  --str-strong:#9ec0e0; --str-strong-bg:#1b2530; --str-mid:#7e94ab;
   --alert-bg:#251a16; --alert-line:#452a20;
   --toast-bg:#f1eee9; --toast-ink:#151210; --toast-muted:#6b6862;
   --shadow:rgba(0,0,0,.55); --shadow-soft:rgba(0,0,0,.4);
@@ -265,6 +267,7 @@ CSS = """
     --accent-soft-2:#3a2b20; --accent-border:#553a29;
     --on-accent:#1a1310; --on-tone:#151210;
     --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
+    --str-strong:#9ec0e0; --str-strong-bg:#1b2530; --str-mid:#7e94ab;
     --alert-bg:#251a16; --alert-line:#452a20;
     --toast-bg:#f1eee9; --toast-ink:#151210; --toast-muted:#6b6862;
     --shadow:rgba(0,0,0,.55); --shadow-soft:rgba(0,0,0,.4);
@@ -342,8 +345,23 @@ aside .railhead a{font-size:12px;cursor:pointer}
 .railscroll{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto;
   padding-right:4px}
 .fgroup{margin:0 0 16px}
-.fgroup h3{margin:0 0 5px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+.fgroup h3{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--faint);font-weight:600}
+details.fgroup>summary{display:flex;align-items:center;gap:6px;cursor:pointer;
+  list-style:none;padding:2px 8px 5px 0;border-radius:6px}
+details.fgroup>summary::-webkit-details-marker{display:none}
+/* Caret ahead of the label, rotating on open, so the affordance is visible
+   without the browser's default triangle fighting the uppercase heading. */
+details.fgroup>summary::before{content:"";width:0;height:0;flex:none;
+  border-left:4px solid var(--faint);border-top:3.5px solid transparent;
+  border-bottom:3.5px solid transparent;transition:transform .12s ease}
+details.fgroup[open]>summary::before{transform:rotate(90deg)}
+details.fgroup>summary:hover h3{color:var(--muted)}
+/* A collapsed group with active filters has to say so, or a reader sees a short
+   result list and no visible reason for it. */
+.fon{font-family:ui-monospace,Menlo,monospace;font-size:10px;background:var(--accent-soft);
+  border:1px solid var(--accent-border);color:var(--accent);border-radius:20px;
+  padding:0 6px;margin-left:auto}
 .fbtn{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;
   background:none;border:1px solid transparent;border-radius:7px;padding:5px 8px;
   font-size:12.5px;color:var(--ink);text-align:left}
@@ -382,6 +400,16 @@ details.railfold{display:none}
 .badge.fill.b-crit{background:var(--crit)} .badge.fill.b-high{background:var(--high)}
 .badge.fill.b-med{background:var(--med)} .badge.fill.b-low{background:var(--low)}
 .badge.dashed{border-style:dashed}
+/* Strength, not severity. One hue, three weights: high reads as solid, low as
+   faint, and neither reads as an alarm. The label is part of the badge because
+   a bare "medium" cannot say which scale it is on. */
+.badge.str{border-color:var(--str-line);color:var(--str-ink);background:var(--str-bg);
+  padding:1px 8px 1px 6px}
+.badge.str i{font-style:normal;color:var(--faint);font-size:10px;letter-spacing:.05em;
+  text-transform:uppercase;margin-right:5px}
+.s-high{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:var(--str-strong-bg)}
+.s-med{--str-line:var(--str-mid);--str-ink:var(--str-mid);--str-bg:transparent}
+.s-low{--str-line:var(--line);--str-ink:var(--faint);--str-bg:transparent}
 .clspill{display:inline-block;border:1px solid var(--line);border-radius:5px;
   background:var(--panel-2);color:var(--muted);font-size:11px;padding:1px 7px;white-space:nowrap}
 .unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--crit)}
@@ -590,6 +618,27 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 .csact li{margin:0 0 6px}
 .muted{margin:0;font-size:12.5px;color:var(--muted)}
 @media(max-width:820px){.csbody{grid-template-columns:minmax(0,1fr);gap:16px}}
+/* Detections sit above the ATLAS/sources footer because they are the actionable
+   half - "here is the incident" is context, "here is the rule that catches it"
+   is the next move. */
+.csdet{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
+.csdet h5{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--faint);display:flex;align-items:center;gap:7px}
+.csdet h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.detrow{display:flex;flex-wrap:wrap;gap:6px}
+.detchip{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--accent-soft);
+  border:1px solid var(--accent-border);color:var(--accent);border-radius:5px;
+  padding:3px 8px;cursor:pointer}
+.detchip:hover{background:var(--accent-soft-2);border-color:var(--accent)}
+.tbadges{display:flex;align-items:center;gap:6px;flex:none}
+.caselink{display:block;width:100%;text-align:left;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:7px;padding:7px 9px;margin:0 0 6px;
+  font-size:12.5px;color:var(--accent);cursor:pointer}
+.caselink:hover{border-color:var(--accent);background:var(--accent-soft)}
+.casebadge{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
+  background:var(--accent);color:var(--on-accent);border-radius:20px;padding:2px 8px;
+  white-space:nowrap}
 .csconf{margin:8px 0 0;font-size:12px;color:var(--faint);
   font-family:ui-monospace,Menlo,monospace}
 .csjumps{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
@@ -719,7 +768,17 @@ JS = r"""
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RANK={critical:0,p1:0,high:1,p2:1,medium:2,p3:2,low:3};
+// Two scales, deliberately not sharing a palette.
+//
+// "high" means opposite things depending on the field, and the page used one
+// red-to-green severity ramp for all of them - so a well-sourced artifact and a
+// dangerous tool both rendered in the same warning orange, and a reader had no
+// way to tell which question a bare badge was answering. Severity (risk, triage
+// priority) keeps the alarm ramp. Strength (confidence, forensic value) gets a
+// neutral ramp where high reads as solid rather than as a warning, because a
+// high-confidence artifact is good news.
 const TONE={critical:'b-crit',p1:'b-crit',high:'b-high',p2:'b-high',medium:'b-med',p3:'b-med',low:'b-low'};
+const STRENGTH={high:'s-high',medium:'s-med',low:'s-low'};
 const TOOLMAP=Object.fromEntries(TOOLS.map(t=>[t.entry_id,t]));
 const ROWMAP=Object.fromEntries(ROWS.map(r=>[r.anchor,r]));
 const GROUPS={cls:'Artifact class',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
@@ -769,7 +828,18 @@ function badge(v,filled,prefix){
   if(!v)return'';
   return `<span class="badge ${filled?'fill ':''}${TONE[v]||''}">${prefix?esc(prefix)+' ':''}${esc(v)}</span>`;
 }
-const fvBadge=(v,p)=>badge(v,v==='high',p);
+// Strength badges always carry their label. An unlabelled "medium" next to
+// another unlabelled "medium" is the ambiguity this is meant to remove.
+function sBadge(v,label,bare){
+  if(!v)return'';
+  return `<span class="badge str ${STRENGTH[v]||''}" title="${esc(label)}: ${esc(v)}"
+    >${bare?'':`<i>${esc(label)}</i>`}${esc(v)}</span>`;
+}
+// bare inside the table only: the column header already names the scale there,
+// and repeating it in every cell is noise. Everywhere else the badge travels
+// without a header, so it carries its own label.
+const fvBadge=(v,bare)=>sBadge(v,'value',bare);
+const confBadge=(v,bare)=>sBadge(v,'sourcing',bare);
 const riskBadge=(v,p)=>badge(v,v==='critical',p);
 const triageBadge=v=>badge(v,true,'triage');
 
@@ -799,6 +869,19 @@ function filteredRows(){
 }
 
 /* ---------- rail ---------- */
+// Collapsed facet groups, remembered. The Tool group alone is 45 options, so a
+// reader who filters by class every time was scrolling past a list they never
+// use. Default open, because a collapsed filter a reader has not opened is a
+// filter they do not know exists.
+const FOLD_KEY='aidfir-folds';
+const folded=new Set((()=>{try{return JSON.parse(localStorage.getItem(FOLD_KEY))||[]}
+  catch(e){return[]}})());
+function saveFolds(){try{localStorage.setItem(FOLD_KEY,JSON.stringify([...folded]))}catch(e){}}
+function fgroup(key,title,body,picked){
+  return `<details class="fgroup" data-f="${esc(key)}"${folded.has(key)?'':' open'}>
+    <summary><h3>${esc(title)}</h3>${picked?`<span class="fon">${picked}</span>`:''}</summary>
+    ${body}</details>`;
+}
 function railHTML(){
   return Object.keys(GROUPS).map(g=>{
     const counts={};
@@ -806,17 +889,23 @@ function railHTML(){
       if(!rowMatches(r,g))continue;
       for(const v of FIELD[g](r).filter(Boolean))counts[v]=(counts[v]||0)+1;
     }
-    return `<div class="fgroup"><h3>${GROUPS[g]}</h3>`+OPTIONS[g].map(v=>{
+    const body=OPTIONS[g].map(v=>{
       const on=filters[g].includes(v);
       return `<button class="fbtn" data-g="${g}" data-v="${esc(v)}" aria-pressed="${on}">
         <span>${esc(v)}</span><span class="c">${counts[v]||0}</span></button>`;
-    }).join('')+'</div>';
+    }).join('');
+    return fgroup(g,GROUPS[g],body,filters[g].length);
   }).join('');
 }
 function renderRail(){
   const h=view==='rules'?ruleRailHTML():railHTML();
   $('#rail').innerHTML=h;
   $('#railfold .foldbody').innerHTML=h;
+  // Both rails render the same markup, so record the state rather than the node.
+  $$('details.fgroup').forEach(d=>d.addEventListener('toggle',()=>{
+    d.open?folded.delete(d.dataset.f):folded.add(d.dataset.f);
+    saveFolds();
+  }));
   $$('.fbtn').forEach(b=>b.onclick=()=>{
     const g=b.dataset.g||b.dataset.rg;
     const set=b.dataset.rg?rfilters:filters;
@@ -855,8 +944,8 @@ function tableHTML(rows){
       <td><span class="clspill">${esc(r.cls)}</span></td>
       <td><span class="path">${esc(r.artifact)}</span>${r.unverified?' <span class="unv">unverified</span>':''}</td>
       <td>${esc(r.os.join(', '))}</td>
-      <td>${fvBadge(r.forensic_value)}</td>
-      <td>${badge(r.confidence,false)}</td>
+      <td>${fvBadge(r.forensic_value,true)}</td>
+      <td>${confBadge(r.confidence,true)}</td>
       <td><span class="note">${esc(r.description)}</span></td>
     </tr>`).join('')+'</tbody></table></div>';
 }
@@ -866,24 +955,36 @@ function cardsHTML(rows){
   return rows.map(r=>`
     <div class="card" data-a="${esc(r.anchor)}" tabindex="0">
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
-        ${fvBadge(r.forensic_value)}${badge(r.confidence,false)}</div>
+        ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
       <span class="path">${esc(r.artifact)}</span>
       <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?' &middot; <span class="unv">unverified</span>':''}</div>
     </div>`).join('');
 }
 
 /* ---------- tools ---------- */
+// Which tools have a documented incident. Six of forty-five, so it reads as a
+// distinction rather than as decoration - which is the whole reason it is worth
+// putting on the card instead of burying it in the drawer.
+const CASES_BY_TOOL=(()=>{
+  const by={};
+  for(const c of CASES)for(const id of c.affects_ids||[])(by[id]=by[id]||[]).push(c);
+  return by;
+})();
 function toolsHTML(){
-  return '<div class="toolgrid">'+TOOLS.map(t=>`
+  return '<div class="toolgrid">'+TOOLS.map(t=>{
+  const cs=CASES_BY_TOOL[t.entry_id]||[];
+  return `
     <button class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
       <div class="trow"><div><div class="tname">${esc(t.tool)}</div>
         <div class="tsub">${esc(t.vendor)} &middot; ${esc(t.category)}</div></div>
-        ${riskBadge(t.risk)}</div>
+        <div class="tbadges">${cs.length?`<span class="casebadge"
+          title="${esc(cs.map(c=>c.title).join(' · '))}">${cs.length} case${
+          cs.length>1?'s':''}</span>`:''}${riskBadge(t.risk,'risk')}</div></div>
       <p>${esc(t.description)}</p>
       ${t.caps.length?`<div class="capchips">${t.caps.map(c=>`<i>${esc(c)}</i>`).join('')}</div>`:''}
       <div class="tfoot"><span>${t.n} artifacts</span>${t.triage?`<span>triage ${esc(t.triage)}</span>`:''}
         <span>${esc(t.os.join(' · '))}</span></div>
-    </button>`).join('')+'</div>';
+    </button>`}).join('')+'</div>';
 }
 
 /* ---------- plan ---------- */
@@ -929,14 +1030,17 @@ function drawerHTML(r){
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
     <div class="dsec"><h4>Locator</h4><div class="locator">${esc(r.artifact)}</div>
-      <div class="badgerow">${fvBadge(r.forensic_value,'value')}
-      ${badge(r.confidence,false,'conf')}
+      <div class="badgerow">${fvBadge(r.forensic_value)}
+      ${confBadge(r.confidence)}
       ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div></div>
     <div class="dsec"><h4>What it proves</h4>
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
       ${r.description?`<p>${esc(r.description)}</p>`:''}</div>
     <div class="dsec"><h4>Tool context</h4><p>${esc(t.description||'')}</p>
       ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</div>
+    ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
+      ${CASES_BY_TOOL[r.entry_id].map(c=>
+        `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     <div class="dsec"><h4>Collection order</h4>
       <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}</div>
       ${t.guidance?`<p>${esc(t.guidance)}</p>`:''}</div>
@@ -967,6 +1071,11 @@ function openDrawer(anchor,fromEl){
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dCopyPath').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
+  $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
+    closeDrawer();view='cases';update();
+    const el=document.getElementById('cs-'+b.dataset.cs);
+    if(el)el.scrollIntoView({block:'start'});
+  });
   wireTechChips();
   renderMain();
 }
@@ -1027,11 +1136,12 @@ function ruleRailHTML(){
     }
     const opts=ROPTIONS[g].filter(v=>counts[v]||rfilters[g].includes(v));
     if(!opts.length)return'';
-    return `<div class="fgroup"><h3>${RGROUPS[g]}</h3>`+opts.map(v=>{
+    const body=opts.map(v=>{
       const on=rfilters[g].includes(v);
       return `<button class="fbtn" data-rg="${g}" data-v="${esc(v)}" aria-pressed="${on}">
         <span>${esc(v)}</span><span class="c">${counts[v]||0}</span></button>`;
-    }).join('')+'</div>';
+    }).join('');
+    return fgroup('r:'+g,RGROUPS[g],body,rfilters[g].length);
   }).join('');
 }
 function rulesHTML(rules){
@@ -1154,7 +1264,7 @@ function caseStudiesHTML(){
     const known=(c.affects_ids||[]).map(id=>TOOLS.find(t=>t.entry_id===id)).filter(Boolean);
     const refs=c.references||[];
     return `
-    <article class="csfull">
+    <article class="csfull" id="cs-${esc(c.id)}">
       <div class="cshead">
         <div><div class="csname">${esc(c.title)}</div>
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
@@ -1167,7 +1277,7 @@ function caseStudiesHTML(){
       </div>
       <p class="cssum">${esc(c.summary)}</p>
       ${c.confidence?`<div class="csprov">
-        ${badge(c.confidence,false,'confidence')}
+        ${sBadge(c.confidence,'sourcing')}
         ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
       </div>`:''}
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
@@ -1188,6 +1298,11 @@ function caseStudiesHTML(){
         </div>
       </div>
       ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
+      ${(c.detections||[]).length?`<div class="csdet">
+        <h5>Detections in this repo <span class="n">${c.detections.length}</span></h5>
+        <div class="detrow">${c.detections.map(d=>
+          `<button class="detchip" data-rule="${esc(d)}">${esc(d)}</button>`).join('')}</div>
+      </div>`:''}
       ${(c.atlas||[]).length||refs.length?`<div class="csfoot">
         ${(c.atlas||[]).length?`<div class="csatlas"><h5>ATLAS</h5>${
           c.atlas.map(a=>`<a class="tech" href="https://atlas.mitre.org/techniques/${esc(a)}"
@@ -1288,6 +1403,12 @@ function renderMain(){
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
       resetFilters();filters.tool=[b.dataset.t];view='catalog';
       history.replaceState(null,'','#'+b.dataset.id);
+      update();
+    });
+    // Search rather than a filter facet: rule filenames are unique and the
+    // detections rail facets by category and format, not by file.
+    $$('#main .detchip').forEach(b=>b.onclick=()=>{
+      resetFilters();view='rules';$('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();
       update();
     });
   }else if(view==='tools'){
@@ -1402,6 +1523,18 @@ $('#jsonBtn').onclick=()=>{
   flash($('#jsonBtn'), `${rows.length} rows`);
 };
 
+// Same corpus the export uses, so "pick all shown" and "export" always agree on
+// what "shown" means. Toggles: a second press on an already-complete selection
+// drops those rows again, which is the only sane undo for a 400-row add.
+$('#pickAllBtn').onclick=()=>{
+  const anchors=exportRows().map(r=>r.anchor);
+  const allPicked=anchors.length&&anchors.every(a=>picks.has(a));
+  anchors.forEach(a=>allPicked?picks.delete(a):picks.add(a));
+  savePicks();
+  flash($('#pickAllBtn'), `${allPicked?'removed':'picked'} ${anchors.length}`);
+  update();
+};
+
 $$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
 // Arrow-key navigation, which role=tablist promises and a plain button row
 // does not provide on its own. Wrapping, plus Home/End, per the ARIA pattern.
@@ -1446,7 +1579,7 @@ THEME_BOOT = (
 )
 
 
-def check_cases(cases, tools):
+def check_cases(cases, tools, rules=()):
     """Case-study invariants. Returns a list of problems.
 
     A case study asserts things about somebody else's incident, mostly from a
@@ -1460,6 +1593,7 @@ def check_cases(cases, tools):
     """
     problems = []
     ids = {t["entry_id"] for t in tools}
+    rule_files = {r["file"] for r in rules}
     seen = set()
     for c in cases:
         cid = c["id"]
@@ -1481,6 +1615,10 @@ def check_cases(cases, tools):
                 problems.append(f"[CASE]    {cid} affects {eid}, which is not a catalog entry")
         if not c["iocs"]:
             problems.append(f"[CASE]    {cid} publishes no indicators")
+        for d in c["detections"]:
+            if d not in rule_files:
+                problems.append(f"[CASE]    {cid} cites detection {d}, which is not a rule "
+                                f"in this repo")
     return problems
 
 
@@ -1562,7 +1700,7 @@ def check(rows, tools, rules, guide, cases=()):
     for h in guide.get("missing_diagrams") or []:
         problems.append(f"[DIAGRAM] no rendered SVG for mermaid block {h}")
 
-    problems += check_cases(cases, tools)
+    problems += check_cases(cases, tools, rules)
 
     by_class = {}
     for r in rows:
@@ -1668,6 +1806,7 @@ def main():
       <button class="tgl plain" id="csvBtn" type="button">CSV</button>
       <button class="tgl plain" id="jsonBtn" type="button">JSON</button>
     </div>
+    <button class="tgl plain" id="pickAllBtn" type="button">Pick all shown</button>
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"
     role="status" aria-live="polite" aria-atomic="true"></span>

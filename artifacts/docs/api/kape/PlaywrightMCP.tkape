@@ -1,0 +1,13 @@
+Description: 'Playwright MCP - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 9f6db3e4-6bce-54a0-be98-d3cd15bb6fc2
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Downloaded Chromium/Firefox/WebKit binaries'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\ms-playwright\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0031 | Downloaded Chromium/Firefox/WebKit binaries'

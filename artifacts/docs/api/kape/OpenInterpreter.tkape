@@ -1,0 +1,13 @@
+Description: 'Open Interpreter - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 70060658-3b15-5a80-b685-05eb3bd96557
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'profiles/, config yaml'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\Open Interpreter\  |  %APPDATA%\Open Interpreter\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0015 | [confidence: medium] profiles/, config yaml'

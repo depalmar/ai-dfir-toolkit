@@ -1,0 +1,25 @@
+Description: 'Codeium / Windsurf - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 68bd7ca7-a104-562e-ac01-958ec0f0c1e4
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'API key + downloaded language server'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0006 | API key + downloaded language server'
+    -
+        Name: 'EXECUTION PRIMITIVE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\windsurf\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0006 | EXECUTION PRIMITIVE'
+    -
+        Name: 'REMOTE BINARY DOWNLOAD - verify hash'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\<version>\'
+        FileMask: 'language_server_*'
+        Comment: 'AIRT-0006 | [confidence: medium] REMOTE BINARY DOWNLOAD - verify hash'

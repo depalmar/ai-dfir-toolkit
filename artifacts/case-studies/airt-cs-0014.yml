@@ -59,6 +59,11 @@ lesson: >-
   It also shows what a disputed CVE does to a defender: with no fix coming, the only
   control is exposure management, and the artifact of record is an access log rather
   than a patch level.
+detections:
+  - ray_jobs_api_rce.rules
+  - ray_dashboard_exposure.rules
+  - shadowray_process_masquerading.yml
+  - gpu_unexpected_high_utilization.yml
 references:
   - title: "Oligo Security - ShadowRay: First Known Attack Campaign Targeting AI Workloads Exploited In The Wild"
     url: https://www.oligo.security/blog/shadowray-attack-ai-workloads-actively-exploited-in-the-wild

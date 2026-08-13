@@ -1,0 +1,12 @@
+Description: 'Tabnine - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 370ff26b-047c-55a9-bf60-135d6132ca15
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'User scope'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.tabnine\agent\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0009 | User scope'

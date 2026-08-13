@@ -1,0 +1,48 @@
+Description: 'MCP client/server configs - records what the agent was authorised to run'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 8d432274-e8b1-5ce6-98ed-ff8678ae5b90
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Claude Code: mcpServers (user scope)'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\'
+        FileMask: '.claude.json'
+        Comment: 'AIRT-0001 | Claude Code: mcpServers (user scope)'
+    -
+        Name: 'Claude Desktop (MCP host): mcpServers.<name>.command + .args'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Claude\'
+        FileMask: 'claude_desktop_config.json'
+        Comment: 'AIRT-0011 | Claude Desktop (MCP host): mcpServers.<name>.command + .args'
+    -
+        Name: 'Claude Desktop (MCP host): mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\'
+        FileMask: 'claude_desktop_config.json'
+        Comment: 'AIRT-0011 | Claude Desktop (MCP host): mcpServers'
+    -
+        Name: 'Claude Desktop (MCP host): mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\Claude\'
+        FileMask: 'claude_desktop_config.json'
+        Comment: 'AIRT-0011 | Claude Desktop (MCP host): mcpServers'
+    -
+        Name: 'Cursor: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cursor\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0002 | Cursor: mcpServers'
+    -
+        Name: 'Goose: extensions'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\goose\'
+        FileMask: 'config.yaml'
+        Comment: 'AIRT-0038 | Goose: extensions'
+    -
+        Name: 'Kiro: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.kiro\settings\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0041 | Kiro: mcpServers'

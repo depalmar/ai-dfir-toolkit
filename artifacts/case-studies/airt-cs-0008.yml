@@ -50,6 +50,11 @@ lesson: >-
   lesson is about posture rather than hunting: if prompt and completion logging was
   not already enabled, the evidence does not exist retrospectively. AI logging
   posture has to be established before AI hunting is possible.
+detections:
+  - markdown_image_exfil.yml
+  - m365_copilot_sensitive_label_access.yml
+  - m365_copilot_anomalous_aggregation.yml
+  - ai_assistant_outbound_to_camo_proxy.rules
 references:
   - title: "NVD - CVE-2025-32711"
     url: https://nvd.nist.gov/vuln/detail/CVE-2025-32711

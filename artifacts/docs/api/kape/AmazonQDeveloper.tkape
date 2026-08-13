@@ -1,0 +1,12 @@
+Description: 'Amazon Q Developer (ex-CodeWhisperer) - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: df560e57-ad14-5b2a-8d11-b29c7757f217
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Extension Dir for Amazon Q Developer (ex-CodeWhisperer)'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.vscode\extensions\'
+        FileMask: 'amazonwebservices.amazon-q-vscode-*'
+        Comment: 'AIRT-0008 | Extension Dir for Amazon Q Developer (ex-CodeWhisperer)'

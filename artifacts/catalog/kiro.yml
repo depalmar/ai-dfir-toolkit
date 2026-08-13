@@ -193,6 +193,7 @@ collection:
     channel to confirm which servers actually connected, since a config entry alone
     does not prove execution. Because config hot-reloads, correlate file mtimes
     against session activity rather than assuming changes took effect at startup.
+  kape_target: Kiro
 
 atlas_techniques: [AML.T0051, AML.T0053, AML.T0080, AML.T0081, AML.T0110]
 attack_techniques: [T1059, T1195.002, T1546, T1552.001]

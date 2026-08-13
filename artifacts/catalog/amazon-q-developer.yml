@@ -90,6 +90,7 @@ mcp: []
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  kape_target: AmazonQDeveloper
 atlas_techniques:
   - AML.T0051
   - AML.T0053

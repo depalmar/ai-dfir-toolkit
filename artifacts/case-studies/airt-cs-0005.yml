@@ -71,6 +71,9 @@ lesson: >-
   AI provider traffic an evidence source rather than background noise, and it is a
   pattern rather than an indicator list: OpenAI retires the Assistants API in
   August 2026 and the tradecraft moves to its successor.
+detections:
+  - sesameop_assistants_api_c2.yml
+  - ai_service_api_c2.rules
 references:
   - title: "Microsoft Security Blog - SesameOp: Novel backdoor uses OpenAI Assistants API for command and control"
     url: https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/

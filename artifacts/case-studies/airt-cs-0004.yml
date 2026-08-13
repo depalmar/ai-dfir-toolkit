@@ -60,6 +60,11 @@ lesson: >-
   that most strongly rewards reading the primary report critically: the same
   document that supplies the autonomy figure also records the model fabricating
   results.
+detections:
+  - agentic_orchestration_behavior.yml
+  - ai_agent_spawning_shell.yml
+  - ai_agent_spawning_lolbin.yml
+  - mcp_server_remote_code_fetch.yml
 references:
   - title: "Anthropic - Disrupting the first reported AI-orchestrated cyber espionage campaign"
     url: https://www-cdn.anthropic.com/d7dd50dd1185f59be051b307150d877f2b82bd2c.pdf

@@ -1,0 +1,19 @@
+Description: 'Aider - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 4309ffff-3d00-5104-9438-189c8d91c646
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Also searched in CWD and git root'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\'
+        FileMask: '.aider.conf.yml'
+        Comment: 'AIRT-0004 | Also searched in CWD and git root'
+    -
+        Name: 'Cache Dir for Aider'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.aider\caches\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0004 | [confidence: medium] Cache Dir for Aider'
