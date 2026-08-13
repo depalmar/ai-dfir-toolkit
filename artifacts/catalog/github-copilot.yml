@@ -119,6 +119,17 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: COPILOT_HOME, COPILOT_PROVIDER_API_KEY
+      type: REG_SZ
+      description: >-
+        COPILOT_HOME relocates the CLI configuration directory including
+        mcp-config.json, so an absence at the default path is not evidence of
+        absence until this is read
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: 'OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)'
     os: [windows, macos, linux]

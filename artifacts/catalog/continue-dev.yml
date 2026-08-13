@@ -104,6 +104,16 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: CONTINUE_API_KEY
+      type: REG_SZ
+      description: >-
+        Provider credential set persistently for the user. Survives reboots and
+        is readable by any process running as that user.
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: ~/.continue/config.yaml
     os: [windows, macos, linux]

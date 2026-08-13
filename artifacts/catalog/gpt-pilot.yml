@@ -24,7 +24,18 @@ capabilities:
 risk: high
 confidence: low
 abuse_potential: Runs generated code on host. Thin public sourcing on canonical paths - inventory by Python process command line.
-artifacts: {}
+artifacts:
+  registry:
+    - key: "HKCU\\Environment"
+      value: OPENAI_API_KEY, ANTHROPIC_API_KEY, GROQ_API_KEY
+      type: REG_SZ
+      description: >-
+        Provider credentials. Relevant to the AIRT-CS-0001 supply-chain case: the
+        payload harvested whatever credentials the host held, and a persistently
+        set user variable is reachable by any process running as that user.
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: '<install>/config.json'
     os: [windows, macos, linux]

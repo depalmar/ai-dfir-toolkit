@@ -39,6 +39,15 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: medium
+  registry:
+    - key: "HKCU\\Environment"
+      value: BROWSER_USE_API_KEY
+      type: REG_SZ
+      description: >-
+        Cloud credential set persistently for the user
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: ~/.config/browseruse/cloud_auth.json
     os: [windows, macos, linux]

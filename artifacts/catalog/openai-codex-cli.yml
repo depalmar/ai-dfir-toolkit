@@ -134,6 +134,18 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: CODEX_HOME
+      type: REG_SZ
+      description: >-
+        Relocates the entire Codex configuration directory, config.toml and MCP
+        servers included. Set persistently here it survives reboots, and a
+        responder who checks only ~/.codex concludes there is no configuration
+        at all. Read this before reporting an absence.
+      forensic_value: high
+      persistence: false
+      confidence: medium
 credentials:
   - location: ~/.codex/auth.json
     os:

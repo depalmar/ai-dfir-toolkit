@@ -89,6 +89,17 @@ artifacts:
         itself leaves none.
       persistence: None - persistence belongs to whatever schedules the calling script
       confidence: medium
+  registry:
+    - key: "HKCU\\Environment"
+      value: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, HF_TOKEN
+      type: REG_SZ
+      description: >-
+        The credential for this whole class. A persistently set user variable is
+        the most common way a developer supplies it, and unlike a .env beside the
+        script it is not tied to any one project.
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
     os:
