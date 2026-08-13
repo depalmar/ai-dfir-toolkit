@@ -111,6 +111,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Fixed
 
+- **The site under-reported detections by 13 and hid three whole categories.**
+  `site_data.py` discovered rule directories from a hardcoded list of six, so
+  every category added after that list was written — 07 runtime AI-malware, 08
+  agentic orchestration, 09 agent memory — was absent from the Detections view
+  and from the header stat, which read 55 against 68 on disk. Nothing failed,
+  because a shorter list looks exactly like a complete one, and the page was the
+  only artifact disagreeing: README, MAPPINGS, CLAUDE.md and the guide all
+  counted 68. Directories are now discovered by pattern, labels fall back to a
+  derived name so a new category cannot be invisible for want of a dict entry,
+  and `build_site.py --check` fails when any rule file on disk was not loaded.
+
 - **The OS facet hid 87 of 425 catalog rows.** The schema declares `os` on disk,
   process and credential rows only, so registry, network and MCP rows carried
   none — and a row with no OS matched no OS filter. Selecting `windows` silently
