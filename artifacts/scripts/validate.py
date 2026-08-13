@@ -150,6 +150,22 @@ def main() -> int:
                   f"scripts/normalize_notes.py")
             failures += drift
 
+    # Provenance coverage. The catalog states that confidence reflects where a
+    # fact came from, so an entry with no reference asserts a provenance the
+    # reader cannot check. Reported rather than failed, because the gap is real
+    # and closing it needs research, not a commit - but reported on every run so
+    # it stays visible and shrinks instead of being forgotten.
+    unsourced = []
+    for path in files:
+        doc = yaml.safe_load(Path(path).read_text())
+        if not (doc.get("references") or []):
+            unsourced.append(f"{doc.get('id')} {doc.get('name')}")
+    if unsourced:
+        print(f"[REFS]   {len(files) - len(unsourced)}/{len(files)} entries carry a "
+              f"reference. Still unsourced:")
+        for u in unsourced:
+            print(f"[REFS]     {u}")
+
     print(f"\n{len(files)} entries + {len(sigma_files)} sigma rules checked, "
           f"{failures} problem(s).")
     return 1 if failures else 0

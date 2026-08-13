@@ -124,5 +124,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1071.001
-references: []
+references:
+  - title: "google-gemini/gemini-cli"
+    url: https://github.com/google-gemini/gemini-cli
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

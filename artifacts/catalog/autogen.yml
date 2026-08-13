@@ -6,8 +6,9 @@
 id: AIRT-0027
 name: AutoGen
 vendor: Microsoft (OSS)
+status: legacy
 category: agent-framework
-description: Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor.
+description: Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no new features, superseded by Microsoft Agent Framework.
 supported_os:
   - windows
   - macos
@@ -113,5 +114,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "microsoft/autogen"
+    url: https://github.com/microsoft/autogen
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

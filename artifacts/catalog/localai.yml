@@ -44,5 +44,8 @@ attack_techniques:
   - T1133
   - T1105
   - T1590
-references: []
+references:
+  - title: "mudler/LocalAI"
+    url: https://github.com/mudler/LocalAI
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

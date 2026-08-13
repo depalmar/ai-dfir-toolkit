@@ -6,8 +6,9 @@
 id: AIRT-0013
 name: AgentGPT
 vendor: Reworkd (OSS)
+status: unmaintained
 category: agent-framework
-description: Browser-based autonomous agent, self-hostable via Docker.
+description: Browser-based autonomous agent, self-hostable via Docker. Repository archived 2026-01-28; the hosted site still loads but receives no updates or security patches.
 supported_os:
   - windows
   - macos
@@ -110,5 +111,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "reworkd/AgentGPT"
+    url: https://github.com/reworkd/AgentGPT
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

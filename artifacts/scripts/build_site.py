@@ -219,6 +219,10 @@ def build_tools(entries, rows):
             # each of its rows, because 45 entries is a much smaller payload
             # than 434 rows and the row search can look it up.
             "aliases": aslist(e.get("aliases")),
+            # Where the entry's facts came from. The catalog says confidence
+            # reflects provenance, so the provenance has to be visible.
+            "refs": [{"title": str(r.get("title", "")), "url": str(r.get("url", ""))}
+                     for r in (e.get("references") or []) if isinstance(r, dict)],
             "status": e.get("status", ""),
             "vendor": e.get("vendor", ""),
             "category": e.get("category", ""),
@@ -652,6 +656,10 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
   border:1px solid var(--line);border-radius:7px;padding:7px 9px;margin:0 0 6px;
   font-size:12.5px;color:var(--accent);cursor:pointer}
 .caselink:hover{border-color:var(--accent);background:var(--accent-soft)}
+.drefs{margin:0;padding-left:17px;font-size:12.5px}
+.drefs li{margin:0 0 5px;color:var(--muted)}
+.dsec h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
   margin:0 0 6px;word-break:break-word}
 .statuspill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
@@ -1088,6 +1096,9 @@ function drawerHTML(r){
       <div class="tech">${t.techniques.map(x=>
         /^AML\./.test(x)?`<span class="tchip" data-tech="${esc(x)}">${esc(x)}</span>`
                         :`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
+    ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
+      <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
+        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
       <input readonly value="#${esc(r.anchor)}" aria-label="Permalink">
       <button class="btn" id="dCopyLink" data-v="${esc(base+'#'+r.anchor)}">copy link</button></div></div>

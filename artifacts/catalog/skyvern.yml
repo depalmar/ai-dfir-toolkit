@@ -182,5 +182,8 @@ attack_techniques:
   - T1185
   - T1539
   - T1552
-references: []
+references:
+  - title: "Skyvern-AI/skyvern"
+    url: https://github.com/Skyvern-AI/skyvern
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

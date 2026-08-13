@@ -158,5 +158,11 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1071.001
-references: []
+references:
+  - title: "openai/codex"
+    url: https://github.com/openai/codex
+    accessed: "2026-08-13"
+  - title: "OpenAI Codex help centre article"
+    url: https://help.openai.com/en/articles/11096431-openai-codex
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

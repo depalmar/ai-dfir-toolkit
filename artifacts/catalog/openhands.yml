@@ -234,5 +234,8 @@ collection:
   velociraptor_artifact: Custom.AIAgents.OpenHands
 atlas_techniques: []
 attack_techniques: []
-references: []
+references:
+  - title: "OpenHands/OpenHands"
+    url: https://github.com/OpenHands/OpenHands
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

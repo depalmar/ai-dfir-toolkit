@@ -290,5 +290,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1195.002
-references: []
+references:
+  - title: "Cursor documentation"
+    url: https://cursor.com/docs
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

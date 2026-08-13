@@ -198,5 +198,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1195.002
-references: []
+references:
+  - title: "Windsurf Plugin (formerly Codeium) on the VS Code Marketplace"
+    url: https://marketplace.visualstudio.com/items?itemName=Codeium.codeium
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

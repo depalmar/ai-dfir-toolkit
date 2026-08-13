@@ -37,7 +37,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/Aider-AI/aider
 ---
 name: AmazonQDeveloperExCodewhispererArtifacts
 doc: Amazon Q Developer (ex-CodeWhisperer) (AIRT-0008) - AWS coding assistant. Node-based
@@ -73,7 +74,8 @@ urls: []
 ---
 name: AutogenArtifacts
 doc: AutoGen (AIRT-0027) - Multi-agent conversation framework with LocalCommandLineCodeExecutor
-  and DockerCommandLineCodeExecutor.
+  and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed,
+  no new features, superseded by Microsoft Agent Framework.
 sources:
 - type: FILE
   attributes:
@@ -106,7 +108,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/microsoft/autogen
 ---
 name: BrowserUseArtifacts
 doc: Browser-Use (AIRT-0032) - Python library giving LLM agents DOM-level browser
@@ -155,7 +158,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/browser-use/browser-use
 ---
 name: ClaudeCodeArtifacts
 doc: Claude Code (AIRT-0001) - Terminal-native agentic coding assistant. Reads/writes
@@ -201,7 +205,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://code.claude.com/docs/en/overview
+- https://github.com/anthropics/claude-code
 ---
 name: ClaudeComputerUseArtifacts
 doc: Claude Computer Use (AIRT-0033) - Vision-driven screenshot-to-coordinate GUI
@@ -274,7 +280,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop
+- https://code.claude.com/docs/en/mcp-quickstart
 ---
 name: ClineArtifacts
 doc: Cline (AIRT-0039) - VS Code extension ID saoudrizwan.claude-dev (formerly Claude
@@ -308,7 +316,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/cline/cline
 ---
 name: CodeiumWindsurfArtifacts
 doc: Codeium / Windsurf (AIRT-0006) - Windsurf IDE with Cascade agentic flow; Codeium
@@ -345,7 +354,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://marketplace.visualstudio.com/items?itemName=Codeium.codeium
 ---
 name: ContinueDevArtifacts
 doc: Continue.dev (AIRT-0005) - VS Code / JetBrains extension with agent mode, custom
@@ -391,7 +401,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://docs.continue.dev
+- https://github.com/continuedev/continue
 ---
 name: CursorArtifacts
 doc: Cursor (AIRT-0002) - VS Code fork with agentic Composer/Agent mode. Executes
@@ -430,7 +442,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://cursor.com/docs
 ---
 name: DifyArtifacts
 doc: Dify (AIRT-0029) - Self-hosted LLM application builder with agent and workflow
@@ -446,7 +459,9 @@ sources:
   - Linux
 supported_os:
 - Linux
-urls: []
+urls:
+- https://github.com/langgenius/dify
+- https://github.com/langgenius/dify-docs
 ---
 name: FlowiseArtifacts
 doc: Flowise (AIRT-0030) - Drag-and-drop LangChain flow builder. Default port 3000,
@@ -486,7 +501,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/FlowiseAI/Flowise
+- https://docs.flowiseai.com/getting-started
 ---
 name: GithubCopilotAgentModeCliArtifacts
 doc: GitHub Copilot (Agent Mode / CLI) (AIRT-0003) - copilot-language-server binary
@@ -538,7 +555,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://docs.github.com/en/copilot
 ---
 name: GoogleGeminiCliArtifacts
 doc: Google Gemini CLI (AIRT-0037) - Terminal agent installed via npm @google/gemini-cli.
@@ -576,7 +594,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/google-gemini/gemini-cli
 ---
 name: GooseArtifacts
 doc: Goose (AIRT-0038) - Rust-based agent shipping both CLI and Desktop. Extension/MCP
@@ -614,7 +633,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/aaif-goose/goose
 ---
 name: GptPilotArtifacts
 doc: GPT Pilot (AIRT-0016) - Python agent that scaffolds and runs full applications,
@@ -645,7 +665,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/Pythagora-io/gpt-pilot
 ---
 name: KiroArtifacts
 doc: Kiro (AIRT-0041) - Agentic IDE from AWS built on a VS Code-style editor, using
@@ -717,7 +738,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/langchain-ai/langgraph
+- https://github.com/langchain-ai/langchain
 ---
 name: LangflowArtifacts
 doc: Langflow (AIRT-0044) - Low-code visual builder for LLM agents and workflows,
@@ -754,7 +777,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/langflow-ai/langflow
 ---
 name: LmStudioArtifacts
 doc: LM Studio (AIRT-0018) - GUI local model runner with OpenAI-compatible server,
@@ -819,7 +843,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/n8n-io/n8n
+- https://github.com/n8n-io/n8n-docs
 ---
 name: OllamaArtifacts
 doc: Ollama (AIRT-0017) - Most widely deployed local LLM server. OpenAI-compatible
@@ -851,7 +877,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/ollama/ollama
 ---
 name: OpenInterpreterArtifacts
 doc: Open Interpreter (AIRT-0015) - Natural-language to executed code on the host.
@@ -970,7 +997,9 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/openai/codex
+- https://help.openai.com/en/articles/11096431-openai-codex
 ---
 name: OpenhandsArtifacts
 doc: OpenHands (AIRT-0043) - Autonomous software-engineering agent (formerly OpenDevin)
@@ -1010,7 +1039,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/OpenHands/OpenHands
 ---
 name: RooCodeArtifacts
 doc: Roo Code (AIRT-0040) - VS Code extension ID rooveterinaryinc.roo-cline (Cline
@@ -1095,7 +1125,8 @@ supported_os:
 - Darwin
 - Linux
 - Windows
-urls: []
+urls:
+- https://github.com/Skyvern-AI/skyvern
 ---
 name: SupermavenArtifacts
 doc: Supermaven (AIRT-0010) - Low-latency completion agent with very large context

@@ -142,6 +142,8 @@ Detection content totals 68 rule files / 159 signatures across the nine attack-c
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
 Confidence: 28 high, 13 medium, 4 low.
+Provenance: 35/45 entries carry a reference; `validate.py` names the other ten
+on every run. 24/45 carry aliases.
 Risk: 11 critical, 22 high, 10 medium, 2 low.
 
 ## Site generation
@@ -183,6 +185,7 @@ Three things worth not relearning:
 - `artifacts/README.md` — the catalog itself
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
+- `artifacts/docs/REVERIFICATION.md` — the quarterly re-verification checklist
 - `artifacts/docs/HANDOFF_REVIEW.md` — what was decided about the site design
   handoff, what was declined, and why
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when

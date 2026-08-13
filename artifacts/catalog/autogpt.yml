@@ -55,5 +55,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "Significant-Gravitas/AutoGPT"
+    url: https://github.com/Significant-Gravitas/AutoGPT
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

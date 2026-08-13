@@ -120,5 +120,8 @@ attack_techniques:
   - T1185
   - T1539
   - T1552
-references: []
+references:
+  - title: "browser-use/browser-use"
+    url: https://github.com/browser-use/browser-use
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

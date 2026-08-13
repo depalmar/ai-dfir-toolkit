@@ -100,5 +100,11 @@ attack_techniques:
   - T1059
   - T1133
   - T1543
-references: []
+references:
+  - title: "n8n-io/n8n"
+    url: https://github.com/n8n-io/n8n
+    accessed: "2026-08-13"
+  - title: "n8n-io/n8n-docs"
+    url: https://github.com/n8n-io/n8n-docs
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

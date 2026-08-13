@@ -224,5 +224,8 @@ collection:
   velociraptor_artifact: Custom.AIAgents.Langflow
 atlas_techniques: []
 attack_techniques: []
-references: []
+references:
+  - title: "langflow-ai/langflow"
+    url: https://github.com/langflow-ai/langflow
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

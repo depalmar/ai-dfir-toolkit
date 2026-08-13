@@ -215,5 +215,8 @@ collection:
   velociraptor_artifact: Custom.AIAgents.GitHubCopilot
 atlas_techniques: []
 attack_techniques: []
-references: []
+references:
+  - title: "GitHub Copilot documentation"
+    url: https://docs.github.com/en/copilot
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

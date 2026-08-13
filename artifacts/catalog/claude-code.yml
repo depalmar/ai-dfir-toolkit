@@ -317,5 +317,11 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1071.001
-references: []
+references:
+  - title: "Claude Code documentation"
+    url: https://code.claude.com/docs/en/overview
+    accessed: "2026-08-13"
+  - title: "anthropics/claude-code"
+    url: https://github.com/anthropics/claude-code
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

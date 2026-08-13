@@ -239,5 +239,11 @@ attack_techniques:
   - T1547.001
   - T1195.002
   - T1552.001
-references: []
+references:
+  - title: "Getting started with local MCP servers on Claude Desktop"
+    url: https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop
+    accessed: "2026-08-13"
+  - title: "Connect to MCP servers"
+    url: https://code.claude.com/docs/en/mcp-quickstart
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

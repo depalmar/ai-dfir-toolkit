@@ -80,5 +80,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "crewAIInc/crewAI"
+    url: https://github.com/crewAIInc/crewAI
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -137,5 +137,8 @@ attack_techniques:
   - T1547.001
   - T1195.002
   - T1552.001
-references: []
+references:
+  - title: "aaif-goose/goose"
+    url: https://github.com/aaif-goose/goose
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -3,8 +3,9 @@
     "id": "AIRT-0013",
     "name": "AgentGPT",
     "vendor": "Reworkd (OSS)",
+    "status": "unmaintained",
     "category": "agent-framework",
-    "description": "Browser-based autonomous agent, self-hostable via Docker.",
+    "description": "Browser-based autonomous agent, self-hostable via Docker. Repository archived 2026-01-28; the hosted site still loads but receives no updates or security patches.",
     "supported_os": [
       "windows",
       "macos",
@@ -123,7 +124,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "reworkd/AgentGPT",
+        "url": "https://github.com/reworkd/AgentGPT",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -328,7 +335,13 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Aider-AI/aider",
+        "url": "https://github.com/Aider-AI/aider",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -473,8 +486,9 @@
     "id": "AIRT-0027",
     "name": "AutoGen",
     "vendor": "Microsoft (OSS)",
+    "status": "legacy",
     "category": "agent-framework",
-    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor.",
+    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no new features, superseded by Microsoft Agent Framework.",
     "supported_os": [
       "windows",
       "macos",
@@ -606,7 +620,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "microsoft/autogen",
+        "url": "https://github.com/microsoft/autogen",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -677,7 +697,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Significant-Gravitas/AutoGPT",
+        "url": "https://github.com/Significant-Gravitas/AutoGPT",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -828,7 +854,13 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "browser-use/browser-use",
+        "url": "https://github.com/browser-use/browser-use",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -1244,7 +1276,18 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Claude Code documentation",
+        "url": "https://code.claude.com/docs/en/overview",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "anthropics/claude-code",
+        "url": "https://github.com/anthropics/claude-code",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -1686,7 +1729,18 @@
       "T1195.002",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Getting started with local MCP servers on Claude Desktop",
+        "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Connect to MCP servers",
+        "url": "https://code.claude.com/docs/en/mcp-quickstart",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -1859,7 +1913,13 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "cline/cline",
+        "url": "https://github.com/cline/cline",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2106,7 +2166,13 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Windsurf Plugin (formerly Codeium) on the VS Code Marketplace",
+        "url": "https://marketplace.visualstudio.com/items?itemName=Codeium.codeium",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2362,7 +2428,18 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Continue documentation",
+        "url": "https://docs.continue.dev",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "continuedev/continue",
+        "url": "https://github.com/continuedev/continue",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2464,7 +2541,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "crewAIInc/crewAI",
+        "url": "https://github.com/crewAIInc/crewAI",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2834,7 +2917,13 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Cursor documentation",
+        "url": "https://cursor.com/docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3041,7 +3130,18 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "langgenius/dify",
+        "url": "https://github.com/langgenius/dify",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "langgenius/dify-docs",
+        "url": "https://github.com/langgenius/dify-docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3196,7 +3296,18 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "FlowiseAI/Flowise",
+        "url": "https://github.com/FlowiseAI/Flowise",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Flowise getting started",
+        "url": "https://docs.flowiseai.com/getting-started",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3473,7 +3584,13 @@
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "GitHub Copilot documentation",
+        "url": "https://docs.github.com/en/copilot",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3635,7 +3752,13 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "google-gemini/gemini-cli",
+        "url": "https://github.com/google-gemini/gemini-cli",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3816,7 +3939,13 @@
       "T1195.002",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "aaif-goose/goose",
+        "url": "https://github.com/aaif-goose/goose",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3908,7 +4037,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Pythagora-io/gpt-pilot",
+        "url": "https://github.com/Pythagora-io/gpt-pilot",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4022,7 +4157,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "nomic-ai/gpt4all",
+        "url": "https://github.com/nomic-ai/gpt4all",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4142,7 +4283,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "janhq/jan",
+        "url": "https://github.com/janhq/jan",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4511,7 +4658,18 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "LostRuins/koboldcpp",
+        "url": "https://github.com/LostRuins/koboldcpp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "KoboldCpp wiki",
+        "url": "https://github.com/LostRuins/koboldcpp/wiki",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4606,7 +4764,18 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "langchain-ai/langgraph",
+        "url": "https://github.com/langchain-ai/langgraph",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "langchain-ai/langchain",
+        "url": "https://github.com/langchain-ai/langchain",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4871,7 +5040,13 @@
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "langflow-ai/langflow",
+        "url": "https://github.com/langflow-ai/langflow",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4979,7 +5154,18 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "ggml-org/llama.cpp",
+        "url": "https://github.com/ggml-org/llama.cpp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "llama.cpp server README",
+        "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -5216,7 +5402,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "mudler/LocalAI",
+        "url": "https://github.com/mudler/LocalAI",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -5385,7 +5577,18 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "n8n-io/n8n",
+        "url": "https://github.com/n8n-io/n8n",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "n8n-io/n8n-docs",
+        "url": "https://github.com/n8n-io/n8n-docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -5674,7 +5877,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "ollama/ollama",
+        "url": "https://github.com/ollama/ollama",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -6381,7 +6590,18 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "openai/codex",
+        "url": "https://github.com/openai/codex",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "OpenAI Codex help centre article",
+        "url": "https://help.openai.com/en/articles/11096431-openai-codex",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -6723,7 +6943,13 @@
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "OpenHands/OpenHands",
+        "url": "https://github.com/OpenHands/OpenHands",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -6893,7 +7119,13 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "microsoft/playwright-mcp",
+        "url": "https://github.com/microsoft/playwright-mcp",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7273,7 +7505,13 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Skyvern-AI/skyvern",
+        "url": "https://github.com/Skyvern-AI/skyvern",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7655,7 +7893,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "oobabooga/text-generation-webui",
+        "url": "https://github.com/oobabooga/text-generation-webui",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
