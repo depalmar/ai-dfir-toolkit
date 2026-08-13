@@ -478,6 +478,16 @@ details.railfold{display:none}
   background:var(--panel-2);color:var(--muted);font-size:11px;padding:1px 7px;white-space:nowrap}
 .unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--crit)}
 
+/* Keyboard focus. There was one :focus-visible rule in the whole stylesheet -
+   on table headers - so tabbing through a page built almost entirely of buttons,
+   chips and tiles showed nothing at all. WCAG 2.4.7. Declared once, globally,
+   rather than per component, so a new control cannot be added without it. */
+:where(button,a,input,select,summary,[tabindex]):focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+details.csfull>summary:focus-visible,details.src>summary:focus-visible{
+  outline-offset:-2px}
+tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
 .tablescroll{overflow-x:auto}
@@ -497,7 +507,7 @@ tr:last-child td{border-bottom:0}
 /* Column widths, so the two prose-ish columns are not left fighting over the
    slack. Artifact holds paths that break anywhere, and with no widths at all it
    took whatever it wanted and squeezed Notes into a 38ch ribbon. */
-col.k-pick{width:34px}
+col.k-pick{width:40px}
 col.k-id{width:96px}
 col.k-tool{width:132px}
 col.k-cls{width:92px}
@@ -513,7 +523,7 @@ td.artcell{min-width:300px}
 td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
 td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap}
 td .note{font-size:12.5px;color:var(--muted);display:block}
-.pick{width:17px;height:17px;border-radius:5px;border:1px solid var(--field-line);
+.pick{width:24px;height:24px;border-radius:6px;border:1px solid var(--field-line);
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
   font-size:12px;color:transparent;padding:0}
 .pick[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
@@ -541,7 +551,7 @@ th .pick.all{vertical-align:middle}
   display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left}
 .tool:hover{border-color:var(--accent)}
 .tool .trow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.tool .tname{font-size:14.5px;font-weight:600}
+
 .tool .tsub{font-size:12px;color:var(--muted)}
 .tool p{margin:0;font-size:12.5px;color:var(--muted)}
 .tool .capchips{display:flex;flex-wrap:wrap;gap:5px}
@@ -617,7 +627,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .srcinner{padding:14px 16px 16px}
 .srcstate{margin:0 0 14px;font-size:12.5px;color:var(--muted);max-width:78ch}
 .srcstate b{color:var(--ink)}
-.src h3{margin:0;font-size:15px}
+
 .srcsub{margin-top:3px;font-size:12px;color:var(--muted)}
 /* Cap the column count as well as the width. auto-fit alone kept adding columns
    on a wide screen until each one was a single ragged word, and three columns of
@@ -625,8 +635,8 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:18px;max-width:1100px}
 .srcgrid p{max-width:52ch}
-.srcgrid h5{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint)}
+.srcgrid h4{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--faint);font-weight:600}
 .srcgrid p{margin:0;font-size:12.5px;line-height:1.55}
 .srcloss p{color:var(--ink)}
 .srcloss h5{color:var(--med)}
@@ -642,6 +652,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   border-bottom:1px dotted var(--line)}
 .srcref:hover{color:var(--accent)}
 @media(max-width:640px){.vollegend>div{grid-template-columns:1fr;gap:3px}}
+.planhead p{max-width:84ch}
 .plansum{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;
   padding:10px 13px;background:var(--panel-2);border:1px solid var(--line);
   border-radius:9px;font-size:12.5px;color:var(--muted)}
@@ -739,7 +750,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   display:flex;flex-direction:column;gap:9px;cursor:pointer;text-align:left}
 .rule:hover{border-color:var(--accent)}
 .rule .rtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.rule .rname{font-size:14px;font-weight:600}
+
 .rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
   word-break:break-all}
 .rule p{margin:0;font-size:12.5px;color:var(--muted)}
@@ -809,7 +820,13 @@ details.csfull[open]>summary{border-bottom:1px solid var(--line-soft);
   min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px}
 details.csfull[open]>summary::before{top:50%;transform:translateY(-50%) rotate(90deg)}
 .cstop{min-width:0}
-.csname{font-size:13.5px;font-weight:600;line-height:1.35}
+/* One treatment for every card title on the site. There were four - case tile
+   16px/600, source tile 15px/700, tool card 14.5px/600, rule card 14px/600 - and
+   three of the four were divs rather than headings. The case tile was 16px only
+   because two older .csname rules outlived the layout they were written for and
+   overrode the tile rule silently. */
+.cardname,.csname,.tool .tname,.rule .rname,.src h3{
+  font-size:14.5px;font-weight:600;line-height:1.35;margin:0;color:var(--ink)}
 /* Clamped, not truncated at a character count: three lines of the real summary
    is enough to decide whether to open a case, and a hard character cut lands
    mid-word on some and mid-sentence on all of them. */
@@ -858,8 +875,8 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .covrow.open .cvcaret{transform:rotate(90deg)}
 .covdet td{background:var(--panel-2);padding:14px 14px 14px 34px}
 .cdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
-.cdgrid h5{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint)}
+.cdgrid h3{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--faint);font-weight:600}
 .cdgrid .n{font-family:ui-monospace,Menlo,monospace;font-size:10px;
   background:var(--line-soft);border-radius:20px;padding:0 6px;color:var(--muted)}
 .cdchip{display:block;width:100%;text-align:left;background:var(--panel);
@@ -908,10 +925,10 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .cs{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px;
   display:flex;flex-direction:column;gap:10px}
 .cs .cshead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.cs .csname{font-size:14.5px;font-weight:600}
+
 .cs .csmeta{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .cs p{margin:0;font-size:12.5px;color:var(--muted)}
-.cs h5{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.cs h4{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
 .iocs{display:flex;flex-wrap:wrap;gap:5px}
 .ioc{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
   border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;color:var(--ink);
@@ -923,7 +940,7 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
   padding:20px 22px;margin:0 0 16px}
 .csfull .cshead{display:flex;justify-content:space-between;align-items:flex-start;
   gap:14px;margin:0 0 10px;flex-wrap:wrap}
-.csfull .csname{font-size:16px;font-weight:600}
+
 .csfull .csjump{flex:none;white-space:nowrap}
 .cssum{margin:0 0 16px;font-size:13.5px;color:var(--ink);max-width:88ch}
 /* Two columns because indicators and response answer different questions - what
@@ -947,9 +964,9 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
    half - "here is the incident" is context, "here is the rule that catches it"
    is the next move. */
 .csdet{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
-.csdet h5{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+.csdet h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--faint);display:flex;align-items:center;gap:7px}
-.csdet h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+.csdet h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .detrow{display:flex;flex-wrap:wrap;gap:6px}
 .detchip{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--accent-soft);
@@ -988,9 +1005,9 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .csdispute b{color:var(--crit)}
 .csfoot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;
   margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
-.csfoot h5{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+.csfoot h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--faint);display:flex;align-items:center;gap:7px}
-.csfoot h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+.csfoot h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .csatlas{display:flex;flex-direction:column;align-items:flex-start}
 .tech{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
@@ -1395,7 +1412,7 @@ function toolsHTML(){
   const cs=CASES_BY_TOOL[t.entry_id]||[];
   return `
     <button class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
-      <div class="trow"><div><div class="tname">${esc(t.tool)}</div>
+      <div class="trow"><div><h3 class="tname">${esc(t.tool)}</h3>
         <div class="tsub">${esc(t.vendor)} &middot; ${esc(t.category)}</div></div>
         <div class="tbadges">${t.status&&t.status!=='active'?
           `<span class="statuspill">${esc(t.status)}</span>`:''}${cs.length?`<span class="casebadge"
@@ -1444,9 +1461,9 @@ function sourcesHTML(){
       <div class="srcinner">
       <p class="srcstate"><b>By default.</b> ${esc(s.default_state)}</p>
       <div class="srcgrid">
-        <div><h5>Turn it on</h5><p>${esc(s.enable)}</p></div>
-        <div><h5>Keep it</h5><p>${esc(s.retention)}</p></div>
-        <div class="srcloss"><h5>Without it you cannot answer</h5><p>${esc(s.without_it)}</p></div>
+        <div><h4>Turn it on</h4><p>${esc(s.enable)}</p></div>
+        <div><h4>Keep it</h4><p>${esc(s.retention)}</p></div>
+        <div class="srcloss"><h4>Without it you cannot answer</h4><p>${esc(s.without_it)}</p></div>
       </div>
       <div class="srcfoot">
         ${s.n_eventlog_rows?`<button class="srcstat" data-cls="eventlog"
@@ -1715,7 +1732,7 @@ function rulesHTML(rules){
     <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
   return '<div class="rulegrid">'+rules.map(r=>`
     <button class="rule" data-f="${esc(r.path)}">
-      <div class="rtop"><div><div class="rname">${esc(r.title)}</div>
+      <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
       ${r.description?`<p>${esc(r.description.split('\n')[0])}</p>`:''}
@@ -1981,15 +1998,15 @@ function coverageHTML(){
         </tr>
         <tr class="covdet" data-for="${esc(r.id)}" hidden><td colspan="5">
           <div class="cdgrid">
-            <div><h5>Rules <span class="n">${r.ruleNames.length}</span></h5>
+            <div><h3>Rules <span class="n">${r.ruleNames.length}</span></h3>
               ${r.ruleNames.length?r.ruleNames.map(f=>
                 `<button class="cdchip" data-rule="${esc(f)}">${esc(f)}</button>`).join('')
                 :'<p class="muted">None in this repo.</p>'}</div>
-            <div><h5>Tools <span class="n">${r.toolNames.length}</span></h5>
+            <div><h3>Tools <span class="n">${r.toolNames.length}</span></h3>
               ${r.toolNames.length?r.toolNames.map(t=>
                 `<button class="cdchip" data-tool="${esc(t)}">${esc(t)}</button>`).join('')
                 :'<p class="muted">No catalogued tool maps to this.</p>'}</div>
-            <div><h5>Incidents <span class="n">${r.caseNames.length}</span></h5>
+            <div><h3>Incidents <span class="n">${r.caseNames.length}</span></h3>
               ${r.caseNames.length?r.caseNames.map(c=>
                 `<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')
                 :'<p class="muted">None documented here.</p>'}</div>
@@ -2053,7 +2070,7 @@ function caseStudiesHTML(){
     return `
     <details class="csfull" id="cs-${esc(c.id)}">
       <summary class="cshead">
-        <div class="cstop"><div class="csname">${esc(c.title)}</div>
+        <div class="cstop"><h3 class="csname">${esc(c.title)}</h3>
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
             c.disclosed?' · disclosed '+esc(c.disclosed):''}</div>
           <div class="csmeta csaff">${known.length?esc(known.map(k=>k.tool).join(', ')):
@@ -2081,7 +2098,7 @@ function caseStudiesHTML(){
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
       <div class="csbody">
         <div class="cscol">
-          <h5>Indicators <span class="n">${n}</span></h5>
+          <h4>Indicators <span class="n">${n}</span></h4>
           ${n?groups.map(g=>`<div class="iocgrp">
             <div class="iockind">${esc(g.kind)}</div>
             <div class="iocs">${g.items.map(i=>
@@ -2090,22 +2107,22 @@ function caseStudiesHTML(){
           </div>`).join(''):`<p class="muted">None published.</p>`}
         </div>
         <div class="cscol">
-          <h5>Response</h5>
+          <h4>Response</h4>
           ${(c.response_actions||[]).length?`<ol class="csact">${c.response_actions.map(a=>
             `<li>${esc(a)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
         </div>
       </div>
       ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
       ${(c.detections||[]).length?`<div class="csdet">
-        <h5>Detections in this repo <span class="n">${c.detections.length}</span></h5>
+        <h4>Detections in this repo <span class="n">${c.detections.length}</span></h4>
         <div class="detrow">${c.detections.map(d=>
           `<button class="detchip" data-rule="${esc(d)}">${esc(d)}</button>`).join('')}</div>
       </div>`:''}
       ${(c.atlas||[]).length||refs.length?`<div class="csfoot">
-        ${(c.atlas||[]).length?`<div class="csatlas"><h5>ATLAS</h5>${
+        ${(c.atlas||[]).length?`<div class="csatlas"><h4>ATLAS</h4>${
           c.atlas.map(a=>`<a class="tech" href="https://atlas.mitre.org/techniques/${esc(a)}"
             target="_blank" rel="noopener">${esc(a)}</a>`).join('')}</div>`:''}
-        ${refs.length?`<div class="csrefs"><h5>Sources <span class="n">${refs.length}</span></h5>
+        ${refs.length?`<div class="csrefs"><h4>Sources <span class="n">${refs.length}</span></h4>
           <ul>${refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
             rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
       </div>`:''}
