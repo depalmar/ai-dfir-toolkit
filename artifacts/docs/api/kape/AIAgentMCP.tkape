@@ -5,6 +5,18 @@ Id: 8d432274-e8b1-5ce6-98ed-ff8678ae5b90
 RecreateDirectories: true
 Targets:
     -
+        Name: 'Amazon Q Developer (ex-CodeWhisperer): mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.aws\amazonq\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0008 | Amazon Q Developer (ex-CodeWhisperer): mcpServers'
+    -
+        Name: 'Amazon Q Developer (ex-CodeWhisperer): Agent configuration, global scope in the '
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.aws\amazonq\'
+        FileMask: 'default.json'
+        Comment: 'AIRT-0008 | Amazon Q Developer (ex-CodeWhisperer): Agent configuration, global scope in the IDE'
+    -
         Name: 'Claude Code: mcpServers (user scope)'
         Category: AIAgents
         Path: 'C:\Users\%user%\'
@@ -29,11 +41,42 @@ Targets:
         FileMask: 'claude_desktop_config.json'
         Comment: 'AIRT-0011 | Claude Desktop (MCP host): mcpServers'
     -
+        Name: 'Codeium / Windsurf: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\windsurf\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0006 | Codeium / Windsurf: mcpServers'
+    -
+        Name: 'Continue.dev: mcpServers (name, command, args, cwd, env)'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.continue\'
+        FileMask: 'config.yaml'
+        Comment: 'AIRT-0005 | Continue.dev: mcpServers (name, command, args, cwd, env)'
+    -
+        Name: 'Continue.dev: One JSON file per server, in the format other clients use'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.continue\mcpServers\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0005 | Continue.dev: One JSON file per server, in the format other clients use'
+    -
         Name: 'Cursor: mcpServers'
         Category: AIAgents
         Path: 'C:\Users\%user%\.cursor\'
         FileMask: 'mcp.json'
         Comment: 'AIRT-0002 | Cursor: mcpServers'
+    -
+        Name: 'GitHub Copilot (Agent Mode / CLI): mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.copilot\'
+        FileMask: 'mcp-config.json'
+        Comment: 'AIRT-0003 | GitHub Copilot (Agent Mode / CLI): mcpServers'
+    -
+        Name: 'Google Gemini CLI: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0037 | Google Gemini CLI: mcpServers'
     -
         Name: 'Goose: extensions'
         Category: AIAgents
@@ -46,3 +89,9 @@ Targets:
         Path: 'C:\Users\%user%\.kiro\settings\'
         FileMask: 'mcp.json'
         Comment: 'AIRT-0041 | Kiro: mcpServers'
+    -
+        Name: 'OpenAI Codex CLI: [mcp_servers.<name>] command + args, or url for HTTP servers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codex\'
+        FileMask: 'config.toml'
+        Comment: 'AIRT-0036 | OpenAI Codex CLI: [mcp_servers.<name>] command + args, or url for HTTP servers'

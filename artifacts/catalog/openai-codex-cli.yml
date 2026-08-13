@@ -144,7 +144,32 @@ credentials:
     secret_type: oauth-token
     description: Plaintext ChatGPT OAuth token
     confidence: high
-mcp: []
+mcp:
+  - config_path: "~/.codex/config.toml"
+    config_key: "[mcp_servers.<name>] command + args, or url for HTTP servers"
+    spawn_mechanism: stdio child process at CLI start
+    secrets_location: env block; HTTP servers name an env var in bearer_token_env_var
+    persistence_trigger: Every CLI invocation
+    triage_priority: p1
+    notes: User scope. TOML not JSON.
+  - config_path: "<repo>/.codex/config.toml"
+    config_key: "[mcp_servers.<name>]"
+    spawn_mechanism: stdio child process at CLI start in the project
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation in the project
+    triage_priority: p1
+    notes: >-
+      Project scope, applied only to trusted projects. Travels with the repo, so
+      review it on every clone.
+  - config_path: "/etc/codex/config.toml"
+    config_key: "[mcp_servers.<name>]"
+    spawn_mechanism: stdio child process at CLI start
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation by any user
+    triage_priority: p1
+    notes: >-
+      System scope on Unix, and the one most likely to be missed - it applies to
+      every user on the host, not just the one under investigation
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

@@ -91,7 +91,30 @@ credentials:
     secret_type: aws-sso-token
     description: SSO access tokens - credential-theft target
     confidence: high
-mcp: []
+mcp:
+  - config_path: "~/.aws/amazonq/mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at CLI start
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation
+    triage_priority: p1
+    notes: >-
+      Global scope. The CLI reads this and the workspace file together and takes
+      the union, so checking one path alone under-reports what the agent could run.
+  - config_path: "<repo>/.amazonq/mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at CLI start in the workspace
+    secrets_location: env block
+    persistence_trigger: Every CLI invocation in the workspace
+    triage_priority: p1
+    notes: Workspace scope. Travels with the repo.
+  - config_path: "~/.aws/amazonq/default.json"
+    config_key: Agent configuration, global scope in the IDE
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block
+    persistence_trigger: Every IDE start
+    triage_priority: p2
+    notes: Where the IDE stores a server added at global scope
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.

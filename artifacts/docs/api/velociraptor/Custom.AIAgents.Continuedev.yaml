@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.continue\config.yaml', 'C:\Users\*\.continue\config.json', 'C:\Users\*\.continue\config.ts', 'C:\Users\*\.continue\.env', 'C:\Users\*\.continue\auth.json']
+      LET Globs = ['C:\Users\*\.continue\config.yaml', 'C:\Users\*\.continue\config.json', 'C:\Users\*\.continue\config.ts', 'C:\Users\*\.continue\.env', 'C:\Users\*\.continue\auth.json', 'C:\Users\*\.continue\mcpServers\**']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.continue/config.yaml', '/Users/*/.continue/config.json', '/Users/*/.continue/config.ts', '/Users/*/.continue/.env', '/Users/*/.continue/auth.json']
+      LET Globs = ['/Users/*/.continue/config.yaml', '/Users/*/.continue/config.json', '/Users/*/.continue/config.ts', '/Users/*/.continue/.env', '/Users/*/.continue/auth.json', '/Users/*/.continue/mcpServers/**']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.continue/config.yaml', '/home/*/.continue/config.json', '/home/*/.continue/config.ts', '/home/*/.continue/.env', '/home/*/.continue/auth.json']
+      LET Globs = ['/home/*/.continue/config.yaml', '/home/*/.continue/config.json', '/home/*/.continue/config.ts', '/home/*/.continue/.env', '/home/*/.continue/auth.json', '/home/*/.continue/mcpServers/**']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

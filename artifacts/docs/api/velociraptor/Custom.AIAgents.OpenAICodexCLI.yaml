@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.codex/config.toml', '/Users/*/.codex/history.jsonl', '/Users/*/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl', '/Users/*/.codex/logs/codex-tui.log', '/Users/*/.codex/auth.json']
+      LET Globs = ['/Users/*/.codex/config.toml', '/Users/*/.codex/history.jsonl', '/Users/*/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl', '/Users/*/.codex/logs/codex-tui.log', '/Users/*/.codex/auth.json', '/etc/codex/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.codex/config.toml', '/home/*/.codex/history.jsonl', '/home/*/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl', '/home/*/.codex/logs/codex-tui.log', '/home/*/.codex/auth.json']
+      LET Globs = ['/home/*/.codex/config.toml', '/home/*/.codex/history.jsonl', '/home/*/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl', '/home/*/.codex/logs/codex-tui.log', '/home/*/.codex/auth.json', '/etc/codex/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

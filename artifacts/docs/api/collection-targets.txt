@@ -21,6 +21,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 /app/backend/data/uploads/ and vector store directory
 /app/backend/data/webui.db
 /data/credential_vault
+/etc/codex/config.toml
 /etc/gemini-cli/settings.json
 /home/node/.flowise/encryption.key
 <LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)
@@ -51,9 +52,12 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <project>/langgraph.json
 <repo>/.aider.chat.history.md
 <repo>/.aider.input.history
+<repo>/.amazonq/mcp.json
 <repo>/.claude/settings.local.json
+<repo>/.codex/config.toml
 <repo>/.continue/.env
 <repo>/.cursor/mcp.json
+<repo>/.gemini/settings.json
 <repo>/.kiro/agents/
 <repo>/.kiro/hooks/*.kiro.hook
 <repo>/.kiro/settings/mcp.json
@@ -129,6 +133,8 @@ webui.db (user and API key tables)
 ~/.autogenstudio/.env
 ~/.autogenstudio/database.sqlite
 ~/.aws
+~/.aws/amazonq/default.json
+~/.aws/amazonq/mcp.json
 ~/.aws/sso/cache/*.json
 ~/.claude.json
 ~/.claude/.credentials.json
@@ -163,6 +169,7 @@ webui.db (user and API key tables)
 ~/.continue/config.json
 ~/.continue/config.ts
 ~/.continue/config.yaml
+~/.continue/mcpServers/
 ~/.copilot/config.json
 ~/.copilot/mcp-config.json
 ~/.copilot/mcp-oauth-config/

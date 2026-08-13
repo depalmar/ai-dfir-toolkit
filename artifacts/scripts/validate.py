@@ -156,6 +156,26 @@ def main() -> int:
     # reader cannot check. Reported rather than failed, because the gap is real
     # and closing it needs research, not a commit - but reported on every run so
     # it stays visible and shrinks instead of being forgotten.
+    # A tool documented as MCP-capable with no MCP location is the same defect as
+    # plaintext_credentials with no credentials: it tells a responder the config
+    # exists and gives them nowhere to look. The MCP config records what the agent
+    # was authorised to execute, and under a rug-pull it is the only authoritative
+    # record - so this is the exact question the catalog exists to answer, left
+    # blank. Reported rather than failed while the backlog is worked down; the
+    # credential version of this check is already a hard gate, and this should
+    # become one once the count reaches zero.
+    no_mcp = []
+    for path in files:
+        doc = yaml.safe_load(Path(path).read_text())
+        if (doc.get("capabilities") or {}).get("mcp_capable") is True \
+                and not (doc.get("mcp") or []):
+            no_mcp.append(f"{doc.get('id')} {doc.get('name')}")
+    if no_mcp:
+        print(f"[MCP]    {len(no_mcp)} entr(ies) declare mcp_capable with no MCP "
+              f"location. Either record where the config lives, or drop the claim:")
+        for m in no_mcp:
+            print(f"[MCP]      {m}")
+
     unsourced = []
     # Verification age, on the quarterly cadence docs/REVERIFICATION.md sets.
     # last_modified tracks edits and answers the wrong question - a typo fix moves
