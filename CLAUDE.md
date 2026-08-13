@@ -127,9 +127,11 @@ to grep for. Exporters that emit paths - forensicartifacts, KAPE, Velociraptor -
 must skip everything except `config-file`, or an import name ships as a file path.
 
 A `mcp_capable: true` claim with no block is not always a gap to fill. Ask
-whether the tool hosts MCP at all first: Ollama and Aider both carried the claim
-and neither is an MCP client. A wrong capability flag reads as a fact and is
-worse than a visible hole.
+whether the tool hosts MCP at all first: Ollama, Aider and the Claude
+computer-use demo all carried the claim and none is an MCP client. Three of 25
+is a high enough hit rate that the capability question comes before the path
+question. A wrong capability flag reads as a fact and is worse than a visible
+hole. The check is a hard gate now that the count is zero.
 
 **Controlled vocabularies.** `artifact_type`, `evidence_type`, `secret_type`,
 and `storage` are closed enums in `schema/artifact.schema.json`. They exist
@@ -187,7 +189,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-49 entries, 313 artifacts, 154 credential locations, 51 MCP config
+49 entries, 313 artifacts, 154 credential locations, 58 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
 Velociraptor artifacts, 9 telemetry sources. Validation clean.
 

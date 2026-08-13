@@ -32,6 +32,25 @@ artifacts:
       exposure_risk: high
 credentials: []
 mcp: []
+mcp:
+  - mechanism: "config-file"
+    config_path: "<models path>/<model>.yaml"
+    config_key: "mcp"
+    spawn_mechanism: "LocalAI connects to the configured servers and executes tool calls server-side, then re-runs inference with the results"
+    secrets_location: "The model YAML itself, alongside the rest of the model definition"
+    persistence_trigger: "Every inference request against that model"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Unusual placement worth knowing: the server list lives inside a model definition rather than in one MCP config, so every model YAML in the models directory has to be read. The agent loop is bounded by agent.max_iterations, default 10."
+  - mechanism: "server"
+    indicator: "Client-side MCP in the LocalAI WebUI - the browser connects to the MCP server directly, so the connection never appears in LocalAI's own process tree"
+    spawn_mechanism: "Opened by the browser, not by the LocalAI backend"
+    secrets_location: "Browser-side, not in the model YAML"
+    persistence_trigger: "Every WebUI session that uses it"
+    triage_priority: "p2"
+    confidence: "medium"
+    unverified: true
+    notes: "Runs alongside the server-side path rather than replacing it, so host telemetry showing no MCP child process does not mean no MCP was used"
 collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -47,6 +66,9 @@ attack_techniques:
 references:
   - title: "mudler/LocalAI"
     url: https://github.com/mudler/LocalAI
+    accessed: "2026-08-13"
+  - title: "LocalAI docs - Model Context Protocol"
+    url: https://localai.io/features/mcp/
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

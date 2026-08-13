@@ -171,6 +171,16 @@ credentials:
       Container path /data/browser_sessions, host bind ./browser_sessions.
     confidence: high
 mcp: []
+mcp:
+  - mechanism: "server"
+    indicator: "python -m skyvern run mcp in a process tree, and a skyvern entry inside another tool's MCP config"
+    config_key: "mcpServers entry in the client's config"
+    spawn_mechanism: "Started over stdio by whichever MCP client lists it"
+    secrets_location: "SKYVERN_API_KEY and SKYVERN_BASE_URL in the client's env block"
+    persistence_trigger: "Every start of the client that lists it"
+    triage_priority: "p1"
+    confidence: "medium"
+    notes: "Grants browser control to the client that loads it, and SKYVERN_BASE_URL decides whether that drives a local server or Skyvern Cloud - which changes where the browsing evidence lives"
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
@@ -185,6 +195,12 @@ attack_techniques:
 references:
   - title: "Skyvern-AI/skyvern"
     url: https://github.com/Skyvern-AI/skyvern
+    accessed: "2026-08-13"
+  - title: "Skyvern docs - MCP server"
+    url: https://docs.skyvern.com/integrations/mcp
+    accessed: "2026-08-13"
+  - title: "Skyvern-AI/skyvern - integrations/mcp"
+    url: https://github.com/Skyvern-AI/skyvern/tree/main/integrations/mcp
     accessed: "2026-08-13"
 last_verified: "2026-08-13"
 last_modified: "2026-08-11"

@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.tabnine\agent\settings.json']
+      LET Globs = ['C:\Users\*\.tabnine\agent\settings.json', 'C:\Users\*\.tabnine\mcp_servers.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.tabnine/agent/settings.json']
+      LET Globs = ['/Users/*/.tabnine/agent/settings.json', '/Users/*/.tabnine/mcp_servers.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.tabnine/agent/settings.json', '/home/*/.config/TabNine/.refresh_token_v2']
+      LET Globs = ['/home/*/.tabnine/agent/settings.json', '/home/*/.config/TabNine/.refresh_token_v2', '/home/*/.tabnine/mcp_servers.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

@@ -181,14 +181,34 @@ for an Ollama MCP config that has never existed.
 | `AIRT-0018` LM Studio | MCP config path | not recorded | **`~/.lmstudio/mcp.json`, plus `~/.cache/lm-studio/mcp.json` on macOS** | The vendor documents the first for all three platforms. An open vendor bug report (lmstudio-ai/lmstudio-bug-tracker#1371) says the documented directory does not exist on macOS and the file is in the cache directory instead. Both rows are recorded, the second `medium` and `unverified`, because a responder who checks only the documented path on a Mac may record a false miss. |
 | `AIRT-0044` Langflow | MCP exposure | not recorded | **flows auto-published as MCP tools** | Creating a Langflow project adds it to Langflow's own MCP server and publishes its flows as tools. The exposure is opt-out, so the tool surface grows without anyone configuring it - which is a finding rather than a configuration detail. |
 
-### Still open
+### Second pass, same day - the remaining six
 
-Six entries still declare `mcp_capable` with no location: AIRT-0009 Tabnine,
-AIRT-0012 AutoGPT, AIRT-0024 LocalAI, AIRT-0030 Flowise, AIRT-0033 Claude
-Computer Use, AIRT-0035 Skyvern. Tabnine is confirmed MCP-capable by vendor
-documentation but the config path could not be sourced. The other five were not
-reached in this pass, and each needs the same question asked first: does the tool
-host MCP at all, or is this another claim to withdraw?
+All six were resolved, taking the count to zero and letting the `[MCP]` check
+become a hard gate rather than a standing report.
+
+Asking the capability question first paid off a third time:
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0033` Claude Computer Use | `capabilities.mcp_capable` | `true` | **`false`** | The reference implementation is a deliberately minimal containerised agent loop driving a Linux desktop over X11 and VNC, using the API's computer-use tool. It is not an MCP host and has no MCP surface. |
+
+The other five gained blocks, and two of them are placements worth knowing about
+before a collection rather than after:
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0024` LocalAI | MCP config location | not recorded | **inside each model YAML, under `mcp`** | Server-side MCP tools are declared in the model definition rather than in one MCP config, so every model YAML in the models path has to be read. LocalAI also supports client-side MCP where the browser connects directly, which leaves no MCP child process in LocalAI's process tree at all - host telemetry showing none does not mean none was used. |
+| `AIRT-0009` Tabnine | MCP config location | not recorded | **`.tabnine/mcp_servers.json`, project and home scope** | Vendor-documented. Pairs with the already-catalogued `~/.tabnine/agent/settings.json`, which records whether a named server is actually enabled, and with team-level MCP governance that may permit or deny what the file names. |
+
+`AIRT-0035` Skyvern and `AIRT-0032` Browser-Use are both `server`: they are
+launched by whatever MCP client lists them, so neither has a config of its own
+and the finding in each case is the client config that names it.
+
+### Gate closed
+
+`capabilities.mcp_capable: true` with an empty `mcp` block now fails
+`validate.py`, on the same footing as the credential check. Verified by
+re-opening the claim on Ollama and confirming the failure, then restoring it.
 
 Note on method: this environment's egress policy blocks most vendor
 documentation domains, so several of these rows rest on search-engine summaries

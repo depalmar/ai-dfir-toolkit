@@ -114,6 +114,12 @@ Targets:
         FileMask: 'config.toml'
         Comment: 'AIRT-0036 | OpenAI Codex CLI: [mcp_servers.<name>] command + args, or url for HTTP servers'
     -
+        Name: 'Tabnine: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.tabnine\'
+        FileMask: 'mcp_servers.json'
+        Comment: 'AIRT-0009 | Tabnine: mcpServers'
+    -
         Name: 'Warp: mcpServers'
         Category: AIAgents
         Path: 'C:\Users\%user%\.warp_cli\'

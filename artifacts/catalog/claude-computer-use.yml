@@ -17,7 +17,7 @@ capabilities:
   local_code_execution: true
   local_listener: true
   plaintext_credentials: true
-  mcp_capable: true
+  mcp_capable: false
 risk: high
 confidence: high
 abuse_potential: Full mouse/keyboard control of a desktop. Screenshot loop = continuous screen capture (data at rest in container).
@@ -104,5 +104,8 @@ attack_techniques:
 references:
   - title: "Computer use tool - Claude Platform Docs"
     url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool
+    accessed: "2026-08-13"
+  - title: "anthropics/anthropic-quickstarts - computer-use-demo"
+    url: https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo
     accessed: "2026-08-13"
 last_modified: "2026-08-11"

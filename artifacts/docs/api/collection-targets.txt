@@ -45,6 +45,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <install>/platform/.env
 <install>/skyvern-frontend/.env
 <mcpo config> (Claude Desktop format, path set at mcpo launch)
+<models path>/<model>.yaml
 <nvim stdpath('cache')>/codeium/config.json
 <project>/.env
 <project>/.env  (path passed to `langflow run --env-file`)
@@ -66,6 +67,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <repo>/.kiro/steering/*.md
 <repo>/.mcp.json
 <repo>/.roo/mcp.json
+<repo>/.tabnine/mcp_servers.json
 <repo>/.warp/.mcp.json
 ANTHROPIC_API_KEY
 ANTHROPIC_AUTH_TOKEN
@@ -77,6 +79,8 @@ CLAUDE_CODE_OAUTH_TOKEN
 CONTINUE_API_KEY
 COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
 COPILOT_PROVIDER_API_KEY
+Client-side MCP in the LocalAI WebUI - the browser connects to the MCP server directly, so the connection never appears in LocalAI's own process tree
+Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)
 FLOWISE_SECRETKEY_OVERWRITE
 Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself
 Goose session logs
@@ -97,6 +101,7 @@ LETTA_PG_URI
 LLM_API_KEY
 LOCAL_CREDENTIAL_VAULT_KEY
 Langflow projects published as MCP tools - each project is added to Langflow's own MCP server automatically on creation
+MCP integrations connected in the AutoGPT Platform UI and persisted in the platform's own store, not in a file beside the agent
 MCP server registrations added in Settings - MCP Servers, persisted in langflow.db under ~/.langflow/
 MCP server registrations created through the Letta server API, persisted in the SQLite database under ~/.letta/ or the Docker PostgreSQL volume
 MCP servers added under Tools - MCP in the workspace, persisted in the Dify application database rather than in a file on the host
@@ -141,6 +146,7 @@ macOS login Keychain: generic-password service 'Cursor Safe Storage', account 'C
 macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token / cursor-api-key, account cursor-user
 mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
 npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config
+python -m skyvern run mcp in a process tree, and a skyvern entry inside another tool's MCP config
 uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config
 vscode.SecretStorage key 'dev.continue.continue' (OS-keyring backed on desktop VS Code)
 webui.db (user and API key tables)
@@ -221,6 +227,7 @@ webui.db (user and API key tables)
 ~/.skyvern/credential_vault/creditem_*.bin
 ~/.skyvern/data.db
 ~/.supermaven/config.json
+~/.tabnine/mcp_servers.json
 ~/.warp_cli/.mcp.json
 ~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
 ~/Library/Application Support/Claude/claude_desktop_config.json
