@@ -41,6 +41,9 @@ ai-dfir-toolkit/
 ├── 06-rag-vector-db/              # Vector DB exposure, RAG poisoning
 ├── 07-runtime-ai-malware/         # Malware calling an LLM API at runtime
 ├── 08-agentic-orchestration/      # Agent-as-operator, AI service API as C2
+├── 09-agent-memory-forensics/     # Memory as persistence, context poisoning
+├── collectors/                    # Read-only acquisition with chain of custody
+├── playbooks/                     # CACAO v2.0 response playbooks
 ├── artifacts/                     # Machine-readable AI agent artifact catalog
 ├── skills/                        # Agent skills for maintaining the catalog
 ├── tests/                         # Sample events / test files
@@ -126,7 +129,7 @@ See [`artifacts/README.md`](artifacts/README.md).
 
 ## Coverage overview
 
-66 rule files containing 154 individual signatures — eight attack-class categories
+68 rule files containing 159 individual signatures — nine attack-class categories
 plus a cross-tool endpoint set:
 
 | Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
@@ -139,8 +142,9 @@ plus a cross-tool endpoint set:
 | RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
 | Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM06 |
 | Agentic Orchestration & AI-Service C2 | 3 | 12 | T0096, T0086, T0054 | LLM06 |
+| Agent Memory & Context Poisoning | 2 | 5 | T0080, T0080.000, T0086 | LLM01, LLM02, LLM06 |
 | Endpoint (cross-tool) | 12 | 12 | T0053, T0081, T0082 | LLM02, LLM06, LLM03 |
-| **Total** | **66** | **154** | | |
+| **Total** | **68** | **159** | | |
 
 The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
 scoped to agent behaviour on a host rather than to one attack class, so it applies

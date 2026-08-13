@@ -8,6 +8,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **`09-agent-memory-forensics/` — 2 rule files / 5 signatures**, plus an
+  analytic that parses memory stores and reports poisoning findings. Agent memory
+  is a persistence mechanism: an instruction written there survives conversation
+  resets, process restarts and the removal of whatever injection put it there, so
+  eradication that skips memory leaves the adversary resident. Maps to
+  `AML.T0080` AI Agent Context Poisoning and its `.000` Memory sub-technique,
+  confirmed against ATLAS (MITRE/Zenity Labs, October 2025).
+- **`AIRT-0045` vLLM.** Three vLLM Suricata signatures shipped with no catalog
+  entry behind them, so an analyst receiving that alert had no collection block
+  and no triage priority. Authored at `high` confidence from the packaged source
+  of vllm 0.27.1 — `VLLM_API_KEY` unset by default, `VLLM_CACHE_ROOT`,
+  `VLLM_CONFIG_ROOT`, `usage_stats.json`, and the 0.0.0.0 default bind.
+- **Fixtures for the three category-07 YARA rules**, with a benign control that
+  must stay clean against all of them. They previously shipped compile-verified
+  only.
+- **`gen_credential_targets.py` now also derives high-forensic-value disk
+  artifacts**, not only credential locations, so the hand-authored remainder of
+  `targets.yaml` is genuinely collection-specific.
+
 - **127 credential locations across 20 entries** that previously declared
   `plaintext_credentials: true` and listed none. The catalog went from 23
   credential locations to 150. Every row carries a vendor citation and went
@@ -91,6 +110,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   why.
 
 ### Fixed
+
+- **The OS facet hid 87 of 425 catalog rows.** The schema declares `os` on disk,
+  process and credential rows only, so registry, network and MCP rows carried
+  none — and a row with no OS matched no OS filter. Selecting `windows` silently
+  dropped every registry key, every listening port and every MCP config. Rows now
+  inherit the entry's `supported_os`, which is stricter than making blank rows
+  match everything: a cloud-only tool must not appear under `windows`. `windows`
+  goes from 163 reachable rows to 339, and `--check` now fails on any row with no
+  OS.
+- **The CrewAI scaffold path was wrong.** The entry documented
+  `<project>/config/agents.yaml`; the packaged first-party metadata puts it at
+  `src/<project>/config/`. The entry already contradicted itself twelve lines
+  down. Corrected and raised to `high`, with the basis in `VERIFICATION.md`.
+- **`tests/validate.sh` scored absent tooling as passes.** `assert_clean` treated
+  empty stdout as a pass, so a missing `yara` binary or a rule that failed to
+  compile looked identical to a clean scan. It now preflights for the binary and
+  exits 2 if it is absent, and checks yara's exit status before its output —
+  keeping stderr separate, since non-fatal warnings must not fail a scan that was
+  genuinely clean.
 
 - **ATLAS and OWASP index counts in `MAPPINGS.md`.** Hand-maintained counts
   disagreed with the tables they summarise (ATLAS `T0010`, `T0020`, `T0024`;

@@ -129,6 +129,13 @@ def build_rows(entries):
     rows = []
     for e in entries:
         eid = e["id"]
+        # The schema declares `os` on disk, process and credential rows only, so
+        # registry, network and MCP rows carry none - and a row with no OS matched
+        # no OS facet, which silently hid every registry key, every listening port
+        # and every MCP config the moment a reader clicked one. Inherit the entry's
+        # supported_os rather than making blank rows match everything: a cloud-only
+        # tool must not appear under `windows` just because its row is unlabelled.
+        entry_os = aslist(e.get("supported_os"))
         for kind, items in (e.get("artifacts") or {}).items():
             for a in items:
                 if kind == "registry":
@@ -144,7 +151,7 @@ def build_rows(entries):
                 rows.append({
                     "entry_id": eid, "tool": e["name"], "cls": kind,
                     "artifact": loc,
-                    "os": aslist(a.get("os")),
+                    "os": aslist(a.get("os")) or entry_os,
                     "forensic_value": a.get("forensic_value", ""),
                     "confidence": a.get("confidence", ""),
                     "evidence": evidence_for(kind, a),
@@ -155,7 +162,7 @@ def build_rows(entries):
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "credential",
                 "artifact": c.get("location", ""),
-                "os": aslist(c.get("os")),
+                "os": aslist(c.get("os")) or entry_os,
                 "forensic_value": "high",
                 "confidence": c.get("confidence", ""),
                 # secret_type answers "what is it", not "what does it prove",
@@ -174,7 +181,7 @@ def build_rows(entries):
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "mcp-config",
                 "artifact": loc,
-                "os": [],
+                "os": entry_os,
                 "forensic_value": "high",
                 "confidence": "high",
                 "evidence": ["execution", "persistence"],
@@ -1290,6 +1297,14 @@ def check(rows, tools, rules, guide):
             problems.append(f"[ORPHAN]  {r['anchor']} has no tool entry")
         if re.search(r"[^A-Za-z0-9/_.\-]", r["anchor"]):
             problems.append(f"[SLUG]    {r['anchor']} is not URL-fragment safe")
+
+    # A row with no OS matches no OS facet, so it vanishes the moment a reader
+    # clicks one. That is the worst failure mode this page has - not an error
+    # message, a shorter list that looks complete.
+    for r in rows:
+        if not r["os"]:
+            problems.append(f"[OS]      {r['anchor']} has no OS and is unreachable "
+                            f"by any OS filter")
 
     # "What it proves" is derived for the classes the schema does not declare it
     # on, so both halves of that need guarding: every row says something, and

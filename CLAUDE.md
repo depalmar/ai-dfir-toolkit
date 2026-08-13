@@ -109,14 +109,14 @@ the entry and raise its confidence.
 
 ## Current state
 
-44 entries, 258 artifacts, 150 credential locations, 17 MCP config
+45 entries, 265 artifacts, 152 credential locations, 17 MCP config
 locations, 12 endpoint Sigma rules, 3 case studies. Validation clean.
 
-Detection content totals 66 rule files / 154 signatures across the eight attack-class
+Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
-Confidence: 27 high, 13 medium, 4 low.
-Risk: 11 critical, 21 high, 10 medium, 2 low.
+Confidence: 28 high, 13 medium, 4 low.
+Risk: 11 critical, 22 high, 10 medium, 2 low.
 
 ## Site generation
 
@@ -142,16 +142,13 @@ Three things worth not relearning:
 
 ## What is next, in priority order
 
-1. **Derive `collectors/targets.yaml` fully from the catalog.** The credential
-   half already is (`gen_credential_targets.py`); the rest is still hand-authored
-   and `check_target_drift.py` reports the divergence on every run.
-2. **Verify the 13 medium-confidence entries** against real installs. Note this
+1. **Verify the medium-confidence entries** against real installs. Note this
    buys row-level honesty rather than entry upgrades: most medium rows sit inside
    entries already rated `high`, so expect few confidence changes.
-3. **Wave 3 tools** — see `artifacts/BACKLOG.md`. Prioritise the ones that open
+2. **Wave 3 tools** — see `artifacts/BACKLOG.md`. Prioritise the ones that open
    a listener or store plaintext credentials (vLLM, Warp, Letta, Docker Model
    Runner), because those produce findings rather than inventory.
-4. **Quarterly re-verification.** Paths change between tool releases. A catalog
+3. **Quarterly re-verification.** Paths change between tool releases. A catalog
    nobody re-verifies decays into a liability, which is worse than one that never
    existed, because people trust it.
 

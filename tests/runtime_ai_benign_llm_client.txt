@@ -1,0 +1,12 @@
+AI-DFIR TEST FIXTURE - BENIGN CONTROL. Represents an ordinary application that
+calls an LLM provider for a legitimate purpose. It must produce ZERO matches
+against every rule in 07-runtime-ai-malware/.
+
+This service summarises support tickets. It posts to api.openai.com and shells
+out with subprocess to render the result as a PDF. There is no self-rewriting,
+no obfuscation prompt, no runtime code generation, and no committed key - the
+token is read from the environment at start-up.
+
+Endpoint contact and process execution together are NOT sufficient to match:
+the class heuristic also requires prompt intent directing runtime code
+generation, which ordinary software does not carry.

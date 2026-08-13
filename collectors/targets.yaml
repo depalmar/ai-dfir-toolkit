@@ -453,11 +453,78 @@ targets:
       - "data/.webui_secret_key"
     notes: "SECRET - jwt-signing-key. Container path is /app/backend/data/.webui_secret_key; collected project-relative from a mounted volume."
 
+  # ---------------- Agent memory & context (category 09) ----------------
+  # Memory is a persistence mechanism: an instruction written here survives
+  # conversation resets and process restarts, so eradication that skips it
+  # leaves the adversary resident. Collected as evidence, not as secrets.
+  - id: agent_memory_stores
+    name: "Assistant / agent long-term memory exports"
+    repo_cat: "09"
+    cosai: [memory_state]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "memory.json"
+      - "memories.json"
+      - "memory.jsonl"
+      - "memories/**/*.json"
+      - "agent_state.json"
+      - ".agent/memory/**/*"
+    notes: "spAIware-style persistent exfiltration instructions live here (ATLAS AML.T0080.000)."
+  - id: agent_memory_user_scope
+    name: "User-scope agent memory (home directory)"
+    repo_cat: "09"
+    cosai: [memory_state]
+    os: [macos, linux, windows]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.langgraph/**/*"
+      - "~/.agent/memory/**/*"
+      - "~/.config/agent/memory/**/*"
+    notes: "User-scope memory persists across every project the agent touches."
+  - id: agent_instruction_files
+    name: "Agent instruction files loaded into context every session"
+    repo_cat: "09"
+    cosai: [memory_state, prompt_logs]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "AGENT.md"
+      - "MEMORY.md"
+      - "GEMINI.md"
+      - ".clinerules"
+      - ".aiderrules"
+    notes: "File-backed context poisoning / Rules-File-Backdoor. Re-read on every invocation, so one line persists indefinitely."
+  - id: langgraph_checkpoints
+    name: "LangGraph checkpointer store (thread state / agent memory)"
+    repo_cat: "09"
+    cosai: [memory_state, tool_calls, trace_id]
+    os: [macos, linux, windows]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "checkpoints.sqlite"
+      - "checkpoints.db"
+      - "checkpoints.sqlite3"
+      - "langgraph.db"
+      - ".langgraph/**/*"
+    notes: "Parse with 09-agent-memory/analyze_agent_memory.py. Blobs may be pickle - never deserialize on the analysis host."
+
 # >>> GENERATED CREDENTIAL TARGETS - do not edit by hand <<<
 # Regenerate with: python collectors/gen_credential_targets.py
-# Source: artifacts/docs/api/catalog.json (credentials[] with a filesystem
-# location). All are sensitivity: secret - metadata and hash only unless
-# --collect-secrets is passed.
+# Source: artifacts/docs/api/catalog.json - every credentials[] row with a
+# filesystem location, plus every disk artifact rated forensic_value: high.
+# Credential targets are sensitivity: secret, so they are recorded as
+# metadata and a hash and never copied unless --collect-secrets is passed.
   - id: cred_airt_0001_claude_config_dir_credentials_json
     name: "Claude Code credential store (AIRT-0001)"
     repo_cat: "cred"
@@ -1496,4 +1563,356 @@ targets:
     paths:
       - "~/.langflow/data/database.db"
     notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: art_airt_0003_copilot_mcp_config_json
+    name: "GitHub Copilot (Agent Mode / CLI) artifact (AIRT-0003)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.copilot/mcp-config.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0004_aider_conf_yml
+    name: "Aider artifact (AIRT-0004)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.aider.conf.yml"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0005_continue_config_ts
+    name: "Continue.dev artifact (AIRT-0005)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.continue/config.ts"
+    notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0011_config_claude_claude_desktop_config_json
+    name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/Claude/claude_desktop_config.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0011_library_application_support_claude_claud
+    name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Claude/claude_desktop_config.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0011_library_logs_claude_mcp_log
+    name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/Library/Logs/Claude/mcp*.log"
+    notes: "log, forensic_value high, catalog confidence medium."
+  - id: art_airt_0018_lmstudio_settings_json
+    name: "LM Studio artifact (AIRT-0018)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.lmstudio/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0036_codex_config_toml
+    name: "OpenAI Codex CLI artifact (AIRT-0036)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.codex/config.toml"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0036_codex_history_jsonl
+    name: "OpenAI Codex CLI artifact (AIRT-0036)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.codex/history.jsonl"
+    notes: "session-artifact, forensic_value high, catalog confidence high."
+  - id: art_airt_0036_codex_logs_codex_tui_log
+    name: "OpenAI Codex CLI artifact (AIRT-0036)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.codex/logs/codex-tui.log"
+    notes: "log, forensic_value high, catalog confidence high."
+  - id: art_airt_0036_codex_sessions_yyyy_mm_dd_rollout_jsonl
+    name: "OpenAI Codex CLI artifact (AIRT-0036)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl"
+    notes: "session-artifact, forensic_value high, catalog confidence high."
+  - id: art_airt_0037_etc_gemini_cli_settings_json
+    name: "Google Gemini CLI artifact (AIRT-0037)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/etc/gemini-cli/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0037_gemini_settings_json
+    name: "Google Gemini CLI artifact (AIRT-0037)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0038_config_goose_config_yaml
+    name: "Goose artifact (AIRT-0038)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/goose/config.yaml"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0038_config_goose_permission_yaml_permissions
+    name: "Goose artifact (AIRT-0038)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/goose/permission.yaml ; permissions/tool_permissions.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0039_config_code_user_globalstorage_saoudrizw
+    name: "Cline artifact (AIRT-0039)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0039_library_application_support_code_user_gl
+    name: "Cline artifact (AIRT-0039)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0040_library_application_support_code_user_gl
+    name: "Roo Code artifact (AIRT-0040)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0040_repo_roo_mcp_json
+    name: "Roo Code artifact (AIRT-0040)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<repo>/.roo/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_kiro_settings_mcp_json
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.kiro/settings/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_power_md_plugin_json_dev_kiro
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "POWER.md / plugin.json / dev.kiro/"
+    notes: "extension-bundle, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_repo_kiro_agents
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<repo>/.kiro/agents/"
+    notes: "agent-definition, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_repo_kiro_hooks_kiro_hook
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "<repo>/.kiro/hooks/*.kiro.hook"
+    notes: "agent-definition, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_repo_kiro_settings_mcp_json
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<repo>/.kiro/settings/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0041_repo_kiro_steering_md
+    name: "Kiro artifact (AIRT-0041)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "<repo>/.kiro/steering/*.md"
+    notes: "rules-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0042_app_backend_data_config_json
+    name: "Open WebUI artifact (AIRT-0042)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/app/backend/data/config.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0042_app_backend_data_uploads_and_vector_stor
+    name: "Open WebUI artifact (AIRT-0042)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/app/backend/data/uploads/ and vector store directory"
+    notes: "data-dir, forensic_value high, catalog confidence medium."
+  - id: art_airt_0042_app_backend_data_webui_db
+    name: "Open WebUI artifact (AIRT-0042)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/app/backend/data/webui.db"
+    notes: "database, forensic_value high, catalog confidence high."
+  - id: art_airt_0042_docker_compose_yml_docker_run_invocation
+    name: "Open WebUI artifact (AIRT-0042)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "docker-compose.yml / docker run invocation"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0043_ghcr_io_openhands_agent_server_docker_op
+    name: "OpenHands artifact (AIRT-0043)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands"
+    notes: "container, forensic_value high, catalog confidence high."
+  - id: art_airt_0043_openhands_config_toml
+    name: "OpenHands artifact (AIRT-0043)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux, docker]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.openhands/config.toml"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0045_config_vllm_usage_stats_json
+    name: "vLLM artifact (AIRT-0045)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/vllm/usage_stats.json"
+    notes: "log, forensic_value high, catalog confidence high."
 # <<< END GENERATED CREDENTIAL TARGETS >>>

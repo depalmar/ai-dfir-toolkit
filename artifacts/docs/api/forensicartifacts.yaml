@@ -1139,3 +1139,23 @@ sources:
 supported_os:
 - Linux
 urls: []
+---
+name: VllmArtifacts
+doc: vLLM (AIRT-0045) - High-throughput inference and serving engine for LLMs. `vllm
+  serve` exposes an OpenAI-compatible HTTP API, which is how it is normally deployed.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/vllm/usage_stats.json'
+    - HF_TOKEN
+    - VLLM_API_KEY
+    separator: /
+  supported_os:
+  - Linux
+supported_os:
+- Linux
+urls:
+- https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html
+- https://nvd.nist.gov/vuln/detail/CVE-2025-32444
+- https://pypi.org/project/vllm/0.27.1/

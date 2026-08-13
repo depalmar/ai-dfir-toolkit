@@ -7,7 +7,7 @@ id: AIRT-0028
 name: CrewAI
 vendor: CrewAI Inc. (OSS)
 category: agent-framework
-description: Role-based multi-agent orchestration. crewai CLI scaffolds config/agents.yaml + config/tasks.yaml + crew.py.
+description: Role-based multi-agent orchestration. The crewai CLI scaffolds src/<name>/config/agents.yaml + tasks.yaml and src/<name>/crew.py.
 supported_os:
   - windows
   - macos
@@ -23,18 +23,20 @@ confidence: medium
 abuse_potential: crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.
 artifacts:
   disk:
-    - path: "<project>/config/agents.yaml  |  config/tasks.yaml"
+    - path: "<project>/src/<name>/config/agents.yaml  |  <project>/src/<name>/config/tasks.yaml"
       os:
         - windows
         - macos
         - linux
       artifact_type: config-file
-      description: Autonomous goal definitions
+      description: >-
+        Autonomous goal definitions. Scaffolded under src/<name>/config/, not the
+        project root - collecting <project>/config/ finds nothing on a real install.
       forensic_value: low
       evidence_type:
         - program-presence
       install_method: crewai create crew
-      confidence: medium
+      confidence: high
     - path: "<project>/src/<name>/crew.py"
       os:
         - windows
