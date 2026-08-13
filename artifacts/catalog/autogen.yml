@@ -59,6 +59,16 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: OAI_CONFIG_LIST
+      type: REG_SZ
+      description: >-
+        Points at the JSON file holding model endpoints and their API keys, so
+        the variable locates the credential rather than being one
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: 'OAI_CONFIG_LIST  (JSON file in CWD, or env var of the same name)'
     os: [windows, macos, linux]

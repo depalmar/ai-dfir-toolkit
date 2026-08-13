@@ -92,6 +92,15 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
+  registry:
+    - key: "HKCU\\Environment"
+      value: OPENAI_API_KEY, ANTHROPIC_API_KEY, INTERPRETER_API_KEY
+      type: REG_SZ
+      description: >-
+        Provider credentials set persistently for the user
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: ~/.openinterpreter/auth.json
     os: [windows, macos, linux]

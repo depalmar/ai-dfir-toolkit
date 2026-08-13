@@ -25,7 +25,18 @@ capabilities:
 risk: high
 confidence: high
 abuse_potential: Shell/Python REPL tools are standard. No canonical path = inventory by process command line and imported module names.
-artifacts: {}
+artifacts:
+  registry:
+    - key: "HKCU\\Environment"
+      value: LANGCHAIN_API_KEY, LANGSMITH_API_KEY
+      type: REG_SZ
+      description: >-
+        LangSmith tracing credentials. Worth collecting for a second reason: if
+        tracing was enabled, LangSmith holds a server-side record of agent runs
+        that may outlive anything on the endpoint.
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: '<project>/langgraph.json'
     os: [windows, macos, linux]

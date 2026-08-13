@@ -87,6 +87,15 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: medium
+  registry:
+    - key: "HKCU\\Environment"
+      value: TABNINE_CLI_SYSTEM_SETTINGS_PATH, TABNINE_CLI_SYSTEM_DEFAULTS_PATH
+      type: REG_SZ
+      description: >-
+        Both redirect Tabnine to settings files outside the default location
+      forensic_value: medium
+      persistence: false
+      confidence: medium
 credentials:
   - location: ~/.config/TabNine/.refresh_token_v2
     os: [linux, container]
