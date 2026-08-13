@@ -84,8 +84,6 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   assumed. `validate.py` reports the remaining ten on every run.
 - **`docs/REVERIFICATION.md`** — a repeatable quarterly checklist, so the
   maintenance task the catalog calls existential is not left to memory.
-
-
 - **Case studies get their own tab, expanded.** They previously rendered as
   three small cards below 45 tool cards at the bottom of the Tools view, where
   nobody would find them. The full view groups indicators by kind — file,
@@ -216,8 +214,6 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   style and `validate.py` gates it.
 - Select-all moved to the head of the column it acts on; facet groups fold and
   remember; the filtered view exports as CSV or JSON.
-
-
 - **The header stat row is gone.** Everything it carried is still reachable and
   in a better place: tools, catalog rows, detections and mappings are counts on
   the tabs, and the credential / MCP split is a facet count in the rail. The one
@@ -269,9 +265,6 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 - The site was missing three whole detection categories because the rule loader
   listed directories instead of discovering them, and the OS facet hid 87 of 425
   rows.
-
-
-
 - **Filtering was silent to a screen reader.** The result count changed from
   "434 of 434 shown" to "4 of 434 shown" with no live region anywhere on the
   page, so the table silently resized for anyone not watching it. `#count` is now
