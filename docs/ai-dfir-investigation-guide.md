@@ -753,7 +753,7 @@ There is no single scanner that catches all AI/ML attacks. Defense requires laye
 
 ### 6.3 XDR/SIEM detection coverage
 
-This repository provides deployable rules for everything in this guide. It contains **55 rule files / 126 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage, and a cross-tool endpoint set scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends.
+This repository provides deployable rules for everything in this guide. It contains **63 rule files / 142 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage, and a cross-tool endpoint set scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends.
 
 Recommended ingestion priorities for any SIEM/XDR program, ordered by signal-to-noise:
 

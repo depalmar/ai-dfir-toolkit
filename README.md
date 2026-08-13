@@ -39,6 +39,7 @@ ai-dfir-toolkit/
 ├── 04-ai-infrastructure/          # ShadowRay, Triton, MLflow, GPU abuse
 ├── 05-copilot-assistant-abuse/    # M365 Copilot, GitHub Copilot, Claude, Cursor
 ├── 06-rag-vector-db/              # Vector DB exposure, RAG poisoning
+├── 07-runtime-ai-malware/         # Malware calling an LLM API at runtime
 ├── artifacts/                     # Machine-readable AI agent artifact catalog
 ├── skills/                        # Agent skills for maintaining the catalog
 ├── tests/                         # Sample events / test files
@@ -124,19 +125,20 @@ See [`artifacts/README.md`](artifacts/README.md).
 
 ## Coverage overview
 
-55 rule files containing 126 individual signatures — six attack-class categories
+63 rule files containing 142 individual signatures — seven attack-class categories
 plus a cross-tool endpoint set:
 
 | Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
 |----------|-------|-----------:|------------------|-----------|
 | LLM Prompt Injection | 8 | 10 | T0051, T0054, T0029 | LLM01, LLM07, LLM10 |
-| MCP Attacks | 5 | 14 | T0010, T0110, T0086 | LLM03, LLM06 |
+| MCP Attacks | 5 | 14 | T0010, T0104, T0110, T0086 | LLM03, LLM06 |
 | Model Supply Chain | 8 | 23 | T0010, T0018, T0020 | LLM03, LLM04 |
 | AI Infrastructure | 9 | 31 | T0011, T0017, T0019 | LLM10 |
 | Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM06 |
 | RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
+| Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM06 |
 | Endpoint (cross-tool) | 12 | 12 | T0053, T0081, T0082 | LLM02, LLM06, LLM03 |
-| **Total** | **55** | **126** | | |
+| **Total** | **63** | **142** | | |
 
 The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
 scoped to agent behaviour on a host rather than to one attack class, so it applies

@@ -8,6 +8,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **`07-runtime-ai-malware/` — 8 rule files / 16 signatures.** Detections for
+  malware that calls an LLM API *during execution* to generate or mutate its own
+  code ("just-in-time code creation", GTIG November 2025): PROMPTFLUX, PROMPTSTEAL
+  / LAMEHUG, FRUITSHELL. The payload is not in the sample, so provider egress and
+  the host artifacts of the rewrite loop are the durable detection surface. Maps
+  to `AML.T0096` (AI Service API) and `AML.T0086`. YARA string sets are derived
+  from public reporting rather than confirmed samples and are labelled MEDIUM —
+  validate against real specimens before blocking.
+- **First Sigma correlation rule**, and CI support for the class.
+  `runtime_ai_malware_correlation.yml` requires LLM egress *and* Startup
+  persistence on one host within an hour. Correlation rules reference siblings by
+  `name`, so they cannot be converted a file at a time, and the Elastic/lucene
+  backend cannot express them at all; `validate.yml` now skips them in the
+  per-file pass and validates each containing directory as a collection instead.
+
 - **`MAPPINGS.md` section 07 — Endpoint (cross-tool)**: the 12 endpoint Sigma
   rules under `artifacts/detections/sigma/` are now indexed, along with the
   osquery inventory pack. Documented scope moves from 43 rule files / 114
@@ -49,6 +64,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- **`AML.T0104` and `AML.T0110` are now distinguished** in the MCP category. A
+  third-party pack proposed replacing `T0110` with `T0104` throughout, on the
+  premise that `T0104` supersedes it. Verified against ATLAS: both are current
+  and distinct — `T0104` Publish Poisoned AI Agent Tool is Resource Development
+  (the adversary publishes it), `T0110` AI Agent Tool Poisoning covers modifying
+  tools so future invocations execute attacker behaviour. A blanket replace would
+  have mis-tagged the rug-pull rule, so the mapping was split by tactic instead.
+  `mcp_tool_poisoning.yar` carries both, because it matches a poisoned
+  description wherever it lands and cannot tell the two apart. Basis recorded in
+  `artifacts/docs/VERIFICATION.md`.
+- The cross-tool Endpoint section moved from `07` to `08` in `MAPPINGS.md`, so
+  numbered sections mirror numbered directories and the non-directory endpoint
+  set sorts last.
 - The Investigation guide header entry is a real tab rather than a link inside
   `role="tablist"`, which had broken arrow-key navigation. The tablist now has
   roving tabindex, arrow/Home/End keys, and `aria-controls` onto a

@@ -49,9 +49,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install sigma-cli and Elastic backend
+      - name: Install sigma-cli and backends
         run: |
-          pip install sigma-cli pysigma-backend-elasticsearch pyyaml
+          # Two backends on purpose. Elastic/lucene is the per-rule syntax gate.
+          # It has no correlation support at all, so correlation rules are
+          # checked with Splunk, which does. Neither is a platform endorsement -
+          # the repo ships Sigma only and no vendor dialect. See CLAUDE.md.
+          pip install sigma-cli pysigma-backend-elasticsearch pysigma-backend-splunk pyyaml
 
       - name: Validate every Sigma rule parses and converts
         run: |
@@ -66,6 +70,13 @@ jobs:
                        -not -path './artifacts/catalog/*' \
                        -not -path './artifacts/case-studies/*' \
                        -not -path './artifacts/schema/*'); do
+            # Correlation rules reference sibling rules by name, so they cannot
+            # resolve one file at a time, and lucene cannot express them at all.
+            # They are validated as collections in the next step instead.
+            if grep -q '^correlation:' "$f"; then
+              echo "=== $f (correlation - deferred to the collection pass)"
+              continue
+            fi
             echo "=== $f ==="
             if ! sigma convert -t lucene --without-pipeline "$f" > /dev/null 2>&1; then
               echo "FAILED: $f"
@@ -78,6 +89,33 @@ jobs:
             exit 1
           fi
           echo "All Sigma rules validated successfully"
+
+      - name: Validate Sigma correlation rules as collections
+        run: |
+          # A correlation rule only resolves alongside the rules it names, so
+          # each containing directory is converted as one collection. Splunk is
+          # used because the Elastic backend has no correlation support; the
+          # choice is arbitrary and nothing vendor-specific is committed.
+          failed=0
+          dirs=$(grep -rl '^correlation:' --include='*.yml' . \
+                   | grep -v '^./.github/' | xargs -r -n1 dirname | sort -u)
+          if [ -z "$dirs" ]; then
+            echo "No correlation rules present."
+            exit 0
+          fi
+          for d in $dirs; do
+            echo "=== $d ==="
+            if ! sigma convert -t splunk --without-pipeline "$d" > /dev/null 2>&1; then
+              echo "FAILED: $d"
+              sigma convert -t splunk --without-pipeline "$d" 2>&1 | head -8
+              failed=$((failed + 1))
+            fi
+          done
+          if [ "$failed" -gt 0 ]; then
+            echo "$failed correlation collection(s) failed validation"
+            exit 1
+          fi
+          echo "All correlation rules validated successfully"
 
   suricata-validation:
     name: Suricata syntax check

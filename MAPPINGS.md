@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 55 rule files / 126 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 63 rule files / 142 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -25,7 +25,7 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `mcp_tool_poisoning.yar` | YARA | T0110, T0086 | LLM06, LLM02 | Invariant Labs 2025 |
+| `mcp_tool_poisoning.yar` | YARA | T0104, T0110, T0086 | LLM06, LLM02 | Invariant Labs 2025 |
 | `mcp_config_tampering.yml` | Sigma | T0010 | LLM03 | CVE-2025-59536 |
 | `mcp_credential_access.yml` | Sigma | T0086 | LLM02 | Cyata 2025 |
 | `mcp_outbound_unknown_domain.rules` | Suricata | T0011, T0086, T0110 | LLM02, LLM06 | CVE-2025-49596, CVE-2025-6514 |
@@ -81,7 +81,28 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 | `chroma_sqlite_unexpected_writer.yml` | Sigma | T0020 | LLM08 | ChromaDB architecture |
 | `vector_db_query_anomaly.yml` | Sigma | T0020, T0024 | LLM02, LLM08 | — |
 
-## 07 — Endpoint (cross-tool)
+## 07 — Runtime AI-Malware
+
+Malware that calls an LLM API *during execution* to generate or mutate its own
+code ("just-in-time code creation", GTIG Nov 2025). The payload is not in the
+sample, so egress to the model provider and the host artifacts of the rewrite
+loop are the durable detection surface.
+
+| Rule | Format | ATLAS | OWASP | CVE / Reference |
+|------|--------|-------|-------|-----------------|
+| `script_interpreter_llm_api_dns.yml` | Sigma | T0096, T0086 | LLM06 | PROMPTFLUX / PROMPTSTEAL (GTIG Nov 2025) |
+| `promptflux_artifacts_fileevent.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX (GTIG Nov 2025) |
+| `powershell_llm_api_command_generation.yml` | Sigma | T0096 | LLM06 | FRUITSHELL / PROMPTSTEAL (GTIG Nov 2025) |
+| `runtime_ai_malware_correlation.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX kill-chain |
+| `promptflux_thinking_robot.yar` | YARA | T0096 | LLM01, LLM06 | PROMPTFLUX |
+| `promptsteal_lamehug.yar` | YARA | T0096 | LLM06 | PROMPTSTEAL / LAMEHUG (APT28) |
+| `llm_api_prompt_in_script_generic.yar` | YARA | T0096 | LLM01, LLM06 | Just-in-time code creation (class heuristic) |
+| `runtime_llm_api_c2.rules` | Suricata | T0096, T0086 | LLM06 | SesameOp-style AI-service C2 (AML.CS0042) |
+
+YARA string sets here are derived from public reporting rather than confirmed
+samples — see the category README before deploying them for blocking.
+
+## 08 — Endpoint (cross-tool)
 
 Cross-tool endpoint rules generated alongside the artifact catalog
 (`artifacts/detections/sigma/`). Scoped to agent behaviour on a host rather than
@@ -130,17 +151,19 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 | T0054    | LLM Jailbreak | 4 |
 | T0081    | Modify AI Agent Configuration | 2 |
 | T0082    | RAG Credential Harvesting | 1 |
-| T0086    | Exfiltration via AI Agent Tool Invocation | 13 |
+| T0086    | Exfiltration via AI Agent Tool Invocation | 15 |
+| T0096    | AI Service API | 8 |
+| T0104    | Publish Poisoned AI Agent Tool | 1 |
 | T0110    | AI Agent Tool Poisoning | 3 |
 
 ## OWASP Top 10 for LLM Applications 2025 Index
 
 | OWASP | Title | Rule count |
 |-------|-------|------------|
-| LLM01    | Prompt Injection | 6 |
+| LLM01    | Prompt Injection | 10 |
 | LLM02    | Sensitive Information Disclosure | 15 |
 | LLM03    | Supply Chain | 12 |
-| LLM06    | Excessive Agency | 10 |
+| LLM06    | Excessive Agency | 18 |
 | LLM07    | System Prompt Leakage | 2 |
 | LLM08    | Vector and Embedding Weaknesses | 5 |
 | LLM10    | Unbounded Consumption | 3 |

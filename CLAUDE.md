@@ -112,7 +112,7 @@ the entry and raise its confidence.
 44 entries, 258 artifacts, 23 credential locations, 17 MCP config locations,
 12 endpoint Sigma rules, 3 case studies. Validation clean.
 
-Detection content totals 55 rule files / 126 signatures across the six attack-class
+Detection content totals 63 rule files / 142 signatures across the seven attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
 Confidence: 27 high, 13 medium, 4 low.

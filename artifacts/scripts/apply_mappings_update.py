@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 MAPPINGS = ROOT / "MAPPINGS.md"
 SIGMA_DIR = ROOT / "artifacts" / "detections" / "sigma"
 
-SECTION_HEADING = "## 07 — Endpoint (cross-tool)"
+SECTION_HEADING = "## 08 — Endpoint (cross-tool)"
 
 # Mapped from each rule's own scope. ATLAS ids use the short form already used
 # throughout this file (T0053 rather than AML.T0053).
