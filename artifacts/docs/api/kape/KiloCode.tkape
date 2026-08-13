@@ -1,0 +1,12 @@
+Description: 'Kilo Code - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: af4b36c8-e574-54e0-b12b-1023e519242c
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Execution primitive. Same globalStorage shape as Cline and Roo Code, under a dif'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Code\User\globalStorage\kilocode.kilo-code\settings\'
+        FileMask: 'mcp_settings.json'
+        Comment: 'AIRT-0051 | [confidence: medium] Execution primitive. Same globalStorage shape as Cline and Roo Code, under a different extension id.'

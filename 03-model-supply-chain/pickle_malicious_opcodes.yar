@@ -33,7 +33,7 @@ rule Pickle_Dangerous_Imports
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         severity    = "high"
 
     strings:
@@ -173,7 +173,7 @@ rule Pickle_HuggingFace_Hidden_File
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010.003"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         reference   = "https://www.reversinglabs.com/blog/rl-identifies-malware-ml-model-hosted-on-hugging-face"
         severity    = "high"
 

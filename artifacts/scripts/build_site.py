@@ -2042,10 +2042,11 @@ function coverageHTML(){
 
 function mappingsHTML(){
   return coverageHTML()+`<div class="idxwrap">
-      ${indexHTML('OWASP Top 10 for LLM Applications 2025',
-        'Application-layer risk categories. Rule counts only - the catalog maps tools to ATLAS, not to OWASP. '+
-        'Note the year: OWASP published a 2026 revision on 4 August 2026 and these mappings have not been '+
-        'moved to it yet, so treat the IDs here as 2025 IDs rather than current ones.',
+      ${indexHTML('OWASP Top 10 for LLM Applications 2026',
+        'Application-layer risk categories, remapped to the 2026 list published 4 August 2026. '+
+        'Rule counts only - the catalog maps tools to ATLAS, not to OWASP. Eight of the ten IDs '+
+        'changed meaning between the 2025 and 2026 editions, so an ID quoted from an older report '+
+        'may name a different category here than it did there.',
         OWASP_INDEX,'rowasp')}
     </div>`;
 }

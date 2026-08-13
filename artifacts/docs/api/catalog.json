@@ -5237,6 +5237,240 @@
     "last_modified": "2026-08-11"
   },
   {
+    "id": "AIRT-0051",
+    "name": "Kilo Code",
+    "aliases": [
+      "Kilo",
+      "kilocode.kilo-code",
+      "kilo-code"
+    ],
+    "vendor": "Kilo Org",
+    "status": "active",
+    "category": "coding-agent-ide",
+    "description": "VS Code extension ID kilocode.kilo-code, in the Cline and Roo lineage and sharing their globalStorage layout. Two things separate it from its ancestors for collection purposes - the storage root can be relocated by a setting, and an upgrade past v7.0.33 stopped reading the previous MCP settings file, so an upgraded host can hold a stale one that no longer governs anything.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "Project-scoped MCP definitions travel with a repository, and kilo-code.customStoragePath can move the whole store somewhere a standard sweep does not look.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%APPDATA%\\Code\\User\\globalStorage\\kilocode.kilo-code\\settings\\mcp_settings.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Execution primitive. Same globalStorage shape as Cline and Roo Code, under a different extension id.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "MCP config for Kilo Code",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "MCP config for Kilo Code",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "The remote variant, used by Dev Containers, SSH and WSL sessions. Worth checking separately - a developer's real agent configuration often lives in the remote store while the workstation copy is empty, and a sweep of the local path alone reports a clean host.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "persistence",
+            "configuration"
+          ],
+          "install_method": "VS Code Server",
+          "confidence": "medium"
+        },
+        {
+          "path": "<globalStorage>/kilocode.kilo-code/settings/custom_modes.yaml",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "Global custom mode definitions - what personas the agent was given and what each was permitted to do",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "user-activity"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<globalStorage>/kilocode.kilo-code/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Extension state root - cached model lists, vector stores and task history alongside the settings. Relocatable via the kilo-code.customStoragePath setting, so resolve that from the VS Code configuration before concluding the store is absent.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "user-activity",
+            "timeline"
+          ],
+          "install_method": "VS Code ext",
+          "confidence": "medium"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured provider (arbitrary), plus kilocode.ai for the hosted provider",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "node (extension host)",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "Code.exe / code",
+          "typical_children": "cmd.exe, powershell.exe, bash, node (MCP)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image is a shared interpreter (node) and CommandLine contains kilocode.kilo-code",
+          "description": "Proves the extension ran, which disk presence does not. The image is a shared interpreter hosting much of this catalog, so key on the command line rather than the name.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - and without it one extension host is indistinguishable from another.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "VS Code SecretStorage -> OS keychain (state.vscdb)",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "os-keyring",
+        "secret_type": "api-key",
+        "description": "Provider keys held by the editor rather than in the extension's own settings file",
+        "confidence": "medium"
+      }
+    ],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "<globalStorage>/kilocode.kilo-code/settings/mcp_settings.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block (plaintext)",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "An upgrade past v7.0.33 stopped reading the previous file. On an upgraded host the older copy may still be present and no longer govern anything - which makes it a poor answer to \"what can this agent reach today\" and a good one to \"what was it configured with before\"."
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "KiloCode",
+      "velociraptor_artifact": "Custom.AIAgents.KiloCode"
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0011"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1552.001",
+      "T1195.002"
+    ],
+    "references": [
+      {
+        "title": "Kilo-Org/kilocode",
+        "url": "https://github.com/Kilo-Org/kilocode",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "kilocode-legacy - file locations",
+        "url": "https://github.com/Kilo-Org/kilocode-legacy/blob/main/docs/file-locations.md",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Kilo-Org/kilocode#6481 - MCP settings not migrated after v7.0.33",
+        "url": "https://github.com/Kilo-Org/kilocode/issues/6481",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_verified": "2026-08-13",
+    "last_modified": "2026-08-13"
+  },
+  {
     "id": "AIRT-0041",
     "name": "Kiro",
     "vendor": "AWS",
@@ -8166,8 +8400,9 @@
       "openai-operator-cua"
     ],
     "vendor": "OpenAI",
+    "status": "eol",
     "category": "computer-use-agent",
-    "description": "Cloud-hosted computer-using agent operating a remote browser.",
+    "description": "Cloud-hosted computer-using agent operating a remote browser. Folded into ChatGPT agent mode during 2025 and the standalone operator.chatgpt.com preview was sunset, so the capability survives inside ChatGPT while this entry's own surface does not. Kept because historic network telemetry still contains the old domain and a responder working an older window needs to know what it was.",
     "supported_os": [
       "cloud"
     ],
@@ -8185,9 +8420,16 @@
       "network": [
         {
           "direction": "egress",
-          "indicator": "operator.chatgpt.com, *.openai.com",
+          "indicator": "operator.chatgpt.com (sunset)",
           "port": "443/TCP",
-          "description": "",
+          "description": "Dead domain. It served the standalone Operator preview, which was retired after the capability moved into ChatGPT agent mode, so a hit on this in current traffic is not Operator - but a hit in retained 2025 telemetry dates the activity precisely.",
+          "confidence": "medium"
+        },
+        {
+          "direction": "egress",
+          "indicator": "chatgpt.com, *.openai.com",
+          "port": "443/TCP",
+          "description": "Where the capability lives now. Indistinguishable from ordinary ChatGPT use at the network layer, which is the point worth recording: after the merge there is no endpoint or network artifact that separates agent mode from a normal session.",
           "confidence": "medium"
         }
       ]
@@ -8206,8 +8448,25 @@
       "T1185",
       "T1071.001"
     ],
-    "references": [],
-    "last_modified": "2026-08-11"
+    "references": [
+      {
+        "title": "Introducing ChatGPT agent: bridging research and action",
+        "url": "https://openai.com/index/introducing-chatgpt-agent/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "ChatGPT agent - OpenAI Help Center",
+        "url": "https://help.openai.com/en/articles/11752874-chatgpt-agent",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Introducing Operator",
+        "url": "https://openai.com/index/introducing-operator/",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_verified": "2026-08-13",
+    "last_modified": "2026-08-13"
   },
   {
     "id": "AIRT-0043",
@@ -9985,6 +10244,223 @@
       {
         "title": "Warp docs - customizing the Warp Agent CLI",
         "url": "https://docs.warp.dev/agents/cli/configuration/",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_verified": "2026-08-13",
+    "last_modified": "2026-08-13"
+  },
+  {
+    "id": "AIRT-0050",
+    "name": "Zed AI",
+    "aliases": [
+      "Zed",
+      "Zed Editor",
+      "zed-ai"
+    ],
+    "vendor": "Zed Industries",
+    "status": "active",
+    "category": "coding-agent-ide",
+    "description": "Rust GPUI editor with a built-in Agent Panel and native MCP support. Settings are a single JSON file rather than a per-extension store, and MCP servers live in that same file under context_servers - not mcpServers, which is why a sweep grepping for the usual key misses Zed entirely. Also hosts external agents over ACP, so a Zed install can be driving another vendor's agent binary.",
+    "supported_os": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "execution_model": "Cloud or local inference + local exec",
+    "capabilities": {
+      "local_code_execution": true,
+      "local_listener": false,
+      "plaintext_credentials": false,
+      "mcp_capable": true
+    },
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "A project-scoped .zed/settings.json travels with a clone and can define context servers, so an untrusted repository carries an execution primitive that the user never configured.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "~/.config/zed/settings.json",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "The whole configuration in one file, including context_servers and the agent's tool permission settings. Read agent.tool_permissions.default first - \"allow\" means the agent was running tools without asking, which changes how the rest of the timeline should be read.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "%APPDATA%\\Zed\\settings.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Same file on Windows. Honours XDG_CONFIG_HOME on the POSIX platforms, so resolve it rather than assuming the default.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "<repo>/.zed/settings.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Project scope, overriding the user file. Travels with the repository, so review it on clone and on pull rather than only at triage.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "execution",
+            "persistence"
+          ],
+          "install_method": "n/a",
+          "confidence": "medium"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Zed\\extensions",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "extension-bundle",
+          "description": "Installed extensions, which is where an MCP server shipped as a Zed extension lands rather than in the settings file",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "low",
+          "unverified": true
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "Configured provider endpoint (arbitrary), plus collab.zed.dev for the hosted service",
+          "port": "443/TCP",
+          "description": "",
+          "confidence": "medium"
+        }
+      ],
+      "process": [
+        {
+          "name": "zed / zed.exe",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "typical_parent": "shell / desktop session",
+          "typical_children": "sh, bash, node, python, uvx (context servers and external agents)",
+          "service_or_daemon": "No",
+          "persistence": "None",
+          "confidence": "medium"
+        }
+      ],
+      "eventlog": [
+        {
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "event_id": "1",
+          "selector": "Image ends with zed.exe",
+          "description": "Proves the editor ran, which the settings file does not. The child processes are the interesting part: a context server or an external agent started by Zed appears here as a child, and that is the only record that the agent panel did anything.",
+          "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled.",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "os": [
+            "windows"
+          ],
+          "forensic_value": "high",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "OS keychain, via the editor's own credential storage",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "os-keyring",
+        "secret_type": "api-key",
+        "description": "Provider keys are not in settings.json by default - collect from the keychain rather than the config file",
+        "confidence": "low",
+        "unverified": true
+      }
+    ],
+    "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.config/zed/settings.json",
+        "config_key": "context_servers",
+        "spawn_mechanism": "Child process at editor start",
+        "secrets_location": "env block within the server definition",
+        "persistence_trigger": "Every editor start",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "The key is context_servers, not mcpServers. A collection script written against the Claude Desktop shape will read this file and find nothing."
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "<repo>/.zed/settings.json",
+        "config_key": "context_servers",
+        "spawn_mechanism": "Child process on project open",
+        "secrets_location": "env block within the server definition",
+        "persistence_trigger": "Every project open",
+        "triage_priority": "p1",
+        "confidence": "medium",
+        "notes": "Travels with the repo - review on clone"
+      }
+    ],
+    "collection": {
+      "triage_priority": "p1",
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "ZedAI",
+      "velociraptor_artifact": "Custom.AIAgents.ZedAI"
+    },
+    "atlas_techniques": [
+      "AML.T0053",
+      "AML.T0081",
+      "AML.T0011"
+    ],
+    "attack_techniques": [
+      "T1059",
+      "T1195.002"
+    ],
+    "references": [
+      {
+        "title": "Zed docs - Model Context Protocol",
+        "url": "https://zed.dev/docs/assistant/model-context-protocol",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Zed docs - Agent Settings",
+        "url": "https://zed.dev/docs/ai/agent-settings",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Zed docs - Configuring Zed",
+        "url": "https://zed.dev/docs/configuring-zed",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Zed docs - External Agents",
+        "url": "https://zed.dev/docs/ai/external-agents",
         "accessed": "2026-08-13"
       }
     ],

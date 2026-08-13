@@ -6,7 +6,7 @@
               https://arxiv.org/abs/2302.12173
               PoisonedRAG (USENIX Security 2025)
    ATLAS: AML.T0020, AML.T0051.001
-   OWASP: LLM01:2025, LLM08:2025
+   OWASP: LLM01:2026, LLM09:2026
 
    Detects steganographic and visually-hidden instructions embedded in
    documents intended for RAG ingestion. Apply to:
@@ -23,7 +23,7 @@ rule RAG_Document_Bidi_Override
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
-        owasp       = "LLM01:2025"
+        owasp       = "LLM01:2026"
         reference   = "https://trojansource.codes/"
         severity    = "high"
 
@@ -47,7 +47,7 @@ rule RAG_Document_Tags_Block_Hidden_Prompt
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0051.001"
-        owasp       = "LLM01:2025"
+        owasp       = "LLM01:2026"
         reference   = "https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/"
         severity    = "high"
 
@@ -68,7 +68,7 @@ rule RAG_Document_HTML_Hidden_Instructions
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0020"
-        owasp       = "LLM01:2025"
+        owasp       = "LLM01:2026"
         severity    = "high"
 
     strings:

@@ -10,9 +10,9 @@ Detects abuse of AI productivity assistants (Microsoft 365 Copilot, GitHub Copil
 | M365 Copilot oversharing / aggregation | T0086 | LLM02 | Concentric AI 2024-2025 |
 | EchoLeak (zero-click M365 Copilot exfil) | T0086 | LLM02 | CVE-2025-32711 |
 | GitHub Copilot Chat exfil (CamoLeak) | T0086 | LLM02 | CVE-2025-59145 |
-| GitHub Copilot YOLO mode RCE | T0011 | LLM06 | CVE-2025-53773 |
-| Rules File Backdoor (Copilot/Cursor) | T0010 | LLM03 | Pillar Security 2025 |
-| Cursor MCPoison persistent backdoor | T0010 | LLM06 | Check Point 2025 |
+| GitHub Copilot YOLO mode RCE | T0011 | LLM03 | CVE-2025-53773 |
+| Rules File Backdoor (Copilot/Cursor) | T0010 | LLM04 | Pillar Security 2025 |
+| Cursor MCPoison persistent backdoor | T0010 | LLM03 | Check Point 2025 |
 | Cursor CurXecute RCE | T0011 | LLM01 | CVE-2025-54135 |
 | Samsung-style ChatGPT data leak | T0086 | LLM02 | Samsung 2023 incident |
 

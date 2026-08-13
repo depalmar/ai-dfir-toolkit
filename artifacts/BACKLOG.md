@@ -14,9 +14,9 @@ one up.
 |---|---|---|---|
 | Sourcegraph Cody | Sourcegraph | Broad enterprise deployment; indexes whole codebases | VS Code / JetBrains extension |
 | Amp | Sourcegraph | Agentic sibling of Cody | CLI + extension |
-| Zed AI | Zed Industries | Editor with native agent + MCP support | `~/.config/zed/settings.json` |
+| ~~Zed AI~~ | Zed Industries | **Done — `AIRT-0050`.** MCP servers live under `context_servers`, not `mcpServers`, so a sweep grepping for the usual key misses it entirely | — |
 | JetBrains AI Assistant / Junie | JetBrains | Large IDE install base | JetBrains config dirs |
-| Kilo Code | Kilo | Cline/Roo lineage — likely same globalStorage pattern | VS Code globalStorage |
+| ~~Kilo Code~~ | Kilo | **Done — `AIRT-0051`.** The globalStorage guess was right (`kilocode.kilo-code`), but the store is relocatable via `kilo-code.customStoragePath` and a v7.0.33 upgrade orphaned the older `mcp_settings.json` | — |
 | Qodo (Codium) | Qodo | Test-generation agent | IDE extension |
 | Replit Agent | Replit | Mostly cloud; confirm any local footprint | browser / CLI |
 | Antigravity | Google | New agentic IDE | unknown |

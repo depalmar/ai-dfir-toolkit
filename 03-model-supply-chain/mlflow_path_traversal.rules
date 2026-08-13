@@ -27,7 +27,7 @@ alert http any any -> any any (msg:"AI-DFIR MLflow path traversal in artifact re
     classtype:web-application-attack; \
     reference:cve,2023-6831; \
     reference:cve,2024-0520; \
-    metadata:atlas AML.T0011, owasp LLM03; \
+    metadata:atlas AML.T0011, owasp LLM04; \
     sid:9000100; rev:1;)
 
 alert http any any -> any any (msg:"AI-DFIR MLflow create-experiment with path traversal in artifact_location"; \
@@ -70,7 +70,7 @@ alert http any any -> any any (msg:"AI-DFIR MLflow artifact store update to exte
     http.request_body; pcre:"/source[\"']?\s*:\s*[\"']?s3:\/\/[^\/]+\.s3[.-]/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-43472; \
-    metadata:atlas AML.T0010, owasp LLM03; \
+    metadata:atlas AML.T0010, owasp LLM04; \
     sid:9000104; rev:1;)
 
 # ==========================================================================

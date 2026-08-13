@@ -1,0 +1,198 @@
+# AI agent artifact catalog entry
+# AIRT-0051 - Kilo Code
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0051
+name: Kilo Code
+aliases:
+  - Kilo
+  - kilocode.kilo-code
+  - kilo-code
+vendor: Kilo Org
+status: active
+category: coding-agent-ide
+description: VS Code extension ID kilocode.kilo-code, in the Cline and Roo lineage and sharing their globalStorage layout. Two things separate it from its ancestors for collection purposes - the storage root can be relocated by a setting, and an upgrade past v7.0.33 stopped reading the previous MCP settings file, so an upgraded host can hold a stale one that no longer governs anything.
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud or local inference + local exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: false
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: Project-scoped MCP definitions travel with a repository, and kilo-code.customStoragePath can move the whole store somewhere a standard sweep does not look.
+artifacts:
+  disk:
+    - path: "%APPDATA%\\Code\\User\\globalStorage\\kilocode.kilo-code\\settings\\mcp_settings.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: Execution primitive. Same globalStorage shape as Cline and Roo Code, under a different extension id.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: medium
+    - path: ~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
+      os:
+        - macos
+      artifact_type: mcp-config
+      description: MCP config for Kilo Code
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: medium
+    - path: ~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
+      os:
+        - linux
+      artifact_type: mcp-config
+      description: MCP config for Kilo Code
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code ext
+      confidence: medium
+    - path: ~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
+      os:
+        - linux
+      artifact_type: mcp-config
+      description: >-
+        The remote variant, used by Dev Containers, SSH and WSL sessions. Worth
+        checking separately - a developer's real agent configuration often lives
+        in the remote store while the workstation copy is empty, and a sweep of
+        the local path alone reports a clean host.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - configuration
+      install_method: VS Code Server
+      confidence: medium
+    - path: "<globalStorage>/kilocode.kilo-code/settings/custom_modes.yaml"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: Global custom mode definitions - what personas the agent was given and what each was permitted to do
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - user-activity
+      install_method: n/a
+      confidence: medium
+    - path: "<globalStorage>/kilocode.kilo-code/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: >-
+        Extension state root - cached model lists, vector stores and task
+        history alongside the settings. Relocatable via the
+        kilo-code.customStoragePath setting, so resolve that from the VS Code
+        configuration before concluding the store is absent.
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - timeline
+      install_method: VS Code ext
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: Configured provider (arbitrary), plus kilocode.ai for the hosted provider
+      port: 443/TCP
+      description: ""
+      confidence: medium
+  process:
+    - name: node (extension host)
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: Code.exe / code
+      typical_children: cmd.exe, powershell.exe, bash, node (MCP)
+      service_or_daemon: "No"
+      persistence: None
+      confidence: medium
+  eventlog:
+    - channel: Microsoft-Windows-Sysmon/Operational
+      event_id: "1"
+      selector: Image is a shared interpreter (node) and CommandLine contains kilocode.kilo-code
+      description: >-
+        Proves the extension ran, which disk presence does not. The image is a
+        shared interpreter hosting much of this catalog, so key on the command
+        line rather than the name.
+      requires: >-
+        Sysmon deployed with process creation logging. Security 4688 is the
+        fallback where it is not, but it carries CommandLine only when Include
+        command line in process creation events is enabled - and without it one
+        extension host is indistinguishable from another.
+      evidence_type:
+        - execution
+        - timeline
+      os:
+        - windows
+      forensic_value: high
+      confidence: medium
+credentials:
+  - location: "VS Code SecretStorage -> OS keychain (state.vscdb)"
+    os:
+      - windows
+      - macos
+      - linux
+    storage: os-keyring
+    secret_type: api-key
+    description: Provider keys held by the editor rather than in the extension's own settings file
+    confidence: medium
+mcp:
+  - mechanism: config-file
+    config_path: "<globalStorage>/kilocode.kilo-code/settings/mcp_settings.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at IDE start
+    secrets_location: env block (plaintext)
+    persistence_trigger: Every IDE start
+    triage_priority: p1
+    confidence: medium
+    notes: >-
+      An upgrade past v7.0.33 stopped reading the previous file. On an upgraded
+      host the older copy may still be present and no longer govern anything -
+      which makes it a poor answer to "what can this agent reach today" and a
+      good one to "what was it configured with before".
+collection:
+  triage_priority: p1
+  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  kape_target: KiloCode
+  velociraptor_artifact: Custom.AIAgents.KiloCode
+atlas_techniques:
+  - AML.T0053
+  - AML.T0081
+  - AML.T0011
+attack_techniques:
+  - T1059
+  - T1552.001
+  - T1195.002
+references:
+  - title: Kilo-Org/kilocode
+    url: https://github.com/Kilo-Org/kilocode
+    accessed: "2026-08-13"
+  - title: "kilocode-legacy - file locations"
+    url: https://github.com/Kilo-Org/kilocode-legacy/blob/main/docs/file-locations.md
+    accessed: "2026-08-13"
+  - title: "Kilo-Org/kilocode#6481 - MCP settings not migrated after v7.0.33"
+    url: https://github.com/Kilo-Org/kilocode/issues/6481
+    accessed: "2026-08-13"
+last_verified: "2026-08-13"
+last_modified: "2026-08-13"

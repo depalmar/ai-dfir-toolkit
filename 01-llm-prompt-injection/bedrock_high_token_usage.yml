@@ -3,7 +3,7 @@ id: 3c5e9f21-4a6b-7c8d-9e0f-1a2b3c4d5e6f
 status: experimental
 description: |
   Detects abnormally high token consumption on AWS Bedrock model
-  invocations, indicating cost-based denial of service (LLM10), model
+  invocations, indicating cost-based denial of service (LLM06), model
   extraction attempts, or runaway agentic loops. Requires Bedrock model
   invocation logging enabled (CloudWatch log group /aws/bedrock with
   schemaType=ModelInvocationLog) — logging is OFF by default.

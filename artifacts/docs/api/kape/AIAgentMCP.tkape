@@ -125,3 +125,9 @@ Targets:
         Path: 'C:\Users\%user%\.warp_cli\'
         FileMask: '.mcp.json'
         Comment: 'AIRT-0046 | Warp: mcpServers'
+    -
+        Name: 'Zed AI: context_servers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\zed\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0050 | Zed AI: context_servers'

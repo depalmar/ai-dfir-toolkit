@@ -728,6 +728,44 @@ supported_os:
 urls:
 - https://github.com/Pythagora-io/gpt-pilot
 ---
+name: KiloCodeArtifacts
+doc: Kilo Code (AIRT-0051) - VS Code extension ID kilocode.kilo-code, in the Cline
+  and Roo lineage and sharing their globalStorage layout. Two things separate it from
+  its ancestors for collection purposes - the storage root can be relocated by a setting,
+  and an upgrade past v7.0.33 stopped reading the previous MCP settings file, so an
+  upgraded host can hold a stale one that no longer governs anything.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json'
+    - '%%users.homedir%%/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Code\User\globalStorage\kilocode.kilo-code\settings\mcp_settings.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://github.com/Kilo-Org/kilocode
+- https://github.com/Kilo-Org/kilocode-legacy/blob/main/docs/file-locations.md
+- https://github.com/Kilo-Org/kilocode/issues/6481
+---
 name: KiroArtifacts
 doc: Kiro (AIRT-0041) - Agentic IDE from AWS built on a VS Code-style editor, using
   a spec-driven workflow. Amazon Q Developer's IDE capabilities are migrating into
@@ -1383,3 +1421,44 @@ urls:
 - https://docs.warp.dev/terminal/settings/file-locations/
 - https://docs.warp.dev/terminal/entry/command-history/
 - https://docs.warp.dev/agents/cli/configuration/
+---
+name: ZedAiArtifacts
+doc: Zed AI (AIRT-0050) - Rust GPUI editor with a built-in Agent Panel and native
+  MCP support. Settings are a single JSON file rather than a per-extension store,
+  and MCP servers live in that same file under context_servers - not mcpServers, which
+  is why a sweep grepping for the usual key misses Zed entirely. Also hosts external
+  agents over ACP, so a Zed install can be driving another vendor's agent binary.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/zed/settings.json'
+    - OS keychain, via the editor's own credential storage
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/zed/settings.json'
+    - OS keychain, via the editor's own credential storage
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\Zed\settings.json'
+    - '%%users.homedir%%/.config/zed/settings.json'
+    - OS keychain, via the editor's own credential storage
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://zed.dev/docs/assistant/model-context-protocol
+- https://zed.dev/docs/ai/agent-settings
+- https://zed.dev/docs/configuring-zed

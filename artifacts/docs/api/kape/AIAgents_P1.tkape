@@ -49,6 +49,10 @@ Targets:
         Category: AIAgents
         Path: 'Janai.tkape'
     -
+        Name: 'KiloCode'
+        Category: AIAgents
+        Path: 'KiloCode.tkape'
+    -
         Name: 'Kiro'
         Category: AIAgents
         Path: 'Kiro.tkape'
@@ -84,6 +88,10 @@ Targets:
         Name: 'Warp'
         Category: AIAgents
         Path: 'Warp.tkape'
+    -
+        Name: 'ZedAI'
+        Category: AIAgents
+        Path: 'ZedAI.tkape'
     -
         Name: 'n8n'
         Category: AIAgents

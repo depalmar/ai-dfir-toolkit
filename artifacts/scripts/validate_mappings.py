@@ -89,14 +89,17 @@ def index_drift(mappings: Path, on_disk: set[str]) -> list[str]:
             if line.startswith("##"):
                 break
             cells = [c.strip() for c in line.strip("|").split("|")]
-            if len(cells) == 3 and cells[2].isdigit():
+            # >= 3, not == 3: the OWASP index gained a "was in 2025" column
+            # when the list was remapped, and an exact width made the whole
+            # table invisible to this check rather than failing loudly.
+            if len(cells) >= 3 and cells[2].isdigit():
                 out[cells[0]] = int(cells[2])
         return out
 
     problems = []
     for label, heading, counted in (
         ("ATLAS", "## ATLAS Technique Index", atlas),
-        ("OWASP", "## OWASP Top 10 for LLM Applications 2025 Index", owasp),
+        ("OWASP", "## OWASP Top 10 for LLM Applications 2026 Index", owasp),
     ):
         pub = published(heading)
         for tag in sorted(set(pub) | set(counted)):

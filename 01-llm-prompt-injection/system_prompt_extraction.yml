@@ -5,7 +5,7 @@ description: |
   Detects attempts to extract or leak the system prompt of an LLM
   application. System prompts often contain operational logic,
   proprietary instructions, embedded credentials, or context that
-  attackers leverage for further exploitation (LLM07:2025).
+  attackers leverage for further exploitation (LLM08:2026).
 references:
   - https://genai.owasp.org/llmrisk/llm072025-system-prompt-leakage/
   - https://atlas.mitre.org/techniques/AML.T0054
