@@ -1,0 +1,31 @@
+Description: 'GitHub Copilot (Agent Mode / CLI) - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 270e9b12-aaa4-5b47-b9de-72b52bcb6397
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'mcp-config.json, lsp-config.json, agents/'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.copilot\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0003 | mcp-config.json, lsp-config.json, agents/'
+    -
+        Name: 'EXECUTION PRIMITIVE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.copilot\'
+        FileMask: 'mcp-config.json'
+        Comment: 'AIRT-0003 | EXECUTION PRIMITIVE'
+    -
+        Name: 'Custom autonomous agent definitions - review on clone'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.copilot\agents\*.agent.md  |  <repo>\.github\agents\'
+        FileMask: '*.agent.md'
+        Comment: 'AIRT-0003 | Custom autonomous agent definitions - review on clone'
+    -
+        Name: 'Extension Dir for GitHub Copilot (Agent Mode / CLI)'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.vscode\extensions\'
+        FileMask: 'github.copilot-*'
+        Comment: 'AIRT-0003 | Extension Dir for GitHub Copilot (Agent Mode / CLI)'

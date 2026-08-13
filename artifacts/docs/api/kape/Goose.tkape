@@ -1,0 +1,18 @@
+Description: 'Goose - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 38cf08da-beab-5987-a31d-65412d5ff256
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Config File for Goose'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\goose\'
+        FileMask: 'config.yaml'
+        Comment: 'AIRT-0038 | Config File for Goose'
+    -
+        Name: 'Records which tools were authorized - CONSENT EVIDENCE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\goose\permission.yaml ; permissions\'
+        FileMask: 'tool_permissions.json'
+        Comment: 'AIRT-0038 | Records which tools were authorized - CONSENT EVIDENCE'

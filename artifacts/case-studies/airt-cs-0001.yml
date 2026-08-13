@@ -48,6 +48,8 @@ response_actions:
   - "Hunt for the bun binary and rt-* temp directories as post-compromise indicators."
   - Treat the repo-local .env and config.json as exposed.
 lesson: AI agent frameworks are installed from source far more often than typical enterprise software, which bypasses package-registry scanning entirely. A from-source clone is an unreviewed supply chain.
+detections:
+  - ai_agent_credential_file_access.yml
 references:
   - title: "StepSecurity - Pythagora-io/gpt-pilot Compromised on GitHub: Shai-Hulud Credential Stealer Blocked by Python Linter"
     url: https://www.stepsecurity.io/blog/pythagora-io-gpt-pilot-compromised-on-github-shai-hulud-credential-stealer-blocked-by-python-linter

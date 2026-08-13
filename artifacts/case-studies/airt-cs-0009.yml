@@ -54,6 +54,13 @@ lesson: >-
   Only the invocation trace is authoritative. The second lesson is scope - the same
   MCP server is usually configured in several clients on the same host, and
   responders who remediate the one that alerted leave the rest running.
+detections:
+  - mcp_tool_poisoning.yar
+  - mcp_config_tampering.yml
+  - claude_desktop_config_modify.yml
+  - mcp_credential_access.yml
+  - mcp_server_remote_code_fetch.yml
+  - ai_agent_mcp_config_modification.yml
 references:
   - title: "GitHub Advisory GHSA-6xpm-ggf7-wc3p - CVE-2025-6514, mcp-remote OS command injection"
     url: https://github.com/advisories/GHSA-6xpm-ggf7-wc3p

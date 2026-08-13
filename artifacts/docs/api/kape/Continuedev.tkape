@@ -1,0 +1,24 @@
+Description: 'Continue.dev - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: e2a2f224-ca0b-5222-bb6a-112946b76b40
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Current format'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.continue\'
+        FileMask: 'config.yaml'
+        Comment: 'AIRT-0005 | Current format'
+    -
+        Name: 'Legacy format'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.continue\'
+        FileMask: 'config.json'
+        Comment: 'AIRT-0005 | Legacy format'
+    -
+        Name: 'Advanced - EXECUTES TYPESCRIPT'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.continue\'
+        FileMask: 'config.ts'
+        Comment: 'AIRT-0005 | [confidence: medium] Advanced - EXECUTES TYPESCRIPT'

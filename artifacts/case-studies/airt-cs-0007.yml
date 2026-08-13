@@ -66,6 +66,10 @@ lesson: >-
   to reason about what the model would have been asked to produce and treat the API
   egress as the pivot. It is also the better-evidenced of the pair: an independent
   national CERT reported it from live operations months before the vendor tracker did.
+detections:
+  - promptsteal_lamehug.yar
+  - runtime_llm_api_c2.rules
+  - llm_api_prompt_in_script_generic.yar
 references:
   - title: "CERT-UA #16039 - LAMEHUG (17 Jul 2025)"
     url: https://cert.gov.ua/article/6284730

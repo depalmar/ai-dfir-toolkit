@@ -58,6 +58,9 @@ lesson: >-
   routinely collapses them. Getting it wrong in either direction is costly: over-
   attributing capability inflates the adversary, and under-attributing it means
   missing genuine autonomy when it does appear.
+detections:
+  - agentic_orchestration_behavior.yml
+  - ai_agent_spawning_shell.yml
 references:
   - title: "Gambit Security - The AI-Assisted Breach of Mexico's Government Infrastructure (technical report)"
     url: https://cdn.prod.website-files.com/69944dd945f20ca4a27a7c47/69d8bb5aea59e31efb3b8a7f_Tech_Report_ai_breach_mex_gov.pdf

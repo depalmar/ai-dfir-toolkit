@@ -1,0 +1,19 @@
+Description: 'Cline - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 8e4ec409-49c7-5b9a-84f1-2b4b71edb850
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'EXECUTION PRIMITIVE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Code\User\globalStorage\saoudrizwan.claude-dev\settings\'
+        FileMask: 'cline_mcp_settings.json'
+        Comment: 'AIRT-0039 | EXECUTION PRIMITIVE'
+    -
+        Name: 'SINGLE-SOURCE - corroborate'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cline\data\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0039 | [confidence: low] SINGLE-SOURCE - corroborate'

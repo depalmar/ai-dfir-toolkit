@@ -1,0 +1,13 @@
+Description: 'Jan.ai - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: a22447eb-2dd1-5c3f-b957-b95d56457931
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'data/, models/, logs/'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\Jan\  |  ~\jan\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0019 | [confidence: medium] data/, models/, logs/'

@@ -49,6 +49,9 @@ lesson: >-
   demonstrates that memory poisoning is not only an espionage primitive; a
   commercial motive means far more victims and far more routine occurrence than a
   targeted-attack framing would predict.
+detections:
+  - memory_poisoning.yml
+  - memory_poisoning_indicators.yar
 references:
   - title: "Microsoft Security Blog - Manipulating AI memory for profit: The rise of AI Recommendation Poisoning"
     url: https://www.microsoft.com/en-us/security/blog/2026/02/10/ai-recommendation-poisoning/

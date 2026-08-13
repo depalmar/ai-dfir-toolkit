@@ -60,6 +60,12 @@ lesson: >-
   intent. This is also the case that most rewards checking the primary source, since
   the sample's self-update routine was commented out and the family was assessed as
   in development.
+detections:
+  - promptflux_thinking_robot.yar
+  - promptflux_artifacts_fileevent.yml
+  - script_interpreter_llm_api_dns.yml
+  - llm_api_prompt_in_script_generic.yar
+  - runtime_ai_malware_correlation.yml
 references:
   - title: "GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)"
     url: https://services.google.com/fh/files/misc/advances-in-threat-actor-usage-of-ai-tools-en.pdf

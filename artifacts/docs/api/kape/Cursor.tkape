@@ -1,0 +1,52 @@
+Description: 'Cursor - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 44a84298-7e06-5e0b-a45e-e1727b02d482
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Electron app root'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\cursor\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0002 | Electron app root'
+    -
+        Name: 'Main process'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\cursor\'
+        FileMask: 'Cursor.exe'
+        Comment: 'AIRT-0002 | Main process'
+    -
+        Name: 'CLI shim'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\cursor\resources\app\bin\'
+        FileMask: 'cursor'
+        Comment: 'AIRT-0002 | CLI shim'
+    -
+        Name: 'Auto-update staging - watch for unsigned writes'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\cursor-updater\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0002 | Auto-update staging - watch for unsigned writes'
+    -
+        Name: 'settings.json, globalStorage, workspaceStorage'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Cursor\User\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0002 | settings.json, globalStorage, workspaceStorage'
+    -
+        Name: 'Global MCP servers - EXECUTION PRIMITIVE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cursor\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0002 | Global MCP servers - EXECUTION PRIMITIVE'
+    -
+        Name: 'Custom agent skills'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Cursor\User\skills\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0002 | [confidence: medium] Custom agent skills'

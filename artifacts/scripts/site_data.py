@@ -298,6 +298,10 @@ def load_case_studies():
             "basis": str(c.get("basis", "")),
             "contested": str(c.get("contested", "")),
             "atlas": [str(a) for a in (c.get("atlas") or [])],
+            # Rule filenames, resolved against the loaded rule set at check time.
+            # A case that names a rule the repo does not ship is worse than one
+            # that names none, because it implies coverage nobody has.
+            "detections": [str(d) for d in (c.get("detections") or [])],
             "iocs": iocs,
             "response_actions": [str(a) for a in (c.get("response_actions") or [])],
             "lesson": c.get("lesson", ""),

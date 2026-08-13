@@ -1,0 +1,19 @@
+Description: 'Ollama - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: a8f26371-9841-57a3-84fc-d04a49c05ba0
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Binary for Ollama'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\Ollama\'
+        FileMask: 'ollama.exe'
+        Comment: 'AIRT-0017 | Binary for Ollama'
+    -
+        Name: 'blobs/ + manifests/ - multi-GB'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.ollama\models\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0017 | blobs/ + manifests/ - multi-GB'

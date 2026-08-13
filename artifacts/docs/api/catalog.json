@@ -314,7 +314,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Aider"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -443,7 +444,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p2",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "AmazonQDeveloper"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -1214,7 +1216,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "ClaudeCode"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -1644,7 +1647,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "ClaudeDesktop"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -1812,7 +1816,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Cline"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2052,7 +2057,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "CodeiumWindsurf"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2302,7 +2308,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Continuedev"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2772,7 +2779,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Cursor"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -3411,7 +3419,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "GitHubCopilot"
     },
     "atlas_techniques": [],
     "attack_techniques": [],
@@ -3557,7 +3566,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "GoogleGeminiCLI"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -3735,7 +3745,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Goose"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -3935,7 +3946,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p2",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "GPT4All"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -4050,7 +4062,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Janai"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -4321,7 +4334,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect the entire .kiro/ directory before remediation - hooks, steering, agents, specs, and both MCP configs together establish what the agent was authorised to do and what fired automatically. Capture the Kiro MCP Logs output channel to confirm which servers actually connected, since a config entry alone does not prove execution. Because config hot-reloads, correlate file mtimes against session activity rather than assuming changes took effect at startup."
+      "guidance": "Collect the entire .kiro/ directory before remediation - hooks, steering, agents, specs, and both MCP configs together establish what the agent was authorised to do and what fired automatically. Capture the Kiro MCP Logs output channel to confirm which servers actually connected, since a config entry alone does not prove execution. Because config hot-reloads, correlate file mtimes against session activity rather than assuming changes took effect at startup.",
+      "kape_target": "Kiro"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -4779,7 +4793,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Langflow"
     },
     "atlas_techniques": [],
     "attack_techniques": [],
@@ -5052,7 +5067,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "LMStudio"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -5268,7 +5284,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "n8n"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -5554,7 +5571,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Ollama"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -5794,7 +5812,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "OpenInterpreter"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -6245,7 +6264,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "OpenAICodexCLI"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -6743,7 +6763,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "PlaywrightMCP"
     },
     "atlas_techniques": [
       "AML.T0086",
@@ -6892,7 +6913,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "RooCode"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -7229,7 +7251,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p2",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Supermaven"
     },
     "atlas_techniques": [
       "AML.T0024"
@@ -7369,7 +7392,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p2",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "kape_target": "Tabnine"
     },
     "atlas_techniques": [
       "AML.T0024"

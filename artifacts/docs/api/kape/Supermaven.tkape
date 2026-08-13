@@ -1,0 +1,12 @@
+Description: 'Supermaven - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: b3e3f8cb-4f65-55c5-a838-f84a408193a0
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Zed Config for Supermaven'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\zed\'
+        FileMask: 'settings.json  ->  inline_completion_provider: supermaven'
+        Comment: 'AIRT-0010 | [confidence: medium] Zed Config for Supermaven'

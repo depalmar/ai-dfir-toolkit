@@ -1,0 +1,12 @@
+Description: 'Kiro - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 68a9249e-4fc2-5280-adf5-9bfb32418e3c
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'User-scope MCP servers, applied across every workspace. Powers installed from th'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.kiro\settings\'
+        FileMask: 'mcp.json'
+        Comment: 'AIRT-0041 | User-scope MCP servers, applied across every workspace. Powers installed from the server directory are auto-registered here under a Powers section.'

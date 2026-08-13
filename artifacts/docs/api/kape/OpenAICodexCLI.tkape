@@ -1,0 +1,30 @@
+Description: 'OpenAI Codex CLI - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: b2721b0d-69d1-561a-a298-2f8bb93288ac
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Contains [mcp_servers] blocks - EXECUTION PRIMITIVE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codex\'
+        FileMask: 'config.toml'
+        Comment: 'AIRT-0036 | Contains [mcp_servers] blocks - EXECUTION PRIMITIVE'
+    -
+        Name: 'Prompt history - FORENSIC TIMELINE SOURCE'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codex\'
+        FileMask: 'history.jsonl'
+        Comment: 'AIRT-0036 | Prompt history - FORENSIC TIMELINE SOURCE'
+    -
+        Name: 'FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codex\sessions\YYYY\MM\DD\'
+        FileMask: 'rollout-*.jsonl'
+        Comment: 'AIRT-0036 | FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT'
+    -
+        Name: 'Log for OpenAI Codex CLI'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codex\logs\'
+        FileMask: 'codex-tui.log'
+        Comment: 'AIRT-0036 | Log for OpenAI Codex CLI'

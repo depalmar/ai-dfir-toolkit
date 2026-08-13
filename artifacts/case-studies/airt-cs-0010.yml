@@ -54,6 +54,11 @@ lesson: >-
   nobody looked at the memory store. That makes memory purge a distinct eradication
   step and purge verification a distinct recovery step - a new line item in the IR
   lifecycle rather than a variation on an existing one.
+detections:
+  - memory_poisoning.yml
+  - memory_poisoning_indicators.yar
+  - markdown_image_exfil.yml
+  - copilot_rules_file_backdoor.yar
 references:
   - title: "Embrace The Red - Spyware Injection Into Your ChatGPT's Long-Term Memory (SpAIware)"
     url: https://embracethered.com/blog/posts/2024/chatgpt-macos-app-persistent-data-exfiltration/

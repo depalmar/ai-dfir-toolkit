@@ -1,0 +1,31 @@
+Description: 'LM Studio - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 350d662b-8223-5c85-90ca-e2aee42e5440
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Binary for LM Studio'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\lm-studio\'
+        FileMask: 'LM Studio.exe'
+        Comment: 'AIRT-0018 | Binary for LM Studio'
+    -
+        Name: 'Headless control CLI'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\bin\'
+        FileMask: 'lms'
+        Comment: 'AIRT-0018 | Headless control CLI'
+    -
+        Name: 'Publisher/model/*.gguf layout'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\models\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0018 | Publisher/model/*.gguf layout'
+    -
+        Name: 'Server bind address + port live here'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0018 | Server bind address + port live here'

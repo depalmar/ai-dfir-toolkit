@@ -1,0 +1,12 @@
+Description: 'Google Gemini CLI - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 0f3d9649-179d-55b6-b1a5-1397ceebd3d7
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Auth type at security.auth.selectedType; MCP servers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0037 | Auth type at security.auth.selectedType; MCP servers'

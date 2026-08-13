@@ -1,0 +1,102 @@
+Description: 'All catalogued AI agent, LLM runtime and MCP artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: de6ef027-a8fd-5e2d-8d23-ecda38dc5e9f
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Aider'
+        Category: AIAgents
+        Path: 'Aider.tkape'
+    -
+        Name: 'AmazonQDeveloper'
+        Category: AIAgents
+        Path: 'AmazonQDeveloper.tkape'
+    -
+        Name: 'ClaudeCode'
+        Category: AIAgents
+        Path: 'ClaudeCode.tkape'
+    -
+        Name: 'ClaudeDesktop'
+        Category: AIAgents
+        Path: 'ClaudeDesktop.tkape'
+    -
+        Name: 'Cline'
+        Category: AIAgents
+        Path: 'Cline.tkape'
+    -
+        Name: 'CodeiumWindsurf'
+        Category: AIAgents
+        Path: 'CodeiumWindsurf.tkape'
+    -
+        Name: 'Continuedev'
+        Category: AIAgents
+        Path: 'Continuedev.tkape'
+    -
+        Name: 'Cursor'
+        Category: AIAgents
+        Path: 'Cursor.tkape'
+    -
+        Name: 'GPT4All'
+        Category: AIAgents
+        Path: 'GPT4All.tkape'
+    -
+        Name: 'GitHubCopilot'
+        Category: AIAgents
+        Path: 'GitHubCopilot.tkape'
+    -
+        Name: 'GoogleGeminiCLI'
+        Category: AIAgents
+        Path: 'GoogleGeminiCLI.tkape'
+    -
+        Name: 'Goose'
+        Category: AIAgents
+        Path: 'Goose.tkape'
+    -
+        Name: 'Janai'
+        Category: AIAgents
+        Path: 'Janai.tkape'
+    -
+        Name: 'Kiro'
+        Category: AIAgents
+        Path: 'Kiro.tkape'
+    -
+        Name: 'LMStudio'
+        Category: AIAgents
+        Path: 'LMStudio.tkape'
+    -
+        Name: 'Langflow'
+        Category: AIAgents
+        Path: 'Langflow.tkape'
+    -
+        Name: 'Ollama'
+        Category: AIAgents
+        Path: 'Ollama.tkape'
+    -
+        Name: 'OpenAICodexCLI'
+        Category: AIAgents
+        Path: 'OpenAICodexCLI.tkape'
+    -
+        Name: 'OpenInterpreter'
+        Category: AIAgents
+        Path: 'OpenInterpreter.tkape'
+    -
+        Name: 'PlaywrightMCP'
+        Category: AIAgents
+        Path: 'PlaywrightMCP.tkape'
+    -
+        Name: 'RooCode'
+        Category: AIAgents
+        Path: 'RooCode.tkape'
+    -
+        Name: 'Supermaven'
+        Category: AIAgents
+        Path: 'Supermaven.tkape'
+    -
+        Name: 'Tabnine'
+        Category: AIAgents
+        Path: 'Tabnine.tkape'
+    -
+        Name: 'n8n'
+        Category: AIAgents
+        Path: 'n8n.tkape'

@@ -41,6 +41,9 @@ response_actions:
   - Run Langflow as a non-root least-privilege user so arbitrary file writes cannot land in root-owned paths.
   - Rotate every credential stored in flows and in the Langflow database.
 lesson: "This is the clearest proof that AI agent infrastructure is now a mass-exploitation target rather than a theoretical one: a CISA KEV listing, a named botnet payload, and internet-wide scanning for the default port. Self-hosted agent platforms deployed by developers rarely sit in the asset inventory that vulnerability management actually scans, which is why an inventory sweep for these listeners is the highest-value first control."
+detections:
+  - langflow_rce_exploitation_attempt.yml
+  - local_llm_listener_non_loopback.yml
 references:
   - title: "NVD - CVE-2025-3248"
     url: https://nvd.nist.gov/vuln/detail/CVE-2025-3248
