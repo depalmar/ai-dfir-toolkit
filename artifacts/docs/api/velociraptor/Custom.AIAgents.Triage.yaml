@@ -1,0 +1,110 @@
+name: Custom.AIAgents.Triage
+description: |
+  Collect every catalogued AI agent, LLM runtime and MCP artifact this host has.
+
+  Calls each per-tool artifact in turn. Generated from the AI agent artifact
+  catalog; every glob is derived from a verified location.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Aider
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Aider(Upload=Upload)
+  - name: AmazonQDeveloper
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.AmazonQDeveloper(Upload=Upload)
+  - name: AutoGen
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.AutoGen(Upload=Upload)
+  - name: BrowserUse
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.BrowserUse(Upload=Upload)
+  - name: ClaudeCode
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.ClaudeCode(Upload=Upload)
+  - name: ClaudeComputerUse
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.ClaudeComputerUse(Upload=Upload)
+  - name: ClaudeDesktop
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.ClaudeDesktop(Upload=Upload)
+  - name: Cline
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Cline(Upload=Upload)
+  - name: CodeiumWindsurf
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.CodeiumWindsurf(Upload=Upload)
+  - name: Continuedev
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Continuedev(Upload=Upload)
+  - name: Cursor
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Cursor(Upload=Upload)
+  - name: Flowise
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Flowise(Upload=Upload)
+  - name: GPT4All
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.GPT4All(Upload=Upload)
+  - name: GitHubCopilot
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.GitHubCopilot(Upload=Upload)
+  - name: GoogleGeminiCLI
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.GoogleGeminiCLI(Upload=Upload)
+  - name: Goose
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Goose(Upload=Upload)
+  - name: Janai
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Janai(Upload=Upload)
+  - name: Kiro
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Kiro(Upload=Upload)
+  - name: LMStudio
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.LMStudio(Upload=Upload)
+  - name: Langflow
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Langflow(Upload=Upload)
+  - name: Ollama
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Ollama(Upload=Upload)
+  - name: OpenAICodexCLI
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.OpenAICodexCLI(Upload=Upload)
+  - name: OpenHands
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.OpenHands(Upload=Upload)
+  - name: OpenInterpreter
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.OpenInterpreter(Upload=Upload)
+  - name: OpenWebUI
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.OpenWebUI(Upload=Upload)
+  - name: PlaywrightMCP
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.PlaywrightMCP(Upload=Upload)
+  - name: RooCode
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.RooCode(Upload=Upload)
+  - name: Skyvern
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Skyvern(Upload=Upload)
+  - name: Supermaven
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Supermaven(Upload=Upload)
+  - name: Tabnine
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Tabnine(Upload=Upload)
+  - name: n8n
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.n8n(Upload=Upload)
+  - name: vLLM
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.vLLM(Upload=Upload)

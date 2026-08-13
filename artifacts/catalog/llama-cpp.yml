@@ -5,6 +5,8 @@
 
 id: AIRT-0021
 name: llama.cpp
+aliases:
+  - llama-cpp
 vendor: ggml-org (OSS)
 category: llm-runtime
 description: Reference C/C++ inference engine underlying most local runtimes. llama-server / llama-cli / llama-run binaries.
@@ -42,7 +44,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: PRIMARY FILE IOC across all local runtimes
+      description: Primary file IOC across all local runtimes
       forensic_value: low
       evidence_type:
         - program-presence
@@ -82,5 +84,11 @@ attack_techniques:
   - T1133
   - T1105
   - T1590
-references: []
+references:
+  - title: "ggml-org/llama.cpp"
+    url: https://github.com/ggml-org/llama.cpp
+    accessed: "2026-08-13"
+  - title: "llama.cpp server README"
+    url: https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -1,0 +1,44 @@
+name: Custom.AIAgents.Cursor
+description: |
+  VS Code fork with agentic Composer/Agent mode. Executes terminal commands and edits files autonomously.
+
+  Generated from the AI agent artifact catalog (AIRT-0002). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Local\Programs\cursor\**', 'C:\Users\*\AppData\Local\Programs\cursor\Cursor.exe', 'C:\Users\*\AppData\Local\Programs\cursor\resources\app\bin\cursor', 'C:\Users\*\AppData\Local\cursor-updater\**', 'C:\Users\*\AppData\Roaming\Cursor\User\**', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\AppData\Roaming\Cursor\User\skills\**', 'C:\Users\*\AppData\Roaming\Cursor\User\globalStorage\state.vscdb']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/Library/Application Support/Cursor/User/**', '/Users/*/.cursor/mcp.json', '/Users/*/Library/Application Support/Cursor/User/globalStorage/state.vscdb']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.config/Cursor/User/**', '/home/*/.cursor/mcp.json', '/home/*/.config/Cursor/User/globalStorage/state.vscdb', '/home/*/.config/cursor/auth.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

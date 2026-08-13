@@ -5,17 +5,17 @@ Id: 47e89e10-943f-5ca8-a166-13111c90a03a
 RecreateDirectories: true
 Targets:
     -
-        Name: 'PRIMARY EXECUTION PRIMITIVE'
+        Name: 'Primary execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Roaming\Claude\'
         FileMask: 'claude_desktop_config.json'
-        Comment: 'AIRT-0011 | PRIMARY EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0011 | Primary execution primitive'
     -
-        Name: 'VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.'
+        Name: 'Virtualized PATH - the app reads this one. Commonly missed by IR.'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\'
         FileMask: 'claude_desktop_config.json'
-        Comment: 'AIRT-0011 | VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.'
+        Comment: 'AIRT-0011 | Virtualized PATH - the app reads this one. Commonly missed by IR.'
     -
         Name: 'MCP server stdout/stderr - forensic goldmine'
         Category: AIAgents

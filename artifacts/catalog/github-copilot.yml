@@ -5,6 +5,11 @@
 
 id: AIRT-0003
 name: GitHub Copilot (Agent Mode / CLI)
+aliases:
+  - GitHub Copilot
+  - github-copilot
+  - copilot
+  - github.copilot-
 vendor: GitHub/Microsoft
 category: coding-agent-ide
 description: copilot-language-server binary + Copilot CLI. Agent mode runs multi-step tasks with tool calls; bundles a GitHub MCP server.
@@ -67,7 +72,7 @@ artifacts:
         - macos
         - linux
       artifact_type: mcp-config
-      description: EXECUTION PRIMITIVE
+      description: Execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -120,8 +125,8 @@ credentials:
     storage: os-keyring
     secret_type: oauth-token
     description: >-
-      DEFAULT for Copilot CLI. Vendor: 'the CLI stores your OAuth token in your
-      operating system's keychain under the service name copilot-cli'. NOT a file -
+      Default for Copilot CLI. Vendor: 'the CLI stores your OAuth token in your
+      operating system's keychain under the service name copilot-cli'. Not a file -
       requires keychain acquisition, not file collection.
     confidence: high
   - location: ~/.copilot/config.json
@@ -129,8 +134,8 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT fallback for the Copilot CLI OAuth token. Vendor: when the system
-      keychain is unavailable (e.g. headless Linux without libsecret) the CLI prompts to
+      Plaintext fallback for the Copilot CLI OAuth token. Vendor: when the system
+      keychain is unavailable (e.g. Headless Linux without libsecret) the CLI prompts to
       store the token in a plaintext configuration file here. The same file also holds
       CLI-managed internal application state including authentication data. Relocated
       wholesale if COPILOT_HOME is set.
@@ -140,7 +145,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT. Vendor-documented Copilot CLI directory holding MCP OAuth token,
+      plaintext. Vendor-documented Copilot CLI directory holding MCP OAuth token,
       registration, and PKCE fallback files for MCP servers the agent connects to. Scope
       is per-MCP-server, so this is where third-party service tokens land.
     confidence: high
@@ -149,7 +154,7 @@ credentials:
     storage: plaintext
     secret_type: unknown
     description: >-
-      PLAINTEXT. Vendor-documented Copilot CLI directory containing fallback file
+      plaintext. Vendor-documented Copilot CLI directory containing fallback file
       storage and an index for MCP secret placeholders.
     confidence: high
   - location: COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
@@ -157,8 +162,8 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT environment variables. Vendor-documented credential precedence for
-      Copilot CLI: these are checked in this order BEFORE the OS keychain, so an env-var
+      Plaintext environment variables. Vendor-documented credential precedence for
+      Copilot CLI: these are checked in this order before the OS keychain, so an env-var
       token overrides the keyring and leaves no file artifact. Collect process
       environment, shell rc files and CI job definitions.
     confidence: high
@@ -167,7 +172,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT environment variable. BYOK provider API key. Vendor: when BYOK provider
+      Plaintext environment variable. BYOK provider API key. Vendor: when BYOK provider
       env vars (COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY) are configured the
       CLI uses them for model requests regardless of authentication status - so prompts
       and code context go to whatever endpoint COPILOT_PROVIDER_BASE_URL names.
@@ -177,7 +182,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT. Copilot editor OAuth token written by the copilot-language-server used
+      plaintext. Copilot editor OAuth token written by the copilot-language-server used
       by the VS Code, JetBrains and Neovim integrations. Distinct from the Copilot CLI
       store. Not vendor-documented, but read as the canonical token location by numerous
       independent projects.
@@ -187,7 +192,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT. Windows location of the Copilot editor OAuth token (same file as the
+      plaintext. Windows location of the Copilot editor OAuth token (same file as the
       Unix ~/.config/github-copilot/apps.json). Four independent implementations resolve
       Windows via LOCALAPPDATA; one outlier uses AppData\Roaming, so check both if the
       Local path is absent.
@@ -197,7 +202,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT. LEGACY predecessor of apps.json, still present on hosts authenticated
+      plaintext. Legacy predecessor of apps.json, still present on hosts authenticated
       by older plugin versions. Consumers routinely check hosts.json and apps.json in
       turn, so collect both. Windows equivalent sits in the same
       %LOCALAPPDATA%\github-copilot\ directory.
@@ -207,7 +212,11 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: GitHubCopilot
+  velociraptor_artifact: Custom.AIAgents.GitHubCopilot
 atlas_techniques: []
 attack_techniques: []
-references: []
+references:
+  - title: "GitHub Copilot documentation"
+    url: https://docs.github.com/en/copilot
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

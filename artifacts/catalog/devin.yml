@@ -18,7 +18,7 @@ capabilities:
   mcp_capable: true
 risk: medium
 confidence: medium
-abuse_potential: Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. THIN PUBLIC SOURCING.
+abuse_potential: Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. Thin public sourcing.
 artifacts:
   disk:
     - path: Browser session / cookies for app.devin.ai
@@ -27,7 +27,7 @@ artifacts:
         - macos
         - linux
       artifact_type: session-artifact
-      description: THIN SOURCING - primary indicator is outbound DNS
+      description: Thin sourcing - primary indicator is outbound DNS
       forensic_value: low
       evidence_type:
         - program-presence
@@ -38,13 +38,13 @@ artifacts:
     - direction: egress
       indicator: "app.devin.ai, *.cognition.ai"
       port: 443/TCP
-      description: Primary and often ONLY endpoint indicator
+      description: Primary and often only endpoint indicator
       confidence: low
       unverified: true
     - direction: egress
       indicator: "*.devinapps.com (IDE/Desktop iframes), app.devin.ai"
       port: 443/TCP + WSS
-      description: "CORRECTED: workstations must reach *.devinapps.com - this is the primary network IOC"
+      description: "corrected: workstations must reach *.devinapps.com - this is the primary network IOC"
       confidence: high
   process:
     - name: devin (CLI); VS Code Remote-SSH child

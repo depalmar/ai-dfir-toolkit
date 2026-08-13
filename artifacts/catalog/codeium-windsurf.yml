@@ -5,6 +5,10 @@
 
 id: AIRT-0006
 name: Codeium / Windsurf
+aliases:
+  - Codeium
+  - Windsurf
+  - codeium-windsurf
 vendor: Codeium (Exafunction)
 category: coding-agent-ide
 description: Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.
@@ -39,7 +43,7 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: EXECUTION PRIMITIVE
+      description: Execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -52,7 +56,7 @@ artifacts:
         - macos
         - linux
       artifact_type: mcp-config
-      description: EXECUTION PRIMITIVE
+      description: Execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -66,7 +70,7 @@ artifacts:
         - macos
         - linux
       artifact_type: binary
-      description: REMOTE BINARY DOWNLOAD - verify hash
+      description: Remote binary download - verify hash
       forensic_value: low
       evidence_type:
         - program-presence
@@ -118,7 +122,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Codeium editor plugins persist the account API key here as PLAINTEXT JSON under
+      Codeium editor plugins persist the account API key here as plaintext JSON under
       the 'apiKey' field, written directly by the plugin after registration. Also the
       legacy and fallback location for the Windsurf editor's key. Honours
       $XDG_DATA_HOME, so it becomes $XDG_DATA_HOME/.codeium/config.json when that is
@@ -131,7 +135,7 @@ credentials:
     secret_type: api-key
     description: >-
       Windsurf editor (VS Code fork). The ItemTable row keyed 'windsurfAuthStatus' holds
-      JSON containing the live Codeium/Windsurf apiKey UNENCRYPTED inside the SQLite DB.
+      JSON containing the live Codeium/Windsurf apiKey unencrypted inside the SQLite DB.
       This is the current location for modern Windsurf builds; ~/.codeium/config.json is
       the older fallback.
     confidence: medium
@@ -157,7 +161,7 @@ credentials:
     secret_type: api-key
     description: >-
       Windsurf / Cascade MCP server definitions. The per-server env block routinely
-      holds PLAINTEXT API keys and bearer tokens for stdio servers. Windsurf supports
+      holds plaintext API keys and bearer tokens for stdio servers. Windsurf supports
       ${env:VAR} interpolation as an alternative, so absence of a literal key here means
       checking the process environment instead.
     confidence: high
@@ -166,16 +170,16 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Windows path for the same Windsurf/Cascade MCP config, same PLAINTEXT env block
-      exposure.
+      Windows path for the same Windsurf/Cascade MCP config, same plaintext env block
+      exposure
     confidence: high
   - location: '<nvim stdpath(''cache'')>/codeium/config.json'
     os: [macos, linux]
     storage: plaintext
     secret_type: api-key
     description: >-
-      The Neovim Codeium/Windsurf plugin keeps its own PLAINTEXT config.json with the
-      account api_key, SEPARATE from ~/.codeium/. Defaults to
+      The Neovim Codeium/Windsurf plugin keeps its own plaintext config.json with the
+      account api_key, separate from ~/.codeium/. Defaults to
       ~/.cache/nvim/codeium/config.json. A responder who only collects ~/.codeium/ will
       miss a Neovim user's key entirely.
     confidence: high
@@ -184,6 +188,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: CodeiumWindsurf
+  velociraptor_artifact: Custom.AIAgents.CodeiumWindsurf
 atlas_techniques:
   - AML.T0051
   - AML.T0053
@@ -193,5 +198,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1195.002
-references: []
+references:
+  - title: "Windsurf Plugin (formerly Codeium) on the VS Code Marketplace"
+    url: https://marketplace.visualstudio.com/items?itemName=Codeium.codeium
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

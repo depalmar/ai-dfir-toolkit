@@ -6,6 +6,62 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-13
+
+### Added
+
+- **KAPE targets and Velociraptor artifacts.** `docs/api/kape/` (28 targets) and
+  `docs/api/velociraptor/` (35 artifacts), both derived entirely from paths the
+  catalog already verified. KAPE is Windows-only and reaches 24 of 45 entries;
+  Velociraptor runs on Windows, macOS and Linux and reaches 32. This fills
+  `collection.kape_target` (0/45 to 24/45) and `collection.velociraptor_artifact`
+  (0/45 to 32/45), two fields the schema had defined and nothing populated.
+- **Eleven case studies, researched rather than transcribed** — GTG-1002,
+  SesameOp, PROMPTFLUX, PROMPTSTEAL/LAMEHUG, EchoLeak, the MCP CVE cluster,
+  spAIware, AI recommendation poisoning, PoisonedRAG, the Mexican government
+  breach and ShadowRay. Every case now carries `confidence`, `basis` and at least
+  one `references` entry, and `build_site.py --check` fails without them. Where
+  analysts disagree, `contested` records the disagreement rather than picking a
+  side.
+- **Detection links on case studies.** 47 references across 14 cases, each
+  validated against the rules actually on disk — a case naming a rule the repo
+  does not ship implies coverage nobody has.
+- **Aliases**, 0/45 to 24/45. Searching "oobabooga", "OpenDevin",
+  "CodeWhisperer", "Roo Cline" or "Pythagora" previously found nothing.
+- **References**, 3/45 to 35/45, each a primary source verified rather than
+  assumed. `validate.py` reports the remaining ten on every run.
+- **`docs/REVERIFICATION.md`** — a repeatable quarterly checklist, so the
+  maintenance task the catalog calls existential is not left to memory.
+
+### Changed
+
+- **Badge colours no longer lie.** `confidence`, `forensic_value`, `risk` and
+  `triage_priority` all use the words high/medium/low, and the site rendered all
+  four on one red-to-green alarm ramp — so a well-sourced artifact and a
+  dangerous tool were the same warning orange. Severity keeps the alarm ramp;
+  strength gets its own ramp, with value and sourcing in separate hues and each
+  badge carrying its label.
+- **One note style.** 363 captions had drifted into four styles with a terminal
+  period on half of them, and 95 instances of `PLAINTEXT` duplicated
+  `storage: plaintext` without being filterable. `normalize_notes.py` applies the
+  style and `validate.py` gates it.
+- Select-all moved to the head of the column it acts on; facet groups fold and
+  remember; the filtered view exports as CSV or JSON.
+
+### Fixed
+
+- **Roo Code is archived** — shutdown announced 2026-04-21, repository archived
+  2026-05-15. The entry carried no status and read as current.
+- **AgentGPT repository archived** 2026-01-28; **AutoGen is in maintenance mode**
+  and superseded by Microsoft Agent Framework. Both now carry a status.
+- Three site accessibility defects: filtering was silent to screen readers, the
+  results region was not a landmark and had no skip link, and the investigation
+  guide rendered seven `<h1>`s inside a tab.
+- The site was missing three whole detection categories because the rule loader
+  listed directories instead of discovering them, and the OS facet hid 87 of 425
+  rows.
+
+
 ### Added
 
 - **Case studies get their own tab, expanded.** They previously rendered as

@@ -27,6 +27,8 @@ python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
 python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
 python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
+python scripts/export_velociraptor.py         # Velociraptor artifacts (--check likewise)
+python scripts/normalize_notes.py             # note style (--check reports, writes nothing)
 python scripts/build_site.py --check          # site data contract, writes nothing
 python scripts/build_site.py                  # regenerate docs/site (CI does this)
 python ../artifacts/scripts/validate_mappings.py   # run this one from the repo root
@@ -59,6 +61,17 @@ verify it or downgrade the entry.
 
 **Omit rather than guess.** A missing field is honest. A guessed one becomes
 somebody's broken detection during an actual incident.
+
+**Notes are captions, not emphasis.** `description` and `notes` rows, plus
+`abuse_potential`, follow one style: no shouted prose, sentence case, and a
+terminal period only when the note is more than one sentence. `PLAINTEXT`
+duplicates `storage: plaintext` and `HIGH-VALUE` duplicates `forensic_value`,
+neither is filterable in the CSV feed, and 363 captions had drifted into four
+styles before this was written down. `normalize_notes.py` applies it and
+`validate.py` gates it. An ALL-CAPS token survives only if it is an identifier
+or an acronym on the derived allowlist - which was derived by enumerating every
+uppercase token in the corpus, because the first version guessed and turned CWD
+into "cwd".
 
 **Case studies carry their provenance.** A case study asserts things about
 somebody else's incident, usually from a single reporting party, so
@@ -122,12 +135,15 @@ the entry and raise its confidence.
 ## Current state
 
 45 entries, 265 artifacts, 152 credential locations, 17 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 28 KAPE targets. Validation clean.
+locations, 12 endpoint Sigma rules, 14 case studies, 28 KAPE targets, 35
+Velociraptor artifacts. Validation clean.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
 Confidence: 28 high, 13 medium, 4 low.
+Provenance: 35/45 entries carry a reference; `validate.py` names the other ten
+on every run. 24/45 carry aliases.
 Risk: 11 critical, 22 high, 10 medium, 2 low.
 
 ## Site generation
@@ -169,6 +185,7 @@ Three things worth not relearning:
 - `artifacts/README.md` — the catalog itself
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
+- `artifacts/docs/REVERIFICATION.md` — the quarterly re-verification checklist
 - `artifacts/docs/HANDOFF_REVIEW.md` — what was decided about the site design
   handoff, what was declined, and why
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when

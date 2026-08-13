@@ -5,9 +5,13 @@
 
 id: AIRT-0040
 name: Roo Code
+aliases:
+  - roo-code
+  - Roo Cline
 vendor: Roo Veterinary Inc. (OSS)
+status: unmaintained
 category: coding-agent-ide
-description: VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP.
+description: VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP. Discontinued - shutdown announced 2026-04-21 and the repository archived 2026-05-15, with the team moving to Roomote. Still installed on hosts and still leaves every artifact below, so it remains in scope for collection.
 supported_os:
   - windows
   - macos
@@ -27,7 +31,7 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: EXECUTION PRIMITIVE
+      description: Execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -53,7 +57,7 @@ artifacts:
         - macos
         - linux
       artifact_type: mcp-config
-      description: TRAVELS WITH THE REPO - review on clone/PR
+      description: Travels with the repo - review on clone/PR
       forensic_value: high
       evidence_type:
         - execution
@@ -102,11 +106,12 @@ mcp:
     secrets_location: env block
     persistence_trigger: Every workspace open
     triage_priority: p1
-    notes: TRAVELS WITH THE REPO
+    notes: Travels with the repo
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: RooCode
+  velociraptor_artifact: Custom.AIAgents.RooCode
 atlas_techniques:
   - AML.T0051
   - AML.T0053

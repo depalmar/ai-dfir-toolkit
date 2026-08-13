@@ -28,7 +28,7 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: GOOSE_PATH_ROOT overrides. API keys here are IGNORED by design
+      description: GOOSE_PATH_ROOT overrides. API keys here are ignored by design.
       forensic_value: high
       evidence_type:
         - configuration
@@ -50,7 +50,7 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: Records which tools were authorized - CONSENT EVIDENCE
+      description: Records which tools were authorized - consent evidence
       forensic_value: high
       evidence_type:
         - configuration
@@ -63,7 +63,7 @@ artifacts:
         - macos
         - linux
       artifact_type: log
-      description: PURGED AFTER 14 DAYS - collect early, short retention window
+      description: Purged after 14 days - collect early, short retention window
       forensic_value: high
       evidence_type:
         - timeline
@@ -95,7 +95,7 @@ credentials:
       - linux
     storage: os-keyring
     secret_type: api-key
-    description: DEFAULT - requires keychain acquisition, not file collection
+    description: Default - requires keychain acquisition, not file collection
     confidence: high
   - location: ~/.config/goose/secrets.yaml (mode 0600)
     os:
@@ -104,7 +104,7 @@ credentials:
       - linux
     storage: plaintext
     secret_type: api-key
-    description: PLAINTEXT FALLBACK when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless
+    description: Plaintext fallback when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless
     confidence: high
   - location: "<config>/githubcopilot/info.json"
     os:
@@ -127,6 +127,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Goose
+  velociraptor_artifact: Custom.AIAgents.Goose
 atlas_techniques:
   - AML.T0053
   - AML.T0081
@@ -136,5 +137,8 @@ attack_techniques:
   - T1547.001
   - T1195.002
   - T1552.001
-references: []
+references:
+  - title: "aaif-goose/goose"
+    url: https://github.com/aaif-goose/goose
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -78,6 +78,7 @@ collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: GPT4All
+  velociraptor_artifact: Custom.AIAgents.GPT4All
 atlas_techniques:
   - AML.T0024
   - AML.T0029
@@ -87,5 +88,8 @@ attack_techniques:
   - T1133
   - T1105
   - T1590
-references: []
+references:
+  - title: "nomic-ai/gpt4all"
+    url: https://github.com/nomic-ai/gpt4all
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

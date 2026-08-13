@@ -48,7 +48,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT AES key file, auto-generated on first run if absent. Decrypts every
+      Plaintext AES key file, auto-generated on first run if absent. Decrypts every
       credential in the Flowise credential table (all stored LLM provider and
       third-party tool API keys). Overridden by SECRETKEY_PATH (key file moves to
       <SECRETKEY_PATH>/encryption.key) or by FLOWISE_SECRETKEY_OVERWRITE (no key file at
@@ -61,7 +61,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT AES key inside the official container image, where SECRETKEY_PATH is set
+      Plaintext AES key inside the official container image, where SECRETKEY_PATH is set
       to /home/node/.flowise. The official compose file bind-mounts host ~/.flowise to
       this path, so the key is readable on the host at ~/.flowise/encryption.key even
       for containerised deployments.
@@ -82,7 +82,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT env var holding the credential-encryption key directly, used instead of
+      Plaintext env var holding the credential-encryption key directly, used instead of
       the key stored at SECRETKEY_PATH. When this is set there is no encryption.key file
       to collect - the key is only in the process environment and in whatever compose
       file or shell profile set it.
@@ -92,7 +92,7 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT env file in the compose working directory. Holds
+      Plaintext env file in the compose working directory. Holds
       FLOWISE_SECRETKEY_OVERWRITE, SECRETKEY_AWS_ACCESS_KEY / SECRETKEY_AWS_SECRET_KEY,
       JWT_AUTH_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET,
       TOKEN_HASH_SECRET, DATABASE_PASSWORD, REDIS_PASSWORD, SMTP_PASSWORD, and
@@ -103,7 +103,7 @@ credentials:
     storage: plaintext
     secret_type: jwt-signing-key
     description: >-
-      PLAINTEXT env var signing the auth JWT that Flowise stores in an HTTP-only cookie
+      Plaintext env var signing the auth JWT that Flowise stores in an HTTP-only cookie
       (v3.0.1+ Passport auth). JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET and
       TOKEN_HASH_SECRET sit alongside it and are equivalent in value. Disclosure allows
       forging an authenticated session against the instance.
@@ -113,8 +113,8 @@ credentials:
     storage: plaintext
     secret_type: admin-credential
     description: >-
-      PLAINTEXT app-level auth credentials FLOWISE_USERNAME / FLOWISE_PASSWORD, in the
-      .env under packages/server. This is the DEPRECATED pre-v3.0.1 auth mechanism: it
+      Plaintext app-level auth credentials FLOWISE_USERNAME / FLOWISE_PASSWORD, in the
+      .env under packages/server. This is the deprecated pre-v3.0.1 auth mechanism: it
       is documented by the vendor and still present on the many older deployments in the
       wild, but no longer referenced anywhere in current main. Treat a hit here as an
       indicator the instance predates 3.0.1.
@@ -123,6 +123,7 @@ mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.Flowise
 atlas_techniques:
   - AML.T0053
   - AML.T0081
@@ -131,5 +132,11 @@ attack_techniques:
   - T1059
   - T1133
   - T1543
-references: []
+references:
+  - title: "FlowiseAI/Flowise"
+    url: https://github.com/FlowiseAI/Flowise
+    accessed: "2026-08-13"
+  - title: "Flowise getting started"
+    url: https://docs.flowiseai.com/getting-started
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

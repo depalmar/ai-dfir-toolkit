@@ -71,6 +71,7 @@ jobs:
           python scripts/export.py
           python scripts/export_forensicartifacts.py
           python scripts/export_kape.py
+          python scripts/export_velociraptor.py
       - name: Fail if feeds are stale
         run: |
           if ! git diff --quiet docs/api; then

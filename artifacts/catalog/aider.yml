@@ -80,7 +80,7 @@ artifacts:
         - macos
         - linux
       artifact_type: session-artifact
-      description: FULL CHAT TRANSCRIPT incl. source code - HIGH-VALUE FORENSIC ARTIFACT
+      description: Full chat transcript incl. Source code - high-value forensic artifact.
       forensic_value: high
       evidence_type:
         - user-activity
@@ -111,7 +111,7 @@ artifacts:
     - direction: ingress-(loopback)
       indicator: OAuth PKCE callback listener
       port: 8484-8584/TCP
-      description: TRANSIENT listener during OpenRouter auth
+      description: Transient listener during OpenRouter auth
       confidence: medium
   process:
     - name: aider / python
@@ -132,7 +132,7 @@ credentials:
       - linux
     storage: plaintext
     secret_type: oauth-token
-    description: OpenRouter OAuth (PKCE) tokens - PLAINTEXT
+    description: OpenRouter OAuth (PKCE) tokens - plaintext
     confidence: medium
   - location: "<home|gitroot|cwd>/.env"
     os:
@@ -141,13 +141,14 @@ credentials:
       - linux
     storage: plaintext
     secret_type: api-key
-    description: OPENAI_API_KEY / ANTHROPIC_API_KEY - PLAINTEXT
+    description: OPENAI_API_KEY / ANTHROPIC_API_KEY - plaintext
     confidence: high
 mcp: []
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Aider
+  velociraptor_artifact: Custom.AIAgents.Aider
 atlas_techniques:
   - AML.T0051
   - AML.T0053
@@ -156,5 +157,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1071.001
-references: []
+references:
+  - title: "Aider-AI/aider"
+    url: https://github.com/Aider-AI/aider
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

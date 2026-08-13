@@ -5,6 +5,9 @@
 
 id: AIRT-0001
 name: Claude Code
+aliases:
+  - claude-code
+  - claude
 vendor: Anthropic
 category: coding-agent-cli
 description: Terminal-native agentic coding assistant. Reads/writes files, runs shell commands, invokes MCP servers.
@@ -112,7 +115,7 @@ artifacts:
         - macos
         - linux
       artifact_type: project-artifact
-      description: Project-scoped MCP servers - EXECUTION PRIMITIVE, review on clone
+      description: Project-scoped MCP servers - execution primitive, review on clone
       forensic_value: high
       evidence_type:
         - user-activity
@@ -143,7 +146,7 @@ artifacts:
     - key: "HKCU\\Environment"
       value: OPENAI_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, OPENAI_BASE_URL, GOOGLE_API_KEY, HF_TOKEN
       type: REG_SZ
-      description: "PERSISTENT USER-LEVEL SECRETS. A modified *_BASE_URL silently redirects ALL inference to an attacker proxy"
+      description: "Persistent user-level secrets. A modified *_BASE_URL silently redirects all inference to an attacker proxy."
       persistence: false
       forensic_value: medium
       confidence: high
@@ -189,7 +192,7 @@ credentials:
     storage: os-keyring
     secret_type: oauth-token
     description: >-
-      NOT A FILE on macOS. The /login OAuth credential lives in the encrypted login
+      Not A file on macOS. The /login OAuth credential lives in the encrypted login
       Keychain, so it needs keychain acquisition rather than file collection. The
       generic-password item is widely reported as 'Claude Code-credentials'.
     confidence: high
@@ -198,7 +201,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT OAuth credential file. Mode 0600 on Linux; on Windows the path is
+      Plaintext OAuth credential file. Mode 0600 on Linux; on Windows the path is
       %USERPROFILE%\.claude\.credentials.json and it inherits user-profile ACLs.
       Vendor-documented for Linux and Windows only, not macOS.
     confidence: high
@@ -207,7 +210,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT. When CLAUDE_CONFIG_DIR is set, .credentials.json lives under that
+      plaintext. When CLAUDE_CONFIG_DIR is set, .credentials.json lives under that
       directory instead of ~/.claude. Check the variable before concluding no credential
       file exists.
     confidence: high
@@ -216,7 +219,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT Anthropic API key read from the process environment; sent as the
+      Plaintext Anthropic API key read from the process environment; sent as the
       X-Api-Key header. Ranks above the /login credential once approved, so it can
       silently replace the interactive identity.
     confidence: high
@@ -225,7 +228,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT bearer token read from the process environment; sent as the
+      Plaintext bearer token read from the process environment; sent as the
       Authorization: Bearer header when routing through an LLM gateway or proxy.
       Outranks apiKeyHelper and the /login credential.
     confidence: high
@@ -234,7 +237,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT long-lived (one year) OAuth token minted by 'claude setup-token'.
+      Plaintext long-lived (one year) OAuth token minted by 'claude setup-token'.
       Intended for CI and scripts, so expect it in pipeline secrets, shell profiles and
       container env rather than on the user's disk.
     confidence: high
@@ -243,18 +246,18 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT third-party secrets embedded in local- and user-scoped MCP server
+      Plaintext third-party secrets embedded in local- and user-scoped MCP server
       definitions: mcpServers.<name>.env values and mcpServers.<name>.headers (for
       example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header
-      flags write the value straight into this file.
+      flags write the value straight into this file
     confidence: high
   - location: '<project>/.mcp.json'
     os: [windows, macos, linux]
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT third-party secrets in project-scoped MCP server definitions (env and
-      headers blocks). TRAVELS WITH THE REPO and is commonly committed, so treat any
+      Plaintext third-party secrets in project-scoped MCP server definitions (env and
+      headers blocks). Travels with the repo and is commonly committed, so treat any
       literal value here as an exposed credential; ${VAR} expansion is optional, not
       enforced.
     confidence: high
@@ -275,7 +278,7 @@ credentials:
     secret_type: oauth-token
     description: >-
       OAuth client secrets and tokens for remote (HTTP/SSE) MCP servers are held in the
-      system keychain, NOT in ~/.claude.json or .mcp.json - so an MCP config with no
+      system keychain, not in ~/.claude.json or .mcp.json - so an MCP config with no
       visible secret does not mean no credential exists. Vendor names the keychain but
       not the item; on Linux/Windows it says only 'a credentials file'.
     confidence: high
@@ -293,18 +296,19 @@ mcp:
     secrets_location: env block
     persistence_trigger: Every CLI invocation in repo
     triage_priority: p1
-    notes: TRAVELS WITH THE REPO - review on every clone/PR
+    notes: Travels with the repo - review on every clone/PR
   - config_path: "<repo>/.claude/settings.local.json"
     config_key: enabledMcpjsonServers
     spawn_mechanism: Approval gate for .mcp.json
     secrets_location: "-"
     persistence_trigger: "-"
     triage_priority: p2
-    notes: Records which project servers the user approved - CONSENT EVIDENCE
+    notes: Records which project servers the user approved - consent evidence
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: ClaudeCode
+  velociraptor_artifact: Custom.AIAgents.ClaudeCode
 atlas_techniques:
   - AML.T0051
   - AML.T0053
@@ -313,5 +317,11 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1071.001
-references: []
+references:
+  - title: "Claude Code documentation"
+    url: https://code.claude.com/docs/en/overview
+    accessed: "2026-08-13"
+  - title: "anthropics/claude-code"
+    url: https://github.com/anthropics/claude-code
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

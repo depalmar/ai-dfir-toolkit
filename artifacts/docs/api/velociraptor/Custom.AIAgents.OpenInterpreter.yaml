@@ -1,0 +1,44 @@
+name: Custom.AIAgents.OpenInterpreter
+description: |
+  Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).
+
+  Generated from the AI agent artifact catalog (AIRT-0015). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.config\Open Interpreter\**', 'C:\Users\*\AppData\Roaming\Open Interpreter\**', 'C:\Users\*\.openinterpreter\auth.json', 'C:\Users\*\.openinterpreter\.credentials.json', 'C:\Users\*\.openinterpreter\secrets\codex_auth.age', 'C:\Users\*\.openinterpreter\secrets\mcp_oauth.age', 'C:\Users\*\.openinterpreter\secrets\local.age', 'C:\Users\*\AppData\Local\open-interpreter\open-interpreter\profiles\default.yaml']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.config/Open Interpreter/**', '/Users/*/.openinterpreter/auth.json', '/Users/*/.openinterpreter/.credentials.json', '/Users/*/.openinterpreter/secrets/codex_auth.age', '/Users/*/.openinterpreter/secrets/mcp_oauth.age', '/Users/*/.openinterpreter/secrets/local.age', '/Users/*/.config/open-interpreter/profiles/default.yaml', '/Users/*/Library/Application Support/open-interpreter/profiles/default.yaml']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.config/Open Interpreter/**', '/home/*/.openinterpreter/auth.json', '/home/*/.openinterpreter/.credentials.json', '/home/*/.openinterpreter/secrets/codex_auth.age', '/home/*/.openinterpreter/secrets/mcp_oauth.age', '/home/*/.openinterpreter/secrets/local.age', '/home/*/.config/open-interpreter/profiles/default.yaml', '/home/*/Library/Application Support/open-interpreter/profiles/default.yaml']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

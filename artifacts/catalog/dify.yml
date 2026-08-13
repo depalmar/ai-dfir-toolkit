@@ -36,7 +36,7 @@ credentials:
     storage: plaintext
     secret_type: encryption-key
     description: >-
-      PLAINTEXT, unencrypted PEM RSA private key, one per tenant. Dify encrypts every
+      Plaintext, unencrypted PEM RSA private key, one per tenant. Dify encrypts every
       stored model-provider credential with the tenant public key (RSA + AES-256 EAX
       hybrid); this file decrypts all of them. Written via the storage abstraction, so
       the container path is /app/api/storage/privkeys/<tenant_id>/private.pem.
@@ -48,9 +48,9 @@ credentials:
     storage: plaintext
     secret_type: jwt-signing-key
     description: >-
-      PLAINTEXT auto-generated SECRET_KEY, persisted here when the SECRET_KEY env var is
+      Plaintext auto-generated SECRET_KEY, persisted here when the SECRET_KEY env var is
       left empty. Signs session cookies / console auth tokens. Presence of this file
-      means the operator did NOT set SECRET_KEY explicitly. Container path
+      means the operator did not set SECRET_KEY explicitly. Container path
       /app/api/storage/.dify_secret_key.
     confidence: high
   - location: '<install>/docker/.env'
@@ -58,7 +58,7 @@ credentials:
     storage: plaintext
     secret_type: embedded-credentials
     description: >-
-      PLAINTEXT compose env file beside docker-compose.yaml, read by every service.
+      Plaintext compose env file beside docker-compose.yaml, read by every service.
       Holds SECRET_KEY, INIT_PASSWORD, DB_PASSWORD, REDIS_PASSWORD, PLUGIN_DAEMON_KEY,
       PLUGIN_DIFY_INNER_API_KEY, CODE_EXECUTION_API_KEY / SANDBOX_API_KEY,
       DIFY_AGENT_API_TOKEN, DIFY_AGENT_SERVER_SECRET_KEY, plus any vector-DB and
@@ -81,7 +81,7 @@ credentials:
     storage: plaintext
     secret_type: admin-credential
     description: >-
-      PLAINTEXT env var. Vendor description: "Password required before initializing a
+      Plaintext env var. Vendor description: "Password required before initializing a
       self-hosted deployment" - it gates the first-run setup page that creates the
       initial admin account. It is the install gate, not the admin account password
       itself. A non-empty value here on a reachable instance is worth recording.
@@ -109,5 +109,11 @@ attack_techniques:
   - T1059
   - T1133
   - T1543
-references: []
+references:
+  - title: "langgenius/dify"
+    url: https://github.com/langgenius/dify
+    accessed: "2026-08-13"
+  - title: "langgenius/dify-docs"
+    url: https://github.com/langgenius/dify-docs
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

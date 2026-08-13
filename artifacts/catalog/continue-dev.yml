@@ -5,6 +5,9 @@
 
 id: AIRT-0005
 name: Continue.dev
+aliases:
+  - continue-dev
+  - continue
 vendor: Continue (OSS)
 category: coding-agent-ide
 description: VS Code / JetBrains extension with agent mode, custom models, and MCP support.
@@ -20,7 +23,7 @@ capabilities:
   mcp_capable: true
 risk: high
 confidence: high
-abuse_potential: config.yaml can point at ANY base_url including attacker-controlled inference proxies. Rules files = injection surface.
+abuse_potential: config.yaml can point at any base_url including attacker-controlled inference proxies. Rules files = injection surface.
 artifacts:
   disk:
     - path: ~/.continue/config.yaml
@@ -53,7 +56,7 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: Advanced - EXECUTES TYPESCRIPT
+      description: Advanced - executes TypeScript
       forensic_value: high
       evidence_type:
         - configuration
@@ -88,7 +91,7 @@ artifacts:
     - direction: egress
       indicator: Configured provider base_url (arbitrary)
       port: 443/TCP
-      description: config.yaml can name ANY endpoint - inspect base_url values
+      description: config.yaml can name any endpoint - inspect base_url values
       confidence: high
   process:
     - name: node (extension host)
@@ -108,7 +111,7 @@ credentials:
     secret_type: api-key
     description: >-
       Primary assistant config. Each model block takes an 'apiKey' field that accepts a
-      PLAINTEXT provider key written straight into the file; the vendor's own reference
+      plaintext provider key written straight into the file; the vendor's own reference
       documents and demonstrates this. Continue chmods the file to 0600 on POSIX when it
       creates it. This exact path is already in this repo's shipped credential-access
       Sigma rule.
@@ -118,7 +121,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Deprecated JSON config, still loaded when present. Carries the same PLAINTEXT
+      Deprecated JSON config, still loaded when present. Carries the same plaintext
       apiKey field per model. Collect alongside config.yaml - a host upgraded from an
       older Continue often still has this file with live keys in it.
     confidence: high
@@ -127,9 +130,9 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Global dotenv that Continue resolves ${{ secrets.X }} references from. PLAINTEXT
+      Global dotenv that Continue resolves ${{ secrets.X }} references from. Plaintext
       provider keys in standard dotenv format. Vendor documents this as the recommended
-      alternative to inlining keys, so on a well-configured host the keys are HERE and
+      alternative to inlining keys, so on a well-configured host the keys are here and
       not in config.yaml.
     confidence: high
   - location: '<repo>/.continue/.env'
@@ -137,7 +140,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      Workspace-scoped dotenv, searched BEFORE the global one. PLAINTEXT provider keys
+      Workspace-scoped dotenv, searched before the global one. Plaintext provider keys
       that travel with the repo if not gitignored. The vendor's resolution order also
       searches <repo>/.env first of all, so check both.
     confidence: high
@@ -146,9 +149,9 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      Continue CLI ('cn') Hub session: PLAINTEXT JSON with accessToken, refreshToken,
+      Continue CLI ('cn') Hub session: plaintext JSON with accessToken, refreshToken,
       expiresAt, userId and userEmail, written with a plain writeFileSync and no chmod.
-      VERSION-DEPENDENT - Hub/WorkOS login was stripped from the CLI in 2026 and the
+      Version-dependent - Hub/WorkOS login was stripped from the CLI in 2026 and the
       path constant is now an unused stub, so expect this only on hosts that ran an
       earlier CLI build. Still worth collecting: the file is not cleaned up on upgrade.
     confidence: medium
@@ -158,7 +161,7 @@ credentials:
     secret_type: api-key
     description: >-
       Vendor-documented environment variable for headless/CI use of the Continue CLI.
-      PLAINTEXT Continue API key. Look in the process environment, shell rc files,
+      Plaintext Continue API key. Look in the process environment, shell rc files,
       container env, and CI job definitions - not on disk under ~/.continue.
     confidence: high
   - location: '<VS Code User dir>/globalStorage/continue.continue/*.bin'
@@ -167,7 +170,7 @@ credentials:
     secret_type: unknown
     description: >-
       Continue's VS Code SecretStorage shim. Each secret is written to its own <key>.bin
-      file as an AES-256-GCM blob laid out salt|iv|tag|ciphertext - NOT plaintext, and
+      file as an AES-256-GCM blob laid out salt|iv|tag|ciphertext - not plaintext, and
       not readable without the key below. Concrete roots: ~/Library/Application
       Support/Code/User/globalStorage/continue.continue (macOS),
       ~/.config/Code/User/globalStorage/continue.continue (Linux),
@@ -178,7 +181,7 @@ credentials:
     storage: os-keyring
     secret_type: encryption-key
     description: >-
-      The AES-256-GCM key that decrypts the .bin files above is NOT stored with them -
+      The AES-256-GCM key that decrypts the .bin files above is not stored with them -
       Continue keeps it in the editor's SecretStorage under this key name, which on
       desktop VS Code resolves through Electron safeStorage to the OS keyring. Without
       it the .bin files are opaque, so acquiring the globalStorage folder alone is not
@@ -189,6 +192,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Continuedev
+  velociraptor_artifact: Custom.AIAgents.Continuedev
 atlas_techniques:
   - AML.T0051
   - AML.T0053
@@ -198,5 +202,11 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1195.002
-references: []
+references:
+  - title: "Continue documentation"
+    url: https://docs.continue.dev
+    accessed: "2026-08-13"
+  - title: "continuedev/continue"
+    url: https://github.com/continuedev/continue
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

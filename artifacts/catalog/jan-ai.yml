@@ -5,6 +5,8 @@
 
 id: AIRT-0019
 name: Jan.ai
+aliases:
+  - jan-ai
 vendor: Menlo Research (OSS)
 category: llm-runtime
 description: Open-source ChatGPT alternative running fully offline; ships a headless daemon mode.
@@ -50,7 +52,7 @@ artifacts:
       os:
         - linux
       artifact_type: config-file
-      description: SYSTEM-LEVEL config - persistence/tamper target
+      description: System-level config - persistence/tamper target
       forensic_value: low
       evidence_type:
         - program-presence
@@ -80,6 +82,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Janai
+  velociraptor_artifact: Custom.AIAgents.Janai
 atlas_techniques:
   - AML.T0024
   - AML.T0029
@@ -89,5 +92,8 @@ attack_techniques:
   - T1133
   - T1105
   - T1590
-references: []
+references:
+  - title: "janhq/jan"
+    url: https://github.com/janhq/jan
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -3,8 +3,9 @@
     "id": "AIRT-0013",
     "name": "AgentGPT",
     "vendor": "Reworkd (OSS)",
+    "status": "unmaintained",
     "category": "agent-framework",
-    "description": "Browser-based autonomous agent, self-hostable via Docker.",
+    "description": "Browser-based autonomous agent, self-hostable via Docker. Repository archived 2026-01-28; the hosted site still loads but receives no updates or security patches.",
     "supported_os": [
       "windows",
       "macos",
@@ -32,7 +33,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CANONICAL env file, PLAINTEXT (confirms the VERIFICATION.md correction). docker-compose bind-mounts it into the frontend container and passes it to the backend as env_file. Contents: REWORKD_PLATFORM_OPENAI_API_KEY, REWORKD_PLATFORM_SERP_API_KEY, REWORKD_PLATFORM_REPLICATE_API_KEY, GOOGLE/GITHUB/DISCORD_CLIENT_SECRET, NEXTAUTH_SECRET, and the MySQL user, password and DATABASE_URL.",
+        "description": "Canonical env file, plaintext (confirms the VERIFICATION.md correction). Docker-compose bind-mounts it into the frontend container and passes it to the backend as env_file. Contents: REWORKD_PLATFORM_OPENAI_API_KEY, REWORKD_PLATFORM_SERP_API_KEY, REWORKD_PLATFORM_REPLICATE_API_KEY, GOOGLE/GITHUB/DISCORD_CLIENT_SECRET, NEXTAUTH_SECRET, and the MySQL user, password and DATABASE_URL.",
         "confidence": "high"
       },
       {
@@ -45,7 +46,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "SECOND FULL COPY of the same plaintext secrets. The setup CLI writes byte-identical content to next/.env and platform/.env, and the FastAPI backend's pydantic Settings independently reads env_file \".env\" from its own directory (env_prefix REWORKD_PLATFORM_). A collection step that takes only next/.env leaves a complete duplicate of every key on disk.",
+        "description": "Second full copy of the same plaintext secrets. The setup CLI writes byte-identical content to next/.env and platform/.env, and the FastAPI backend's pydantic Settings independently reads env_file \".env\" from its own directory (env_prefix REWORKD_PLATFORM_). A collection step that takes only next/.env leaves a complete duplicate of every key on disk.",
         "confidence": "high"
       },
       {
@@ -83,7 +84,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CLIENT-SIDE, not on the server. The user's own OpenAI key entered in the Settings dialog (ModelSettings.customApiKey) is persisted by a zustand persist store into browser localStorage, and the store's partialize spreads the whole modelSettings object so the key is included. It therefore lives unencrypted in the browser profile's Local Storage LevelDB, not in any AgentGPT file. Collect the browser profile of the user who ran the agent, not just the host running the containers.",
+        "description": "Client-side, not on the server. The user's own OpenAI key entered in the Settings dialog (ModelSettings.customApiKey) is persisted by a zustand persist store into browser localStorage, and the store's partialize spreads the whole modelSettings object so the key is included. It therefore lives unencrypted in the browser profile's Local Storage LevelDB, not in any AgentGPT file. Collect the browser profile of the user who ran the agent, not just the host running the containers.",
         "confidence": "high"
       },
       {
@@ -93,7 +94,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "NextAuth Account table stores third-party provider refresh_token, access_token and id_token in UNENCRYPTED TEXT columns for every user who signed in with Google, GitHub or Discord. mysql:8.0 container named agentgpt_db, named docker volume agentgpt_db, MYSQL_TCP_PORT 3307 published on host 3308.",
+        "description": "NextAuth Account table stores third-party provider refresh_token, access_token and id_token in unencrypted text columns for every user who signed in with Google, GitHub or Discord. Mysql:8.0 container named agentgpt_db, named docker volume agentgpt_db, MYSQL_TCP_PORT 3307 published on host 3308.",
         "confidence": "high"
       },
       {
@@ -123,7 +124,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "reworkd/AgentGPT",
+        "url": "https://github.com/reworkd/AgentGPT",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -224,7 +231,7 @@
             "linux"
           ],
           "artifact_type": "session-artifact",
-          "description": "FULL CHAT TRANSCRIPT incl. source code - HIGH-VALUE FORENSIC ARTIFACT",
+          "description": "Full chat transcript incl. Source code - high-value forensic artifact.",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
@@ -265,7 +272,7 @@
           "direction": "ingress-(loopback)",
           "indicator": "OAuth PKCE callback listener",
           "port": "8484-8584/TCP",
-          "description": "TRANSIENT listener during OpenRouter auth",
+          "description": "Transient listener during OpenRouter auth",
           "confidence": "medium"
         }
       ],
@@ -295,7 +302,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "OpenRouter OAuth (PKCE) tokens - PLAINTEXT",
+        "description": "OpenRouter OAuth (PKCE) tokens - plaintext",
         "confidence": "medium"
       },
       {
@@ -307,7 +314,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "OPENAI_API_KEY / ANTHROPIC_API_KEY - PLAINTEXT",
+        "description": "OPENAI_API_KEY / ANTHROPIC_API_KEY - plaintext",
         "confidence": "high"
       }
     ],
@@ -315,7 +322,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Aider"
+      "kape_target": "Aider",
+      "velociraptor_artifact": "Custom.AIAgents.Aider"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -327,12 +335,24 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Aider-AI/aider",
+        "url": "https://github.com/Aider-AI/aider",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0008",
     "name": "Amazon Q Developer (ex-CodeWhisperer)",
+    "aliases": [
+      "CodeWhisperer",
+      "Amazon Q Developer",
+      "amazon-q-developer",
+      "amazonq"
+    ],
     "vendor": "AWS",
     "category": "coding-agent-ide",
     "description": "AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.",
@@ -445,7 +465,8 @@
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "AmazonQDeveloper"
+      "kape_target": "AmazonQDeveloper",
+      "velociraptor_artifact": "Custom.AIAgents.AmazonQDeveloper"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -465,8 +486,9 @@
     "id": "AIRT-0027",
     "name": "AutoGen",
     "vendor": "Microsoft (OSS)",
+    "status": "legacy",
     "category": "agent-framework",
-    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor.",
+    "description": "Multi-agent conversation framework with LocalCommandLineCodeExecutor and DockerCommandLineCodeExecutor. In maintenance mode as of 2026 - community managed, no new features, superseded by Microsoft Agent Framework.",
     "supported_os": [
       "windows",
       "macos",
@@ -492,7 +514,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "PLAINTEXT api_key values",
+          "description": "Plaintext api_key values",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -508,7 +530,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "AGENT-GENERATED CODE executed on host",
+          "description": "Agent-generated code executed on host",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -543,7 +565,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT JSON list of model configs, each carrying an `api_key` field. Vendor docs state AutoGen looks for the keys in the OAI_CONFIG_LIST file in the current working directory, or in the OAI_CONFIG_LIST environment variable - so the variable may hold the JSON itself, not just a path. Collect the process environment as well as the CWD.",
+        "description": "Plaintext JSON list of model configs, each carrying an `api_key` field. Vendor docs state AutoGen looks for the keys in the OAI_CONFIG_LIST file in the current working directory, or in the OAI_CONFIG_LIST environment variable - so the variable may hold the JSON itself, not just a path. Collect the process environment as well as the CWD.",
         "confidence": "high"
       },
       {
@@ -555,7 +577,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT provider keys in the process environment. autogen-ext's OpenAI client documents api_key as \"Required if 'OPENAI_API_KEY' is not found in the environment variables\"; the Studio gallery builder enumerates all three names. This is the fallback path when no OAI_CONFIG_LIST is present.",
+        "description": "Plaintext provider keys in the process environment. Autogen-ext's OpenAI client documents api_key as \"Required if 'OPENAI_API_KEY' is not found in the environment variables\"; the Studio gallery builder enumerates all three names. This is the fallback path when no OAI_CONFIG_LIST is present.",
         "confidence": "high"
       },
       {
@@ -580,14 +602,15 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT env file in the AutoGen Studio appdir. web/initialization.py calls load_dotenv() on it at startup, and the vendor README states .env files in that directory are used to set environment variables for the app. Follows --appdir / AUTOGENSTUDIO_APPDIR if relocated.",
+        "description": "Plaintext env file in the AutoGen Studio appdir. Web/initialization.py calls load_dotenv() on it at startup, and the vendor README states .env files in that directory are used to set environment variables for the app. Follows --appdir / AUTOGENSTUDIO_APPDIR if relocated.",
         "confidence": "high"
       }
     ],
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.AutoGen"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -597,7 +620,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "microsoft/autogen",
+        "url": "https://github.com/microsoft/autogen",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -631,7 +660,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "AGENT-GENERATED FILES - triage as unknown-origin content",
+          "description": "Agent-generated files - triage as unknown-origin content",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -668,7 +697,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Significant-Gravitas/AutoGPT",
+        "url": "https://github.com/Significant-Gravitas/AutoGPT",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -728,7 +763,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT JSON holding `api_token` (an OAuth2 device-authorization-grant access token for Browser Use Cloud), `user_id` and `authorized_at`. Written via json.dump by the cloud sync auth flow, which then attempts chmod 0600. Check existence and mode; do not read contents.",
+        "description": "Plaintext JSON holding `api_token` (an OAuth2 device-authorization-grant access token for Browser Use Cloud), `user_id` and `authorized_at`. Written via json.dump by the cloud sync auth flow, which then attempts chmod 0600. Check existence and mode; do not read contents.",
         "confidence": "high"
       },
       {
@@ -740,7 +775,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT LLM provider keys. The DB-style config holds LLMEntry records carrying an `api_key` field. Resolved as $XDG_CONFIG_HOME/browseruse/config.json, defaulting to ~/.config on every platform including Windows; BROWSER_USE_CONFIG_DIR overrides the directory.",
+        "description": "Plaintext LLM provider keys. The DB-style config holds LLMEntry records carrying an `api_key` field. Resolved as $XDG_CONFIG_HOME/browseruse/config.json, defaulting to ~/.config on every platform including Windows; BROWSER_USE_CONFIG_DIR overrides the directory.",
         "confidence": "high"
       },
       {
@@ -764,7 +799,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "Optional Gmail integration (used to retrieve 2FA codes). gmail_credentials.json is the Google OAuth client secret; gmail_token.json is the resulting access/refresh token. Default filenames inside the browser-use config dir; present only when that integration is configured. Their presence indicates the agent could read the user's mail.",
+        "description": "Optional Gmail integration (used to retrieve 2FA codes). Gmail_credentials.json is the Google OAuth client secret; gmail_token.json is the resulting access/refresh token. Default filenames inside the browser-use config dir; present only when that integration is configured. Their presence indicates the agent could read the user's mail.",
         "confidence": "high"
       },
       {
@@ -776,7 +811,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT Browser Use Cloud API key in the process environment, sent as the X-Browser-Use-API-Key header. Documented in the vendor README and used by the cloud SDK when no argument is passed.",
+        "description": "Plaintext Browser Use Cloud API key in the process environment, sent as the X-Browser-Use-API-Key header. Documented in the vendor README and used by the cloud SDK when no argument is passed.",
         "confidence": "high"
       },
       {
@@ -788,7 +823,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT keys. The vendor README shows BROWSER_USE_API_KEY and provider keys written to a project .env, and the shipped examples load it with dotenv.",
+        "description": "Plaintext keys. The vendor README shows BROWSER_USE_API_KEY and provider keys written to a project .env, and the shipped examples load it with dotenv.",
         "confidence": "high"
       },
       {
@@ -800,14 +835,15 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT provider keys read from the process environment by browser_use/config.py. Note the Azure variable is AZURE_OPENAI_KEY here (paired with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.",
+        "description": "Plaintext provider keys read from the process environment by browser_use/config.py. Note the Azure variable is AZURE_OPENAI_KEY here (paired with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.",
         "confidence": "high"
       }
     ],
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.BrowserUse"
     },
     "atlas_techniques": [
       "AML.T0086",
@@ -818,12 +854,22 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "browser-use/browser-use",
+        "url": "https://github.com/browser-use/browser-use",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0001",
     "name": "Claude Code",
+    "aliases": [
+      "claude-code",
+      "claude"
+    ],
     "vendor": "Anthropic",
     "category": "coding-agent-cli",
     "description": "Terminal-native agentic coding assistant. Reads/writes files, runs shell commands, invokes MCP servers.",
@@ -963,7 +1009,7 @@
             "linux"
           ],
           "artifact_type": "project-artifact",
-          "description": "Project-scoped MCP servers - EXECUTION PRIMITIVE, review on clone",
+          "description": "Project-scoped MCP servers - execution primitive, review on clone",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
@@ -1004,7 +1050,7 @@
           "key": "HKCU\\Environment",
           "value": "OPENAI_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, OPENAI_BASE_URL, GOOGLE_API_KEY, HF_TOKEN",
           "type": "REG_SZ",
-          "description": "PERSISTENT USER-LEVEL SECRETS. A modified *_BASE_URL silently redirects ALL inference to an attacker proxy",
+          "description": "Persistent user-level secrets. A modified *_BASE_URL silently redirects all inference to an attacker proxy.",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -1069,7 +1115,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "oauth-token",
-        "description": "NOT A FILE on macOS. The /login OAuth credential lives in the encrypted login Keychain, so it needs keychain acquisition rather than file collection. The generic-password item is widely reported as 'Claude Code-credentials'.",
+        "description": "Not A file on macOS. The /login OAuth credential lives in the encrypted login Keychain, so it needs keychain acquisition rather than file collection. The generic-password item is widely reported as 'Claude Code-credentials'.",
         "confidence": "high"
       },
       {
@@ -1080,7 +1126,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT OAuth credential file. Mode 0600 on Linux; on Windows the path is %USERPROFILE%\\.claude\\.credentials.json and it inherits user-profile ACLs. Vendor-documented for Linux and Windows only, not macOS.",
+        "description": "Plaintext OAuth credential file. Mode 0600 on Linux; on Windows the path is %USERPROFILE%\\.claude\\.credentials.json and it inherits user-profile ACLs. Vendor-documented for Linux and Windows only, not macOS.",
         "confidence": "high"
       },
       {
@@ -1091,7 +1137,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT. When CLAUDE_CONFIG_DIR is set, .credentials.json lives under that directory instead of ~/.claude. Check the variable before concluding no credential file exists.",
+        "description": "plaintext. When CLAUDE_CONFIG_DIR is set, .credentials.json lives under that directory instead of ~/.claude. Check the variable before concluding no credential file exists.",
         "confidence": "high"
       },
       {
@@ -1106,7 +1152,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT Anthropic API key read from the process environment; sent as the X-Api-Key header. Ranks above the /login credential once approved, so it can silently replace the interactive identity.",
+        "description": "Plaintext Anthropic API key read from the process environment; sent as the X-Api-Key header. Ranks above the /login credential once approved, so it can silently replace the interactive identity.",
         "confidence": "high"
       },
       {
@@ -1121,7 +1167,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT bearer token read from the process environment; sent as the Authorization: Bearer header when routing through an LLM gateway or proxy. Outranks apiKeyHelper and the /login credential.",
+        "description": "Plaintext bearer token read from the process environment; sent as the Authorization: Bearer header when routing through an LLM gateway or proxy. Outranks apiKeyHelper and the /login credential.",
         "confidence": "high"
       },
       {
@@ -1136,7 +1182,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT long-lived (one year) OAuth token minted by 'claude setup-token'. Intended for CI and scripts, so expect it in pipeline secrets, shell profiles and container env rather than on the user's disk.",
+        "description": "Plaintext long-lived (one year) OAuth token minted by 'claude setup-token'. Intended for CI and scripts, so expect it in pipeline secrets, shell profiles and container env rather than on the user's disk.",
         "confidence": "high"
       },
       {
@@ -1148,7 +1194,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT third-party secrets embedded in local- and user-scoped MCP server definitions: mcpServers.<name>.env values and mcpServers.<name>.headers (for example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header flags write the value straight into this file.",
+        "description": "Plaintext third-party secrets embedded in local- and user-scoped MCP server definitions: mcpServers.<name>.env values and mcpServers.<name>.headers (for example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header flags write the value straight into this file",
         "confidence": "high"
       },
       {
@@ -1160,7 +1206,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT third-party secrets in project-scoped MCP server definitions (env and headers blocks). TRAVELS WITH THE REPO and is commonly committed, so treat any literal value here as an exposed credential; ${VAR} expansion is optional, not enforced.",
+        "description": "Plaintext third-party secrets in project-scoped MCP server definitions (env and headers blocks). Travels with the repo and is commonly committed, so treat any literal value here as an exposed credential; ${VAR} expansion is optional, not enforced.",
         "confidence": "high"
       },
       {
@@ -1181,7 +1227,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "oauth-token",
-        "description": "OAuth client secrets and tokens for remote (HTTP/SSE) MCP servers are held in the system keychain, NOT in ~/.claude.json or .mcp.json - so an MCP config with no visible secret does not mean no credential exists. Vendor names the keychain but not the item; on Linux/Windows it says only 'a credentials file'.",
+        "description": "OAuth client secrets and tokens for remote (HTTP/SSE) MCP servers are held in the system keychain, not in ~/.claude.json or .mcp.json - so an MCP config with no visible secret does not mean no credential exists. Vendor names the keychain but not the item; on Linux/Windows it says only 'a credentials file'.",
         "confidence": "high"
       }
     ],
@@ -1202,7 +1248,7 @@
         "secrets_location": "env block",
         "persistence_trigger": "Every CLI invocation in repo",
         "triage_priority": "p1",
-        "notes": "TRAVELS WITH THE REPO - review on every clone/PR"
+        "notes": "Travels with the repo - review on every clone/PR"
       },
       {
         "config_path": "<repo>/.claude/settings.local.json",
@@ -1211,13 +1257,14 @@
         "secrets_location": "-",
         "persistence_trigger": "-",
         "triage_priority": "p2",
-        "notes": "Records which project servers the user approved - CONSENT EVIDENCE"
+        "notes": "Records which project servers the user approved - consent evidence"
       }
     ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "ClaudeCode"
+      "kape_target": "ClaudeCode",
+      "velociraptor_artifact": "Custom.AIAgents.ClaudeCode"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -1229,12 +1276,26 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Claude Code documentation",
+        "url": "https://code.claude.com/docs/en/overview",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "anthropics/claude-code",
+        "url": "https://github.com/anthropics/claude-code",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0033",
     "name": "Claude Computer Use",
+    "aliases": [
+      "claude-computer-use"
+    ],
     "vendor": "Anthropic",
     "category": "computer-use-agent",
     "description": "Vision-driven screenshot-to-coordinate GUI control loop. Reference implementation ships as a Docker container.",
@@ -1291,7 +1352,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT Anthropic API key persisted by the reference implementation's Streamlit UI, written with mode 0600. Lives at /home/computeruse/.anthropic/api_key inside the container, which the documented docker run bind-mounts from the HOST at $HOME/.anthropic - so the key SURVIVES container teardown on the host filesystem.",
+        "description": "Plaintext Anthropic API key persisted by the reference implementation's Streamlit UI, written with mode 0600. Lives at /home/computeruse/.anthropic/api_key inside the container, which the documented docker run bind-mounts from the host at $HOME/.anthropic - so the key survives container teardown on the host filesystem.",
         "confidence": "high"
       },
       {
@@ -1302,7 +1363,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT API key passed on the docker run command line (-e ANTHROPIC_API_KEY=...). Recoverable from container config metadata and from host shell history, independently of the container filesystem.",
+        "description": "Plaintext API key passed on the docker run command line (-e ANTHROPIC_API_KEY=...). Recoverable from container config metadata and from host shell history, independently of the container filesystem.",
         "confidence": "high"
       },
       {
@@ -1315,7 +1376,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "aws-sso-token",
-        "description": "The HOST AWS credential directory (credentials, config, sso/cache/) is bind-mounted into the container at /home/computeruse/.aws in the documented Bedrock profile setup. Anything running in the container inherits the user's full AWS identity, so scope the blast radius to every profile in that directory, not just the one named.",
+        "description": "The host AWS credential directory (credentials, config, sso/cache/) is bind-mounted into the container at /home/computeruse/.aws in the documented Bedrock profile setup. Anything running in the container inherits the user's full AWS identity, so scope the blast radius to every profile in that directory, not just the one named.",
         "confidence": "high"
       },
       {
@@ -1326,7 +1387,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT AWS access key ID, secret access key and STS session token passed on the docker run command line in the documented Bedrock access-key setup. Expect them in container config metadata and host shell history.",
+        "description": "Plaintext AWS access key ID, secret access key and STS session token passed on the docker run command line in the documented Bedrock access-key setup. Expect them in container config metadata and host shell history.",
         "confidence": "high"
       },
       {
@@ -1339,14 +1400,15 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT Google Application Default Credentials (refresh token / service-account material) bind-mounted file-for-file from the host into the container in the documented Vertex AI setup.",
+        "description": "Plaintext Google Application Default Credentials (refresh token / service-account material) bind-mounted file-for-file from the host into the container in the documented Vertex AI setup",
         "confidence": "high"
       }
     ],
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.ClaudeComputerUse"
     },
     "atlas_techniques": [
       "AML.T0086"
@@ -1362,6 +1424,11 @@
   {
     "id": "AIRT-0011",
     "name": "Claude Desktop (MCP host)",
+    "aliases": [
+      "Claude Desktop",
+      "claude-desktop",
+      "Claude"
+    ],
     "vendor": "Anthropic",
     "category": "mcp-host",
     "description": "Desktop chat client that launches arbitrary local MCP servers at app start per claude_desktop_config.json. Bundles a Node.js runtime.",
@@ -1379,7 +1446,7 @@
     },
     "risk": "critical",
     "confidence": "high",
-    "abuse_potential": "THE key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.",
+    "abuse_potential": "The key persistence+execution primitive. Any mcpServers entry silently spawns a child process with inherited env on every app launch.",
     "artifacts": {
       "disk": [
         {
@@ -1388,7 +1455,7 @@
             "macos"
           ],
           "artifact_type": "mcp-config",
-          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "description": "Primary execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1404,7 +1471,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "description": "Primary execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1420,7 +1487,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "VIRTUALIZED PATH - the app reads THIS one. Commonly missed by IR.",
+          "description": "Virtualized PATH - the app reads this one. Commonly missed by IR.",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1436,7 +1503,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "PRIMARY EXECUTION PRIMITIVE",
+          "description": "Primary execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1454,7 +1521,7 @@
             "linux"
           ],
           "artifact_type": "extension-bundle",
-          "description": "ZIP archive containing server code + manifest - UNPACK AND REVIEW",
+          "description": "ZIP archive containing server code + manifest - unpack and review",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence"
@@ -1507,7 +1574,7 @@
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
           "value": "Claude",
           "type": "REG_SZ",
-          "description": "Auto-start - LAUNCHES ALL CONFIGURED MCP SERVERS ON LOGIN",
+          "description": "Auto-start - launches all configured MCP servers on login",
           "persistence": true,
           "forensic_value": "high",
           "confidence": "medium"
@@ -1536,14 +1603,14 @@
           "direction": "egress",
           "indicator": "api.anthropic.com, claude.ai",
           "port": "443/TCP",
-          "description": "Plus ANY egress initiated by child MCP servers",
+          "description": "Plus any egress initiated by child MCP servers",
           "confidence": "high"
         },
         {
           "direction": "egress-(indirect)",
           "indicator": "registry.npmjs.org (npx MCP server fetch)",
           "port": "443/TCP",
-          "description": "npx @scope/server@latest pulls and EXECUTES code at every launch - supply-chain risk",
+          "description": "npx @scope/server@latest pulls and executes code at every launch - supply-chain risk",
           "confidence": "high"
         }
       ],
@@ -1582,7 +1649,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT third-party API keys, PATs and tokens embedded in MCP server definitions, in a JSON file readable by any process running as the user. Same four per-OS paths already listed in artifacts.disk, including the MSIX virtualized %LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\... path. Treat every literal value as an exposed credential and rotate.",
+        "description": "Plaintext third-party API keys, PATs and tokens embedded in MCP server definitions, in a JSON file readable by any process running as the user. Same four per-OS paths already listed in artifacts.disk, including the MSIX virtualized %LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\... Path. Treat every literal value as an exposed credential and rotate.",
         "confidence": "high"
       },
       {
@@ -1594,7 +1661,7 @@
         ],
         "storage": "encrypted",
         "secret_type": "oauth-token",
-        "description": "OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are written into the application-data directory as ciphertext, encrypted using OS secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext IS on disk here, but is not usable without the key - see the keyring row. Vendor does not name the specific file.",
+        "description": "OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are written into the application-data directory as ciphertext, encrypted using OS secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here, but is not usable without the key - see the keyring row. Vendor does not name the specific file.",
         "confidence": "medium"
       }
     ],
@@ -1615,7 +1682,7 @@
         "secrets_location": "mcpServers.<name>.env",
         "persistence_trigger": "Every app start",
         "triage_priority": "p1",
-        "notes": "VIRTUALIZED - the app reads THIS. 'Edit Config' in the UI can open the WRONG file. Commonly missed in IR."
+        "notes": "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
       },
       {
         "config_path": "~/Library/Application Support/Claude/claude_desktop_config.json",
@@ -1642,13 +1709,14 @@
         "secrets_location": "manifest user_config",
         "persistence_trigger": "Every app start",
         "triage_priority": "p1",
-        "notes": "ZIP ARCHIVE - unpack and review server code before trusting"
+        "notes": "ZIP archive - unpack and review server code before trusting"
       }
     ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "ClaudeDesktop"
+      "kape_target": "ClaudeDesktop",
+      "velociraptor_artifact": "Custom.AIAgents.ClaudeDesktop"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -1661,12 +1729,26 @@
       "T1195.002",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Getting started with local MCP servers on Claude Desktop",
+        "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Connect to MCP servers",
+        "url": "https://code.claude.com/docs/en/mcp-quickstart",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0039",
     "name": "Cline",
+    "aliases": [
+      "Claude Dev"
+    ],
     "vendor": "Cline Bot Inc. (OSS)",
     "category": "coding-agent-ide",
     "description": "VS Code extension ID saoudrizwan.claude-dev (formerly Claude Dev). Agentic file edit + terminal execution.",
@@ -1693,7 +1775,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "EXECUTION PRIMITIVE",
+          "description": "Execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1743,7 +1825,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "SINGLE-SOURCE - corroborate",
+          "description": "Single-source - corroborate",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -1758,7 +1840,7 @@
           "direction": "listener",
           "indicator": "Standalone gRPC server",
           "port": "26040/TCP",
-          "description": "SINGLE-SOURCE - corroborate before detecting",
+          "description": "Single-source - corroborate before detecting",
           "confidence": "low",
           "unverified": true,
           "default_bind": "127.0.0.1",
@@ -1817,7 +1899,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Cline"
+      "kape_target": "Cline",
+      "velociraptor_artifact": "Custom.AIAgents.Cline"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -1830,12 +1913,23 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "cline/cline",
+        "url": "https://github.com/cline/cline",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0006",
     "name": "Codeium / Windsurf",
+    "aliases": [
+      "Codeium",
+      "Windsurf",
+      "codeium-windsurf"
+    ],
     "vendor": "Codeium (Exafunction)",
     "category": "coding-agent-ide",
     "description": "Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.",
@@ -1878,7 +1972,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "EXECUTION PRIMITIVE",
+          "description": "Execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1895,7 +1989,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "EXECUTION PRIMITIVE",
+          "description": "Execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1913,7 +2007,7 @@
             "linux"
           ],
           "artifact_type": "binary",
-          "description": "REMOTE BINARY DOWNLOAD - verify hash",
+          "description": "Remote binary download - verify hash",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -1988,7 +2082,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Codeium editor plugins persist the account API key here as PLAINTEXT JSON under the 'apiKey' field, written directly by the plugin after registration. Also the legacy and fallback location for the Windsurf editor's key. Honours $XDG_DATA_HOME, so it becomes $XDG_DATA_HOME/.codeium/config.json when that is set. This directory is already covered by this repo's shipped credential-access Sigma rule.",
+        "description": "Codeium editor plugins persist the account API key here as plaintext JSON under the 'apiKey' field, written directly by the plugin after registration. Also the legacy and fallback location for the Windsurf editor's key. Honours $XDG_DATA_HOME, so it becomes $XDG_DATA_HOME/.codeium/config.json when that is set. This directory is already covered by this repo's shipped credential-access Sigma rule.",
         "confidence": "high"
       },
       {
@@ -1998,7 +2092,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "api-key",
-        "description": "Windsurf editor (VS Code fork). The ItemTable row keyed 'windsurfAuthStatus' holds JSON containing the live Codeium/Windsurf apiKey UNENCRYPTED inside the SQLite DB. This is the current location for modern Windsurf builds; ~/.codeium/config.json is the older fallback.",
+        "description": "Windsurf editor (VS Code fork). The ItemTable row keyed 'windsurfAuthStatus' holds JSON containing the live Codeium/Windsurf apiKey unencrypted inside the SQLite DB. This is the current location for modern Windsurf builds; ~/.codeium/config.json is the older fallback.",
         "confidence": "medium"
       },
       {
@@ -2029,7 +2123,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Windsurf / Cascade MCP server definitions. The per-server env block routinely holds PLAINTEXT API keys and bearer tokens for stdio servers. Windsurf supports ${env:VAR} interpolation as an alternative, so absence of a literal key here means checking the process environment instead.",
+        "description": "Windsurf / Cascade MCP server definitions. The per-server env block routinely holds plaintext API keys and bearer tokens for stdio servers. Windsurf supports ${env:VAR} interpolation as an alternative, so absence of a literal key here means checking the process environment instead.",
         "confidence": "high"
       },
       {
@@ -2039,7 +2133,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Windows path for the same Windsurf/Cascade MCP config, same PLAINTEXT env block exposure.",
+        "description": "Windows path for the same Windsurf/Cascade MCP config, same plaintext env block exposure",
         "confidence": "high"
       },
       {
@@ -2050,7 +2144,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "The Neovim Codeium/Windsurf plugin keeps its own PLAINTEXT config.json with the account api_key, SEPARATE from ~/.codeium/. Defaults to ~/.cache/nvim/codeium/config.json. A responder who only collects ~/.codeium/ will miss a Neovim user's key entirely.",
+        "description": "The Neovim Codeium/Windsurf plugin keeps its own plaintext config.json with the account api_key, separate from ~/.codeium/. Defaults to ~/.cache/nvim/codeium/config.json. A responder who only collects ~/.codeium/ will miss a Neovim user's key entirely.",
         "confidence": "high"
       }
     ],
@@ -2058,7 +2152,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "CodeiumWindsurf"
+      "kape_target": "CodeiumWindsurf",
+      "velociraptor_artifact": "Custom.AIAgents.CodeiumWindsurf"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2071,12 +2166,22 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Windsurf Plugin (formerly Codeium) on the VS Code Marketplace",
+        "url": "https://marketplace.visualstudio.com/items?itemName=Codeium.codeium",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0005",
     "name": "Continue.dev",
+    "aliases": [
+      "continue-dev",
+      "continue"
+    ],
     "vendor": "Continue (OSS)",
     "category": "coding-agent-ide",
     "description": "VS Code / JetBrains extension with agent mode, custom models, and MCP support.",
@@ -2094,7 +2199,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "config.yaml can point at ANY base_url including attacker-controlled inference proxies. Rules files = injection surface.",
+    "abuse_potential": "config.yaml can point at any base_url including attacker-controlled inference proxies. Rules files = injection surface.",
     "artifacts": {
       "disk": [
         {
@@ -2137,7 +2242,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Advanced - EXECUTES TYPESCRIPT",
+          "description": "Advanced - executes TypeScript",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -2184,7 +2289,7 @@
           "direction": "egress",
           "indicator": "Configured provider base_url (arbitrary)",
           "port": "443/TCP",
-          "description": "config.yaml can name ANY endpoint - inspect base_url values",
+          "description": "config.yaml can name any endpoint - inspect base_url values",
           "confidence": "high"
         }
       ],
@@ -2214,7 +2319,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Primary assistant config. Each model block takes an 'apiKey' field that accepts a PLAINTEXT provider key written straight into the file; the vendor's own reference documents and demonstrates this. Continue chmods the file to 0600 on POSIX when it creates it. This exact path is already in this repo's shipped credential-access Sigma rule.",
+        "description": "Primary assistant config. Each model block takes an 'apiKey' field that accepts a plaintext provider key written straight into the file; the vendor's own reference documents and demonstrates this. Continue chmods the file to 0600 on POSIX when it creates it. This exact path is already in this repo's shipped credential-access Sigma rule.",
         "confidence": "high"
       },
       {
@@ -2226,7 +2331,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Deprecated JSON config, still loaded when present. Carries the same PLAINTEXT apiKey field per model. Collect alongside config.yaml - a host upgraded from an older Continue often still has this file with live keys in it.",
+        "description": "Deprecated JSON config, still loaded when present. Carries the same plaintext apiKey field per model. Collect alongside config.yaml - a host upgraded from an older Continue often still has this file with live keys in it.",
         "confidence": "high"
       },
       {
@@ -2238,7 +2343,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Global dotenv that Continue resolves ${{ secrets.X }} references from. PLAINTEXT provider keys in standard dotenv format. Vendor documents this as the recommended alternative to inlining keys, so on a well-configured host the keys are HERE and not in config.yaml.",
+        "description": "Global dotenv that Continue resolves ${{ secrets.X }} references from. Plaintext provider keys in standard dotenv format. Vendor documents this as the recommended alternative to inlining keys, so on a well-configured host the keys are here and not in config.yaml.",
         "confidence": "high"
       },
       {
@@ -2250,7 +2355,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Workspace-scoped dotenv, searched BEFORE the global one. PLAINTEXT provider keys that travel with the repo if not gitignored. The vendor's resolution order also searches <repo>/.env first of all, so check both.",
+        "description": "Workspace-scoped dotenv, searched before the global one. Plaintext provider keys that travel with the repo if not gitignored. The vendor's resolution order also searches <repo>/.env first of all, so check both.",
         "confidence": "high"
       },
       {
@@ -2262,7 +2367,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "Continue CLI ('cn') Hub session: PLAINTEXT JSON with accessToken, refreshToken, expiresAt, userId and userEmail, written with a plain writeFileSync and no chmod. VERSION-DEPENDENT - Hub/WorkOS login was stripped from the CLI in 2026 and the path constant is now an unused stub, so expect this only on hosts that ran an earlier CLI build. Still worth collecting: the file is not cleaned up on upgrade.",
+        "description": "Continue CLI ('cn') Hub session: plaintext JSON with accessToken, refreshToken, expiresAt, userId and userEmail, written with a plain writeFileSync and no chmod. Version-dependent - Hub/WorkOS login was stripped from the CLI in 2026 and the path constant is now an unused stub, so expect this only on hosts that ran an earlier CLI build. Still worth collecting: the file is not cleaned up on upgrade.",
         "confidence": "medium"
       },
       {
@@ -2277,7 +2382,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Vendor-documented environment variable for headless/CI use of the Continue CLI. PLAINTEXT Continue API key. Look in the process environment, shell rc files, container env, and CI job definitions - not on disk under ~/.continue.",
+        "description": "Vendor-documented environment variable for headless/CI use of the Continue CLI. Plaintext Continue API key. Look in the process environment, shell rc files, container env, and CI job definitions - not on disk under ~/.continue.",
         "confidence": "high"
       },
       {
@@ -2289,7 +2394,7 @@
         ],
         "storage": "encrypted",
         "secret_type": "unknown",
-        "description": "Continue's VS Code SecretStorage shim. Each secret is written to its own <key>.bin file as an AES-256-GCM blob laid out salt|iv|tag|ciphertext - NOT plaintext, and not readable without the key below. Concrete roots: ~/Library/Application Support/Code/User/globalStorage/continue.continue (macOS), ~/.config/Code/User/globalStorage/continue.continue (Linux), %APPDATA%\\Code\\User\\globalStorage\\continue.continue (Windows).",
+        "description": "Continue's VS Code SecretStorage shim. Each secret is written to its own <key>.bin file as an AES-256-GCM blob laid out salt|iv|tag|ciphertext - not plaintext, and not readable without the key below. Concrete roots: ~/Library/Application Support/Code/User/globalStorage/continue.continue (macOS), ~/.config/Code/User/globalStorage/continue.continue (Linux), %APPDATA%\\Code\\User\\globalStorage\\continue.continue (Windows).",
         "confidence": "medium"
       },
       {
@@ -2301,7 +2406,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "encryption-key",
-        "description": "The AES-256-GCM key that decrypts the .bin files above is NOT stored with them - Continue keeps it in the editor's SecretStorage under this key name, which on desktop VS Code resolves through Electron safeStorage to the OS keyring. Without it the .bin files are opaque, so acquiring the globalStorage folder alone is not sufficient.",
+        "description": "The AES-256-GCM key that decrypts the .bin files above is not stored with them - Continue keeps it in the editor's SecretStorage under this key name, which on desktop VS Code resolves through Electron safeStorage to the OS keyring. Without it the .bin files are opaque, so acquiring the globalStorage folder alone is not sufficient.",
         "confidence": "medium"
       }
     ],
@@ -2309,7 +2414,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Continuedev"
+      "kape_target": "Continuedev",
+      "velociraptor_artifact": "Custom.AIAgents.Continuedev"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2322,7 +2428,18 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Continue documentation",
+        "url": "https://docs.continue.dev",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "continuedev/continue",
+        "url": "https://github.com/continuedev/continue",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2345,7 +2462,7 @@
     },
     "risk": "high",
     "confidence": "medium",
-    "abuse_potential": "crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.",
+    "abuse_potential": "Crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.",
     "artifacts": {
       "disk": [
         {
@@ -2424,7 +2541,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "crewAIInc/crewAI",
+        "url": "https://github.com/crewAIInc/crewAI",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2558,7 +2681,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "Global MCP servers - EXECUTION PRIMITIVE",
+          "description": "Global MCP servers - execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -2678,7 +2801,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "oauth-token",
-        "description": "Cursor IDE login session. The ItemTable rows cursorAuth/accessToken, cursorAuth/refreshToken and cursorAuth/cachedEmail hold their values UNENCRYPTED (PLAINTEXT JWTs) inside the SQLite database - the DB is not itself protected. Copying the file transfers a logged-in session. Quit Cursor before acquisition so the WAL journal is checkpointed.",
+        "description": "Cursor IDE login session. The ItemTable rows cursorAuth/accessToken, cursorAuth/refreshToken and cursorAuth/cachedEmail hold their values unencrypted (plaintext JWTs) inside the SQLite database - the DB is not itself protected. Copying the file transfers a logged-in session. Quit Cursor before acquisition so the WAL journal is checkpointed.",
         "confidence": "medium"
       },
       {
@@ -2688,7 +2811,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "oauth-token",
-        "description": "Linux path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the SQLite DB.",
+        "description": "Linux path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the SQLite DB.",
         "confidence": "medium"
       },
       {
@@ -2698,7 +2821,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "oauth-token",
-        "description": "Windows path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are PLAINTEXT values inside the SQLite DB.",
+        "description": "Windows path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the SQLite DB.",
         "confidence": "medium"
       },
       {
@@ -2710,7 +2833,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Global MCP server definitions. The per-server env block routinely carries PLAINTEXT API keys and bearer tokens for whatever the agent was authorised to call. Already declared as a secrets location by this catalog's own MCP block for this entry.",
+        "description": "Global MCP server definitions. The per-server env block routinely carries plaintext API keys and bearer tokens for whatever the agent was authorised to call. Already declared as a secrets location by this catalog's own MCP block for this entry.",
         "confidence": "high"
       },
       {
@@ -2722,7 +2845,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Project-scoped MCP server definitions with the same PLAINTEXT env block. TRAVELS WITH THE REPO - collect per workspace the user opened, not just from home.",
+        "description": "Project-scoped MCP server definitions with the same plaintext env block. Travels with the repo - collect per workspace the user opened, not just from home.",
         "confidence": "high"
       },
       {
@@ -2732,7 +2855,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "Cursor CLI (cursor-agent), NOT the IDE. PLAINTEXT JSON holding accessToken, refreshToken and apiKey, written by 'cursor-agent login'; independently observed at mode 600. Note it is ~/.config/cursor/, not ~/.cursor/.",
+        "description": "Cursor CLI (cursor-agent), not the IDE. Plaintext JSON holding accessToken, refreshToken and apiKey, written by 'cursor-agent login'; independently observed at mode 600. Note it is ~/.config/cursor/, not ~/.cursor/.",
         "confidence": "medium"
       },
       {
@@ -2742,7 +2865,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "oauth-token",
-        "description": "On macOS the Cursor CLI (cursor-agent) keeps its session in the login Keychain rather than in a file - there is NO auth.json to collect on a Mac. If you are looking for cursor-agent credentials on macOS, look in the Keychain.",
+        "description": "On macOS the Cursor CLI (cursor-agent) keeps its session in the login Keychain rather than in a file - there is no auth.json to collect on a Mac. If you are looking for cursor-agent credentials on macOS, look in the Keychain.",
         "confidence": "medium"
       },
       {
@@ -2774,13 +2897,14 @@
         "secrets_location": "env block",
         "persistence_trigger": "Every workspace open",
         "triage_priority": "p1",
-        "notes": "TRAVELS WITH THE REPO"
+        "notes": "Travels with the repo"
       }
     ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Cursor"
+      "kape_target": "Cursor",
+      "velociraptor_artifact": "Custom.AIAgents.Cursor"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -2793,7 +2917,13 @@
       "T1552.001",
       "T1195.002"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Cursor documentation",
+        "url": "https://cursor.com/docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -2814,7 +2944,7 @@
     },
     "risk": "medium",
     "confidence": "medium",
-    "abuse_potential": "Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. THIN PUBLIC SOURCING.",
+    "abuse_potential": "Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. Thin public sourcing.",
     "artifacts": {
       "disk": [
         {
@@ -2825,7 +2955,7 @@
             "linux"
           ],
           "artifact_type": "session-artifact",
-          "description": "THIN SOURCING - primary indicator is outbound DNS",
+          "description": "Thin sourcing - primary indicator is outbound DNS",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -2840,7 +2970,7 @@
           "direction": "egress",
           "indicator": "app.devin.ai, *.cognition.ai",
           "port": "443/TCP",
-          "description": "Primary and often ONLY endpoint indicator",
+          "description": "Primary and often only endpoint indicator",
           "confidence": "low",
           "unverified": true
         },
@@ -2848,7 +2978,7 @@
           "direction": "egress",
           "indicator": "*.devinapps.com (IDE/Desktop iframes), app.devin.ai",
           "port": "443/TCP + WSS",
-          "description": "CORRECTED: workstations must reach *.devinapps.com - this is the primary network IOC",
+          "description": "corrected: workstations must reach *.devinapps.com - this is the primary network IOC",
           "confidence": "high"
         }
       ],
@@ -2926,7 +3056,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT, unencrypted PEM RSA private key, one per tenant. Dify encrypts every stored model-provider credential with the tenant public key (RSA + AES-256 EAX hybrid); this file decrypts all of them. Written via the storage abstraction, so the container path is /app/api/storage/privkeys/<tenant_id>/private.pem. Highest-value single file in a Dify stack. Collect metadata and permissions only - never read the contents.",
+        "description": "Plaintext, unencrypted PEM RSA private key, one per tenant. Dify encrypts every stored model-provider credential with the tenant public key (RSA + AES-256 EAX hybrid); this file decrypts all of them. Written via the storage abstraction, so the container path is /app/api/storage/privkeys/<tenant_id>/private.pem. Highest-value single file in a Dify stack. Collect metadata and permissions only - never read the contents.",
         "confidence": "high"
       },
       {
@@ -2937,7 +3067,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "jwt-signing-key",
-        "description": "PLAINTEXT auto-generated SECRET_KEY, persisted here when the SECRET_KEY env var is left empty. Signs session cookies / console auth tokens. Presence of this file means the operator did NOT set SECRET_KEY explicitly. Container path /app/api/storage/.dify_secret_key.",
+        "description": "Plaintext auto-generated SECRET_KEY, persisted here when the SECRET_KEY env var is left empty. Signs session cookies / console auth tokens. Presence of this file means the operator did not set SECRET_KEY explicitly. Container path /app/api/storage/.dify_secret_key.",
         "confidence": "high"
       },
       {
@@ -2948,7 +3078,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT compose env file beside docker-compose.yaml, read by every service. Holds SECRET_KEY, INIT_PASSWORD, DB_PASSWORD, REDIS_PASSWORD, PLUGIN_DAEMON_KEY, PLUGIN_DIFY_INNER_API_KEY, CODE_EXECUTION_API_KEY / SANDBOX_API_KEY, DIFY_AGENT_API_TOKEN, DIFY_AGENT_SERVER_SECRET_KEY, plus any vector-DB and object-storage keys. Newer releases also split these across <install>/docker/envs/*.env (security.env, middleware.env, databases/db-postgres.env).",
+        "description": "Plaintext compose env file beside docker-compose.yaml, read by every service. Holds SECRET_KEY, INIT_PASSWORD, DB_PASSWORD, REDIS_PASSWORD, PLUGIN_DAEMON_KEY, PLUGIN_DIFY_INNER_API_KEY, CODE_EXECUTION_API_KEY / SANDBOX_API_KEY, DIFY_AGENT_API_TOKEN, DIFY_AGENT_SERVER_SECRET_KEY, plus any vector-DB and object-storage keys. Newer releases also split these across <install>/docker/envs/*.env (security.env, middleware.env, databases/db-postgres.env).",
         "confidence": "high"
       },
       {
@@ -2970,7 +3100,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "admin-credential",
-        "description": "PLAINTEXT env var. Vendor description: \"Password required before initializing a self-hosted deployment\" - it gates the first-run setup page that creates the initial admin account. It is the install gate, not the admin account password itself. A non-empty value here on a reachable instance is worth recording.",
+        "description": "Plaintext env var. Vendor description: \"Password required before initializing a self-hosted deployment\" - it gates the first-run setup page that creates the initial admin account. It is the install gate, not the admin account password itself. A non-empty value here on a reachable instance is worth recording.",
         "confidence": "high"
       },
       {
@@ -3000,7 +3130,18 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "langgenius/dify",
+        "url": "https://github.com/langgenius/dify",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "langgenius/dify-docs",
+        "url": "https://github.com/langgenius/dify-docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3063,7 +3204,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT AES key file, auto-generated on first run if absent. Decrypts every credential in the Flowise credential table (all stored LLM provider and third-party tool API keys). Overridden by SECRETKEY_PATH (key file moves to <SECRETKEY_PATH>/encryption.key) or by FLOWISE_SECRETKEY_OVERWRITE (no key file at all). Note the source also probes several encryption.key locations relative to the install dir before falling back to the home directory, so on a git-clone install check <install>/packages/server/encryption.key too.",
+        "description": "Plaintext AES key file, auto-generated on first run if absent. Decrypts every credential in the Flowise credential table (all stored LLM provider and third-party tool API keys). Overridden by SECRETKEY_PATH (key file moves to <SECRETKEY_PATH>/encryption.key) or by FLOWISE_SECRETKEY_OVERWRITE (no key file at all). Note the source also probes several encryption.key locations relative to the install dir before falling back to the home directory, so on a git-clone install check <install>/packages/server/encryption.key too.",
         "confidence": "high"
       },
       {
@@ -3073,7 +3214,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT AES key inside the official container image, where SECRETKEY_PATH is set to /home/node/.flowise. The official compose file bind-mounts host ~/.flowise to this path, so the key is readable on the host at ~/.flowise/encryption.key even for containerised deployments.",
+        "description": "Plaintext AES key inside the official container image, where SECRETKEY_PATH is set to /home/node/.flowise. The official compose file bind-mounts host ~/.flowise to this path, so the key is readable on the host at ~/.flowise/encryption.key even for containerised deployments.",
         "confidence": "high"
       },
       {
@@ -3098,7 +3239,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT env var holding the credential-encryption key directly, used instead of the key stored at SECRETKEY_PATH. When this is set there is no encryption.key file to collect - the key is only in the process environment and in whatever compose file or shell profile set it.",
+        "description": "Plaintext env var holding the credential-encryption key directly, used instead of the key stored at SECRETKEY_PATH. When this is set there is no encryption.key file to collect - the key is only in the process environment and in whatever compose file or shell profile set it.",
         "confidence": "high"
       },
       {
@@ -3110,7 +3251,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT env file in the compose working directory. Holds FLOWISE_SECRETKEY_OVERWRITE, SECRETKEY_AWS_ACCESS_KEY / SECRETKEY_AWS_SECRET_KEY, JWT_AUTH_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET, TOKEN_HASH_SECRET, DATABASE_PASSWORD, REDIS_PASSWORD, SMTP_PASSWORD, and S3/Azure/GCS storage credentials.",
+        "description": "Plaintext env file in the compose working directory. Holds FLOWISE_SECRETKEY_OVERWRITE, SECRETKEY_AWS_ACCESS_KEY / SECRETKEY_AWS_SECRET_KEY, JWT_AUTH_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET, TOKEN_HASH_SECRET, DATABASE_PASSWORD, REDIS_PASSWORD, SMTP_PASSWORD, and S3/Azure/GCS storage credentials.",
         "confidence": "high"
       },
       {
@@ -3123,7 +3264,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "jwt-signing-key",
-        "description": "PLAINTEXT env var signing the auth JWT that Flowise stores in an HTTP-only cookie (v3.0.1+ Passport auth). JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET and TOKEN_HASH_SECRET sit alongside it and are equivalent in value. Disclosure allows forging an authenticated session against the instance.",
+        "description": "Plaintext env var signing the auth JWT that Flowise stores in an HTTP-only cookie (v3.0.1+ Passport auth). JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET and TOKEN_HASH_SECRET sit alongside it and are equivalent in value. Disclosure allows forging an authenticated session against the instance.",
         "confidence": "high"
       },
       {
@@ -3135,14 +3276,15 @@
         ],
         "storage": "plaintext",
         "secret_type": "admin-credential",
-        "description": "PLAINTEXT app-level auth credentials FLOWISE_USERNAME / FLOWISE_PASSWORD, in the .env under packages/server. This is the DEPRECATED pre-v3.0.1 auth mechanism: it is documented by the vendor and still present on the many older deployments in the wild, but no longer referenced anywhere in current main. Treat a hit here as an indicator the instance predates 3.0.1.",
+        "description": "Plaintext app-level auth credentials FLOWISE_USERNAME / FLOWISE_PASSWORD, in the .env under packages/server. This is the deprecated pre-v3.0.1 auth mechanism: it is documented by the vendor and still present on the many older deployments in the wild, but no longer referenced anywhere in current main. Treat a hit here as an indicator the instance predates 3.0.1.",
         "confidence": "medium"
       }
     ],
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.Flowise"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -3154,12 +3296,29 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "FlowiseAI/Flowise",
+        "url": "https://github.com/FlowiseAI/Flowise",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Flowise getting started",
+        "url": "https://docs.flowiseai.com/getting-started",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0003",
     "name": "GitHub Copilot (Agent Mode / CLI)",
+    "aliases": [
+      "GitHub Copilot",
+      "github-copilot",
+      "copilot",
+      "github.copilot-"
+    ],
     "vendor": "GitHub/Microsoft",
     "category": "coding-agent-ide",
     "description": "copilot-language-server binary + Copilot CLI. Agent mode runs multi-step tasks with tool calls; bundles a GitHub MCP server.",
@@ -3238,7 +3397,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "EXECUTION PRIMITIVE",
+          "description": "Execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -3314,7 +3473,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "oauth-token",
-        "description": "DEFAULT for Copilot CLI. Vendor: 'the CLI stores your OAuth token in your operating system's keychain under the service name copilot-cli'. NOT a file - requires keychain acquisition, not file collection.",
+        "description": "Default for Copilot CLI. Vendor: 'the CLI stores your OAuth token in your operating system's keychain under the service name copilot-cli'. Not a file - requires keychain acquisition, not file collection.",
         "confidence": "high"
       },
       {
@@ -3326,7 +3485,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT fallback for the Copilot CLI OAuth token. Vendor: when the system keychain is unavailable (e.g. headless Linux without libsecret) the CLI prompts to store the token in a plaintext configuration file here. The same file also holds CLI-managed internal application state including authentication data. Relocated wholesale if COPILOT_HOME is set.",
+        "description": "Plaintext fallback for the Copilot CLI OAuth token. Vendor: when the system keychain is unavailable (e.g. Headless Linux without libsecret) the CLI prompts to store the token in a plaintext configuration file here. The same file also holds CLI-managed internal application state including authentication data. Relocated wholesale if COPILOT_HOME is set.",
         "confidence": "high"
       },
       {
@@ -3338,7 +3497,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT. Vendor-documented Copilot CLI directory holding MCP OAuth token, registration, and PKCE fallback files for MCP servers the agent connects to. Scope is per-MCP-server, so this is where third-party service tokens land.",
+        "description": "plaintext. Vendor-documented Copilot CLI directory holding MCP OAuth token, registration, and PKCE fallback files for MCP servers the agent connects to. Scope is per-MCP-server, so this is where third-party service tokens land.",
         "confidence": "high"
       },
       {
@@ -3350,7 +3509,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "unknown",
-        "description": "PLAINTEXT. Vendor-documented Copilot CLI directory containing fallback file storage and an index for MCP secret placeholders.",
+        "description": "plaintext. Vendor-documented Copilot CLI directory containing fallback file storage and an index for MCP secret placeholders.",
         "confidence": "high"
       },
       {
@@ -3365,7 +3524,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT environment variables. Vendor-documented credential precedence for Copilot CLI: these are checked in this order BEFORE the OS keychain, so an env-var token overrides the keyring and leaves no file artifact. Collect process environment, shell rc files and CI job definitions.",
+        "description": "Plaintext environment variables. Vendor-documented credential precedence for Copilot CLI: these are checked in this order before the OS keychain, so an env-var token overrides the keyring and leaves no file artifact. Collect process environment, shell rc files and CI job definitions.",
         "confidence": "high"
       },
       {
@@ -3380,7 +3539,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT environment variable. BYOK provider API key. Vendor: when BYOK provider env vars (COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY) are configured the CLI uses them for model requests regardless of authentication status - so prompts and code context go to whatever endpoint COPILOT_PROVIDER_BASE_URL names.",
+        "description": "Plaintext environment variable. BYOK provider API key. Vendor: when BYOK provider env vars (COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY) are configured the CLI uses them for model requests regardless of authentication status - so prompts and code context go to whatever endpoint COPILOT_PROVIDER_BASE_URL names.",
         "confidence": "high"
       },
       {
@@ -3391,7 +3550,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT. Copilot editor OAuth token written by the copilot-language-server used by the VS Code, JetBrains and Neovim integrations. Distinct from the Copilot CLI store. Not vendor-documented, but read as the canonical token location by numerous independent projects.",
+        "description": "plaintext. Copilot editor OAuth token written by the copilot-language-server used by the VS Code, JetBrains and Neovim integrations. Distinct from the Copilot CLI store. Not vendor-documented, but read as the canonical token location by numerous independent projects.",
         "confidence": "medium"
       },
       {
@@ -3401,7 +3560,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT. Windows location of the Copilot editor OAuth token (same file as the Unix ~/.config/github-copilot/apps.json). Four independent implementations resolve Windows via LOCALAPPDATA; one outlier uses AppData\\Roaming, so check both if the Local path is absent.",
+        "description": "plaintext. Windows location of the Copilot editor OAuth token (same file as the Unix ~/.config/github-copilot/apps.json). Four independent implementations resolve Windows via LOCALAPPDATA; one outlier uses AppData\\Roaming, so check both if the Local path is absent.",
         "confidence": "medium"
       },
       {
@@ -3412,7 +3571,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT. LEGACY predecessor of apps.json, still present on hosts authenticated by older plugin versions. Consumers routinely check hosts.json and apps.json in turn, so collect both. Windows equivalent sits in the same %LOCALAPPDATA%\\github-copilot\\ directory.",
+        "description": "plaintext. Legacy predecessor of apps.json, still present on hosts authenticated by older plugin versions. Consumers routinely check hosts.json and apps.json in turn, so collect both. Windows equivalent sits in the same %LOCALAPPDATA%\\github-copilot\\ directory.",
         "confidence": "medium"
       }
     ],
@@ -3420,16 +3579,29 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "GitHubCopilot"
+      "kape_target": "GitHubCopilot",
+      "velociraptor_artifact": "Custom.AIAgents.GitHubCopilot"
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "GitHub Copilot documentation",
+        "url": "https://docs.github.com/en/copilot",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0037",
     "name": "Google Gemini CLI",
+    "aliases": [
+      "google-gemini-cli",
+      "gemini",
+      "@google/gemini-cli",
+      "gemini-cli"
+    ],
     "vendor": "Google",
     "category": "coding-agent-cli",
     "description": "Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config.",
@@ -3489,7 +3661,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "SYSTEM-LEVEL policy - privileged tamper/persistence target",
+          "description": "System-level policy - privileged tamper/persistence target",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -3535,7 +3707,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT access + refresh + id tokens, expiry, scope",
+        "description": "Plaintext access + refresh + id tokens, expiry, scope",
         "confidence": "high"
       },
       {
@@ -3547,7 +3719,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Bound Google account identity - USER ATTRIBUTION ARTIFACT",
+        "description": "Bound Google account identity - user attribution artifact",
         "confidence": "high"
       },
       {
@@ -3567,7 +3739,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "GoogleGeminiCLI"
+      "kape_target": "GoogleGeminiCLI",
+      "velociraptor_artifact": "Custom.AIAgents.GoogleGeminiCLI"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -3579,7 +3752,13 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "google-gemini/gemini-cli",
+        "url": "https://github.com/google-gemini/gemini-cli",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3612,7 +3791,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "GOOSE_PATH_ROOT overrides. API keys here are IGNORED by design",
+          "description": "GOOSE_PATH_ROOT overrides. API keys here are ignored by design.",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -3642,7 +3821,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Records which tools were authorized - CONSENT EVIDENCE",
+          "description": "Records which tools were authorized - consent evidence",
           "forensic_value": "high",
           "evidence_type": [
             "configuration",
@@ -3659,7 +3838,7 @@
             "linux"
           ],
           "artifact_type": "log",
-          "description": "PURGED AFTER 14 DAYS - collect early, short retention window",
+          "description": "Purged after 14 days - collect early, short retention window",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",
@@ -3704,7 +3883,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "api-key",
-        "description": "DEFAULT - requires keychain acquisition, not file collection",
+        "description": "Default - requires keychain acquisition, not file collection",
         "confidence": "high"
       },
       {
@@ -3716,7 +3895,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT FALLBACK when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless",
+        "description": "Plaintext fallback when GOOSE_DISABLE_KEYRING is set - common in CI/containers/headless",
         "confidence": "high"
       },
       {
@@ -3746,7 +3925,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Goose"
+      "kape_target": "Goose",
+      "velociraptor_artifact": "Custom.AIAgents.Goose"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -3759,12 +3939,22 @@
       "T1195.002",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "aaif-goose/goose",
+        "url": "https://github.com/aaif-goose/goose",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0016",
     "name": "GPT Pilot",
+    "aliases": [
+      "gpt-pilot",
+      "Pythagora"
+    ],
     "vendor": "Pythagora (OSS)",
     "category": "agent-framework",
     "description": "Python agent that scaffolds and runs full applications, executing generated code.",
@@ -3782,7 +3972,7 @@
     },
     "risk": "high",
     "confidence": "low",
-    "abuse_potential": "Runs generated code on host. THIN PUBLIC SOURCING on canonical paths - inventory by Python process command line.",
+    "abuse_potential": "Runs generated code on host. Thin public sourcing on canonical paths - inventory by Python process command line.",
     "artifacts": {},
     "credentials": [
       {
@@ -3794,7 +3984,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PRIMARY credential file. PLAINTEXT JSON with llm.<provider>.api_key for openai / anthropic / azure / groq. Created by the vendor's documented setup step \"cp example-config.json config.json\"; the --config argument defaults to the bare string \"config.json\", so it resolves relative to the working directory the agent is launched from - normally the repo root. The same file's db.url carries an embedded user:password when the operator switches from the default sqlite to PostgreSQL. Listed in .gitignore, so it is present on disk but absent from the repo.",
+        "description": "Primary credential file. Plaintext JSON with llm.<provider>.api_key for openai / anthropic / azure / groq. Created by the vendor's documented setup step \"cp example-config.json config.json\"; the --config argument defaults to the bare string \"config.json\", so it resolves relative to the working directory the agent is launched from - normally the repo root. The same file's db.url carries an embedded user:password when the operator switches from the default sqlite to PostgreSQL. Listed in .gitignore, so it is present on disk but absent from the repo.",
         "confidence": "high"
       },
       {
@@ -3806,7 +3996,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "LEGACY plaintext env file from pre-rewrite gpt-pilot: OPENAI_API_KEY, ANTHROPIC_API_KEY, GROQ_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY plus matching *_ENDPOINT values. Still forensically live - the current build's importer reads this path on startup when config.json does not yet exist and copies the keys into config.json, so an upgraded host can hold the same live key in BOTH files. Collect both.",
+        "description": "Legacy plaintext env file from pre-rewrite gpt-pilot: OPENAI_API_KEY, ANTHROPIC_API_KEY, GROQ_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY plus matching *_ENDPOINT values. Still forensically live - the current build's importer reads this path on startup when config.json does not yet exist and copies the keys into config.json, so an upgraded host can hold the same live key in both files. Collect both.",
         "confidence": "high"
       },
       {
@@ -3847,7 +4037,13 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Pythagora-io/gpt-pilot",
+        "url": "https://github.com/Pythagora-io/gpt-pilot",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -3947,7 +4143,8 @@
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "GPT4All"
+      "kape_target": "GPT4All",
+      "velociraptor_artifact": "Custom.AIAgents.GPT4All"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -3960,12 +4157,21 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "nomic-ai/gpt4all",
+        "url": "https://github.com/nomic-ai/gpt4all",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0019",
     "name": "Jan.ai",
+    "aliases": [
+      "jan-ai"
+    ],
     "vendor": "Menlo Research (OSS)",
     "category": "llm-runtime",
     "description": "Open-source ChatGPT alternative running fully offline; ships a headless daemon mode.",
@@ -4023,7 +4229,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "SYSTEM-LEVEL config - persistence/tamper target",
+          "description": "System-level config - persistence/tamper target",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -4063,7 +4269,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Janai"
+      "kape_target": "Janai",
+      "velociraptor_artifact": "Custom.AIAgents.Janai"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -4076,7 +4283,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "janhq/jan",
+        "url": "https://github.com/janhq/jan",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4129,7 +4342,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "Workspace-scope MCP servers. TRAVELS WITH THE REPO - a clone or PR can introduce servers that launch on open.",
+          "description": "Workspace-scope MCP servers. Travels with the repo - a clone or PR can introduce servers that launch on open.",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -4146,7 +4359,7 @@
             "linux"
           ],
           "artifact_type": "agent-definition",
-          "description": "JSON hook definitions. The when block sets the trigger (fileSaved, fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec task events) with a file pattern; the then block invokes the agent with a prompt. A fileSaved hook is an AUTO-TRIGGERING EXECUTION PRIMITIVE that needs no user interaction. Enumerate every hook during triage.",
+          "description": "JSON hook definitions. The when block sets the trigger (fileSaved, fileCreated, fileDeleted, manual, prompt and agent lifecycle events, spec task events) with a file pattern; the then block invokes the agent with a prompt. A fileSaved hook is an auto-triggering execution primitive that needs no user interaction. Enumerate every hook during triage.",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -4258,14 +4471,14 @@
           "direction": "egress",
           "indicator": "kiro.dev, AWS Kiro service endpoints",
           "port": "443/TCP",
-          "description": "Agent inference and Power/MCP directory retrieval.",
+          "description": "Agent inference and Power/MCP directory retrieval",
           "confidence": "high"
         },
         {
           "direction": "egress",
           "indicator": "kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links",
           "port": "443/TCP",
-          "description": "One-click MCP install deep links. Kiro shows a confirmation dialog listing the command, args, and the NAMES of env vars (values stay hidden) before writing. A convincing link is a social-engineering path to MCP installation.",
+          "description": "One-click MCP install deep links. Kiro shows a confirmation dialog listing the command, args, and the names of env vars (values stay hidden) before writing. A convincing link is a social-engineering path to MCP installation.",
           "confidence": "high"
         }
       ],
@@ -4320,7 +4533,7 @@
         "secrets_location": "env block (explicit approval required for expansion)",
         "persistence_trigger": "Every session, and immediately on file save via hot-reload",
         "triage_priority": "p1",
-        "notes": "Entries carry an autoApprove array listing tools that execute WITHOUT user confirmation - read it first. Hot-reload means a tampered config applies at the next idle boundary with no restart, so file mtime is the change signal, not process start time."
+        "notes": "Entries carry an autoApprove array listing tools that execute without user confirmation - read it first. Hot-reload means a tampered config applies at the next idle boundary with no restart, so file mtime is the change signal, not process start time."
       },
       {
         "config_path": "<repo>/.kiro/settings/mcp.json",
@@ -4329,13 +4542,14 @@
         "secrets_location": "env block",
         "persistence_trigger": "Workspace open, and on save via hot-reload",
         "triage_priority": "p1",
-        "notes": "TRAVELS WITH THE REPO. Gate in CI alongside .kiro/hooks/."
+        "notes": "Travels with the repo. Gate in CI alongside .kiro/hooks/."
       }
     ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect the entire .kiro/ directory before remediation - hooks, steering, agents, specs, and both MCP configs together establish what the agent was authorised to do and what fired automatically. Capture the Kiro MCP Logs output channel to confirm which servers actually connected, since a config entry alone does not prove execution. Because config hot-reloads, correlate file mtimes against session activity rather than assuming changes took effect at startup.",
-      "kape_target": "Kiro"
+      "kape_target": "Kiro",
+      "velociraptor_artifact": "Custom.AIAgents.Kiro"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -4399,7 +4613,7 @@
     },
     "risk": "medium",
     "confidence": "medium",
-    "abuse_potential": "Single portable .exe - trivially dropped and run without install. Named in Splunk STRT local-LLM analytics.",
+    "abuse_potential": "Single portable .exe - trivially dropped and run without install. Named in Splunk strt local-LLM analytics.",
     "artifacts": {
       "network": [
         {
@@ -4444,12 +4658,28 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "LostRuins/koboldcpp",
+        "url": "https://github.com/LostRuins/koboldcpp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "KoboldCpp wiki",
+        "url": "https://github.com/LostRuins/koboldcpp/wiki",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0026",
     "name": "LangChain / LangGraph",
+    "aliases": [
+      "LangChain",
+      "LangGraph",
+      "langchain-langgraph"
+    ],
     "vendor": "LangChain Inc. (OSS)",
     "category": "agent-framework",
     "description": "Dominant agent-building library. Deployed as bespoke services - no fixed install path.",
@@ -4479,7 +4709,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "LangGraph CLI project config. Its `env` field accepts an INLINE JSON object of environment variables, so provider API keys are frequently stored PLAINTEXT inside this file itself (vendor example shows an OPENAI_API_KEY entry under `env`). Present only for LangGraph CLI / Platform projects.",
+        "description": "LangGraph CLI project config. Its `env` field accepts an inline JSON object of environment variables, so provider API keys are frequently stored plaintext inside this file itself (vendor example shows an OPENAI_API_KEY entry under `env`). Present only for LangGraph CLI / Platform projects.",
         "confidence": "high"
       },
       {
@@ -4491,7 +4721,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT provider and LangSmith keys. Vendor README documents `\"env\": \"./.env\"` in langgraph.json; the CLI helper `_parse_env_from_config` resolves the `env` field or falls back to a .env file.",
+        "description": "Plaintext provider and LangSmith keys. Vendor README documents `\"env\": \"./.env\"` in langgraph.json; the CLI helper `_parse_env_from_config` resolves the `env` field or falls back to a .env file.",
         "confidence": "high"
       },
       {
@@ -4504,7 +4734,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT LangSmith tracing key in the process environment; LANGCHAIN_API_KEY is the legacy alias and is still read. Forensically important beyond the key itself: if tracing was enabled, full prompts and responses were shipped to LangSmith, so this key indicates an off-host copy of agent activity exists.",
+        "description": "Plaintext LangSmith tracing key in the process environment; LANGCHAIN_API_KEY is the legacy alias and is still read. Forensically important beyond the key itself: if tracing was enabled, full prompts and responses were shipped to LangSmith, so this key indicates an off-host copy of agent activity exists.",
         "confidence": "high"
       },
       {
@@ -4517,7 +4747,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT provider keys read from the process environment by the langchain-* partner packages. langchain_openai documents that the key \"can be inferred from the OPENAI_API_KEY environment variable\". LangChain ships no managed credential file - the environment and .env ARE the credential store, so collect process environment blocks.",
+        "description": "Plaintext provider keys read from the process environment by the langchain-* partner packages. Langchain_openai documents that the key \"can be inferred from the OPENAI_API_KEY environment variable\". LangChain ships no managed credential file - the environment and .env are the credential store, so collect process environment blocks.",
         "confidence": "high"
       }
     ],
@@ -4534,7 +4764,18 @@
       "T1059",
       "T1552.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "langchain-ai/langgraph",
+        "url": "https://github.com/langchain-ai/langgraph",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "langchain-ai/langchain",
+        "url": "https://github.com/langchain-ai/langchain",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -4568,7 +4809,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "Config and database root.",
+          "description": "Config and database root",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence"
@@ -4600,7 +4841,7 @@
             "linux"
           ],
           "artifact_type": "env-var",
-          "description": "When true, the instance requires NO LOGIN. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.",
+          "description": "When true, the instance requires no login. Vendor mitigation guidance explicitly says to set it false - so a true value on an exposed host is a finding.",
           "forensic_value": "medium",
           "evidence_type": [
             "configuration"
@@ -4616,7 +4857,7 @@
             "linux"
           ],
           "artifact_type": "env-var",
-          "description": "Superuser bootstrap credentials, commonly left plaintext in compose files.",
+          "description": "Superuser bootstrap credentials, commonly left plaintext in compose files",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -4632,7 +4873,7 @@
             "linux"
           ],
           "artifact_type": "project-artifact",
-          "description": "Flow exports embed credentials and custom Python component code.",
+          "description": "Flow exports embed credentials and custom Python component code",
           "forensic_value": "low",
           "evidence_type": [
             "user-activity",
@@ -4647,7 +4888,7 @@
           "direction": "listener",
           "indicator": "Langflow web UI + API",
           "port": "7860/TCP",
-          "description": "MASS-EXPLOITED. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.",
+          "description": "mass-exploited. Attackers enumerate exposed instances via Shodan/FOFA, then hit /api/v1/validate/code.",
           "confidence": "high",
           "default_bind": "0.0.0.0",
           "authentication": "None when LANGFLOW_AUTO_LOGIN=true",
@@ -4688,7 +4929,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT Fernet master key, auto-generated and persisted on startup when LANGFLOW_SECRET_KEY is not set. THE highest-value artifact for this tool: Langflow source calls it 'the Fernet master key (secret_key)' and states that reading it 'would disclose every tenant's stored credentials' - it decrypts the api_key table, credential-type global variables, and encrypted MCP server settings in the database. Config dir defaults to platformdirs user_cache_dir('langflow','langflow'); vendor release notes confirm the Linux/Docker form resolves to <HOME>/.cache/langflow.",
+        "description": "Plaintext Fernet master key, auto-generated and persisted on startup when LANGFLOW_SECRET_KEY is not set. The highest-value artifact for this tool: Langflow source calls it 'the Fernet master key (secret_key)' and states that reading it 'would disclose every tenant's stored credentials' - it decrypts the api_key table, credential-type global variables, and encrypted MCP server settings in the database. Config dir defaults to platformdirs user_cache_dir('langflow','langflow'); vendor release notes confirm the Linux/Docker form resolves to <HOME>/.cache/langflow.",
         "confidence": "high"
       },
       {
@@ -4701,7 +4942,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "jwt-signing-key",
-        "description": "PLAINTEXT RSA private key used to sign session JWTs, auto-generated and persisted into the config dir on startup when LANGFLOW_ALGORITHM is RS256/RS512. Vendor docs: 'Langflow creates and persists the keys in LANGFLOW_CONFIG_DIR on startup'. Not created under the default HS256 algorithm - absence of these files is itself a signal about which algorithm the instance ran. Theft permits forging a session for any user.",
+        "description": "Plaintext RSA private key used to sign session JWTs, auto-generated and persisted into the config dir on startup when LANGFLOW_ALGORITHM is RS256/RS512. Vendor docs: 'Langflow creates and persists the keys in LANGFLOW_CONFIG_DIR on startup'. Not created under the default HS256 algorithm - absence of these files is itself a signal about which algorithm the instance ran. Theft permits forging a session for any user.",
         "confidence": "high"
       },
       {
@@ -4714,7 +4955,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT env var that supplies the Fernet key instead of the on-disk secret_key file. Vendor docs describe it as 'a secret key used for encrypting sensitive data like API keys and for JWT signing when using the HS256 algorithm'. Commonly left in a .env or compose file. Vendor guidance is to rotate it if compromised; rotation requires the re-encryption migration script, so do not rotate before collection.",
+        "description": "Plaintext env var that supplies the Fernet key instead of the on-disk secret_key file. Vendor docs describe it as 'a secret key used for encrypting sensitive data like API keys and for JWT signing when using the HS256 algorithm'. Commonly left in a .env or compose file. Vendor guidance is to rotate it if compromised; rotation requires the re-encryption migration script, so do not rotate before collection.",
         "confidence": "high"
       },
       {
@@ -4727,7 +4968,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "admin-credential",
-        "description": "PLAINTEXT superuser bootstrap credentials. Vendor docs: these 'specify the username and password for the Langflow server's superuser'; the password is required when LANGFLOW_AUTO_LOGIN=False, and the username defaults to 'langflow'. Routinely left in .env files, compose files, and Kubernetes manifests. Note the source also carries a LEGACY_DEFAULT_SUPERUSER_PASSWORD constant used to detect credentials created by older releases - a default-password instance is a finding.",
+        "description": "Plaintext superuser bootstrap credentials. Vendor docs: these 'specify the username and password for the Langflow server's superuser'; the password is required when LANGFLOW_AUTO_LOGIN=False, and the username defaults to 'langflow'. Routinely left in .env files, compose files, and Kubernetes manifests. Note the source also carries a LEGACY_DEFAULT_SUPERUSER_PASSWORD constant used to detect credentials created by older releases - a default-password instance is a finding.",
         "confidence": "high"
       },
       {
@@ -4740,7 +4981,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT aggregation point. Vendor CLI reference documents --env-file as 'the path to the .env file containing Langflow environment variables', and vendor guides consistently start the server as `langflow run --env-file .env`. In practice this one file carries LANGFLOW_SECRET_KEY, LANGFLOW_SUPERUSER_PASSWORD, LANGFLOW_DATABASE_URL, and provider API keys together. Collect it before remediation.",
+        "description": "Plaintext aggregation point. Vendor CLI reference documents --env-file as 'the path to the .env file containing Langflow environment variables', and vendor guides consistently start the server as `langflow run --env-file .env`. In practice this one file carries LANGFLOW_SECRET_KEY, LANGFLOW_SUPERUSER_PASSWORD, LANGFLOW_DATABASE_URL, and provider API keys together. Collect it before remediation.",
         "confidence": "high"
       },
       {
@@ -4753,7 +4994,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT database connection string. When Langflow is pointed at external Postgres the documented format embeds the database username and password directly in the value (postgresql://user:password@host:5432/langflow). Also tells the responder that flows, users, and encrypted credentials are NOT in a local SQLite file for this deployment.",
+        "description": "Plaintext database connection string. When Langflow is pointed at external Postgres the documented format embeds the database username and password directly in the value (postgresql://user:password@host:5432/langflow). Also tells the responder that flows, users, and encrypted credentials are not in a local SQLite file for this deployment.",
         "confidence": "high"
       },
       {
@@ -4766,7 +5007,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "api-key",
-        "description": "SQLite database for Langflow OSS. Holds Langflow API keys (api_key table), credential-type global variables, MCP server settings, and user records. These values are ENCRYPTED at rest with the Fernet key, not plaintext - but the key file lives in the config dir, and in the LANGFLOW_SAVE_DB_IN_CONFIG_DIR deployment it is the DB's own directory sibling, so DB + secret_key together are a full credential compromise. Note the default path is inside the venv or the clone, NOT ~/.langflow as the current catalog disk row states.",
+        "description": "SQLite database for Langflow OSS. Holds Langflow API keys (api_key table), credential-type global variables, MCP server settings, and user records. These values are encrypted at rest with the Fernet key, not plaintext - but the key file lives in the config dir, and in the LANGFLOW_SAVE_DB_IN_CONFIG_DIR deployment it is the DB's own directory sibling, so DB + secret_key together are a full credential compromise. Note the default path is inside the venv or the clone, not ~/.langflow as the current catalog disk row states.",
         "confidence": "high"
       },
       {
@@ -4794,16 +5035,26 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Langflow"
+      "kape_target": "Langflow",
+      "velociraptor_artifact": "Custom.AIAgents.Langflow"
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "langflow-ai/langflow",
+        "url": "https://github.com/langflow-ai/langflow",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0021",
     "name": "llama.cpp",
+    "aliases": [
+      "llama-cpp"
+    ],
     "vendor": "ggml-org (OSS)",
     "category": "llm-runtime",
     "description": "Reference C/C++ inference engine underlying most local runtimes. llama-server / llama-cli / llama-run binaries.",
@@ -4849,7 +5100,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "PRIMARY FILE IOC across all local runtimes",
+          "description": "Primary file IOC across all local runtimes",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -4903,12 +5154,27 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "ggml-org/llama.cpp",
+        "url": "https://github.com/ggml-org/llama.cpp",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "llama.cpp server README",
+        "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0018",
     "name": "LM Studio",
+    "aliases": [
+      "lm-studio",
+      "lmstudio"
+    ],
     "vendor": "LM Studio (Element Labs)",
     "category": "llm-runtime",
     "description": "GUI local model runner with OpenAI-compatible server, CLI (lms), and daemon (llmster). MCP host capable.",
@@ -5024,7 +5290,7 @@
           "key": "HKCU\\Environment",
           "value": "LMS_SERVER_HOST",
           "type": "REG_SZ",
-          "description": "0.0.0.0 = NETWORK EXPOSURE of the OpenAI-compatible API",
+          "description": "0.0.0.0 = network exposure of the OpenAI-compatible API",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "medium"
@@ -5068,7 +5334,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "LMStudio"
+      "kape_target": "LMStudio",
+      "velociraptor_artifact": "Custom.AIAgents.LMStudio"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -5135,12 +5402,21 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "mudler/LocalAI",
+        "url": "https://github.com/mudler/LocalAI",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0014",
     "name": "Microsoft Copilot Studio Agents",
+    "aliases": [
+      "microsoft-copilot-studio-agents"
+    ],
     "vendor": "Microsoft",
     "category": "cloud-agent",
     "description": "Low-code agent builder hosted in Microsoft cloud. Endpoint footprint is browser only.",
@@ -5176,6 +5452,9 @@
   {
     "id": "AIRT-0025",
     "name": "n8n (AI Agent / LangChain nodes)",
+    "aliases": [
+      "n8n"
+    ],
     "vendor": "n8n GmbH",
     "category": "workflow-engine",
     "description": "Self-hostable workflow automation with native AI Agent / SQL Agent LangChain nodes and MCP support.",
@@ -5220,7 +5499,7 @@
             "linux"
           ],
           "artifact_type": "env-var",
-          "description": "HIGH-VALUE SECRET",
+          "description": "High-value secret",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -5234,7 +5513,7 @@
           "key": "HKCU\\Environment",
           "value": "N8N_ENCRYPTION_KEY",
           "type": "REG_SZ",
-          "description": "Decrypts ALL stored n8n credentials - CROWN JEWEL",
+          "description": "Decrypts all stored n8n credentials - crown jewel",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -5285,7 +5564,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "n8n"
+      "kape_target": "n8n",
+      "velociraptor_artifact": "Custom.AIAgents.n8n"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -5297,7 +5577,18 @@
       "T1133",
       "T1543"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "n8n-io/n8n",
+        "url": "https://github.com/n8n-io/n8n",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "n8n-io/n8n-docs",
+        "url": "https://github.com/n8n-io/n8n-docs",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -5407,7 +5698,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Can embed SYSTEM prompts - jailbreak/backdoor vector",
+          "description": "Can embed system prompts - jailbreak/backdoor vector",
           "forensic_value": "low",
           "evidence_type": [
             "configuration"
@@ -5421,7 +5712,7 @@
             "linux"
           ],
           "artifact_type": "service-config",
-          "description": "PERSISTENCE + where OLLAMA_HOST=0.0.0.0 is usually set",
+          "description": "Persistence + where OLLAMA_HOST=0.0.0.0 is usually set",
           "forensic_value": "medium",
           "evidence_type": [
             "persistence",
@@ -5436,7 +5727,7 @@
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "SERVICE ACCOUNT HOME. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama MISSES ALL MODELS on a systemd install.",
+          "description": "Service account home. Created by 'useradd -r -s /bin/false -m -d /usr/share/ollama ollama'. Collecting only the invoking user's ~/.ollama misses all models on a systemd install.",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence",
@@ -5451,7 +5742,7 @@
             "linux"
           ],
           "artifact_type": "log",
-          "description": "Ollama writes no separate log file under systemd - journald is the only timeline source.",
+          "description": "Ollama writes no separate log file under systemd - journald is the only timeline source",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",
@@ -5475,7 +5766,7 @@
           "key": "HKCU\\Environment",
           "value": "OLLAMA_HOST",
           "type": "REG_SZ",
-          "description": "Bind address override - VALUE OF 0.0.0.0 = NETWORK EXPOSURE",
+          "description": "Bind address override - value of 0.0.0.0 = network exposure",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -5484,7 +5775,7 @@
           "key": "HKCU\\Environment",
           "value": "OLLAMA_MODELS / OLLAMA_ORIGINS",
           "type": "REG_SZ",
-          "description": "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls",
+          "description": "Model path + CORS allowlist. OLLAMA_ORIGINS=* weakens browser-origin controls.",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -5504,7 +5795,7 @@
           "direction": "listener",
           "indicator": "Ollama OpenAI-compatible + native API",
           "port": "11434/TCP",
-          "description": "NO DEFAULT AUTH. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.",
+          "description": "No default auth. ~175,000 exposed hosts observed (SentinelLABS+Censys, Jan 2026). Primary LLMjacking target.",
           "confidence": "high",
           "default_bind": "127.0.0.1 (0.0.0.0 if OLLAMA_HOST set)",
           "authentication": "NONE",
@@ -5572,7 +5863,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Ollama"
+      "kape_target": "Ollama",
+      "velociraptor_artifact": "Custom.AIAgents.Ollama"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -5585,12 +5877,22 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "ollama/ollama",
+        "url": "https://github.com/ollama/ollama",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0015",
     "name": "Open Interpreter",
+    "aliases": [
+      "open-interpreter",
+      "interpreter"
+    ],
     "vendor": "Open Interpreter (OSS)",
     "category": "code-execution-agent",
     "description": "Natural-language to executed code on the host. Supports --local via llamafile (no API key needed).",
@@ -5608,7 +5910,7 @@
     },
     "risk": "critical",
     "confidence": "high",
-    "abuse_potential": "BY DESIGN a code execution primitive. --allow-all-tools / autopilot runs commands with NO user confirmation. Effectively a LOLBIN.",
+    "abuse_potential": "By design a code execution primitive. --allow-all-tools / autopilot runs commands with no user confirmation. Effectively a LOLBIN.",
     "artifacts": {
       "disk": [
         {
@@ -5681,7 +5983,7 @@
           "direction": "egress",
           "indicator": "api.openai.com or configured base_url; NONE in --local mode",
           "port": "443/TCP",
-          "description": "--local mode has ZERO network IOCs - file/process telemetry only",
+          "description": "--local mode has zero network IOCs - file/process telemetry only",
           "confidence": "high"
         }
       ],
@@ -5711,7 +6013,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "CURRENT (Rust) build - DEFAULT credential store. PLAINTEXT JSON holding ChatGPT sign-in OAuth tokens plus an OPENAI_API_KEY field, personal_access_token, Bedrock API key and agent-identity JWT. Created mode 0600 on Unix (no mode enforcement on Windows). Relocated by INTERPRETER_HOME; CODEX_HOME is deliberately ignored by this product.",
+        "description": "Current (Rust) build - default credential store. Plaintext JSON holding ChatGPT sign-in OAuth tokens plus an OPENAI_API_KEY field, personal_access_token, Bedrock API key and agent-identity JWT. Created mode 0600 on Unix (no mode enforcement on Windows). Relocated by INTERPRETER_HOME; CODEX_HOME is deliberately ignored by this product.",
         "confidence": "high"
       },
       {
@@ -5723,7 +6025,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "CURRENT (Rust) build - MCP server OAuth tokens (per-server access_token, refresh_token, client_id, scopes) in PLAINTEXT JSON. This is the fallback store: default mode is keyring-preferred, so this file appears when the OS keyring is unavailable or fails.",
+        "description": "Current (Rust) build - MCP server OAuth tokens (per-server access_token, refresh_token, client_id, scopes) in plaintext JSON. This is the fallback store: default mode is keyring-preferred, so this file appears when the OS keyring is unavailable or fails.",
         "confidence": "high"
       },
       {
@@ -5735,7 +6037,7 @@
         ],
         "storage": "os-keyring",
         "secret_type": "oauth-token",
-        "description": "CURRENT (Rust) build - NON-DEFAULT but user-selectable via cli_auth_credentials_store = \"keyring\" or \"auto\". When set, CLI auth is NOT in a file: it is in the OS keychain/credential manager. The service string is still \"Codex Auth\" in the Open Interpreter fork. Requires keychain acquisition rather than file collection.",
+        "description": "Current (Rust) build - non-default but user-selectable via cli_auth_credentials_store = \"keyring\" or \"auto\". When set, CLI auth is not in a file: it is in the OS keychain/credential manager. The service string is still \"Codex Auth\" in the Open Interpreter fork. Requires keychain acquisition rather than file collection.",
         "confidence": "high"
       },
       {
@@ -5747,7 +6049,7 @@
         ],
         "storage": "encrypted",
         "secret_type": "oauth-token",
-        "description": "CURRENT (Rust) build - age-encrypted secrets files used by the \"secrets\" keyring backend, which is the default backend on Windows when keyring storage is selected. The file encryption key lives in the OS keyring, so the file alone is not decryptable - collect the files AND the keyring entry together or neither is useful.",
+        "description": "Current (Rust) build - age-encrypted secrets files used by the \"secrets\" keyring backend, which is the default backend on Windows when keyring storage is selected. The file encryption key lives in the OS keyring, so the file alone is not decryptable - collect the files and the keyring entry together or neither is useful.",
         "confidence": "high"
       },
       {
@@ -5759,7 +6061,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CURRENT (Rust) build - vendor-documented API-key path for CI and headless hosts. Custom OpenAI-compatible providers declare their own variable name via env_key in config.toml. Nothing is written to disk in this mode: look at process environment, shell rc files, unit files and CI secret stores.",
+        "description": "Current (Rust) build - vendor-documented API-key path for CI and headless hosts. Custom OpenAI-compatible providers declare their own variable name via env_key in config.toml. Nothing is written to disk in this mode: look at process environment, shell rc files, unit files and CI secret stores.",
         "confidence": "high"
       },
       {
@@ -5770,7 +6072,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CLASSIC Python build (pip install open-interpreter, current PyPI release 0.4.3 - this is the build AIRT-0015's pip/venv artifacts describe). PLAINTEXT profile YAML. The vendor's own shipped default profile carries a commented \"api_key: ...\" under \"llm:\", making this the documented place a provider key is persisted. NOTE the directory is lowercase-hyphen \"open-interpreter\"; the entry's existing \"~/.config/Open Interpreter/\" is the pre-0.2.0 legacy name that the built-in migrator still reads.",
+        "description": "Classic Python build (pip install open-interpreter, current PyPI release 0.4.3 - this is the build AIRT-0015's pip/venv artifacts describe). Plaintext profile YAML. The vendor's own shipped default profile carries a commented \"api_key: ...\" under \"llm:\", making this the documented place a provider key is persisted. Note the directory is lowercase-hyphen \"open-interpreter\"; the entry's existing \"~/.config/Open Interpreter/\" is the pre-0.2.0 legacy name that the built-in migrator still reads.",
         "confidence": "medium"
       },
       {
@@ -5780,7 +6082,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CLASSIC Python build - Windows form of the profile YAML above. DERIVED, not vendor-documented: platformdirs.user_config_dir on Windows resolves to user_data_dir (LOCAL, not roaming) and appends appauthor-then-appname, and appauthor defaults to appname, which is why the name appears twice. Note this is %LOCALAPPDATA%, not the %APPDATA% currently in the entry. Verify on a live Windows host before shipping a collection step.",
+        "description": "Classic Python build - Windows form of the profile YAML above. Derived, not vendor-documented: platformdirs.user_config_dir on Windows resolves to user_data_dir (local, not roaming) and appends appauthor-then-appname, and appauthor defaults to appname, which is why the name appears twice. Note this is %LOCALAPPDATA%, not the %APPDATA% currently in the entry. Verify on a live Windows host before shipping a collection step.",
         "unverified": true,
         "confidence": "low"
       },
@@ -5793,7 +6095,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CLASSIC Python build - keys are read from the environment. IMPORTANT for collection: the interactive first-run key prompt does NOT persist the key to disk; it assigns it in memory and instructs the user to append \"export OPENAI_API_KEY=...\" to ~/.zshrc or ~/.bashrc, or run setx on Windows. So there is no auth file for this build - collect shell rc files and the HKCU\\Environment key instead.",
+        "description": "Classic Python build - keys are read from the environment. Important for collection: the interactive first-run key prompt does not persist the key to disk; it assigns it in memory and instructs the user to append \"export OPENAI_API_KEY=...\" to ~/.zshrc or ~/.bashrc, or run setx on Windows. So there is no auth file for this build - collect shell rc files and the HKCU\\Environment key instead.",
         "confidence": "high"
       },
       {
@@ -5805,7 +6107,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "CLASSIC Python build - shared secret for Open Interpreter's server/async mode, not a provider credential. Forensically significant because the auth function returns True when the variable is unset: an exposed server-mode instance with no INTERPRETER_API_KEY set accepts any caller.",
+        "description": "Classic Python build - shared secret for Open Interpreter's server/async mode, not a provider credential. Forensically significant because the auth function returns True when the variable is unset: an exposed server-mode instance with no INTERPRETER_API_KEY set accepts any caller.",
         "confidence": "high"
       }
     ],
@@ -5813,7 +6115,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "OpenInterpreter"
+      "kape_target": "OpenInterpreter",
+      "velociraptor_artifact": "Custom.AIAgents.OpenInterpreter"
     },
     "atlas_techniques": [
       "AML.T0053",
@@ -5828,6 +6131,9 @@
   {
     "id": "AIRT-0042",
     "name": "Open WebUI",
+    "aliases": [
+      "open-webui"
+    ],
     "vendor": "Open WebUI (OSS)",
     "category": "llm-runtime",
     "description": "Self-hosted web interface for local and remote LLMs, formerly Ollama WebUI. Multi-user with RBAC, RAG document ingestion, and a Tools/Functions system that executes Python. Usually deployed via Docker; also installable via pip.",
@@ -5848,7 +6154,7 @@
     },
     "risk": "critical",
     "confidence": "high",
-    "abuse_potential": "The first account registered on a fresh instance is automatically the administrator, so an instance reachable before its owner registers can be taken over outright by whoever signs up first. Tools and Functions execute Python server-side. The OpenAI router exposes a catch-all proxy that forwards requests upstream using the admin-configured API key, turning an authenticated account into free use of the organisation's inference spend. Multiple RCE, SSRF, and information-disclosure CVEs have shipped against it.",
+    "abuse_potential": "The first account registered on a fresh instance is automatically the administrator, so an instance reachable before its owner registers can be taken over outright by whoever signs up first. Tools and Functions execute Python server-side. The OpenAI router exposes a catch-all proxy that forwards requests upstream using the admin-configured API key, turning an authenticated account into free use of the organisation's inference spend. Multiple RCE, ssrf, and information-disclosure CVEs have shipped against it.",
     "artifacts": {
       "disk": [
         {
@@ -5890,7 +6196,7 @@
             "docker"
           ],
           "artifact_type": "credential-file",
-          "description": "Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not set in the environment and reloaded on restart.",
+          "description": "Auto-generated JWT signing key, written here when WEBUI_SECRET_KEY is not set in the environment and reloaded on restart",
           "forensic_value": "high",
           "evidence_type": [
             "credential-access"
@@ -5972,7 +6278,7 @@
           "direction": "egress",
           "indicator": "Configured inference backends via OLLAMA_BASE_URL / OPENAI_API_BASE_URL",
           "port": "443/TCP, 11434/TCP",
-          "description": "Both are endpoint-override variables - a modified value silently redirects all prompts and documents to an attacker-controlled proxy.",
+          "description": "Both are endpoint-override variables - a modified value silently redirects all prompts and documents to an attacker-controlled proxy",
           "confidence": "high"
         },
         {
@@ -6032,7 +6338,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication."
+      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication.",
+      "velociraptor_artifact": "Custom.AIAgents.OpenWebUI"
     },
     "atlas_techniques": [
       "AML.T0024",
@@ -6083,6 +6390,11 @@
   {
     "id": "AIRT-0036",
     "name": "OpenAI Codex CLI",
+    "aliases": [
+      "openai-codex-cli",
+      "codex",
+      "@openai/codex"
+    ],
     "vendor": "OpenAI",
     "category": "coding-agent-cli",
     "description": "Terminal coding agent installed via npm @openai/codex (also Homebrew cask / winget). Binary `codex`. Reads AGENTS.md.",
@@ -6128,7 +6440,7 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Contains [mcp_servers] blocks - EXECUTION PRIMITIVE",
+          "description": "Contains [mcp_servers] blocks - execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -6144,7 +6456,7 @@
             "linux"
           ],
           "artifact_type": "session-artifact",
-          "description": "Prompt history - FORENSIC TIMELINE SOURCE",
+          "description": "Prompt history - forensic timeline source",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
@@ -6161,7 +6473,7 @@
             "linux"
           ],
           "artifact_type": "session-artifact",
-          "description": "FULL session transcript incl. source code - HIGH-VALUE EXFIL SCOPING ARTIFACT",
+          "description": "Full session transcript incl. Source code - high-value exfil scoping artifact.",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
@@ -6257,7 +6569,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT ChatGPT OAuth token",
+        "description": "Plaintext ChatGPT OAuth token",
         "confidence": "high"
       }
     ],
@@ -6265,7 +6577,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "OpenAICodexCLI"
+      "kape_target": "OpenAICodexCLI",
+      "velociraptor_artifact": "Custom.AIAgents.OpenAICodexCLI"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -6277,12 +6590,28 @@
       "T1552.001",
       "T1071.001"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "openai/codex",
+        "url": "https://github.com/openai/codex",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "OpenAI Codex help centre article",
+        "url": "https://help.openai.com/en/articles/11096431-openai-codex",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0034",
     "name": "OpenAI Operator / CUA",
+    "aliases": [
+      "OpenAI Operator",
+      "CUA",
+      "openai-operator-cua"
+    ],
     "vendor": "OpenAI",
     "category": "computer-use-agent",
     "description": "Cloud-hosted computer-using agent operating a remote browser.",
@@ -6330,6 +6659,9 @@
   {
     "id": "AIRT-0043",
     "name": "OpenHands",
+    "aliases": [
+      "OpenDevin"
+    ],
     "vendor": "All Hands AI (OSS)",
     "category": "agent-framework",
     "description": "Autonomous software-engineering agent (formerly OpenDevin) with a web UI, running agent code in Docker sandbox containers. Deployed via Docker, Docker Compose, or from source.",
@@ -6357,7 +6689,7 @@
             "docker"
           ],
           "artifact_type": "config-file",
-          "description": "[core] workspace_base, [llm] model/api_key/base_url. PLAINTEXT api_key. base_url is an inference-redirection vector.",
+          "description": "[core] workspace_base, [llm] model/api_key/base_url. Plaintext api_key. Base_url is an inference-redirection vector.",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -6402,7 +6734,7 @@
             "docker"
           ],
           "artifact_type": "data-dir",
-          "description": "AGENT-GENERATED AND AGENT-MODIFIED FILES. Treat as unknown-origin content during triage.",
+          "description": "Agent-generated and agent-modified files. Treat as unknown-origin content during triage.",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence"
@@ -6417,7 +6749,7 @@
             "docker"
           ],
           "artifact_type": "agent-definition",
-          "description": "Custom skill definitions loaded by the agent.",
+          "description": "Custom skill definitions loaded by the agent",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -6432,7 +6764,7 @@
             "docker"
           ],
           "artifact_type": "config-file",
-          "description": "CRITICAL TRIAGE ARTIFACT: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent.",
+          "description": "Critical triage artifact: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
@@ -6471,7 +6803,7 @@
           "direction": "listener",
           "indicator": "Sandbox VS Code server",
           "port": "41234/TCP (SANDBOX_VSCODE_PORT)",
-          "description": "Published when the in-sandbox editor is used.",
+          "description": "Published when the in-sandbox editor is used",
           "confidence": "medium",
           "default_bind": "0.0.0.0",
           "authentication": "None",
@@ -6481,14 +6813,14 @@
           "direction": "egress",
           "indicator": "docker.openhands.dev, ghcr.io, docker.all-hands.dev",
           "port": "443/TCP",
-          "description": "Runtime image pulls.",
+          "description": "Runtime image pulls",
           "confidence": "high"
         },
         {
           "direction": "egress",
           "indicator": "LLM_BASE_URL / LLM_OLLAMA_BASE_URL configured endpoint",
           "port": "443/TCP, 11434/TCP",
-          "description": "Endpoint-override variables - a modified value redirects all agent traffic.",
+          "description": "Endpoint-override variables - a modified value redirects all agent traffic",
           "confidence": "high"
         }
       ],
@@ -6517,7 +6849,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT LLM provider api_key. Vendor CLI docs list this file as holding 'LLM configuration and agent settings' (model, API credentials, base URL). The CLI agent store serialises the agent spec with model_dump_json(context={'expose_secrets': True}) before writing, so the key is written unredacted. No OS keyring is involved.",
+        "description": "Plaintext LLM provider api_key. Vendor CLI docs list this file as holding 'LLM configuration and agent settings' (model, API credentials, base URL). The CLI agent store serialises the agent spec with model_dump_json(context={'expose_secrets': True}) before writing, so the key is written unredacted. No OS keyring is involved.",
         "confidence": "high"
       },
       {
@@ -6529,7 +6861,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT LLM api_key for the server / Docker deployment. Vendor Docker install docs instruct 'Set up ~/.openhands/settings.json with your LLM configuration'. The app server's FileSettingsStore defaults to path 'settings.json' and stores with model_dump_json(context={'expose_secrets': True, 'persist_settings': True}); the app image sets FILE_STORE=local and FILE_STORE_PATH=/.openhands, and the documented run command mounts -v ~/.openhands:/.openhands.",
+        "description": "Plaintext LLM api_key for the server / Docker deployment. Vendor Docker install docs instruct 'Set up ~/.openhands/settings.json with your LLM configuration'. The app server's FileSettingsStore defaults to path 'settings.json' and stores with model_dump_json(context={'expose_secrets': True, 'persist_settings': True}); the app image sets FILE_STORE=local and FILE_STORE_PATH=/.openhands, and the documented run command mounts -v ~/.openhands:/.openhands.",
         "confidence": "high"
       },
       {
@@ -6541,7 +6873,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT git provider tokens (GitHub / GitLab) plus any user-defined custom secrets the operator added for the agent. The app server's FileSecretsStore defaults to filename 'secrets.json' and writes model_dump_json(context={'expose_secrets': True}) with no encryption layer. Same file-store root as settings.json (FILE_STORE_PATH=/.openhands).",
+        "description": "Plaintext git provider tokens (GitHub / GitLab) plus any user-defined custom secrets the operator added for the agent. The app server's FileSecretsStore defaults to filename 'secrets.json' and writes model_dump_json(context={'expose_secrets': True}) with no encryption layer. Same file-store root as settings.json (FILE_STORE_PATH=/.openhands).",
         "confidence": "high"
       },
       {
@@ -6553,7 +6885,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT api_key under the [llm] section of config.toml (legacy V0 / CLI / headless / development mode). Vendor docs place this file 'in the same directory from which the command is run', or at a path given with --config-file - NOT necessarily at the ~/.openhands/config.toml the catalog disk row lists. Current vendor docs show ~/.openhands/config.toml only for the [plugins] section, so collect both locations and treat the working-directory copy as the likely one.",
+        "description": "Plaintext api_key under the [llm] section of config.toml (legacy V0 / CLI / headless / development mode). Vendor docs place this file 'in the same directory from which the command is run', or at a path given with --config-file - not necessarily at the ~/.openhands/config.toml the catalog disk row lists. Current vendor docs show ~/.openhands/config.toml only for the [plugins] section, so collect both locations and treat the working-directory copy as the likely one.",
         "confidence": "high"
       },
       {
@@ -6565,7 +6897,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT provider key in the process environment; vendor environment-variable reference documents it as 'API key for your LLM provider'. Usually supplied on the documented docker run line, so it also survives in the container config (docker inspect), any compose file, and shell history. Related documented credential vars in the same table: LLM_AWS_ACCESS_KEY_ID, LLM_AWS_SECRET_ACCESS_KEY, SANDBOX_API_KEY, GITHUB_TOKEN, TAVILY_API_KEY.",
+        "description": "Plaintext provider key in the process environment; vendor environment-variable reference documents it as 'API key for your LLM provider'. Usually supplied on the documented docker run line, so it also survives in the container config (docker inspect), any compose file, and shell history. Related documented credential vars in the same table: LLM_AWS_ACCESS_KEY_ID, LLM_AWS_SECRET_ACCESS_KEY, SANDBOX_API_KEY, GITHUB_TOKEN, TAVILY_API_KEY.",
         "confidence": "high"
       },
       {
@@ -6577,7 +6909,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "unknown",
-        "description": "PLAINTEXT pass-through variables. Vendor docs: 'Variables prefixed with SANDBOX_ENV_ are passed through to the sandbox environment' - so any secret named this way on the host is injected into the agent's sandbox container and is readable by anything the agent runs there. Enumerate them from the container environment during triage.",
+        "description": "Plaintext pass-through variables. Vendor docs: 'Variables prefixed with SANDBOX_ENV_ are passed through to the sandbox environment' - so any secret named this way on the host is injected into the agent's sandbox container and is readable by anything the agent runs there. Enumerate them from the container environment during triage.",
         "confidence": "high"
       },
       {
@@ -6589,7 +6921,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "jwt-signing-key",
-        "description": "PLAINTEXT session-token signing secret, documented as 'JWT secret for authentication', default auto-generated. The V0 config equivalent is jwt_secret in config.toml, which the vendor docs tell operators to set to their own value. Theft permits forging a session against the port 3000 UI/API; rotation invalidates existing sessions.",
+        "description": "Plaintext session-token signing secret, documented as 'JWT secret for authentication', default auto-generated. The V0 config equivalent is jwt_secret in config.toml, which the vendor docs tell operators to set to their own value. Theft permits forging a session against the port 3000 UI/API; rotation invalidates existing sessions.",
         "confidence": "high"
       }
     ],
@@ -6606,16 +6938,27 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.OpenHands"
     },
     "atlas_techniques": [],
     "attack_techniques": [],
-    "references": [],
+    "references": [
+      {
+        "title": "OpenHands/OpenHands",
+        "url": "https://github.com/OpenHands/OpenHands",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0031",
     "name": "Playwright MCP",
+    "aliases": [
+      "playwright-mcp",
+      "@playwright/mcp"
+    ],
     "vendor": "Microsoft (OSS)",
     "category": "browser-agent",
     "description": "npx @playwright/mcp - gives any MCP client full browser control. Downloads browser binaries on first run.",
@@ -6633,7 +6976,7 @@
     },
     "risk": "critical",
     "confidence": "high",
-    "abuse_potential": "--caps=storage exposes cookie/localStorage tools. --storage-state replays AUTHENTICATED SESSIONS. Session-token theft and MFA-bypass surface.",
+    "abuse_potential": "--caps=storage exposes cookie/localStorage tools. --storage-state replays authenticated sessions. Session-token theft and MFA-bypass surface.",
     "artifacts": {
       "disk": [
         {
@@ -6644,7 +6987,7 @@
             "linux"
           ],
           "artifact_type": "binary",
-          "description": "RUNS WITHOUT INSTALL - npx cache only",
+          "description": "Runs without install - npx cache only",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -6716,7 +7059,7 @@
           "direction": "listener",
           "indicator": "SSE/HTTP transport mode",
           "port": "Configurable (PLAYWRIGHT_MCP_HOST)",
-          "description": "0.0.0.0 bind = REMOTE BROWSER CONTROL of the host",
+          "description": "0.0.0.0 bind = remote browser control of the host",
           "confidence": "high",
           "default_bind": "127.0.0.1 (0.0.0.0 if set)",
           "authentication": "NONE",
@@ -6756,7 +7099,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "session-state",
-        "description": "SERIALIZED COOKIES + localStorage = SESSION HIJACK ARTIFACT",
+        "description": "Serialized cookies + localStorage = session hijack artifact",
         "confidence": "high"
       }
     ],
@@ -6764,7 +7107,8 @@
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "PlaywrightMCP"
+      "kape_target": "PlaywrightMCP",
+      "velociraptor_artifact": "Custom.AIAgents.PlaywrightMCP"
     },
     "atlas_techniques": [
       "AML.T0086",
@@ -6775,15 +7119,26 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "microsoft/playwright-mcp",
+        "url": "https://github.com/microsoft/playwright-mcp",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
     "id": "AIRT-0040",
     "name": "Roo Code",
+    "aliases": [
+      "roo-code",
+      "Roo Cline"
+    ],
     "vendor": "Roo Veterinary Inc. (OSS)",
+    "status": "unmaintained",
     "category": "coding-agent-ide",
-    "description": "VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP.",
+    "description": "VS Code extension ID rooveterinaryinc.roo-cline (Cline fork). Multi-mode agent with project-scoped MCP. Discontinued - shutdown announced 2026-04-21 and the repository archived 2026-05-15, with the team moving to Roomote. Still installed on hosts and still leaves every artifact below, so it remains in scope for collection.",
     "supported_os": [
       "windows",
       "macos",
@@ -6807,7 +7162,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "EXECUTION PRIMITIVE",
+          "description": "Execution primitive",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -6841,7 +7196,7 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "TRAVELS WITH THE REPO - review on clone/PR",
+          "description": "Travels with the repo - review on clone/PR",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -6908,13 +7263,14 @@
         "secrets_location": "env block",
         "persistence_trigger": "Every workspace open",
         "triage_priority": "p1",
-        "notes": "TRAVELS WITH THE REPO"
+        "notes": "Travels with the repo"
       }
     ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "RooCode"
+      "kape_target": "RooCode",
+      "velociraptor_artifact": "Custom.AIAgents.RooCode"
     },
     "atlas_techniques": [
       "AML.T0051",
@@ -7006,7 +7362,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT Fernet key, written mode 0600, auto-generated on first vault use when LOCAL_CREDENTIAL_VAULT_KEY is unset. Decrypts every item in the local credential vault. It is generated INTO THE SAME DIRECTORY as the encrypted credential files it protects, so anyone who can read the vault directory has both halves. Container path /data/credential_vault/.fernet_key.",
+        "description": "Plaintext Fernet key, written mode 0600, auto-generated on first vault use when LOCAL_CREDENTIAL_VAULT_KEY is unset. Decrypts every item in the local credential vault. It is generated into the same directory as the encrypted credential files it protects, so anyone who can read the vault directory has both halves. Container path /data/credential_vault/.fernet_key.",
         "confidence": "high"
       },
       {
@@ -7018,7 +7374,7 @@
         ],
         "storage": "encrypted",
         "secret_type": "embedded-credentials",
-        "description": "Fernet-encrypted credential items, one file per credential, mode 0600. These are the third-party website logins (usernames/passwords) and credit-card records that Skyvern replays into target sites during automated logins - i.e. the victim-relevant secrets, not Skyvern's own auth. This is the built-in vault used by default in the OSS docker-compose setup (CREDENTIAL_VAULT_TYPE=skyvern, ENABLE_LOCAL_CREDENTIAL_VAULT=true).",
+        "description": "Fernet-encrypted credential items, one file per credential, mode 0600. These are the third-party website logins (usernames/passwords) and credit-card records that Skyvern replays into target sites during automated logins - i.e. The victim-relevant secrets, not Skyvern's own auth. This is the built-in vault used by default in the OSS docker-compose setup (CREDENTIAL_VAULT_TYPE=skyvern, ENABLE_LOCAL_CREDENTIAL_VAULT=true).",
         "confidence": "high"
       },
       {
@@ -7041,7 +7397,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "encryption-key",
-        "description": "PLAINTEXT env var supplying the vault Fernet key directly. When set, no .fernet_key file is generated - the key exists only in the process environment and in whatever .env or compose file provided it. Absence of .fernet_key alongside a populated vault means look here.",
+        "description": "Plaintext env var supplying the vault Fernet key directly. When set, no .fernet_key file is generated - the key exists only in the process environment and in whatever .env or compose file provided it. Absence of .fernet_key alongside a populated vault means look here.",
         "confidence": "high"
       },
       {
@@ -7054,7 +7410,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT backend env file at the repo/working root, created by `skyvern init` / `skyvern quickstart`. The CLI writes the generated SKYVERN_API_KEY into it directly, and it also carries the configured LLM provider keys (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY, GROQ_API_KEY, AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) and POSTGRES_PASSWORD. Loaded by the compose stack via env_file.",
+        "description": "Plaintext backend env file at the repo/working root, created by `skyvern init` / `skyvern quickstart`. The CLI writes the generated SKYVERN_API_KEY into it directly, and it also carries the configured LLM provider keys (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY, GROQ_API_KEY, AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) and POSTGRES_PASSWORD. Loaded by the compose stack via env_file.",
         "confidence": "high"
       },
       {
@@ -7066,7 +7422,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT user-level backend env file (global scope). Skyvern layers a global ~/.skyvern env under the project-scope and repo-root .env files; which of them is consulted depends on the resolution intent, so this one is not always present or authoritative. Worth collecting when the repo-root .env does not explain the running configuration.",
+        "description": "Plaintext user-level backend env file (global scope). Skyvern layers a global ~/.skyvern env under the project-scope and repo-root .env files; which of them is consulted depends on the resolution intent, so this one is not always present or authoritative. Worth collecting when the repo-root .env does not explain the running configuration.",
         "confidence": "medium"
       },
       {
@@ -7079,7 +7435,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT frontend env file holding VITE_SKYVERN_API_KEY - the organization API key used by the UI. Vite bakes VITE_* values into the built bundle, so the key can also survive in the served JavaScript assets, not just this file.",
+        "description": "Plaintext frontend env file holding VITE_SKYVERN_API_KEY - the organization API key used by the UI. Vite bakes VITE_* values into the built bundle, so the key can also survive in the served JavaScript assets, not just this file.",
         "confidence": "high"
       },
       {
@@ -7092,7 +7448,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
-        "description": "PLAINTEXT Bitwarden vault master password in an env var, used when CREDENTIAL_VAULT_TYPE=bitwarden. SKYVERN_AUTH_BITWARDEN_CLIENT_ID, SKYVERN_AUTH_BITWARDEN_CLIENT_SECRET and SKYVERN_AUTH_BITWARDEN_ORGANIZATION_ID sit beside it. Compromise reaches the entire linked Bitwarden collection, well beyond Skyvern itself - escalate scope accordingly.",
+        "description": "Plaintext Bitwarden vault master password in an env var, used when CREDENTIAL_VAULT_TYPE=bitwarden. SKYVERN_AUTH_BITWARDEN_CLIENT_ID, SKYVERN_AUTH_BITWARDEN_CLIENT_SECRET and SKYVERN_AUTH_BITWARDEN_ORGANIZATION_ID sit beside it. Compromise reaches the entire linked Bitwarden collection, well beyond Skyvern itself - escalate scope accordingly.",
         "confidence": "high"
       },
       {
@@ -7105,7 +7461,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT 1Password service-account token in an env var, used when Skyvern is configured against a 1Password vault. Same escalation consideration as the Bitwarden variables - it reaches an external vault.",
+        "description": "Plaintext 1Password service-account token in an env var, used when Skyvern is configured against a 1Password vault. Same escalation consideration as the Bitwarden variables - it reaches an external vault.",
         "confidence": "high"
       },
       {
@@ -7137,7 +7493,8 @@
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
+      "velociraptor_artifact": "Custom.AIAgents.Skyvern"
     },
     "atlas_techniques": [
       "AML.T0086",
@@ -7148,7 +7505,13 @@
       "T1539",
       "T1552"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "Skyvern-AI/skyvern",
+        "url": "https://github.com/Skyvern-AI/skyvern",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7171,7 +7534,7 @@
     },
     "risk": "medium",
     "confidence": "low",
-    "abuse_potential": "Large context = large code egress per request. THIN PUBLIC SOURCING on canonical paths.",
+    "abuse_potential": "Large context = large code egress per request. Thin public sourcing on canonical paths.",
     "artifacts": {
       "disk": [
         {
@@ -7182,7 +7545,7 @@
             "linux"
           ],
           "artifact_type": "binary",
-          "description": "THIN SOURCING - validate locally",
+          "description": "Thin sourcing - validate locally",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -7230,7 +7593,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "unknown",
-        "description": "PLAINTEXT account key written by the sm-agent binary. Field names observed in a real-world instance: api_key, api_key_obtained_at, link_id. ~/.supermaven is confirmed as Supermaven's data root by the vendor's own Neovim plugin (falls back to $XDG_DATA_HOME/supermaven when that variable is set, so check there too). Single-quality-source on the credential file itself - verify before relying on it.",
+        "description": "Plaintext account key written by the sm-agent binary. Field names observed in a real-world instance: api_key, api_key_obtained_at, link_id. ~/.supermaven is confirmed as Supermaven's data root by the vendor's own Neovim plugin (falls back to $XDG_DATA_HOME/supermaven when that variable is set, so check there too). Single-quality-source on the credential file itself - verify before relying on it.",
         "unverified": true,
         "confidence": "low"
       },
@@ -7243,7 +7606,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "unknown",
-        "description": "PLAINTEXT. Same config file, created RELATIVE TO THE WORKING DIRECTORY rather than under $HOME - reported on the vendor's own repo as sm-agent creating .supermaven/config.json in the project dir on startup. Forensically material because an account key can land inside a repo working tree and be committed. Worth a repo-wide sweep when Supermaven is in scope.",
+        "description": "plaintext. Same config file, created relative to the working directory rather than under $HOME - reported on the vendor's own repo as sm-agent creating .supermaven/config.json in the project dir on startup. Forensically material because an account key can land inside a repo working tree and be committed. Worth a repo-wide sweep when Supermaven is in scope.",
         "unverified": true,
         "confidence": "low"
       }
@@ -7252,7 +7615,8 @@
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Supermaven"
+      "kape_target": "Supermaven",
+      "velociraptor_artifact": "Custom.AIAgents.Supermaven"
     },
     "atlas_techniques": [
       "AML.T0024"
@@ -7327,7 +7691,7 @@
             "linux"
           ],
           "artifact_type": "binary",
-          "description": "BINARY SUBSTITUTION RISK",
+          "description": "Binary substitution risk",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -7385,7 +7749,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "oauth-token",
-        "description": "PLAINTEXT refresh token. Written and read by Tabnine's own VS Code extension (TABNINE_TOKEN_FILE_PATH = TABNINE_CONFIG_DIR + '.refresh_token_v2', where TABNINE_CONFIG_DIR = homedir/.config/TabNine). The cloud-environment code path also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a Codespaces/Gitpod host has it in two places.",
+        "description": "Plaintext refresh token. Written and read by Tabnine's own VS Code extension (TABNINE_TOKEN_FILE_PATH = TABNINE_CONFIG_DIR + '.refresh_token_v2', where TABNINE_CONFIG_DIR = homedir/.config/TabNine). The cloud-environment code path also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a Codespaces/Gitpod host has it in two places.",
         "confidence": "high"
       }
     ],
@@ -7393,7 +7757,8 @@
     "collection": {
       "triage_priority": "p2",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.",
-      "kape_target": "Tabnine"
+      "kape_target": "Tabnine",
+      "velociraptor_artifact": "Custom.AIAgents.Tabnine"
     },
     "atlas_techniques": [
       "AML.T0024"
@@ -7408,6 +7773,10 @@
   {
     "id": "AIRT-0022",
     "name": "text-generation-webui (oobabooga)",
+    "aliases": [
+      "oobabooga",
+      "text-generation-webui"
+    ],
     "vendor": "oobabooga (OSS)",
     "category": "llm-runtime",
     "description": "Gradio web UI for local models with an extension system.",
@@ -7425,7 +7794,7 @@
     },
     "risk": "high",
     "confidence": "medium",
-    "abuse_potential": "Extensions execute arbitrary Python. Gradio --share creates a PUBLIC TUNNEL to the host - a covert ingress channel.",
+    "abuse_potential": "Extensions execute arbitrary Python. Gradio --share creates a public tunnel to the host - a covert ingress channel.",
     "artifacts": {
       "disk": [
         {
@@ -7470,7 +7839,7 @@
             "linux"
           ],
           "artifact_type": "install-dir",
-          "description": "ARBITRARY PYTHON EXECUTION",
+          "description": "Arbitrary Python execution",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -7484,7 +7853,7 @@
           "direction": "listener",
           "indicator": "Gradio UI / OpenAI-compatible API",
           "port": "7860/TCP, 5000/TCP",
-          "description": "--share creates a PUBLIC gradio.live TUNNEL - covert ingress",
+          "description": "--share creates a public gradio.live tunnel - covert ingress",
           "confidence": "medium",
           "default_bind": "127.0.0.1",
           "authentication": "Optional",
@@ -7524,7 +7893,13 @@
       "T1105",
       "T1590"
     ],
-    "references": [],
+    "references": [
+      {
+        "title": "oobabooga/text-generation-webui",
+        "url": "https://github.com/oobabooga/text-generation-webui",
+        "accessed": "2026-08-13"
+      }
+    ],
     "last_modified": "2026-08-11"
   },
   {
@@ -7651,7 +8026,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT. The API key the server requires from clients, read from the process environment. Unset by default, which means no authentication at all. The --api-key CLI flag takes precedence over it, so check the command line as well as the environment before concluding the server was unauthenticated.",
+        "description": "plaintext. The API key the server requires from clients, read from the process environment. Unset by default, which means no authentication at all. The --api-key CLI flag takes precedence over it, so check the command line as well as the environment before concluding the server was unauthenticated.",
         "confidence": "high"
       },
       {
@@ -7662,14 +8037,15 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "PLAINTEXT Hugging Face token used to pull gated model weights, read from the environment. Grants access to whatever private repositories the account can reach.",
+        "description": "Plaintext Hugging Face token used to pull gated model weights, read from the environment. Grants access to whatever private repositories the account can reach.",
         "confidence": "high"
       }
     ],
     "mcp": [],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Establish the authentication posture first, because it decides whether this is an exposure: capture the full `vllm serve` command line and the process environment, and check for --api-key and VLLM_API_KEY together. Then confirm the bind address with `ss -lntp` rather than trusting the config - the default is 0.0.0.0. Collect ~/.config/vllm/usage_stats.json before any restart; it is often the only timeline of what was served. Note the model cache is shared with other Hugging Face consumers, so presence alone does not attribute activity to vLLM."
+      "guidance": "Establish the authentication posture first, because it decides whether this is an exposure: capture the full `vllm serve` command line and the process environment, and check for --api-key and VLLM_API_KEY together. Then confirm the bind address with `ss -lntp` rather than trusting the config - the default is 0.0.0.0. Collect ~/.config/vllm/usage_stats.json before any restart; it is often the only timeline of what was served. Note the model cache is shared with other Hugging Face consumers, so presence alone does not attribute activity to vLLM.",
+      "velociraptor_artifact": "Custom.AIAgents.vLLM"
     },
     "atlas_techniques": [
       "AML.T0011",

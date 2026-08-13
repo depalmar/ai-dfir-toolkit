@@ -5,8 +5,8 @@ Id: b2009e3b-2fc0-5c98-b15a-b1107c3bc960
 RecreateDirectories: true
 Targets:
     -
-        Name: 'EXECUTION PRIMITIVE'
+        Name: 'Execution primitive'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Roaming\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\'
         FileMask: 'mcp_settings.json'
-        Comment: 'AIRT-0040 | EXECUTION PRIMITIVE'
+        Comment: 'AIRT-0040 | Execution primitive'

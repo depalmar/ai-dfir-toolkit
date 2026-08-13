@@ -1,0 +1,44 @@
+name: Custom.AIAgents.Goose
+description: |
+  Rust-based agent shipping both CLI and Desktop. Extension/MCP host. GOOSE_PATH_ROOT overrides config root.
+
+  Generated from the AI agent artifact catalog (AIRT-0038). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Roaming\goose\config.yaml', 'C:\Users\*\.config\goose\permission.yaml ; permissions\tool_permissions.json', 'C:\Users\*\.config\goose\secrets.yaml (mode 0600)', 'C:\Users\*\.config\goose\config.yaml']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.config/goose/config.yaml', '/Users/*/.config/goose/permission.yaml ; permissions/tool_permissions.json', '/Users/*/.config/goose/secrets.yaml (mode 0600)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.config/goose/config.yaml', '/home/*/.config/goose/permission.yaml ; permissions/tool_permissions.json', '/home/*/.config/goose/secrets.yaml (mode 0600)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

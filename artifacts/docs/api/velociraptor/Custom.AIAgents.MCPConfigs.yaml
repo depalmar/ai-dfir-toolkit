@@ -1,0 +1,44 @@
+name: Custom.AIAgents.MCPConfigs
+description: |
+  MCP client and server configs - what the agent was authorised to run. Collect before remediation; removing a server destroys the record.
+
+  Generated from the AI agent artifact catalog (multiple entries). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.claude.json', 'C:\Users\*\.config\Claude\claude_desktop_config.json', 'C:\Users\*\.config\goose\config.yaml', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\.kiro\settings\mcp.json', 'C:\Users\*\.openhands\config.toml', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.claude.json', '/Users/*/.config/Claude/claude_desktop_config.json', '/Users/*/.config/goose/config.yaml', '/Users/*/.cursor/mcp.json', '/Users/*/.kiro/settings/mcp.json', '/Users/*/Library/Application Support/Claude/claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.claude.json', '/home/*/.config/Claude/claude_desktop_config.json', '/home/*/.config/goose/config.yaml', '/home/*/.cursor/mcp.json', '/home/*/.kiro/settings/mcp.json', '/home/*/.openhands/config.toml', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

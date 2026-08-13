@@ -20,7 +20,7 @@ capabilities:
   mcp_capable: true
 risk: high
 confidence: medium
-abuse_potential: crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.
+abuse_potential: Crewai-tools includes code-execution and file-read tools. YAML defines autonomous agent goals - a tamper target.
 artifacts:
   disk:
     - path: "<project>/src/<name>/config/agents.yaml  |  <project>/src/<name>/config/tasks.yaml"
@@ -80,5 +80,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "crewAIInc/crewAI"
+    url: https://github.com/crewAIInc/crewAI
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -5,6 +5,8 @@
 
 id: AIRT-0043
 name: OpenHands
+aliases:
+  - OpenDevin
 vendor: All Hands AI (OSS)
 category: agent-framework
 description: Autonomous software-engineering agent (formerly OpenDevin) with a web UI, running agent code in Docker sandbox containers. Deployed via Docker, Docker Compose, or from source.
@@ -28,7 +30,7 @@ artifacts:
         - linux
         - docker
       artifact_type: config-file
-      description: "[core] workspace_base, [llm] model/api_key/base_url. PLAINTEXT api_key. base_url is an inference-redirection vector."
+      description: "[core] workspace_base, [llm] model/api_key/base_url. Plaintext api_key. Base_url is an inference-redirection vector."
       forensic_value: high
       evidence_type:
         - configuration
@@ -61,7 +63,7 @@ artifacts:
         - linux
         - docker
       artifact_type: data-dir
-      description: AGENT-GENERATED AND AGENT-MODIFIED FILES. Treat as unknown-origin content during triage.
+      description: Agent-generated and agent-modified files. Treat as unknown-origin content during triage.
       forensic_value: medium
       evidence_type:
         - program-presence
@@ -72,7 +74,7 @@ artifacts:
         - linux
         - docker
       artifact_type: agent-definition
-      description: Custom skill definitions loaded by the agent.
+      description: Custom skill definitions loaded by the agent
       forensic_value: low
       evidence_type:
         - program-presence
@@ -83,7 +85,7 @@ artifacts:
         - linux
         - docker
       artifact_type: config-file
-      description: "CRITICAL TRIAGE ARTIFACT: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent."
+      description: "Critical triage artifact: check for -v /var/run/docker.sock:/var/run/docker.sock, which is host-root-equivalent"
       forensic_value: high
       evidence_type:
         - configuration
@@ -112,7 +114,7 @@ artifacts:
     - direction: listener
       indicator: Sandbox VS Code server
       port: 41234/TCP (SANDBOX_VSCODE_PORT)
-      description: Published when the in-sandbox editor is used.
+      description: Published when the in-sandbox editor is used
       confidence: medium
       default_bind: "0.0.0.0"
       authentication: None
@@ -120,12 +122,12 @@ artifacts:
     - direction: egress
       indicator: docker.openhands.dev, ghcr.io, docker.all-hands.dev
       port: 443/TCP
-      description: Runtime image pulls.
+      description: Runtime image pulls
       confidence: high
     - direction: egress
       indicator: LLM_BASE_URL / LLM_OLLAMA_BASE_URL configured endpoint
       port: 443/TCP, 11434/TCP
-      description: Endpoint-override variables - a modified value redirects all agent traffic.
+      description: Endpoint-override variables - a modified value redirects all agent traffic
       confidence: high
   process:
     - name: "python (uvicorn openhands.server.listen:app)"
@@ -143,7 +145,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT LLM provider api_key. Vendor CLI docs list this file as holding 'LLM
+      Plaintext LLM provider api_key. Vendor CLI docs list this file as holding 'LLM
       configuration and agent settings' (model, API credentials, base URL). The CLI
       agent store serialises the agent spec with
       model_dump_json(context={'expose_secrets': True}) before writing, so the key is
@@ -154,7 +156,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT LLM api_key for the server / Docker deployment. Vendor Docker install
+      Plaintext LLM api_key for the server / Docker deployment. Vendor Docker install
       docs instruct 'Set up ~/.openhands/settings.json with your LLM configuration'. The
       app server's FileSettingsStore defaults to path 'settings.json' and stores with
       model_dump_json(context={'expose_secrets': True, 'persist_settings': True}); the
@@ -166,7 +168,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT git provider tokens (GitHub / GitLab) plus any user-defined custom
+      Plaintext git provider tokens (GitHub / GitLab) plus any user-defined custom
       secrets the operator added for the agent. The app server's FileSecretsStore
       defaults to filename 'secrets.json' and writes
       model_dump_json(context={'expose_secrets': True}) with no encryption layer. Same
@@ -177,9 +179,9 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT api_key under the [llm] section of config.toml (legacy V0 / CLI /
+      Plaintext api_key under the [llm] section of config.toml (legacy V0 / CLI /
       headless / development mode). Vendor docs place this file 'in the same directory
-      from which the command is run', or at a path given with --config-file - NOT
+      from which the command is run', or at a path given with --config-file - not
       necessarily at the ~/.openhands/config.toml the catalog disk row lists. Current
       vendor docs show ~/.openhands/config.toml only for the [plugins] section, so
       collect both locations and treat the working-directory copy as the likely one.
@@ -189,7 +191,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT provider key in the process environment; vendor environment-variable
+      Plaintext provider key in the process environment; vendor environment-variable
       reference documents it as 'API key for your LLM provider'. Usually supplied on the
       documented docker run line, so it also survives in the container config (docker
       inspect), any compose file, and shell history. Related documented credential vars
@@ -201,7 +203,7 @@ credentials:
     storage: plaintext
     secret_type: unknown
     description: >-
-      PLAINTEXT pass-through variables. Vendor docs: 'Variables prefixed with
+      Plaintext pass-through variables. Vendor docs: 'Variables prefixed with
       SANDBOX_ENV_ are passed through to the sandbox environment' - so any secret named
       this way on the host is injected into the agent's sandbox container and is
       readable by anything the agent runs there. Enumerate them from the container
@@ -212,7 +214,7 @@ credentials:
     storage: plaintext
     secret_type: jwt-signing-key
     description: >-
-      PLAINTEXT session-token signing secret, documented as 'JWT secret for
+      Plaintext session-token signing secret, documented as 'JWT secret for
       authentication', default auto-generated. The V0 config equivalent is jwt_secret in
       config.toml, which the vendor docs tell operators to set to their own value. Theft
       permits forging a session against the port 3000 UI/API; rotation invalidates
@@ -229,7 +231,11 @@ mcp:
 collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  velociraptor_artifact: Custom.AIAgents.OpenHands
 atlas_techniques: []
 attack_techniques: []
-references: []
+references:
+  - title: "OpenHands/OpenHands"
+    url: https://github.com/OpenHands/OpenHands
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -53,7 +53,7 @@ artifacts:
         - macos
         - linux
       artifact_type: binary
-      description: BINARY SUBSTITUTION RISK
+      description: Binary substitution risk
       forensic_value: medium
       evidence_type:
         - execution
@@ -93,7 +93,7 @@ credentials:
     storage: plaintext
     secret_type: oauth-token
     description: >-
-      PLAINTEXT refresh token. Written and read by Tabnine's own VS Code extension
+      Plaintext refresh token. Written and read by Tabnine's own VS Code extension
       (TABNINE_TOKEN_FILE_PATH = TABNINE_CONFIG_DIR + '.refresh_token_v2', where
       TABNINE_CONFIG_DIR = homedir/.config/TabNine). The cloud-environment code path
       also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a
@@ -104,6 +104,7 @@ collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Tabnine
+  velociraptor_artifact: Custom.AIAgents.Tabnine
 atlas_techniques:
   - AML.T0024
 attack_techniques:

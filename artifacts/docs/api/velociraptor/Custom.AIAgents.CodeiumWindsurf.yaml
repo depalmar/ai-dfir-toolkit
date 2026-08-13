@@ -1,0 +1,44 @@
+name: Custom.AIAgents.CodeiumWindsurf
+description: |
+  Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.
+
+  Generated from the AI agent artifact catalog (AIRT-0006). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.codeium\**', 'C:\Users\*\.codeium\windsurf\mcp_config.json', 'C:\Users\*\.codeium\*\language_server_*', 'C:\Users\*\.codeium\config.json', 'C:\Users\*\AppData\Roaming\Windsurf\User\globalStorage\state.vscdb']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.codeium/**', '/Users/*/.codeium/windsurf/mcp_config.json', '/Users/*/.codeium/*/language_server_*', '/Users/*/.codeium/config.json', '/Users/*/Library/Application Support/Windsurf/User/globalStorage/state.vscdb']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.codeium/**', '/home/*/.codeium/windsurf/mcp_config.json', '/home/*/.codeium/*/language_server_*', '/home/*/.codeium/config.json', '/home/*/.config/Windsurf/User/globalStorage/state.vscdb']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

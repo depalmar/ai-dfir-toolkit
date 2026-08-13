@@ -5,6 +5,11 @@
 
 id: AIRT-0008
 name: Amazon Q Developer (ex-CodeWhisperer)
+aliases:
+  - CodeWhisperer
+  - Amazon Q Developer
+  - amazon-q-developer
+  - amazonq
 vendor: AWS
 category: coding-agent-ide
 description: AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.
@@ -91,6 +96,7 @@ collection:
   triage_priority: p2
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: AmazonQDeveloper
+  velociraptor_artifact: Custom.AIAgents.AmazonQDeveloper
 atlas_techniques:
   - AML.T0051
   - AML.T0053

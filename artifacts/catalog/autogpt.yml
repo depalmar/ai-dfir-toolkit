@@ -29,7 +29,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: AGENT-GENERATED FILES - triage as unknown-origin content
+      description: Agent-generated files - triage as unknown-origin content
       forensic_value: low
       evidence_type:
         - program-presence
@@ -55,5 +55,8 @@ atlas_techniques:
 attack_techniques:
   - T1059
   - T1552.001
-references: []
+references:
+  - title: "Significant-Gravitas/AutoGPT"
+    url: https://github.com/Significant-Gravitas/AutoGPT
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

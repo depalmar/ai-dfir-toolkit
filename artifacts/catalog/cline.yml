@@ -5,6 +5,8 @@
 
 id: AIRT-0039
 name: Cline
+aliases:
+  - Claude Dev
 vendor: Cline Bot Inc. (OSS)
 category: coding-agent-ide
 description: VS Code extension ID saoudrizwan.claude-dev (formerly Claude Dev). Agentic file edit + terminal execution.
@@ -27,7 +29,7 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: EXECUTION PRIMITIVE
+      description: Execution primitive
       forensic_value: high
       evidence_type:
         - execution
@@ -65,7 +67,7 @@ artifacts:
         - macos
         - linux
       artifact_type: data-dir
-      description: SINGLE-SOURCE - corroborate
+      description: Single-source - corroborate
       forensic_value: low
       evidence_type:
         - program-presence
@@ -76,7 +78,7 @@ artifacts:
     - direction: listener
       indicator: Standalone gRPC server
       port: 26040/TCP
-      description: SINGLE-SOURCE - corroborate before detecting
+      description: Single-source - corroborate before detecting
       confidence: low
       unverified: true
       default_bind: "127.0.0.1"
@@ -120,6 +122,7 @@ collection:
   triage_priority: p1
   guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
   kape_target: Cline
+  velociraptor_artifact: Custom.AIAgents.Cline
 atlas_techniques:
   - AML.T0051
   - AML.T0053
@@ -129,5 +132,8 @@ attack_techniques:
   - T1059
   - T1552.001
   - T1195.002
-references: []
+references:
+  - title: "cline/cline"
+    url: https://github.com/cline/cline
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

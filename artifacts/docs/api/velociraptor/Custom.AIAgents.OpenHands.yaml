@@ -1,0 +1,34 @@
+name: Custom.AIAgents.OpenHands
+description: |
+  Autonomous software-engineering agent (formerly OpenDevin) with a web UI, running agent code in Docker sandbox containers. Deployed via Docker, Docker Compose, 
+
+  Generated from the AI agent artifact catalog (AIRT-0043). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.openhands\agent_settings.json', 'C:\Users\*\.openhands\settings.json  (mounted to \.openhands\settings.json)', 'C:\Users\*\.openhands\secrets.json  (mounted to \.openhands\secrets.json)', 'C:\Users\*\.openhands\config.toml']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.openhands/config.toml', '/home/*/.openhands-state/  (mounted to /.openhands-state)', '/home/*/.openhands/  (mounted to /.openhands)', '/home/*/.openhands/skills/ ; ~/.agents/skills/**', '/home/*/.openhands/agent_settings.json', '/home/*/.openhands/settings.json  (mounted to /.openhands/settings.json)', '/home/*/.openhands/secrets.json  (mounted to /.openhands/secrets.json)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

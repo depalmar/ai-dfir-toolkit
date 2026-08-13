@@ -115,7 +115,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT. The API key the server requires from clients, read from the process
+      plaintext. The API key the server requires from clients, read from the process
       environment. Unset by default, which means no authentication at all. The --api-key
       CLI flag takes precedence over it, so check the command line as well as the
       environment before concluding the server was unauthenticated.
@@ -125,7 +125,7 @@ credentials:
     storage: plaintext
     secret_type: api-key
     description: >-
-      PLAINTEXT Hugging Face token used to pull gated model weights, read from the
+      Plaintext Hugging Face token used to pull gated model weights, read from the
       environment. Grants access to whatever private repositories the account can reach.
     confidence: high
 mcp: []
@@ -139,6 +139,7 @@ collection:
     ~/.config/vllm/usage_stats.json before any restart; it is often the only timeline of
     what was served. Note the model cache is shared with other Hugging Face consumers,
     so presence alone does not attribute activity to vLLM.
+  velociraptor_artifact: Custom.AIAgents.vLLM
 atlas_techniques:
   - AML.T0011
   - AML.T0024

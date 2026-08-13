@@ -20,7 +20,7 @@ capabilities:
   mcp_capable: false
 risk: medium
 confidence: medium
-abuse_potential: Single portable .exe - trivially dropped and run without install. Named in Splunk STRT local-LLM analytics.
+abuse_potential: Single portable .exe - trivially dropped and run without install. Named in Splunk strt local-LLM analytics.
 artifacts:
   network:
     - direction: listener
@@ -54,5 +54,11 @@ attack_techniques:
   - T1133
   - T1105
   - T1590
-references: []
+references:
+  - title: "LostRuins/koboldcpp"
+    url: https://github.com/LostRuins/koboldcpp
+    accessed: "2026-08-13"
+  - title: "KoboldCpp wiki"
+    url: https://github.com/LostRuins/koboldcpp/wiki
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

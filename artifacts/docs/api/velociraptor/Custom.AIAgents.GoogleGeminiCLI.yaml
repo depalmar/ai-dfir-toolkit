@@ -1,0 +1,44 @@
+name: Custom.AIAgents.GoogleGeminiCLI
+description: |
+  Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config.
+
+  Generated from the AI agent artifact catalog (AIRT-0037). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.gemini\settings.json', 'C:\Users\*\.gemini\oauth_creds.json', 'C:\Users\*\.gemini\google_accounts.json', 'C:\Users\*\.gemini\.env  (plus cwd-upward .env search)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.gemini/settings.json', '/Users/*/.gemini/oauth_creds.json', '/Users/*/.gemini/google_accounts.json', '/Users/*/.gemini/.env  (plus cwd-upward .env search)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.gemini/settings.json', '/etc/gemini-cli/settings.json', '/home/*/.gemini/oauth_creds.json', '/home/*/.gemini/google_accounts.json', '/home/*/.gemini/.env  (plus cwd-upward .env search)']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
