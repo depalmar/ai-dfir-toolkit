@@ -215,3 +215,21 @@ documentation domains, so several of these rows rest on search-engine summaries
 of vendor pages rather than on pages read directly. Those are rated `medium` and
 flagged `unverified`, and the URL is recorded so the next pass can confirm them
 from a host that can reach it.
+
+## 2026-08-13 - AIRT-0034, the last unsourced entry
+
+`validate.py` named AIRT-0034 OpenAI Operator / CUA on every run as the one entry
+with no reference. Sourcing it turned up a correction rather than just a citation.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0034` | `status` | absent (read as active) | **`eol`** | Operator was folded into ChatGPT agent mode during 2025 and the standalone preview was retired. |
+| `AIRT-0034` | network indicator | `operator.chatgpt.com, *.openai.com` | **split in two** | `operator.chatgpt.com` is a dead domain. It was the entry's only indicator, so as written it pointed a responder at something that no longer resolves. It is kept and labelled, because a hit in retained 2025 telemetry dates activity precisely - but it cannot be the current answer. |
+
+The second row is the finding. The capability did not go away, it moved into
+ordinary ChatGPT, and at the network layer agent mode is indistinguishable from a
+normal session. There is no endpoint or network artifact separating them, which
+is worth stating plainly: an entry that quietly kept listing the retired domain
+would have implied a discriminator that no longer exists.
+
+Provenance is now 49/49.

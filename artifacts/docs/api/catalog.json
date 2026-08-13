@@ -8166,8 +8166,9 @@
       "openai-operator-cua"
     ],
     "vendor": "OpenAI",
+    "status": "eol",
     "category": "computer-use-agent",
-    "description": "Cloud-hosted computer-using agent operating a remote browser.",
+    "description": "Cloud-hosted computer-using agent operating a remote browser. Folded into ChatGPT agent mode during 2025 and the standalone operator.chatgpt.com preview was sunset, so the capability survives inside ChatGPT while this entry's own surface does not. Kept because historic network telemetry still contains the old domain and a responder working an older window needs to know what it was.",
     "supported_os": [
       "cloud"
     ],
@@ -8185,9 +8186,16 @@
       "network": [
         {
           "direction": "egress",
-          "indicator": "operator.chatgpt.com, *.openai.com",
+          "indicator": "operator.chatgpt.com (sunset)",
           "port": "443/TCP",
-          "description": "",
+          "description": "Dead domain. It served the standalone Operator preview, which was retired after the capability moved into ChatGPT agent mode, so a hit on this in current traffic is not Operator - but a hit in retained 2025 telemetry dates the activity precisely.",
+          "confidence": "medium"
+        },
+        {
+          "direction": "egress",
+          "indicator": "chatgpt.com, *.openai.com",
+          "port": "443/TCP",
+          "description": "Where the capability lives now. Indistinguishable from ordinary ChatGPT use at the network layer, which is the point worth recording: after the merge there is no endpoint or network artifact that separates agent mode from a normal session.",
           "confidence": "medium"
         }
       ]
@@ -8206,8 +8214,25 @@
       "T1185",
       "T1071.001"
     ],
-    "references": [],
-    "last_modified": "2026-08-11"
+    "references": [
+      {
+        "title": "Introducing ChatGPT agent: bridging research and action",
+        "url": "https://openai.com/index/introducing-chatgpt-agent/",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "ChatGPT agent - OpenAI Help Center",
+        "url": "https://help.openai.com/en/articles/11752874-chatgpt-agent",
+        "accessed": "2026-08-13"
+      },
+      {
+        "title": "Introducing Operator",
+        "url": "https://openai.com/index/introducing-operator/",
+        "accessed": "2026-08-13"
+      }
+    ],
+    "last_verified": "2026-08-13",
+    "last_modified": "2026-08-13"
   },
   {
     "id": "AIRT-0043",
