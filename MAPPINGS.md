@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 66 rule files / 154 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 68 rule files / 159 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -119,6 +119,21 @@ GTG-1002 is vendor-disclosed with no public IOCs, so these are behavioural rathe
 than signature-based. `agentic_orchestration_behavior.yml` is threshold-driven and
 must be baselined before alerting - see the category README.
 
+## 09 — Agent Memory Forensics & Context Poisoning
+
+Agent memory as a persistence mechanism. An instruction written into an agent's
+long-term memory survives conversation resets, process restarts, and the removal
+of whatever injection put it there - so eradication that does not purge memory
+leaves the adversary resident.
+
+| Rule | Format | ATLAS | OWASP | CVE / Reference |
+|------|--------|-------|-------|-----------------|
+| `memory_poisoning.yml` | Sigma | T0080, T0080.000, T0081 | LLM01, LLM06 | MITRE/Zenity Labs Oct 2025 |
+| `memory_poisoning_indicators.yar` | YARA | T0080.000, T0086 | LLM01, LLM02 | spAIware-class persistent exfiltration |
+
+Also here: `analyze_agent_memory.py`, which parses memory stores and reports
+poisoning findings with severity and ATLAS mapping.
+
 ## Endpoint (cross-tool)
 
 Cross-tool endpoint rules generated alongside the artifact catalog
@@ -166,9 +181,11 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 | T0051.001 | Indirect Prompt Injection | 1 |
 | T0053    | AI Agent Tool Invocation | 4 |
 | T0054    | LLM Jailbreak | 5 |
-| T0081    | Modify AI Agent Configuration | 2 |
+| T0080    | AI Agent Context Poisoning | 1 |
+| T0080.000 | AI Agent Context Poisoning: Memory | 2 |
+| T0081    | Modify AI Agent Configuration | 3 |
 | T0082    | RAG Credential Harvesting | 1 |
-| T0086    | Exfiltration via AI Agent Tool Invocation | 17 |
+| T0086    | Exfiltration via AI Agent Tool Invocation | 18 |
 | T0096    | AI Service API | 10 |
 | T0104    | Publish Poisoned AI Agent Tool | 1 |
 | T0110    | AI Agent Tool Poisoning | 3 |
@@ -177,10 +194,10 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 
 | OWASP | Title | Rule count |
 |-------|-------|------------|
-| LLM01    | Prompt Injection | 10 |
-| LLM02    | Sensitive Information Disclosure | 15 |
+| LLM01    | Prompt Injection | 12 |
+| LLM02    | Sensitive Information Disclosure | 16 |
 | LLM03    | Supply Chain | 12 |
-| LLM06    | Excessive Agency | 21 |
+| LLM06    | Excessive Agency | 22 |
 | LLM07    | System Prompt Leakage | 2 |
 | LLM08    | Vector and Embedding Weaknesses | 5 |
 | LLM10    | Unbounded Consumption | 3 |

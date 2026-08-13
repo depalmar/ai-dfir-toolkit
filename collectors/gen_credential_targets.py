@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate collectors/targets.yaml's credential section from the catalog.
+"""Generate the catalog-derived section of collectors/targets.yaml.
 
     python collectors/gen_credential_targets.py            # rewrite the block
     python collectors/gen_credential_targets.py --check    # fail if it is stale
@@ -10,16 +10,23 @@ gets reviewed when a path changes. Hand-copying those into targets.yaml made a
 second list that drifts, and drift here decides whether a responder acquires the
 evidence at all.
 
-So the credential half of targets.yaml is generated. Everything above the marker
-stays hand-authored, because targets like session transcripts and vector stores
-are collection concerns the catalog does not model.
+Two things are generated: every credential location that is a real filesystem
+path, and every disk artifact the catalog rates forensic_value: high. Everything
+above the marker stays hand-authored, because targets like session transcripts,
+model manifests and vector stores are collection concerns the catalog does not
+model - it documents what a tool leaves behind, not what an operator should
+acquire, and those are different questions that mostly overlap.
+
+Only high-value disk artifacts are emitted. The catalog carries plenty of
+low-value presence indicators, and a collector that acquires everything is a
+collector nobody runs.
 
 Only locations that a file collector can actually acquire are emitted. The
 catalog's `location` field also holds environment variable names, CLI flags and
 prose describing an OS keychain; those are real evidence but not files, and
 emitting them as paths would produce targets that silently match nothing.
 
-Every generated target is `sensitivity: secret`, so the collector records
+Every generated *credential* target is `sensitivity: secret`, so the collector records
 metadata plus a hash and never copies the body unless the operator passes
 --collect-secrets. That is deliberate even for files that also hold ordinary
 configuration: a file the catalog rates as a credential location should not land
@@ -74,6 +81,62 @@ def slug(entry_id: str, location: str) -> str:
     return f"cred_{entry_id.lower().replace('-', '_')}_{base}"
 
 
+def _norm(p: str) -> str:
+    p = p.replace("\\", "/").lower()
+    p = re.sub(r"%(\w+)%", r"\1", p)
+    p = re.sub(r"\$\{?(\w+)\}?", r"\1", p)
+    p = re.sub(r"<[^>]+>/?", "", p)
+    return p.replace("~/", "").strip("/")
+
+
+def collect_disk(catalog, taken: set, cred_paths: set) -> list[dict]:
+    """High-forensic-value disk artifacts the catalog documents.
+
+    Only forensic_value: high rows are emitted. The catalog records plenty of
+    low-value presence indicators, and a collector that acquires everything is a
+    collector nobody runs. Anything already claimed by a credential target is
+    skipped so a path is not collected twice under two names.
+    """
+    out = []
+    for entry in catalog:
+        for a in (entry.get("artifacts") or {}).get("disk", []):
+            path = a.get("path", "")
+            if not path or a.get("forensic_value") != "high" or not is_path(path):
+                continue
+            paths = [p for p in split_locations(path) if is_path(p)]
+            # A path whose only distinguishing part is a placeholder root -
+            # <install>/.env, <project>/config.json - reduces to a bare filename
+            # that matches every same-named file in the catalog. One such target
+            # would claim every .env across every entry, including ones the
+            # credential half correctly marks secret. Too generic to emit.
+            paths = [p for p in paths
+                     if re.sub(r"<[^>]+>/?", "", p).strip("/").count("/") >= 1]
+            # A directory that contains a catalogued credential file must not be
+            # emitted as a normal-sensitivity target: collecting it whole would
+            # drag the secret into the case directory unhashed, past the very
+            # control the credential target exists to apply. The credential
+            # target already covers the file. Generation stays conservative and
+            # leaves the directory to a deliberate hand-authored decision.
+            paths = [p for p in paths
+                     if not any(c.startswith(_norm(p).rstrip("/") + "/")
+                                for c in cred_paths if _norm(p))]
+            if not paths:
+                continue
+            key = tuple(sorted(paths))
+            if key in taken:
+                continue
+            taken.add(key)
+            out.append({
+                "id": slug(entry["id"], paths[0]).replace("cred_", "art_", 1),
+                "name": f"{entry['name']} artifact ({entry['id']})",
+                "os": a.get("os") or entry.get("supported_os") or ["linux"],
+                "paths": paths,
+                "artifact_type": a.get("artifact_type", "unknown"),
+                "confidence": a.get("confidence", "unknown"),
+            })
+    return sorted(out, key=lambda t: t["id"])
+
+
 def collect(catalog) -> list[dict]:
     seen, targets = set(), []
     for entry in catalog:
@@ -97,16 +160,17 @@ def collect(catalog) -> list[dict]:
                 "storage": cred.get("storage", "unknown"),
                 "confidence": cred.get("confidence", "unknown"),
             })
-    return sorted(targets, key=lambda t: t["id"])
+    return sorted(targets, key=lambda t: t["id"]), seen
 
 
-def render(targets: list[dict]) -> str:
+def render(targets: list[dict], disk: list[dict]) -> str:
     lines = [
         MARKER,
         "# Regenerate with: python collectors/gen_credential_targets.py",
-        "# Source: artifacts/docs/api/catalog.json (credentials[] with a filesystem",
-        "# location). All are sensitivity: secret - metadata and hash only unless",
-        "# --collect-secrets is passed.",
+        "# Source: artifacts/docs/api/catalog.json - every credentials[] row with a",
+        "# filesystem location, plus every disk artifact rated forensic_value: high.",
+        "# Credential targets are sensitivity: secret, so they are recorded as",
+        "# metadata and a hash and never copied unless --collect-secrets is passed.",
     ]
     for t in targets:
         scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
@@ -128,6 +192,25 @@ def render(targets: list[dict]) -> str:
                 f"{t['confidence']}. Existence and mode are the finding; the body "
                 f"is not copied unless --collect-secrets.")
         lines.append(f"    notes: {json.dumps(note)}")
+    for t in disk:
+        scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
+        os_list = [o for o in t["os"] if o in
+                   ("windows", "macos", "linux", "docker", "container")] or ["linux"]
+        lines += [
+            f"  - id: {t['id']}",
+            f"    name: {json.dumps(t['name'])}",
+            '    repo_cat: "art"',
+            "    cosai: []",
+            f"    os: [{', '.join(os_list)}]",
+            f"    scope: {scope}",
+            f"    type: {'glob' if any('*' in p for p in t['paths']) else 'file'}",
+            "    sensitivity: normal",
+            "    paths:",
+        ]
+        lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
+        note = (f"{t['artifact_type']}, forensic_value high, catalog confidence "
+                f"{t['confidence']}.")
+        lines.append(f"    notes: {json.dumps(note)}")
     lines.append(FOOTER)
     return "\n".join(lines)
 
@@ -140,7 +223,9 @@ def main() -> int:
     args = ap.parse_args()
 
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
-    block = render(collect(catalog))
+    creds, taken = collect(catalog)
+    cred_paths = {_norm(p) for t in creds for p in t["paths"]}
+    block = render(creds, collect_disk(catalog, taken, cred_paths))
 
     text = TARGETS.read_text(encoding="utf-8")
     if MARKER in text:

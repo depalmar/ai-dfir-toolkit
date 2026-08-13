@@ -1,0 +1,139 @@
+title: Agent Instruction File Modified (Persistence via Agent Context)
+name: agent_instruction_file_modified
+id: 6b41c07e-9a2d-4f83-b5e1-3c8d70a4f2b9
+status: experimental
+description: |
+    Detects modification of the instruction and rules files that agentic coding tools load into context on
+    every session (CLAUDE.md, AGENTS.md, MEMORY.md, .cursorrules, .windsurfrules, .clinerules, GEMINI.md).
+    These files are re-read at each invocation, so an attacker-controlled line persists across sessions,
+    process restarts and conversation resets. This is the file-backed form of MITRE ATLAS AML.T0080
+    (AI Agent Context Poisoning) and is the mechanism behind Rules-File-Backdoor style attacks.
+    Modification is normal in active development, so alert quality depends on WHO wrote the file: a write
+    by a non-interactive process, a background agent, or an unexpected user is the signal.
+references:
+    - https://atlas.mitre.org/techniques/AML.T0080
+    - https://zenity.io/blog/current-events/zenity-labs-and-mitre-atlas-collaborate-to-advances-ai-agent-security-with-the-first-release-of
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.persistence
+    - atlas.aml-t0080
+logsource:
+    category: file_event
+detection:
+    selection_name:
+        TargetFilename|endswith:
+            - '\CLAUDE.md'
+            - '\AGENTS.md'
+            - '\AGENT.md'
+            - '\MEMORY.md'
+            - '\GEMINI.md'
+            - '\.cursorrules'
+            - '\.windsurfrules'
+            - '\.clinerules'
+            - '\.aiderrules'
+            - '/CLAUDE.md'
+            - '/AGENTS.md'
+            - '/MEMORY.md'
+            - '/.cursorrules'
+            - '/.windsurfrules'
+    filter_editors:
+        # Interactive edits by a developer are expected; tune to your estate.
+        Image|endswith:
+            - '\Code.exe'
+            - '\devenv.exe'
+            - '\idea64.exe'
+            - '/code'
+            - '/vim'
+            - '/nvim'
+            - '/emacs'
+    condition: selection_name and not filter_editors
+falsepositives:
+    - Legitimate repository updates via git checkout, pull, or merge - correlate with VCS activity.
+    - Project scaffolding tools that generate agent instruction files.
+level: medium
+---
+title: Agent Memory Store Written by Unexpected Process
+name: agent_memory_store_write
+id: 0d7e5a91-4b36-42cf-9e08-1a6f3b28c574
+status: experimental
+description: |
+    Detects writes to agent long-term memory and checkpoint stores by a process other than the owning agent
+    runtime. Memory is a persistence surface: an instruction written here survives session resets, so direct
+    manipulation of the store is a way to install persistence without ever interacting with the model.
+    Covers LangGraph SQLite checkpointers, assistant memory exports, and agent state files.
+references:
+    - https://atlas.mitre.org/techniques/AML.T0080
+    - https://www.microsoft.com/en-us/security/blog/2026/02/10/ai-recommendation-poisoning/
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.persistence
+    - attack.t1546
+    - atlas.aml-t0080
+logsource:
+    category: file_event
+detection:
+    selection_store:
+        TargetFilename|contains:
+            - 'checkpoints.sqlite'
+            - 'checkpoints.db'
+            - 'langgraph'
+            - 'agent_state'
+            - 'memory.json'
+            - 'memories.json'
+            - 'memory.jsonl'
+    filter_runtime:
+        # Allowlist the legitimate agent runtimes that own these stores.
+        Image|endswith:
+            - '\python.exe'
+            - '\node.exe'
+            - '/python3'
+            - '/node'
+            - '/uv'
+    condition: selection_store and not filter_runtime
+falsepositives:
+    - Backup, sync, and indexing agents touching the store directory.
+    - Container or venv paths where the runtime binary differs from the allowlist - extend filter_runtime.
+level: medium
+---
+title: Memory Poisoning Indicator Written to Agent Memory
+name: agent_memory_poisoning_content
+id: a92f3c6d-58b1-4e70-83da-4f0c9e51b6a3
+status: experimental
+description: |
+    Content-based detection for poisoning instructions being committed to agent memory, for platforms that
+    log memory-write operations (assistant memory APIs, agent frameworks emitting OpenTelemetry gen_ai spans,
+    or MCP memory servers). Matches the spAIware pattern - a stored instruction directing the agent to append
+    a markdown image beacon carrying conversation content to every future response - along with secrecy
+    directives and standing credential-collection instructions.
+    Where memory writes are not logged, use 09-agent-memory/analyze_agent_memory.py against the store on disk.
+references:
+    - https://atlas.mitre.org/techniques/AML.T0080
+    - https://embracethered.com/blog/posts/2024/chatgpt-hacking-memories/
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.persistence
+    - attack.exfiltration
+    - atlas.aml-t0080
+    - atlas.aml-t0086
+logsource:
+    product: agent
+    service: memory_write
+    definition: 'Memory-write events from an assistant memory API, agent framework, or MCP memory server. Expected fields: user_id, memory_text, source.'
+detection:
+    selection_exfil:
+        memory_text|re: '(?i)(end|append|conclude)\s+(all\s+|every\s+)?(future\s+)?(responses?|replies)\s+with[^.\n]{0,120}https?://'
+    selection_secrecy:
+        memory_text|re: '(?i)(do\s*n(o|'')t|never)\s+(tell|inform|mention|reveal|notify)\s+(the\s+)?(user|human|anyone)'
+    selection_creds:
+        memory_text|re: '(?i)(whenever|when|if)\s+you\s+(see|find|encounter)\s+(an?\s+)?(api[_\s-]?key|password|secret|credential|token)'
+    selection_beacon:
+        memory_text|contains:
+            - '!['
+        memory_text|re: '(?i)https?://[^\s)]{0,200}[?&][a-z0-9_]{1,20}=\s*(\[[A-Z_]{2,20}\]|\{\{?[a-z_]{2,30}\}?\})'
+    condition: 1 of selection_*
+falsepositives:
+    - Users legitimately storing a preferred signature or link format. Review the destination domain.
+level: high

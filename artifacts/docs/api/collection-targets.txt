@@ -71,6 +71,7 @@ COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
 COPILOT_PROVIDER_API_KEY
 FLOWISE_SECRETKEY_OVERWRITE
 Goose session logs
+HF_TOKEN
 INIT_PASSWORD
 INTERPRETER_API_KEY
 JWT_AUTH_TOKEN_SECRET
@@ -103,6 +104,7 @@ SANDBOX_ENV_*  (e.g. SANDBOX_ENV_OPENAI_API_KEY)
 SECRET_KEY
 SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
 Tools and Functions Python source stored in webui.db
+VLLM_API_KEY
 VS Code SecretStorage -> OS keychain (state.vscdb)
 VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)
 WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
@@ -152,6 +154,7 @@ webui.db (user and API key tables)
 ~/.config/goose/permission.yaml ; permissions/tool_permissions.json
 ~/.config/goose/secrets.yaml (mode 0600)
 ~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml
+~/.config/vllm/usage_stats.json
 ~/.continue/.env
 ~/.continue/auth.json
 ~/.continue/config.json

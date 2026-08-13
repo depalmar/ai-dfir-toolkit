@@ -177,12 +177,20 @@ def main() -> int:
     def covered_by(n: str):
         return [(tid, sens) for tid, tp, sens in target_paths if same_path(tp, n)]
 
-    missed, unmarked, uncollectable, mixed_content = [], [], [], []
+    missed, unmarked, uncollectable, mixed_content, unpinnable = [], [], [], [], []
     for entry_id, location, storage, secret_type in creds:
         pieces = [norm(x) for x in split_locations(location)]
         n = pieces[0]
-        hits = [h for piece in pieces for h in covered_by(piece)]
         kind = location_kind(location)
+        # After a <project>/ or <install>/ root is stripped, a location like
+        # "<project>/config.toml" is just "config.toml" - a name that matches
+        # every same-named file in the catalog and pins to nothing on disk.
+        # Calling such a row covered, or missed, would both be guesses.
+        if kind in ("path", "other") and all("/" not in x for x in pieces):
+            unpinnable.append({"entry": entry_id, "location": location,
+                               "secret_type": secret_type})
+            continue
+        hits = [h for piece in pieces for h in covered_by(piece)]
         if not hits:
             if storage != "plaintext":
                 continue
@@ -220,6 +228,7 @@ def main() -> int:
         print(json.dumps({"missed_secret": missed, "unmarked": unmarked,
                           "uncollectable": uncollectable,
                           "mixed_content": mixed_content,
+                          "unpinnable": unpinnable,
                           "catalog_gap": catalog_gaps}, indent=2))
         return 1 if (missed or unmarked) else 0
 
@@ -255,6 +264,14 @@ def main() -> int:
         print("        the case directory will contain embedded secrets. Handle accordingly.")
         for m in mixed_content:
             print(f"        {m['target']:24} {m['location'][:52]}")
+
+    if unpinnable:
+        print(f"\n[UNPINNED] {len(unpinnable)} credential location(s) that resolve to a bare "
+              f"filename (informational).")
+        print("           A <project>/ or <install>/ root leaves nothing to match on, so")
+        print("           coverage cannot be decided either way. Pin the root to gate them.")
+        for u in unpinnable:
+            print(f"           {u['entry']}  {u['location'][:58]}")
 
     if catalog_gaps:
         print(f"\n[CATALOG-GAP] {len(catalog_gaps)} in-scope collector target(s) the "

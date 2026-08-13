@@ -16,6 +16,15 @@ cd "$(dirname "$0")"
 
 echo "=== ai-dfir-toolkit smoke test ==="
 echo "Rules root: $RULES_ROOT"
+
+# Without this, a missing yara binary is indistinguishable from a clean scan:
+# every assert_clean would report PASS and the suite would look healthy while
+# testing nothing at all.
+if ! command -v yara >/dev/null 2>&1; then
+  echo "ERROR: yara is not installed. Install YARA 4.x and re-run."
+  echo "       Refusing to continue - absent tooling would score as passes."
+  exit 2
+fi
 echo
 
 # ---------- Helper: assert the YARA scan produces matches ----------
@@ -23,8 +32,14 @@ assert_match() {
   local label="$1"
   local rule_file="$2"
   local target="$3"
-  local out
-  out=$(yara "$RULES_ROOT/$rule_file" "$target" 2>/dev/null)
+  local out rc errf
+  errf=$(mktemp)
+  out=$(yara "$RULES_ROOT/$rule_file" "$target" 2>"$errf"); rc=$?
+  if [ "$rc" -ne 0 ]; then
+    echo "  FAIL  $label  (yara exited $rc: $(head -1 "$errf"))"
+    FAIL=$((FAIL + 1)); rm -f "$errf"; return
+  fi
+  rm -f "$errf"
   if [ -n "$out" ]; then
     echo "  PASS  $label"
     PASS=$((PASS + 1))
@@ -39,8 +54,19 @@ assert_clean() {
   local label="$1"
   local rule_file="$2"
   local target="$3"
-  local out
-  out=$(yara "$RULES_ROOT/$rule_file" "$target" 2>/dev/null)
+  local out rc errf
+  # Exit status decides whether the scan ran; stdout decides whether it matched.
+  # Both are needed and they must stay separate. Empty stdout means "no matches"
+  # only when yara actually ran, so a rule that fails to compile must not score
+  # as clean - but yara also writes non-fatal warnings to stderr, and folding
+  # those into the match check would fail a scan that was genuinely clean.
+  errf=$(mktemp)
+  out=$(yara "$RULES_ROOT/$rule_file" "$target" 2>"$errf"); rc=$?
+  if [ "$rc" -ne 0 ]; then
+    echo "  FAIL  $label  (yara exited $rc: $(head -1 "$errf"))"
+    FAIL=$((FAIL + 1)); rm -f "$errf"; return
+  fi
+  rm -f "$errf"
   if [ -z "$out" ]; then
     echo "  PASS  $label"
     PASS=$((PASS + 1))
@@ -88,6 +114,27 @@ echo "[ Copilot Rules File Backdoor YARA tests ]"
 assert_match "backdoored copilot-instructions triggers Rules File Backdoor rules" \
   "05-copilot-assistant-abuse/copilot_rules_file_backdoor.yar" \
   "copilot_rules_backdoored.md"
+
+echo
+echo "[ Runtime AI-malware YARA tests ]"
+assert_match "PROMPTFLUX indicators trigger promptflux_thinking_robot" \
+  "07-runtime-ai-malware/promptflux_thinking_robot.yar" \
+  "runtime_ai_malware_promptflux.txt"
+assert_match "PROMPTSTEAL indicators trigger promptsteal_lamehug" \
+  "07-runtime-ai-malware/promptsteal_lamehug.yar" \
+  "runtime_ai_malware_promptsteal.txt"
+assert_match "endpoint + prompt intent + exec triggers the class heuristic" \
+  "07-runtime-ai-malware/llm_api_prompt_in_script_generic.yar" \
+  "runtime_ai_malware_generic.txt"
+assert_clean "benign LLM client produces no PROMPTFLUX matches" \
+  "07-runtime-ai-malware/promptflux_thinking_robot.yar" \
+  "runtime_ai_benign_llm_client.txt"
+assert_clean "benign LLM client produces no PROMPTSTEAL matches" \
+  "07-runtime-ai-malware/promptsteal_lamehug.yar" \
+  "runtime_ai_benign_llm_client.txt"
+assert_clean "benign LLM client does not trip the class heuristic" \
+  "07-runtime-ai-malware/llm_api_prompt_in_script_generic.yar" \
+  "runtime_ai_benign_llm_client.txt"
 
 echo
 echo "=== Summary ==="
