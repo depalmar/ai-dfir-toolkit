@@ -1959,4 +1959,70 @@ targets:
     paths:
       - "~/.letta/.persist/pgdata"
     notes: "database, forensic_value high, catalog confidence medium."
+  - id: art_airt_0050_config_zed_settings_json
+    name: "Zed AI artifact (AIRT-0050)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/zed/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0050_repo_zed_settings_json
+    name: "Zed AI artifact (AIRT-0050)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<repo>/.zed/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0051_config_code_user_globalstorage_kilocode
+    name: "Kilo Code artifact (AIRT-0051)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence medium."
+  - id: art_airt_0051_globalstorage_kilocode_kilo_code_setting
+    name: "Kilo Code artifact (AIRT-0051)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<globalStorage>/kilocode.kilo-code/settings/custom_modes.yaml"
+    notes: "agent-definition, forensic_value high, catalog confidence medium."
+  - id: art_airt_0051_library_application_support_code_user_gl
+    name: "Kilo Code artifact (AIRT-0051)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence medium."
+  - id: art_airt_0051_vscode_server_data_user_globalstorage_ki
+    name: "Kilo Code artifact (AIRT-0051)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json"
+    notes: "mcp-config, forensic_value high, catalog confidence medium."
 # <<< END GENERATED CREDENTIAL TARGETS >>>

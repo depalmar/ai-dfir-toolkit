@@ -1,0 +1,18 @@
+Description: 'Zed AI - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 9191f173-83a4-5573-bf19-95793f074663
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Same file on Windows. Honours XDG_CONFIG_HOME on the POSIX platforms, so resolve'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Zed\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0050 | [confidence: medium] Same file on Windows. Honours XDG_CONFIG_HOME on the POSIX platforms, so resolve it rather than assuming the default.'
+    -
+        Name: 'Installed extensions, which is where an MCP server shipped as a Zed extension la'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Zed\'
+        FileMask: 'extensions'
+        Comment: 'AIRT-0050 | [confidence: low] Installed extensions, which is where an MCP server shipped as a Zed extension lands rather than in the settings file'
