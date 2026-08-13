@@ -267,10 +267,11 @@ def load_case_studies():
         iocs = []
         for i in (c.get("iocs") or []):
             if isinstance(i, dict):
-                iocs.append({"value": str(i.get("value", "")),
+                iocs.append({"type": str(i.get("type", "")),
+                             "value": str(i.get("value", "")),
                              "description": str(i.get("description", ""))})
             else:
-                iocs.append({"value": str(i), "description": ""})
+                iocs.append({"type": "", "value": str(i), "description": ""})
         out.append({
             "id": c.get("id", path.stem),
             "title": c.get("title", ""),
