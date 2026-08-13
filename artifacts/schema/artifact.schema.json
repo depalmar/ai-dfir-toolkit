@@ -184,7 +184,7 @@
         "eventlog": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/eventlogArtifact"
           }
         }
       }
@@ -571,6 +571,68 @@
         },
         "notes": {
           "type": "string"
+        }
+      }
+    },
+    "eventlogArtifact": {
+      "type": "object",
+      "required": [
+        "channel",
+        "event_id",
+        "description",
+        "confidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "type": "string",
+          "description": "Windows event log channel, e.g. Security or Microsoft-Windows-Sysmon/Operational."
+        },
+        "event_id": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "A single event ID. One row per ID rather than a list, so the published feed stays filterable."
+        },
+        "selector": {
+          "type": "string",
+          "description": "The field and value that narrow the channel to this tool, e.g. Image ends with ollama.exe. Without it the row names a log, not an artifact."
+        },
+        "description": {
+          "type": "string"
+        },
+        "requires": {
+          "type": "string",
+          "description": "Any configuration the event depends on. These events do not exist by default: Sysmon must be deployed, and Security 4688 carries a command line only when command line auditing is enabled. A row without this reads as though the evidence is always there."
+        },
+        "evidence_type": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "execution",
+              "persistence",
+              "configuration",
+              "credential-access",
+              "user-activity",
+              "data-access",
+              "timeline",
+              "program-presence",
+              "prompt-injection-surface"
+            ]
+          }
+        },
+        "os": {
+          "$ref": "#/$defs/osList"
+        },
+        "forensic_value": {
+          "$ref": "#/$defs/forensicValue"
+        },
+        "unverified": {
+          "type": "boolean",
+          "description": "Set true when the artifact is single-source or otherwise not independently corroborated."
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
         }
       }
     }

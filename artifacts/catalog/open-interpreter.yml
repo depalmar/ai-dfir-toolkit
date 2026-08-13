@@ -101,6 +101,27 @@ artifacts:
       forensic_value: medium
       persistence: false
       confidence: medium
+  eventlog:
+    - channel: Microsoft-Windows-Sysmon/Operational
+      event_id: "1"
+      selector: "Image ends with interpreter / python"
+      description: >-
+        Proves the agent ran, which disk presence does not. The child processes of
+        this event are what the agent actually did, and the parent tells you
+        whether a human started it or something else did.
+      requires: >-
+        Sysmon deployed with process creation logging. Security 4688 is the
+        fallback where it is not, but it carries CommandLine only when Include
+        command line in process creation events is enabled - so on a host
+        without that setting one interpreter process is indistinguishable from
+        another.
+      evidence_type:
+        - execution
+        - timeline
+      os:
+        - windows
+      forensic_value: high
+      confidence: medium
 credentials:
   - location: ~/.openinterpreter/auth.json
     os: [windows, macos, linux]

@@ -3,8 +3,8 @@ name: agent-artifact-catalog
 description: >-
   Research, author, and validate AI agent artifact catalog entries documenting the
   forensic artifacts AI agents leave on endpoints - install paths, config and
-  credential files, MCP server configs, listening ports, process trees, and
-  registry keys. Use this skill whenever the user mentions AI agent forensics,
+  credential files, MCP server configs, listening ports, process trees,
+  registry keys, and the Windows event log records that prove a tool ran. Use this skill whenever the user mentions AI agent forensics,
   AI agent artifacts, MCP server artifacts, shadow AI discovery, local LLM
   runtime detection, adding or updating a tool in the AI agent artifact catalog, or
   asks what an AI coding agent or LLM runtime leaves behind on a host. Also use
@@ -71,7 +71,8 @@ Anything resting only on tier 4 is `confidence: low` and needs `unverified: true
 Gather, per platform: install paths and binary names, config file locations,
 credential storage (and *how* it is stored - plaintext, keyring, SQLite),
 MCP config paths, default listener ports and bind addresses, process names with
-typical parents and children, registry keys, and persistence mechanisms.
+typical parents and children, registry keys, event log channels and IDs, and
+persistence mechanisms.
 
 ### 3. Write the entry
 
@@ -131,8 +132,8 @@ vendor documentation. `medium` means multiple independent third-party sources
 agree. `low` means single-source or inferred - and must carry `unverified: true`.
 
 The validator enforces this: a `confidence: high` entry cannot contain an
-unmarked low-confidence row — in **any** class. Disk, registry, network, process
-and credential rows all accept `unverified: true` and are all checked. (The gate
+unmarked low-confidence row — in **any** class. Disk, registry, network, process,
+eventlog and credential rows all accept `unverified: true` and are all checked. (The gate
 covered only disk artifacts until August 2026, and three of those classes could
 not even carry the flag, so the rule was unenforceable rather than merely
 unenforced.)
@@ -154,6 +155,24 @@ python scripts/export.py       # regenerate docs/api feeds
 
 CI runs both and fails the build if `docs/api` is stale, so regenerate the feeds
 in the same commit as the entry.
+
+
+### `eventlog` rows: the class that proves execution
+
+Disk presence proves a tool is **installed**. Only an event log record proves it
+**ran**, and that distinction is the one most investigations actually turn on.
+
+Two rules when writing one:
+
+- **Give it a `selector`.** Without the field and value that narrow the channel
+  to this tool, the row names a log rather than an artifact. For anything hosted
+  by a shared interpreter — half this catalog runs under `node` or `python` — the
+  image name is not a discriminator and the selector has to key on the command
+  line.
+- **Fill in `requires`.** None of these events exist by default. Sysmon has to be
+  deployed, and Security 4688 carries a command line only when command line
+  auditing is enabled. A row that omits this reads as though the evidence is
+  always waiting to be collected, and on most hosts it is not there at all.
 
 ## MCP entries need extra care
 

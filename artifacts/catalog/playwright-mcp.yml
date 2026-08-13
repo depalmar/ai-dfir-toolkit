@@ -105,6 +105,28 @@ artifacts:
       service_or_daemon: "No"
       persistence: Persists via the MCP config of its host client
       confidence: high
+  eventlog:
+    - channel: Microsoft-Windows-Sysmon/Operational
+      event_id: "1"
+      selector: "Image is a shared interpreter (npx -> node (@playwright/mcp)) and CommandLine contains playwright-mcp"
+      description: >-
+        Proves the agent ran, which disk presence does not. The image name is not
+        the discriminator here, because the process is a shared interpreter that
+        hosts much of this catalog - key on the command line instead. The child
+        processes of this event are what the agent actually did.
+      requires: >-
+        Sysmon deployed with process creation logging. Security 4688 is the
+        fallback where it is not, but it carries CommandLine only when Include
+        command line in process creation events is enabled - so on a host
+        without that setting one interpreter process is indistinguishable from
+        another.
+      evidence_type:
+        - execution
+        - timeline
+      os:
+        - windows
+      forensic_value: high
+      confidence: medium
 credentials:
   - location: "--storage-state <file.json>"
     os:

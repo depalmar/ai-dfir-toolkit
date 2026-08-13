@@ -101,6 +101,10 @@ def evidence_for(kind, a):
             return ["program-presence", "configuration"]
         return ["program-presence"]
 
+    if kind == "eventlog":
+        # Every row here is a record that something ran, at a known time.
+        return ["execution", "timeline"]
+
     if kind == "process":
         ev = ["execution", "program-presence"]
         # Free text, not an enum: 'None', 'None (user-invoked)' and
@@ -146,6 +150,12 @@ def build_rows(entries):
                     loc = a.get("indicator", "")
                     if a.get("port"):
                         loc += " :" + str(a["port"])
+                elif kind == "eventlog":
+                    # Channel plus ID is the locator a responder types into a
+                    # query bar, and it is unique per row within an entry.
+                    loc = a.get("channel", "")
+                    if a.get("event_id"):
+                        loc += " EID " + str(a["event_id"])
                 else:
                     loc = a.get("path") or a.get("name") or ""
                 rows.append({
@@ -157,6 +167,10 @@ def build_rows(entries):
                     "evidence": evidence_for(kind, a),
                     "unverified": bool(a.get("unverified")),
                     "description": a.get("description", ""),
+                    # Event log rows depend on configuration that is off by
+                    # default. Without this a reader takes the row as evidence
+                    # waiting to be collected, when on most hosts it is absent.
+                    "requires": a.get("requires", ""),
                 })
         for c in (e.get("credentials") or []):
             rows.append({
@@ -505,6 +519,10 @@ th .pick.all{vertical-align:middle}
   background:var(--panel-2);border-radius:8px;padding:10px}
 .badgerow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .evrow{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}
+.requires{margin:8px 0 0;padding:8px 10px;font-size:12px;color:var(--muted);
+  background:var(--alert-bg);border:1px solid var(--alert-line);
+  border-left:3px solid var(--med);border-radius:8px}
+.requires b{color:var(--med)}
 .ev{font-size:11px;background:var(--accent-soft);border:1px solid var(--accent-border);
   color:var(--accent);border-radius:5px;padding:1px 7px}
 .dsec p{margin:0;font-size:12.5px;color:var(--muted)}
@@ -1082,7 +1100,8 @@ function drawerHTML(r){
       ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div></div>
     <div class="dsec"><h4>What it proves</h4>
       ${r.evidence.length?`<div class="evrow">${r.evidence.map(e=>`<span class="ev">${esc(e)}</span>`).join('')}</div>`:''}
-      ${r.description?`<p>${esc(r.description)}</p>`:''}</div>
+      ${r.description?`<p>${esc(r.description)}</p>`:''}
+      ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}</div>
     <div class="dsec"><h4>Tool context</h4>
       <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
         :'never verified against a host or a current release'}</div>
