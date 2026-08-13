@@ -87,7 +87,18 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: medium
-credentials: []
+credentials:
+  - location: ~/.config/TabNine/.refresh_token_v2
+    os: [linux, container]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT refresh token. Written and read by Tabnine's own VS Code extension
+      (TABNINE_TOKEN_FILE_PATH = TABNINE_CONFIG_DIR + '.refresh_token_v2', where
+      TABNINE_CONFIG_DIR = homedir/.config/TabNine). The cloud-environment code path
+      also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a
+      Codespaces/Gitpod host has it in two places.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p2

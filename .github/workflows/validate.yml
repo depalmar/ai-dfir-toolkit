@@ -65,11 +65,16 @@ jobs:
           # those are validated by scripts/validate.py in the artifact-catalog
           # workflow. Sigma rules shipped with the catalog live in
           # artifacts/detections/sigma/ and stay in scope here.
+          # collectors/ and playbooks/ hold data files, not detection content -
+          # a target registry and CACAO playbooks are validated by their own
+          # checks in the artifact-catalog workflow.
           for f in $(find . -name '*.yml' \
                        -not -path './.github/*' \
                        -not -path './artifacts/catalog/*' \
                        -not -path './artifacts/case-studies/*' \
-                       -not -path './artifacts/schema/*'); do
+                       -not -path './artifacts/schema/*' \
+                       -not -path './collectors/*' \
+                       -not -path './playbooks/*'); do
             # Correlation rules reference sibling rules by name, so they cannot
             # resolve one file at a time, and lucene cannot express them at all.
             # They are validated as collections in the next step instead.

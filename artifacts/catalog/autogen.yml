@@ -58,7 +58,50 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
-credentials: []
+credentials:
+  - location: 'OAI_CONFIG_LIST  (JSON file in CWD, or env var of the same name)'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT JSON list of model configs, each carrying an `api_key` field. Vendor
+      docs state AutoGen looks for the keys in the OAI_CONFIG_LIST file in the current
+      working directory, or in the OAI_CONFIG_LIST environment variable - so the
+      variable may hold the JSON itself, not just a path. Collect the process
+      environment as well as the CWD.
+    confidence: high
+  - location: OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT provider keys in the process environment. autogen-ext's OpenAI client
+      documents api_key as "Required if 'OPENAI_API_KEY' is not found in the environment
+      variables"; the Studio gallery builder enumerates all three names. This is the
+      fallback path when no OAI_CONFIG_LIST is present.
+    confidence: high
+  - location: ~/.autogenstudio/database.sqlite
+    os: [windows, macos, linux]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      AutoGen Studio application database. The Settings table stores a SettingsConfig
+      JSON blob holding the default model client config (which carries `api_key`) plus
+      user-defined environment variables - so provider keys live in the DB, not in a
+      keyring. Default appdir is ~/.autogenstudio, overridable via --appdir or
+      AUTOGENSTUDIO_APPDIR; --database-uri can relocate it to Postgres/MySQL entirely.
+    unverified: true
+    confidence: low
+  - location: ~/.autogenstudio/.env
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT env file in the AutoGen Studio appdir. web/initialization.py calls
+      load_dotenv() on it at startup, and the vendor README states .env files in that
+      directory are used to set environment variables for the app. Follows --appdir /
+      AUTOGENSTUDIO_APPDIR if relocated.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

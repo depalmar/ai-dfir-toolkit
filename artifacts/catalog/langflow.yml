@@ -109,7 +109,113 @@ artifacts:
       service_or_daemon: Optional
       persistence: Docker restart policy or systemd
       confidence: high
-credentials: []
+credentials:
+  - location: '<LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on Linux/Docker)'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT Fernet master key, auto-generated and persisted on startup when
+      LANGFLOW_SECRET_KEY is not set. THE highest-value artifact for this tool: Langflow
+      source calls it 'the Fernet master key (secret_key)' and states that reading it
+      'would disclose every tenant's stored credentials' - it decrypts the api_key
+      table, credential-type global variables, and encrypted MCP server settings in the
+      database. Config dir defaults to platformdirs
+      user_cache_dir('langflow','langflow'); vendor release notes confirm the
+      Linux/Docker form resolves to <HOME>/.cache/langflow.
+    confidence: high
+  - location: '<LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      PLAINTEXT RSA private key used to sign session JWTs, auto-generated and persisted
+      into the config dir on startup when LANGFLOW_ALGORITHM is RS256/RS512. Vendor
+      docs: 'Langflow creates and persists the keys in LANGFLOW_CONFIG_DIR on startup'.
+      Not created under the default HS256 algorithm - absence of these files is itself a
+      signal about which algorithm the instance ran. Theft permits forging a session for
+      any user.
+    confidence: high
+  - location: LANGFLOW_SECRET_KEY
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT env var that supplies the Fernet key instead of the on-disk secret_key
+      file. Vendor docs describe it as 'a secret key used for encrypting sensitive data
+      like API keys and for JWT signing when using the HS256 algorithm'. Commonly left
+      in a .env or compose file. Vendor guidance is to rotate it if compromised;
+      rotation requires the re-encryption migration script, so do not rotate before
+      collection.
+    confidence: high
+  - location: LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: admin-credential
+    description: >-
+      PLAINTEXT superuser bootstrap credentials. Vendor docs: these 'specify the
+      username and password for the Langflow server's superuser'; the password is
+      required when LANGFLOW_AUTO_LOGIN=False, and the username defaults to 'langflow'.
+      Routinely left in .env files, compose files, and Kubernetes manifests. Note the
+      source also carries a LEGACY_DEFAULT_SUPERUSER_PASSWORD constant used to detect
+      credentials created by older releases - a default-password instance is a finding.
+    confidence: high
+  - location: '<project>/.env  (path passed to `langflow run --env-file`)'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT aggregation point. Vendor CLI reference documents --env-file as 'the
+      path to the .env file containing Langflow environment variables', and vendor
+      guides consistently start the server as `langflow run --env-file .env`. In
+      practice this one file carries LANGFLOW_SECRET_KEY, LANGFLOW_SUPERUSER_PASSWORD,
+      LANGFLOW_DATABASE_URL, and provider API keys together. Collect it before
+      remediation.
+    confidence: high
+  - location: LANGFLOW_DATABASE_URL
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT database connection string. When Langflow is pointed at external
+      Postgres the documented format embeds the database username and password directly
+      in the value (postgresql://user:password@host:5432/langflow). Also tells the
+      responder that flows, users, and encrypted credentials are NOT in a local SQLite
+      file for this deployment.
+    confidence: high
+  - location: 'langflow.db  (pip install: <install>/lib/python3.x/site-packages/langflow/langflow.db ; git clone: <install>/src/backend/base/langflow/langflow.db ; <LANGFLOW_CONFIG_DIR>/langflow.db when LANGFLOW_SAVE_DB_IN_CONFIG_DIR=True)'
+    os: [windows, macos, linux, docker]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      SQLite database for Langflow OSS. Holds Langflow API keys (api_key table),
+      credential-type global variables, MCP server settings, and user records. These
+      values are ENCRYPTED at rest with the Fernet key, not plaintext - but the key file
+      lives in the config dir, and in the LANGFLOW_SAVE_DB_IN_CONFIG_DIR deployment it
+      is the DB's own directory sibling, so DB + secret_key together are a full
+      credential compromise. Note the default path is inside the venv or the clone, NOT
+      ~/.langflow as the current catalog disk row states.
+    confidence: high
+  - location: ~/.langflow/data/database.db  (Langflow Desktop)
+    os: [macos]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Langflow Desktop's SQLite database on macOS, documented verbatim by the vendor as
+      /Users/<username>/.langflow/data/database.db. Same contents as langflow.db:
+      encrypted API keys and credential variables, plus flows and users. This is the
+      only place the ~/.langflow path the catalog currently uses is actually correct.
+    confidence: high
+  - location: '%APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)'
+    os: [windows]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Langflow Desktop's SQLite database on Windows, documented verbatim by the vendor
+      as C:\Users\<name>\AppData\Roaming\com.LangflowDesktop\data\database.db. Same
+      contents as langflow.db: encrypted API keys and credential variables, plus flows
+      and users.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

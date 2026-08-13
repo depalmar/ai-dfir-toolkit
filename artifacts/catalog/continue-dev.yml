@@ -101,7 +101,89 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
-credentials: []
+credentials:
+  - location: ~/.continue/config.yaml
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Primary assistant config. Each model block takes an 'apiKey' field that accepts a
+      PLAINTEXT provider key written straight into the file; the vendor's own reference
+      documents and demonstrates this. Continue chmods the file to 0600 on POSIX when it
+      creates it. This exact path is already in this repo's shipped credential-access
+      Sigma rule.
+    confidence: high
+  - location: ~/.continue/config.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Deprecated JSON config, still loaded when present. Carries the same PLAINTEXT
+      apiKey field per model. Collect alongside config.yaml - a host upgraded from an
+      older Continue often still has this file with live keys in it.
+    confidence: high
+  - location: ~/.continue/.env
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Global dotenv that Continue resolves ${{ secrets.X }} references from. PLAINTEXT
+      provider keys in standard dotenv format. Vendor documents this as the recommended
+      alternative to inlining keys, so on a well-configured host the keys are HERE and
+      not in config.yaml.
+    confidence: high
+  - location: '<repo>/.continue/.env'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Workspace-scoped dotenv, searched BEFORE the global one. PLAINTEXT provider keys
+      that travel with the repo if not gitignored. The vendor's resolution order also
+      searches <repo>/.env first of all, so check both.
+    confidence: high
+  - location: ~/.continue/auth.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      Continue CLI ('cn') Hub session: PLAINTEXT JSON with accessToken, refreshToken,
+      expiresAt, userId and userEmail, written with a plain writeFileSync and no chmod.
+      VERSION-DEPENDENT - Hub/WorkOS login was stripped from the CLI in 2026 and the
+      path constant is now an unused stub, so expect this only on hosts that ran an
+      earlier CLI build. Still worth collecting: the file is not cleaned up on upgrade.
+    confidence: medium
+  - location: CONTINUE_API_KEY
+    os: [windows, macos, linux, docker, container, cloud]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Vendor-documented environment variable for headless/CI use of the Continue CLI.
+      PLAINTEXT Continue API key. Look in the process environment, shell rc files,
+      container env, and CI job definitions - not on disk under ~/.continue.
+    confidence: high
+  - location: '<VS Code User dir>/globalStorage/continue.continue/*.bin'
+    os: [windows, macos, linux]
+    storage: encrypted
+    secret_type: unknown
+    description: >-
+      Continue's VS Code SecretStorage shim. Each secret is written to its own <key>.bin
+      file as an AES-256-GCM blob laid out salt|iv|tag|ciphertext - NOT plaintext, and
+      not readable without the key below. Concrete roots: ~/Library/Application
+      Support/Code/User/globalStorage/continue.continue (macOS),
+      ~/.config/Code/User/globalStorage/continue.continue (Linux),
+      %APPDATA%\Code\User\globalStorage\continue.continue (Windows).
+    confidence: medium
+  - location: 'vscode.SecretStorage key ''dev.continue.continue'' (OS-keyring backed on desktop VS Code)'
+    os: [windows, macos, linux]
+    storage: os-keyring
+    secret_type: encryption-key
+    description: >-
+      The AES-256-GCM key that decrypts the .bin files above is NOT stored with them -
+      Continue keeps it in the editor's SecretStorage under this key name, which on
+      desktop VS Code resolves through Electron safeStorage to the OS keyring. Without
+      it the .bin files are opaque, so acquiring the globalStorage folder alone is not
+      sufficient.
+    confidence: medium
 mcp: []
 collection:
   triage_priority: p1

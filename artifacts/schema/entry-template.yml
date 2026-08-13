@@ -64,12 +64,17 @@ artifacts:
       persistence: None
       confidence: high
 
+# Required whenever capabilities.plaintext_credentials is true - the validator
+# rejects that claim with an empty block. "This tool stores plaintext secrets"
+# with no location tells a responder the secret exists and gives them nowhere
+# to look. os-keyring is a finding too: it says stop looking on disk.
 credentials:
   - location: ~/.example/auth.json
     os: [macos, linux]
     storage: plaintext              # plaintext | os-keyring | encrypted | sqlite | unknown
     secret_type: oauth-token
-    description: What is stored and what it unlocks.
+    description: What is stored and what it unlocks. Never the secret itself.
+    unverified: true                # required on a low row inside a high entry
     confidence: high
 
 mcp:

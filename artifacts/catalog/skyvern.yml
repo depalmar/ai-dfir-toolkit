@@ -53,7 +53,123 @@ artifacts:
       service_or_daemon: YES (container)
       persistence: Docker restart policy
       confidence: medium
-credentials: []
+credentials:
+  - location: ~/.skyvern/credential_vault/.fernet_key
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT Fernet key, written mode 0600, auto-generated on first vault use when
+      LOCAL_CREDENTIAL_VAULT_KEY is unset. Decrypts every item in the local credential
+      vault. It is generated INTO THE SAME DIRECTORY as the encrypted credential files
+      it protects, so anyone who can read the vault directory has both halves. Container
+      path /data/credential_vault/.fernet_key.
+    confidence: high
+  - location: '~/.skyvern/credential_vault/creditem_*.bin'
+    os: [windows, macos, linux]
+    storage: encrypted
+    secret_type: embedded-credentials
+    description: >-
+      Fernet-encrypted credential items, one file per credential, mode 0600. These are
+      the third-party website logins (usernames/passwords) and credit-card records that
+      Skyvern replays into target sites during automated logins - i.e. the
+      victim-relevant secrets, not Skyvern's own auth. This is the built-in vault used
+      by default in the OSS docker-compose setup (CREDENTIAL_VAULT_TYPE=skyvern,
+      ENABLE_LOCAL_CREDENTIAL_VAULT=true).
+    confidence: high
+  - location: /data/credential_vault
+    os: [docker]
+    storage: encrypted
+    secret_type: embedded-credentials
+    description: >-
+      Container path of the local credential vault, set in the image and persisted by
+      the compose file as host bind mount ./credential_vault. Contains both the
+      encrypted creditem_*.bin files and the .fernet_key that decrypts them.
+    confidence: high
+  - location: LOCAL_CREDENTIAL_VAULT_KEY
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT env var supplying the vault Fernet key directly. When set, no
+      .fernet_key file is generated - the key exists only in the process environment and
+      in whatever .env or compose file provided it. Absence of .fernet_key alongside a
+      populated vault means look here.
+    confidence: high
+  - location: '<install>/.env'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT backend env file at the repo/working root, created by `skyvern init` /
+      `skyvern quickstart`. The CLI writes the generated SKYVERN_API_KEY into it
+      directly, and it also carries the configured LLM provider keys (OPENAI_API_KEY,
+      ANTHROPIC_API_KEY, GEMINI_API_KEY, AZURE_API_KEY, OPENROUTER_API_KEY,
+      GROQ_API_KEY, AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) and POSTGRES_PASSWORD.
+      Loaded by the compose stack via env_file.
+    confidence: high
+  - location: ~/.skyvern/.env
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT user-level backend env file (global scope). Skyvern layers a global
+      ~/.skyvern env under the project-scope and repo-root .env files; which of them is
+      consulted depends on the resolution intent, so this one is not always present or
+      authoritative. Worth collecting when the repo-root .env does not explain the
+      running configuration.
+    confidence: medium
+  - location: '<install>/skyvern-frontend/.env'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT frontend env file holding VITE_SKYVERN_API_KEY - the organization API
+      key used by the UI. Vite bakes VITE_* values into the built bundle, so the key can
+      also survive in the served JavaScript assets, not just this file.
+    confidence: high
+  - location: SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT Bitwarden vault master password in an env var, used when
+      CREDENTIAL_VAULT_TYPE=bitwarden. SKYVERN_AUTH_BITWARDEN_CLIENT_ID,
+      SKYVERN_AUTH_BITWARDEN_CLIENT_SECRET and SKYVERN_AUTH_BITWARDEN_ORGANIZATION_ID
+      sit beside it. Compromise reaches the entire linked Bitwarden collection, well
+      beyond Skyvern itself - escalate scope accordingly.
+    confidence: high
+  - location: OP_SERVICE_ACCOUNT_TOKEN
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT 1Password service-account token in an env var, used when Skyvern is
+      configured against a 1Password vault. Same escalation consideration as the
+      Bitwarden variables - it reaches an external vault.
+    confidence: high
+  - location: ~/.skyvern/data.db
+    os: [windows, macos, linux]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Default SQLite database (DATABASE_STRING defaults to
+      sqlite+aiosqlite:///~/.skyvern/data.db). The organization_auth_tokens table holds
+      the Skyvern API token; the original schema stored it in a plaintext indexed
+      `token` column, with nullable `encrypted_token`/`encrypted_method` columns added
+      later - so on older or unmigrated instances the token is readable directly.
+      Compose deployments use Postgres instead (./postgres-data bind mount).
+    confidence: high
+  - location: '<install>/browser_sessions/'
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: session-state
+    description: >-
+      Persistent browser profile directories (BROWSER_SESSION_BASE_PATH). Hold cookies
+      and authenticated session state for every site the agent logged into, which for a
+      browser agent is often more immediately usable than the credential vault.
+      Container path /data/browser_sessions, host bind ./browser_sessions.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

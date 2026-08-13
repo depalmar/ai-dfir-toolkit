@@ -137,7 +137,87 @@ artifacts:
       service_or_daemon: YES (container)
       persistence: Docker restart policy
       confidence: high
-credentials: []
+credentials:
+  - location: ~/.openhands/agent_settings.json
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT LLM provider api_key. Vendor CLI docs list this file as holding 'LLM
+      configuration and agent settings' (model, API credentials, base URL). The CLI
+      agent store serialises the agent spec with
+      model_dump_json(context={'expose_secrets': True}) before writing, so the key is
+      written unredacted. No OS keyring is involved.
+    confidence: high
+  - location: ~/.openhands/settings.json  (mounted to /.openhands/settings.json)
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT LLM api_key for the server / Docker deployment. Vendor Docker install
+      docs instruct 'Set up ~/.openhands/settings.json with your LLM configuration'. The
+      app server's FileSettingsStore defaults to path 'settings.json' and stores with
+      model_dump_json(context={'expose_secrets': True, 'persist_settings': True}); the
+      app image sets FILE_STORE=local and FILE_STORE_PATH=/.openhands, and the
+      documented run command mounts -v ~/.openhands:/.openhands.
+    confidence: high
+  - location: ~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT git provider tokens (GitHub / GitLab) plus any user-defined custom
+      secrets the operator added for the agent. The app server's FileSecretsStore
+      defaults to filename 'secrets.json' and writes
+      model_dump_json(context={'expose_secrets': True}) with no encryption layer. Same
+      file-store root as settings.json (FILE_STORE_PATH=/.openhands).
+    confidence: high
+  - location: '<project>/config.toml  ([llm] api_key)'
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT api_key under the [llm] section of config.toml (legacy V0 / CLI /
+      headless / development mode). Vendor docs place this file 'in the same directory
+      from which the command is run', or at a path given with --config-file - NOT
+      necessarily at the ~/.openhands/config.toml the catalog disk row lists. Current
+      vendor docs show ~/.openhands/config.toml only for the [plugins] section, so
+      collect both locations and treat the working-directory copy as the likely one.
+    confidence: high
+  - location: LLM_API_KEY
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT provider key in the process environment; vendor environment-variable
+      reference documents it as 'API key for your LLM provider'. Usually supplied on the
+      documented docker run line, so it also survives in the container config (docker
+      inspect), any compose file, and shell history. Related documented credential vars
+      in the same table: LLM_AWS_ACCESS_KEY_ID, LLM_AWS_SECRET_ACCESS_KEY,
+      SANDBOX_API_KEY, GITHUB_TOKEN, TAVILY_API_KEY.
+    confidence: high
+  - location: 'SANDBOX_ENV_*  (e.g. SANDBOX_ENV_OPENAI_API_KEY)'
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: unknown
+    description: >-
+      PLAINTEXT pass-through variables. Vendor docs: 'Variables prefixed with
+      SANDBOX_ENV_ are passed through to the sandbox environment' - so any secret named
+      this way on the host is injected into the agent's sandbox container and is
+      readable by anything the agent runs there. Enumerate them from the container
+      environment during triage.
+    confidence: high
+  - location: JWT_SECRET
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      PLAINTEXT session-token signing secret, documented as 'JWT secret for
+      authentication', default auto-generated. The V0 config equivalent is jwt_secret in
+      config.toml, which the vendor docs tell operators to set to their own value. Theft
+      permits forging a session against the port 3000 UI/API; rotation invalidates
+      existing sessions.
+    confidence: high
 mcp:
   - config_path: ~/.openhands/config.toml
     config_key: "[mcp] section"

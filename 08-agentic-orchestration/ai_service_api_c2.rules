@@ -1,0 +1,28 @@
+# AI-service-API abused as C2 / agentic orchestration egress
+# Category 08 - agentic-orchestration
+# ATLAS AML.T0096 (AI Service API), AML.T0086 (Exfiltration via AI Agent Tool Invocation)
+#
+# CONTEXT: SesameOp (Microsoft DART, disclosed Nov 2025) used the OpenAI *Assistants* API as a storage/relay
+# for C2 - not for inference. The implant polled the assistants list, read a verb (SLEEP / Payload / Result)
+# from the `description` field, took the encrypted+compressed command from `instructions`, and posted output
+# back as a message with description "Result". Because the endpoint is a trusted provider, SNI-only visibility
+# is weak; the high-value signals are (a) NON-inference API paths and (b) regular polling cadence.
+#
+# DEPRECATION NOTE: OpenAI retires the Assistants API in August 2026 in favour of the Responses API.
+# Expect migration of this tradecraft - keep sid:91008003 (generic beacon cadence) and add Responses paths.
+#
+# SID range 91008001-91008020 is arbitrary - renumber to avoid collisions.
+
+# --- Non-inference Assistants/Threads API paths (requires TLS interception) ---
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"AI-DFIR SesameOp - OpenAI Assistants API accessed (non-inference C2 relay path)"; flow:established,to_server; http.host; content:"api.openai.com"; http.uri; content:"/v1/assistants"; nocase; classtype:trojan-activity; metadata:atlas AML.T0096, malware SesameOp, category agentic-orchestration, confidence medium, tlp clear; sid:9000800; rev:1;)
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"AI-DFIR SesameOp - Assistants API response carries C2 verb in description field (intercepted)"; flow:established,from_server; http.response_body; content:"description"; nocase; http.response_body; content:"Payload"; nocase; distance:0; within:200; classtype:trojan-activity; metadata:atlas AML.T0096, malware SesameOp, category agentic-orchestration, confidence medium, tlp clear; sid:9000801; rev:1;)
+
+# --- Beacon cadence to an LLM provider from a server segment (provider-agnostic; survives API migration) ---
+# Tune $AI_C2_SEGMENT to hosts with NO legitimate interactive AI usage (servers, DMZ, jump boxes).
+alert tls $HOME_NET any -> $EXTERNAL_NET 443 (msg:"AI-DFIR Possible AI-service C2 beacon - repeated LLM provider connections from server segment"; flow:established,to_server; tls.sni; pcre:"/(api\.openai\.com|api\.anthropic\.com|generativelanguage\.googleapis\.com)$/i"; threshold:type both, track by_src, count 30, seconds 600; classtype:policy-violation; metadata:atlas AML.T0096, category agentic-orchestration, confidence low, tlp clear; sid:9000802; rev:1;)
+
+# --- Agentic orchestration: sustained high-rate LLM API calls (GTG-1002 tempo) ---
+alert tls $HOME_NET any -> $EXTERNAL_NET 443 (msg:"AI-DFIR Agentic orchestration tempo - high-rate LLM API connections (GTG-1002 pattern)"; flow:established,to_server; tls.sni; pcre:"/(api\.anthropic\.com|api\.openai\.com|generativelanguage\.googleapis\.com)$/i"; threshold:type both, track by_src, count 300, seconds 60; classtype:policy-violation; metadata:atlas AML.T0096, category agentic-orchestration, confidence low, tlp clear; sid:9000803; rev:1;)
+
+# --- Exfil shape: large sustained POST volume to an LLM provider (data staged through the model channel) ---
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"AI-DFIR Large POST volume to LLM provider - possible exfil via AI service channel"; flow:established,to_server; http.method; content:"POST"; http.host; pcre:"/(api\.openai\.com|api\.anthropic\.com|generativelanguage\.googleapis\.com)$/i"; http.request_body; bsize:>500000; threshold:type both, track by_src, count 5, seconds 300; classtype:policy-violation; metadata:atlas AML.T0086, category agentic-orchestration, confidence low, tlp clear; sid:9000804; rev:1;)

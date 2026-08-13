@@ -152,6 +152,7 @@ credentials:
     description: >-
       Kiro authenticates via AWS identity. The exact cache path was not confirmed;
       check ~/.aws/sso/cache/ and the Kiro config root before asserting a location.
+    unverified: true
     confidence: low
   - location: mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
     os: [windows, macos, linux]

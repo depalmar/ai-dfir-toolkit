@@ -40,6 +40,7 @@ ai-dfir-toolkit/
 ├── 05-copilot-assistant-abuse/    # M365 Copilot, GitHub Copilot, Claude, Cursor
 ├── 06-rag-vector-db/              # Vector DB exposure, RAG poisoning
 ├── 07-runtime-ai-malware/         # Malware calling an LLM API at runtime
+├── 08-agentic-orchestration/      # Agent-as-operator, AI service API as C2
 ├── artifacts/                     # Machine-readable AI agent artifact catalog
 ├── skills/                        # Agent skills for maintaining the catalog
 ├── tests/                         # Sample events / test files
@@ -125,7 +126,7 @@ See [`artifacts/README.md`](artifacts/README.md).
 
 ## Coverage overview
 
-63 rule files containing 142 individual signatures — seven attack-class categories
+66 rule files containing 154 individual signatures — eight attack-class categories
 plus a cross-tool endpoint set:
 
 | Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
@@ -137,8 +138,9 @@ plus a cross-tool endpoint set:
 | Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM06 |
 | RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
 | Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM06 |
+| Agentic Orchestration & AI-Service C2 | 3 | 12 | T0096, T0086, T0054 | LLM06 |
 | Endpoint (cross-tool) | 12 | 12 | T0053, T0081, T0082 | LLM02, LLM06, LLM03 |
-| **Total** | **63** | **142** | | |
+| **Total** | **66** | **154** | | |
 
 The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
 scoped to agent behaviour on a host rather than to one attack class, so it applies

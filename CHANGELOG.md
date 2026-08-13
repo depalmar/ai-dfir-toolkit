@@ -8,6 +8,56 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- **127 credential locations across 20 entries** that previously declared
+  `plaintext_credentials: true` and listed none. The catalog went from 23
+  credential locations to 150. Every row carries a vendor citation and went
+  through an adversarial verification pass that dropped 5 and downgraded 14;
+  provenance splits 104 `high` / 18 `medium` / 5 `low`, the last marked
+  `unverified: true`. The flagship case was `claude-code.yml`: it listed no
+  credential location while its own disk row named `.credentials.json`,
+  `CLAUDE.md` named that file as holding live tokens, and the repository shipped
+  a Sigma rule detecting reads of it. Verification also established that on macOS
+  the credential is in the login Keychain rather than that file, so the
+  file-access rule cannot fire on a stock macOS host — recorded as an
+  `os-keyring` row rather than left implied.
+- **`collectors/gen_credential_targets.py`** — the credential half of
+  `targets.yaml` is now generated from the catalog rather than hand-copied, with
+  a staleness check in CI. Only locations a file collector can actually open are
+  emitted; environment variables, CLI flags, keychains, browser stores and
+  databases are real evidence acquired by other means and are reported rather
+  than faked as paths.
+
+- **`collectors/` — forensically-sound acquisition.** Cross-platform collector
+  driven by a declarative `targets.yaml`, plus read-only cloud pulls for Bedrock,
+  Azure OpenAI, Vertex and M365 Copilot. Sources are opened read-only and copied
+  with mtime preserved; every artifact is SHA-256 hashed into a manifest that
+  records operator, host, UTC window, and a self-hash of the collector.
+  `VALIDATION.md` records the non-alteration evidence and is explicit that atime
+  is outside the tool's control.
+- **`collectors/check_target_drift.py`** — `targets.yaml` is a second list of
+  artifact paths and the catalog is the first. Until the former is derived from
+  the latter, this fails when the catalog documents a plaintext credential that
+  no collector target covers, or that a target covers without marking it secret
+  (which would copy a live token whole into a case directory). It found 9 real
+  gaps on the first run, including `~/.codex/auth.json` and
+  `~/.gemini/oauth_creds.json` — both named in this repo's own Sigma and osquery
+  content. Credential coverage went from 0 of 23 to complete.
+- **`playbooks/` — three CACAO v2.0 response playbooks** (coding-agent session
+  forensics, MCP compromise containment, cloud LLM log triage) with a conformance
+  validator wired into CI. Each acquires evidence before any containment step.
+- **`08-agentic-orchestration/analyze_agent_traces.py`** — behavioural scoring
+  over agent traces, the primary detection for a class where every individual
+  tool call is legitimate.
+
+- **`08-agentic-orchestration/` — 3 rule files / 12 signatures.** The adversary
+  using an agent as the operator (GTG-1002, Anthropic Nov 2025) and AI provider
+  APIs abused as covert C2 (SesameOp, Microsoft DART Nov 2025). Different in kind
+  from the other categories: every individual tool call is legitimate, and what
+  betrays the intrusion is emergent — tempo, phase progression, breadth. Both
+  cases are vendor-disclosed with no public IOCs, so the content is behavioural
+  and threshold-driven; the README says plainly that the thresholds must be
+  baselined before they are alerted on. Maps to `AML.T0096` and `AML.T0086`.
+
 - **`07-runtime-ai-malware/` — 8 rule files / 16 signatures.** Detections for
   malware that calls an LLM API *during execution* to generate or mutate its own
   code ("just-in-time code creation", GTIG November 2025): PROMPTFLUX, PROMPTSTEAL
@@ -23,9 +73,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   backend cannot express them at all; `validate.yml` now skips them in the
   per-file pass and validates each containing directory as a collection instead.
 
-- **`MAPPINGS.md` section 07 — Endpoint (cross-tool)**: the 12 endpoint Sigma
-  rules under `artifacts/detections/sigma/` are now indexed, along with the
-  osquery inventory pack. Documented scope moves from 43 rule files / 114
+- **`MAPPINGS.md` Endpoint (cross-tool) section**: the 12 endpoint Sigma rules
+  under `artifacts/detections/sigma/` are now indexed, along with the osquery
+  inventory pack. Documented scope moves from 43 rule files / 114
   signatures to **55 rule files / 126 signatures**.
 - **`artifacts/scripts/validate_mappings.py`**: fails when `MAPPINGS.md`
   references a rule file that does not exist, or when a rule file on disk is
@@ -74,9 +124,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   `mcp_tool_poisoning.yar` carries both, because it matches a poisoned
   description wherever it lands and cannot tell the two apart. Basis recorded in
   `artifacts/docs/VERIFICATION.md`.
-- The cross-tool Endpoint section moved from `07` to `08` in `MAPPINGS.md`, so
-  numbered sections mirror numbered directories and the non-directory endpoint
-  set sorts last.
+- The cross-tool Endpoint section in `MAPPINGS.md` is no longer numbered. It was
+  bumped once per new category (07 → 08) because it competed for numbers with the
+  rule directories while not being one; unnumbering it ends that permanently and
+  lets numbered sections mirror numbered directories.
 - The Investigation guide header entry is a real tab rather than a link inside
   `role="tablist"`, which had broken arrow-key navigation. The tablist now has
   roving tabindex, arrow/Home/End keys, and `aria-controls` onto a

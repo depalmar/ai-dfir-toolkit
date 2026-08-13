@@ -37,6 +37,19 @@ jobs:
       # that breaks the site's data contract would not surface until deploy.
       - name: Check site data contract
         run: python scripts/build_site.py --check
+      # The credential half of collectors/targets.yaml is generated from the
+      # catalog, so the first command fails if it was not regenerated after a
+      # catalog change. The second covers what generation does not: the
+      # hand-authored targets, and any catalogued credential the collector would
+      # miss entirely or copy whole instead of hashing.
+      - name: Check collector targets against the catalog
+        working-directory: .
+        run: |
+          python collectors/gen_credential_targets.py --check
+          python collectors/check_target_drift.py
+      - name: Validate CACAO playbooks
+        working-directory: .
+        run: python playbooks/validate_cacao.py playbooks/pb-*.json
       - name: Verify Sigma rules convert to a real backend
         run: |
           pip install sigma-cli pysigma-backend-splunk

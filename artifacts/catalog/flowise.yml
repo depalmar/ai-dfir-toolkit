@@ -42,7 +42,83 @@ artifacts:
       service_or_daemon: Optional
       persistence: pm2 / systemd / Docker
       confidence: medium
-credentials: []
+credentials:
+  - location: ~/.flowise/encryption.key
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT AES key file, auto-generated on first run if absent. Decrypts every
+      credential in the Flowise credential table (all stored LLM provider and
+      third-party tool API keys). Overridden by SECRETKEY_PATH (key file moves to
+      <SECRETKEY_PATH>/encryption.key) or by FLOWISE_SECRETKEY_OVERWRITE (no key file at
+      all). Note the source also probes several encryption.key locations relative to the
+      install dir before falling back to the home directory, so on a git-clone install
+      check <install>/packages/server/encryption.key too.
+    confidence: high
+  - location: /home/node/.flowise/encryption.key
+    os: [docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT AES key inside the official container image, where SECRETKEY_PATH is set
+      to /home/node/.flowise. The official compose file bind-mounts host ~/.flowise to
+      this path, so the key is readable on the host at ~/.flowise/encryption.key even
+      for containerised deployments.
+    confidence: high
+  - location: ~/.flowise/database.sqlite
+    os: [windows, macos, linux]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Default SQLite store (DATABASE_PATH, defaults to ~/.flowise). Holds the credential
+      table - third-party LLM and tool API keys, AES-encrypted with encryption.key - and
+      the login_sessions table used by the Passport session store. Ciphertext only, but
+      the decrypting key sits in the same directory. Flow definitions stored here can
+      also embed secrets inline.
+    confidence: high
+  - location: FLOWISE_SECRETKEY_OVERWRITE
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT env var holding the credential-encryption key directly, used instead of
+      the key stored at SECRETKEY_PATH. When this is set there is no encryption.key file
+      to collect - the key is only in the process environment and in whatever compose
+      file or shell profile set it.
+    confidence: high
+  - location: '<install>/docker/.env'
+    os: [linux, windows, docker]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT env file in the compose working directory. Holds
+      FLOWISE_SECRETKEY_OVERWRITE, SECRETKEY_AWS_ACCESS_KEY / SECRETKEY_AWS_SECRET_KEY,
+      JWT_AUTH_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET,
+      TOKEN_HASH_SECRET, DATABASE_PASSWORD, REDIS_PASSWORD, SMTP_PASSWORD, and
+      S3/Azure/GCS storage credentials.
+    confidence: high
+  - location: JWT_AUTH_TOKEN_SECRET
+    os: [windows, macos, linux, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      PLAINTEXT env var signing the auth JWT that Flowise stores in an HTTP-only cookie
+      (v3.0.1+ Passport auth). JWT_REFRESH_TOKEN_SECRET, EXPRESS_SESSION_SECRET and
+      TOKEN_HASH_SECRET sit alongside it and are equivalent in value. Disclosure allows
+      forging an authenticated session against the instance.
+    confidence: high
+  - location: '<install>/packages/server/.env'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: admin-credential
+    description: >-
+      PLAINTEXT app-level auth credentials FLOWISE_USERNAME / FLOWISE_PASSWORD, in the
+      .env under packages/server. This is the DEPRECATED pre-v3.0.1 auth mechanism: it
+      is documented by the vendor and still present on the many older deployments in the
+      wild, but no longer referenced anywhere in current main. Treat a hit here as an
+      indicator the instance predates 3.0.1.
+    confidence: medium
 mcp: []
 collection:
   triage_priority: p1

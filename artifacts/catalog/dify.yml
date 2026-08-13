@@ -30,7 +30,73 @@ artifacts:
       default_bind: 0.0.0.0 (container)
       authentication: App auth
       exposure_risk: medium
-credentials: []
+credentials:
+  - location: '<install>/docker/volumes/app/storage/privkeys/<tenant_id>/private.pem'
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: encryption-key
+    description: >-
+      PLAINTEXT, unencrypted PEM RSA private key, one per tenant. Dify encrypts every
+      stored model-provider credential with the tenant public key (RSA + AES-256 EAX
+      hybrid); this file decrypts all of them. Written via the storage abstraction, so
+      the container path is /app/api/storage/privkeys/<tenant_id>/private.pem.
+      Highest-value single file in a Dify stack. Collect metadata and permissions only -
+      never read the contents.
+    confidence: high
+  - location: '<install>/docker/volumes/app/storage/.dify_secret_key'
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      PLAINTEXT auto-generated SECRET_KEY, persisted here when the SECRET_KEY env var is
+      left empty. Signs session cookies / console auth tokens. Presence of this file
+      means the operator did NOT set SECRET_KEY explicitly. Container path
+      /app/api/storage/.dify_secret_key.
+    confidence: high
+  - location: '<install>/docker/.env'
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      PLAINTEXT compose env file beside docker-compose.yaml, read by every service.
+      Holds SECRET_KEY, INIT_PASSWORD, DB_PASSWORD, REDIS_PASSWORD, PLUGIN_DAEMON_KEY,
+      PLUGIN_DIFY_INNER_API_KEY, CODE_EXECUTION_API_KEY / SANDBOX_API_KEY,
+      DIFY_AGENT_API_TOKEN, DIFY_AGENT_SERVER_SECRET_KEY, plus any vector-DB and
+      object-storage keys. Newer releases also split these across
+      <install>/docker/envs/*.env (security.env, middleware.env,
+      databases/db-postgres.env).
+    confidence: high
+  - location: SECRET_KEY
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      Env var. Vendor description: "Secret key for secure session cookie signing. Leave
+      empty to let Dify generate a persistent key in the storage directory." If set, the
+      secret is in the process environment and the compose env file rather than in
+      .dify_secret_key.
+    confidence: high
+  - location: INIT_PASSWORD
+    os: [linux, docker]
+    storage: plaintext
+    secret_type: admin-credential
+    description: >-
+      PLAINTEXT env var. Vendor description: "Password required before initializing a
+      self-hosted deployment" - it gates the first-run setup page that creates the
+      initial admin account. It is the install gate, not the admin account password
+      itself. A non-empty value here on a reachable instance is worth recording.
+    confidence: high
+  - location: '<install>/docker/volumes/db/data'
+    os: [linux, docker]
+    storage: encrypted
+    secret_type: api-key
+    description: >-
+      PostgreSQL data directory. Model-provider API keys live here in encrypted_config
+      columns on the providers / provider_models / provider_credentials tables,
+      encrypted with the tenant RSA public key. Ciphertext only - useless without the
+      privkeys/<tenant_id>/private.pem file above, which is why the two must be
+      collected and handled together.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p2

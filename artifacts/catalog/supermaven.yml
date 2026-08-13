@@ -56,7 +56,31 @@ artifacts:
       description: ""
       confidence: low
       unverified: true
-credentials: []
+credentials:
+  - location: ~/.supermaven/config.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: unknown
+    description: >-
+      PLAINTEXT account key written by the sm-agent binary. Field names observed in a
+      real-world instance: api_key, api_key_obtained_at, link_id. ~/.supermaven is
+      confirmed as Supermaven's data root by the vendor's own Neovim plugin (falls back
+      to $XDG_DATA_HOME/supermaven when that variable is set, so check there too).
+      Single-quality-source on the credential file itself - verify before relying on it.
+    unverified: true
+    confidence: low
+  - location: '<project>/.supermaven/config.json'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: unknown
+    description: >-
+      PLAINTEXT. Same config file, created RELATIVE TO THE WORKING DIRECTORY rather than
+      under $HOME - reported on the vendor's own repo as sm-agent creating
+      .supermaven/config.json in the project dir on startup. Forensically material
+      because an account key can land inside a repo working tree and be committed. Worth
+      a repo-wide sweep when Supermaven is in scope.
+    unverified: true
+    confidence: low
 mcp: []
 collection:
   triage_priority: p2

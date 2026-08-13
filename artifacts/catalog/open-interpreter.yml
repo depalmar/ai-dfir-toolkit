@@ -88,7 +88,108 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: high
-credentials: []
+credentials:
+  - location: ~/.openinterpreter/auth.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      CURRENT (Rust) build - DEFAULT credential store. PLAINTEXT JSON holding ChatGPT
+      sign-in OAuth tokens plus an OPENAI_API_KEY field, personal_access_token, Bedrock
+      API key and agent-identity JWT. Created mode 0600 on Unix (no mode enforcement on
+      Windows). Relocated by INTERPRETER_HOME; CODEX_HOME is deliberately ignored by
+      this product.
+    confidence: high
+  - location: ~/.openinterpreter/.credentials.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      CURRENT (Rust) build - MCP server OAuth tokens (per-server access_token,
+      refresh_token, client_id, scopes) in PLAINTEXT JSON. This is the fallback store:
+      default mode is keyring-preferred, so this file appears when the OS keyring is
+      unavailable or fails.
+    confidence: high
+  - location: 'OS keyring: service "Codex Auth", account "cli|<first 16 hex of SHA-256 of the resolved home path>"'
+    os: [windows, macos, linux]
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      CURRENT (Rust) build - NON-DEFAULT but user-selectable via
+      cli_auth_credentials_store = "keyring" or "auto". When set, CLI auth is NOT in a
+      file: it is in the OS keychain/credential manager. The service string is still
+      "Codex Auth" in the Open Interpreter fork. Requires keychain acquisition rather
+      than file collection.
+    confidence: high
+  - location: '~/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
+    os: [windows, macos, linux]
+    storage: encrypted
+    secret_type: oauth-token
+    description: >-
+      CURRENT (Rust) build - age-encrypted secrets files used by the "secrets" keyring
+      backend, which is the default backend on Windows when keyring storage is selected.
+      The file encryption key lives in the OS keyring, so the file alone is not
+      decryptable - collect the files AND the keyring entry together or neither is
+      useful.
+    confidence: high
+  - location: 'OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  <model_providers.*.env_key>'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      CURRENT (Rust) build - vendor-documented API-key path for CI and headless hosts.
+      Custom OpenAI-compatible providers declare their own variable name via env_key in
+      config.toml. Nothing is written to disk in this mode: look at process environment,
+      shell rc files, unit files and CI secret stores.
+    confidence: high
+  - location: '~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml'
+    os: [macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      CLASSIC Python build (pip install open-interpreter, current PyPI release 0.4.3 -
+      this is the build AIRT-0015's pip/venv artifacts describe). PLAINTEXT profile
+      YAML. The vendor's own shipped default profile carries a commented "api_key: ..."
+      under "llm:", making this the documented place a provider key is persisted. NOTE
+      the directory is lowercase-hyphen "open-interpreter"; the entry's existing
+      "~/.config/Open Interpreter/" is the pre-0.2.0 legacy name that the built-in
+      migrator still reads.
+    confidence: medium
+  - location: '%LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml'
+    os: [windows]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      CLASSIC Python build - Windows form of the profile YAML above. DERIVED, not
+      vendor-documented: platformdirs.user_config_dir on Windows resolves to
+      user_data_dir (LOCAL, not roaming) and appends appauthor-then-appname, and
+      appauthor defaults to appname, which is why the name appears twice. Note this is
+      %LOCALAPPDATA%, not the %APPDATA% currently in the entry. Verify on a live Windows
+      host before shipping a collection step.
+    unverified: true
+    confidence: low
+  - location: 'OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      CLASSIC Python build - keys are read from the environment. IMPORTANT for
+      collection: the interactive first-run key prompt does NOT persist the key to disk;
+      it assigns it in memory and instructs the user to append "export
+      OPENAI_API_KEY=..." to ~/.zshrc or ~/.bashrc, or run setx on Windows. So there is
+      no auth file for this build - collect shell rc files and the HKCU\Environment key
+      instead.
+    confidence: high
+  - location: INTERPRETER_API_KEY
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      CLASSIC Python build - shared secret for Open Interpreter's server/async mode, not
+      a provider credential. Forensically significant because the auth function returns
+      True when the variable is unset: an exposed server-mode instance with no
+      INTERPRETER_API_KEY set accepts any caller.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

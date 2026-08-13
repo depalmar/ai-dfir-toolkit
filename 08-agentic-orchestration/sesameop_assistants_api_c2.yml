@@ -1,0 +1,92 @@
+title: SesameOp - OpenAI Assistants API Abused as C2 Relay
+name: sesameop_assistants_api_c2
+id: 4e2c8b71-9d05-4a36-bf18-6c3a7e1d9b40
+status: experimental
+description: |
+    Detects the SesameOp backdoor pattern, in which the OpenAI Assistants API is abused as a storage/relay
+    channel for command and control rather than for model inference. Microsoft DART discovered SesameOp in
+    July 2025 in an environment where the actor had persisted for months: a heavily obfuscated .NET loader
+    (Netapi64.dll) delivered the OpenAIAgent.Netapi64 implant, which polls the Assistants list and reads the
+    `description` field for one of three verbs - SLEEP, Payload, or Result - taking the encrypted, compressed
+    command body from the `instructions` field and returning output as a new message with description "Result".
+    Because the traffic terminates at a trusted provider, it blends with legitimate AI usage.
+    Detection keys on non-inference Assistants-API endpoints being reached by a process with no business
+    calling them, and on the documented loader artifacts / AppDomainManager injection.
+    NOTE: OpenAI deprecates the Assistants API in August 2026 in favour of the Responses API; expect this
+    tradecraft to migrate. Extend `selection_api` to Responses-API paths as your estate adopts them.
+references:
+    - https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/
+    - https://thehackernews.com/2025/11/microsoft-detects-sesameop-backdoor.html
+    - https://www.infosecurity-magazine.com/news/openai-assistants-api-sesameop/
+    - https://atlas.mitre.org/techniques/AML.T0096
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.command-and-control
+    - attack.t1071.001
+    - attack.t1102          # Web Service as C2 relay
+    - attack.defense-evasion
+    - attack.t1574.014      # AppDomainManager injection
+    - atlas.aml-t0096
+logsource:
+    category: proxy
+detection:
+    selection_api:
+        c-uri|contains:
+            - '/v1/assistants'
+            - '/v1/threads'
+    filter_known_ai_clients:
+        # Tune to your sanctioned AI tooling; the point is a NON-AI process reaching these endpoints.
+        c-useragent|contains:
+            - 'OpenAI/Python'
+            - 'openai-node'
+            - 'langchain'
+    condition: selection_api and not filter_known_ai_clients
+fields:
+    - c-uri
+    - c-useragent
+    - src_ip
+    - cs-method
+falsepositives:
+    - Bespoke internal applications built on the Assistants API with custom user agents. Baseline first, then allowlist by host/process.
+level: high
+---
+title: SesameOp Loader Artifacts (Netapi64 / AppDomainManager Injection)
+name: sesameop_loader_artifacts
+id: 8b16f4a9-3c72-4e08-95d1-2f7b0c6ae315
+status: experimental
+description: |
+    Host-side companion to the SesameOp network detection: the Netapi64.dll loader, the OpenAIAgent.Netapi64
+    implant, and the .NET AppDomainManager injection into Microsoft Visual Studio utilities that Microsoft DART
+    documented as the persistence/defense-evasion mechanism.
+references:
+    - https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/
+    - https://securityonline.info/sesameop-backdoor-hijacks-openai-assistants-api-for-covert-c2-and-espionage/
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.defense-evasion
+    - attack.t1574.014
+    - attack.persistence
+    - atlas.aml-t0096
+logsource:
+    product: windows
+    category: file_event
+detection:
+    selection_loader:
+        TargetFilename|endswith:
+            - '\Netapi64.dll'
+    selection_implant:
+        TargetFilename|contains:
+            - 'OpenAIAgent'
+    selection_appdomain_cfg:
+        # AppDomainManager injection rides a .config alongside a trusted VS utility
+        TargetFilename|endswith: '.exe.config'
+        TargetFilename|contains:
+            - '\Microsoft Visual Studio\'
+            - '\MSBuild\'
+    condition: 1 of selection_*
+falsepositives:
+    - Legitimate netapi32/netapi-named libraries in unusual paths; verify signature and path before escalating.
+    - Developer-authored .exe.config files in Visual Studio directories - inspect for appDomainManagerAssembly entries.
+level: high

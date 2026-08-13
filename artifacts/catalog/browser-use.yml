@@ -39,7 +39,75 @@ artifacts:
       service_or_daemon: "No"
       persistence: None
       confidence: medium
-credentials: []
+credentials:
+  - location: ~/.config/browseruse/cloud_auth.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      PLAINTEXT JSON holding `api_token` (an OAuth2 device-authorization-grant access
+      token for Browser Use Cloud), `user_id` and `authorized_at`. Written via json.dump
+      by the cloud sync auth flow, which then attempts chmod 0600. Check existence and
+      mode; do not read contents.
+    confidence: high
+  - location: ~/.config/browseruse/config.json
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT LLM provider keys. The DB-style config holds LLMEntry records carrying
+      an `api_key` field. Resolved as $XDG_CONFIG_HOME/browseruse/config.json,
+      defaulting to ~/.config on every platform including Windows;
+      BROWSER_USE_CONFIG_DIR overrides the directory.
+    confidence: high
+  - location: ~/.config/browseruse/profiles/default
+    os: [windows, macos, linux]
+    storage: unknown
+    secret_type: session-state
+    description: >-
+      Default Chromium user_data_dir for agent sessions - a live, logged-in browser
+      profile, and the highest-value item for this tool. Cookies sit in Default/Cookies
+      (SQLite) with values encrypted under an OS-keyring-derived key, so the profile
+      plus the user's keyring reconstitutes authenticated sessions and bypasses MFA.
+      Collect the directory as a unit; do not decrypt cookie values.
+    confidence: high
+  - location: '~/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      Optional Gmail integration (used to retrieve 2FA codes). gmail_credentials.json is
+      the Google OAuth client secret; gmail_token.json is the resulting access/refresh
+      token. Default filenames inside the browser-use config dir; present only when that
+      integration is configured. Their presence indicates the agent could read the
+      user's mail.
+    confidence: high
+  - location: BROWSER_USE_API_KEY
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT Browser Use Cloud API key in the process environment, sent as the
+      X-Browser-Use-API-Key header. Documented in the vendor README and used by the
+      cloud SDK when no argument is passed.
+    confidence: high
+  - location: '<project>/.env'
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT keys. The vendor README shows BROWSER_USE_API_KEY and provider keys
+      written to a project .env, and the shipped examples load it with dotenv.
+    confidence: high
+  - location: OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY / NOVITA_API_KEY / AZURE_OPENAI_KEY
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      PLAINTEXT provider keys read from the process environment by
+      browser_use/config.py. Note the Azure variable is AZURE_OPENAI_KEY here (paired
+      with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1

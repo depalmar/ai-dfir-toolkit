@@ -1,0 +1,162 @@
+title: Agent Tool Invocation at Machine Tempo
+name: agent_tool_invocation_tempo_base
+id: 2d7f4c60-1b83-4e95-a7c2-5f80e3b1d946
+status: experimental
+description: |
+    Detects MCP/agent tool invocations occurring at a rate no human operator could drive. In the GTG-1002
+    campaign Anthropic disclosed (Nov 2025), Claude Code plugged into MCP servers executed 80-90% of the
+    tactical work and sustained request rates reported as "thousands of requests per second" across ~30
+    targets, with human operators intervening at only 4-6 decision points per campaign. Tempo is therefore
+    one of the few reliable discriminators between an analyst using an agent and an adversary orchestrating one.
+    This rule counts tool-invocation events per source in a short window; tune `count` to your baseline.
+    For the richer behavioural picture (phase progression, breadth, autonomy ratio, exfil data-flow), run
+    `analyze_agent_traces.py` in this directory over the collected session traces.
+references:
+    - https://www.anthropic.com/news/disrupting-AI-espionage
+    - https://www.scworld.com/perspective/anthropics-ai-disclosure-what-we-know-and-what-were-watching-for
+    - https://atlas.mitre.org/techniques/AML.T0096
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.execution
+    - attack.t1059
+    - atlas.aml-t0096
+    - atlas.aml-t0053
+logsource:
+    product: mcp
+    service: tool_invocation
+    definition: 'MCP server / agent framework tool-invocation logs normalized with fields: session_id, tool_name, src_host. Emitted by MCP gateways, agent observability (OTel gen_ai.execute_tool spans), or parsed Claude Code JSONL.'
+detection:
+    selection:
+        event_type: 'tool_invocation'
+    timeframe: 1m
+    condition: selection
+falsepositives:
+    - Legitimate bulk automation, CI pipelines, and large-scale refactoring agents. Baseline per session type before enforcing.
+    - Agent retry storms against a failing tool.
+level: medium
+---
+title: Mass Data Collection via Agent Tool Invocation
+name: agent_tool_chain_mass_exfil_base
+id: 9c05a3e8-7f41-4bd2-8e63-1a94c7f0b258
+status: experimental
+description: |
+    Detects an agent chaining tool calls into bulk collection/exfiltration - MITRE ATLAS AML.T0086
+    (Exfiltration via AI Agent Tool Invocation, added in the Oct 2025 Zenity Labs technique set). The
+    signature is archive/dump/upload tooling invoked repeatedly by an agent session rather than
+    interactively, matching the GTG-1002 final phase in which the model categorized and staged stolen data
+    by intelligence value.
+references:
+    - https://atlas.mitre.org/techniques/AML.T0086
+    - https://www.anthropic.com/news/disrupting-AI-espionage
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+tags:
+    - attack.exfiltration
+    - attack.t1041
+    - attack.collection
+    - attack.t1560
+    - atlas.aml-t0086
+logsource:
+    product: mcp
+    service: tool_invocation
+detection:
+    selection:
+        event_type: 'tool_invocation'
+    selection_collect:
+        tool_input|contains:
+            - 'tar -cz'
+            - 'zip -r'
+            - '7z a'
+            - 'mysqldump'
+            - 'pg_dump'
+            - 'rclone'
+            - 'aws s3 cp'
+            - 'aws s3 sync'
+            - 'gsutil cp'
+            - 'curl -T'
+            - '--upload-file'
+    timeframe: 10m
+    condition: selection and selection_collect
+falsepositives:
+    - Backup automation and legitimate data-migration agents. Allowlist known backup service accounts.
+level: high
+---
+title: Agentic Killchain Progression in a Single Session
+id: f1a6e29d-4c50-4783-b9e7-08d3c5a2f461
+status: experimental
+description: |
+    Correlation rule: an agent session that exhibits machine-tempo tool invocation AND bulk collection within
+    the same hour matches the GTG-1002 pattern of an autonomous chain running reconnaissance through
+    exfiltration with minimal human intervention. Either signal alone has benign analogues; together they
+    warrant immediate IR review.
+references:
+    - https://www.anthropic.com/news/disrupting-AI-espionage
+author: Raymond DePalma (@depalmar)
+date: 2026-08-12
+correlation:
+    type: temporal
+    rules:
+        - agent_tool_invocation_tempo_base
+        - agent_tool_chain_mass_exfil_base
+    group-by:
+        - session_id
+    timespan: 1h
+    condition:
+        gte: 2
+tags:
+    - attack.execution
+    - attack.exfiltration
+    - atlas.aml-t0096
+    - atlas.aml-t0086
+level: critical
+
+---
+# The pipe syntax these replace carried no time window, so "60 tool calls" was
+# unbounded and would fire on any long-running legitimate session. A correlation
+# requires a timespan, and the threshold only means "machine tempo" against a short
+# one: 60 invocations in 5 minutes is 12/min, which no human drives.
+title: Agent Tool Invocation at Machine Tempo
+id: 8f2b1c47-6d39-4a5e-9c81-2e7f4a0b6d13
+status: experimental
+description: >-
+    Sustained agent tool-invocation rate consistent with autonomous operation rather
+    than human-paced use. Models the GTG-1002 tempo signal.
+author: Raymond DePalma (@depalmar)
+date: 2026-08-13
+correlation:
+    type: event_count
+    rules:
+        - agent_tool_invocation_tempo_base
+    group-by:
+        - session_id
+    timespan: 5m
+    condition:
+        gt: 60
+tags:
+    - attack.execution
+    - atlas.aml-t0086
+level: medium
+
+---
+title: Mass Data Collection via Agent Tool Chaining
+id: 3c9e5a71-0b48-4f26-8d13-7a6c2f9b4e05
+status: experimental
+description: >-
+    Repeated collection-oriented tool calls inside one agent session, the
+    tool-chaining path to bulk exfiltration (ATLAS T0086).
+author: Raymond DePalma (@depalmar)
+date: 2026-08-13
+correlation:
+    type: event_count
+    rules:
+        - agent_tool_chain_mass_exfil_base
+    group-by:
+        - session_id
+    timespan: 1h
+    condition:
+        gt: 5
+tags:
+    - attack.collection
+    - atlas.aml-t0086
+level: high

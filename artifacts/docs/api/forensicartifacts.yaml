@@ -71,28 +71,34 @@ supported_os:
 - Windows
 urls: []
 ---
-name: ClaudeCodeArtifacts
-doc: Claude Code (AIRT-0001) - Terminal-native agentic coding assistant. Reads/writes
-  files, runs shell commands, invokes MCP servers.
+name: AutogenArtifacts
+doc: AutoGen (AIRT-0027) - Multi-agent conversation framework with LocalCommandLineCodeExecutor
+  and DockerCommandLineCodeExecutor.
 sources:
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.autogenstudio/.env'
+    - '%%users.homedir%%/.autogenstudio/database.sqlite'
+    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.autogenstudio/.env'
+    - '%%users.homedir%%/.autogenstudio/database.sqlite'
+    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.autogenstudio/.env'
+    - '%%users.homedir%%/.autogenstudio/database.sqlite'
+    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -100,6 +106,128 @@ supported_os:
 - Darwin
 - Linux
 - Windows
+urls: []
+---
+name: BrowserUseArtifacts
+doc: Browser-Use (AIRT-0032) - Python library giving LLM agents DOM-level browser
+  control via Playwright.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
+    - '%%users.homedir%%/.config/browseruse/config.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/profiles/default'
+    - BROWSER_USE_API_KEY
+    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
+      / NOVITA_API_KEY / AZURE_OPENAI_KEY
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
+    - '%%users.homedir%%/.config/browseruse/config.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/profiles/default'
+    - BROWSER_USE_API_KEY
+    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
+      / NOVITA_API_KEY / AZURE_OPENAI_KEY
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
+    - '%%users.homedir%%/.config/browseruse/config.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/profiles/default'
+    - BROWSER_USE_API_KEY
+    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
+      / NOVITA_API_KEY / AZURE_OPENAI_KEY
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ClaudeCodeArtifacts
+doc: Claude Code (AIRT-0001) - Terminal-native agentic coding assistant. Reads/writes
+  files, runs shell commands, invokes MCP servers.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - $CLAUDE_CONFIG_DIR/.credentials.json
+    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.claude/.credentials.json'
+    - '%%users.homedir%%/.config/anthropic/configs/'
+    - ANTHROPIC_API_KEY
+    - ANTHROPIC_AUTH_TOKEN
+    - CLAUDE_CODE_OAUTH_TOKEN
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.config/anthropic/configs/'
+    - ANTHROPIC_API_KEY
+    - ANTHROPIC_AUTH_TOKEN
+    - CLAUDE_CODE_OAUTH_TOKEN
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - $CLAUDE_CONFIG_DIR/.credentials.json
+    - '%%users.homedir%%/.claude.json'
+    - '%%users.homedir%%/.claude/.credentials.json'
+    - ANTHROPIC_API_KEY
+    - ANTHROPIC_AUTH_TOKEN
+    - CLAUDE_CODE_OAUTH_TOKEN
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: ClaudeComputerUseArtifacts
+doc: Claude Computer Use (AIRT-0033) - Vision-driven screenshot-to-coordinate GUI
+  control loop. Reference implementation ships as a Docker container.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.anthropic/api_key'
+    - '%%users.homedir%%/.aws'
+    - '%%users.homedir%%/.config/gcloud/application_default_credentials.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.anthropic/api_key'
+    - '%%users.homedir%%/.aws'
+    - '%%users.homedir%%/.config/gcloud/application_default_credentials.json'
+    separator: /
+  supported_os:
+  - Darwin
+supported_os:
+- Darwin
+- Linux
 urls: []
 ---
 name: ClaudeDesktopMcpHostArtifacts
@@ -189,20 +317,26 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.codeium/config.json'
     - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
+    - '%%users.homedir%%/.config/Windsurf/User/globalStorage/state.vscdb'
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.codeium/config.json'
     - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
+    - '%%users.homedir%%/Library/Application Support/Windsurf/User/globalStorage/state.vscdb'
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\Windsurf\User\globalStorage\state.vscdb'
+    - '%%users.homedir%%/.codeium/config.json'
     - '%%users.homedir%%\.codeium\windsurf\mcp_config.json'
     separator: \
   supported_os:
@@ -220,27 +354,36 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.continue/.env'
+    - '%%users.homedir%%/.continue/auth.json'
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - CONTINUE_API_KEY
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.continue/.env'
+    - '%%users.homedir%%/.continue/auth.json'
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - CONTINUE_API_KEY
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.continue/.env'
+    - '%%users.homedir%%/.continue/auth.json'
     - '%%users.homedir%%/.continue/config.json'
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
+    - CONTINUE_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -257,6 +400,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.config/Cursor/User/globalStorage/state.vscdb'
+    - '%%users.homedir%%/.config/cursor/auth.json'
     - '%%users.homedir%%/.cursor/mcp.json'
     separator: /
   supported_os:
@@ -265,13 +410,75 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.cursor/mcp.json'
+    - '%%users.homedir%%/Library/Application Support/Cursor/User/globalStorage/state.vscdb'
+    - 'macOS login Keychain: generic-password service ''Cursor Safe Storage'', account
+      ''Cursor Key'''
+    - 'macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token
+      / cursor-api-key, account cursor-user'
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\Cursor\User\globalStorage\state.vscdb'
     - '%%users.homedir%%/.cursor/mcp.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: DifyArtifacts
+doc: Dify (AIRT-0029) - Self-hosted LLM application builder with agent and workflow
+  modes.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - INIT_PASSWORD
+    - SECRET_KEY
+    separator: /
+  supported_os:
+  - Linux
+supported_os:
+- Linux
+urls: []
+---
+name: FlowiseArtifacts
+doc: Flowise (AIRT-0030) - Drag-and-drop LangChain flow builder. Default port 3000,
+  flows persisted to local DB.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.flowise/database.sqlite'
+    - '%%users.homedir%%/.flowise/encryption.key'
+    - FLOWISE_SECRETKEY_OVERWRITE
+    - JWT_AUTH_TOKEN_SECRET
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.flowise/database.sqlite'
+    - '%%users.homedir%%/.flowise/encryption.key'
+    - FLOWISE_SECRETKEY_OVERWRITE
+    - JWT_AUTH_TOKEN_SECRET
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.flowise/database.sqlite'
+    - '%%users.homedir%%/.flowise/encryption.key'
+    - FLOWISE_SECRETKEY_OVERWRITE
+    - JWT_AUTH_TOKEN_SECRET
     separator: \
   supported_os:
   - Windows
@@ -289,21 +496,41 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.config/github-copilot/apps.json'
+    - '%%users.homedir%%/.config/github-copilot/hosts.json'
+    - '%%users.homedir%%/.copilot/config.json'
     - '%%users.homedir%%/.copilot/mcp-config.json'
+    - '%%users.homedir%%/.copilot/mcp-oauth-config/'
+    - '%%users.homedir%%/.copilot/mcp-secrets/'
+    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
+    - COPILOT_PROVIDER_API_KEY
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.config/github-copilot/apps.json'
+    - '%%users.homedir%%/.config/github-copilot/hosts.json'
+    - '%%users.homedir%%/.copilot/config.json'
     - '%%users.homedir%%/.copilot/mcp-config.json'
+    - '%%users.homedir%%/.copilot/mcp-oauth-config/'
+    - '%%users.homedir%%/.copilot/mcp-secrets/'
+    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
+    - COPILOT_PROVIDER_API_KEY
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.copilot/config.json'
     - '%%users.homedir%%/.copilot/mcp-config.json'
+    - '%%users.homedir%%/.copilot/mcp-oauth-config/'
+    - '%%users.homedir%%/.copilot/mcp-secrets/'
+    - '%%users.localappdata%%\github-copilot\apps.json'
+    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
+    - COPILOT_PROVIDER_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -389,6 +616,37 @@ supported_os:
 - Windows
 urls: []
 ---
+name: GptPilotArtifacts
+doc: GPT Pilot (AIRT-0016) - Python agent that scaffolds and runs full applications,
+  executing generated code.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
 name: KiroArtifacts
 doc: Kiro (AIRT-0041) - Agentic IDE from AWS built on a VS Code-style editor, using
   a spec-driven workflow. Amazon Q Developer's IDE capabilities are migrating into
@@ -430,6 +688,37 @@ urls:
 - https://kiro.dev/docs/mcp/
 - https://kiro.dev/docs/getting-started/first-project/
 ---
+name: LangchainLanggraphArtifacts
+doc: LangChain / LangGraph (AIRT-0026) - Dominant agent-building library. Deployed
+  as bespoke services - no fixed install path.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
 name: LangflowArtifacts
 doc: Langflow (AIRT-0044) - Low-code visual builder for LLM agents and workflows,
   Python-based. Installable as a pip package, a desktop app, or a hosted service.
@@ -437,6 +726,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - LANGFLOW_DATABASE_URL
+    - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
     separator: /
   supported_os:
@@ -444,6 +735,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - LANGFLOW_DATABASE_URL
+    - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
     separator: /
   supported_os:
@@ -451,6 +744,8 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - LANGFLOW_DATABASE_URL
+    - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
     separator: \
   supported_os:
@@ -558,6 +853,57 @@ supported_os:
 - Windows
 urls: []
 ---
+name: OpenInterpreterArtifacts
+doc: Open Interpreter (AIRT-0015) - Natural-language to executed code on the host.
+  Supports --local via llamafile (no API key needed).
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application
+      Support/open-interpreter/profiles/default.yaml'
+    - '%%users.homedir%%/.openinterpreter/.credentials.json'
+    - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
+    - INTERPRETER_API_KEY
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
+      / AWS_SECRET_ACCESS_KEY
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application
+      Support/open-interpreter/profiles/default.yaml'
+    - '%%users.homedir%%/.openinterpreter/.credentials.json'
+    - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
+    - INTERPRETER_API_KEY
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
+      / AWS_SECRET_ACCESS_KEY
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.openinterpreter/.credentials.json'
+    - '%%users.homedir%%/.openinterpreter/auth.json'
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
+    - '%%users.localappdata%%\open-interpreter\open-interpreter\profiles\default.yaml'
+    - INTERPRETER_API_KEY
+    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
+      / AWS_SECRET_ACCESS_KEY
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
 name: OpenWebuiArtifacts
 doc: Open WebUI (AIRT-0042) - Self-hosted web interface for local and remote LLMs,
   formerly Ollama WebUI. Multi-user with RBAC, RAG document ingestion, and a Tools/Functions
@@ -634,7 +980,10 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - JWT_SECRET
+    - LLM_API_KEY
     - docker-compose.yml / docker run invocation
     - ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
     separator: /
@@ -650,7 +999,10 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - JWT_SECRET
+    - LLM_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -691,4 +1043,99 @@ supported_os:
 - Darwin
 - Linux
 - Windows
+urls: []
+---
+name: SkyvernArtifacts
+doc: Skyvern (AIRT-0035) - Open-source vision+DOM browser automation agent, commonly
+  Docker-deployed with a web UI.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.skyvern/.env'
+    - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
+    - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
+    - '%%users.homedir%%/.skyvern/data.db'
+    - LOCAL_CREDENTIAL_VAULT_KEY
+    - OP_SERVICE_ACCOUNT_TOKEN
+    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.skyvern/.env'
+    - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
+    - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
+    - '%%users.homedir%%/.skyvern/data.db'
+    - LOCAL_CREDENTIAL_VAULT_KEY
+    - OP_SERVICE_ACCOUNT_TOKEN
+    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.skyvern/.env'
+    - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
+    - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
+    - '%%users.homedir%%/.skyvern/data.db'
+    - LOCAL_CREDENTIAL_VAULT_KEY
+    - OP_SERVICE_ACCOUNT_TOKEN
+    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: SupermavenArtifacts
+doc: Supermaven (AIRT-0010) - Low-latency completion agent with very large context
+  window. Downloads its own agent binary. Integrated in Zed and VS Code.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.supermaven/config.json'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.supermaven/config.json'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.supermaven/config.json'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls: []
+---
+name: TabnineArtifacts
+doc: Tabnine (AIRT-0009) - Completion + agent platform. Editor plugin spawns and supervises
+  a downloaded platform-specific binary.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/TabNine/.refresh_token_v2'
+    separator: /
+  supported_os:
+  - Linux
+supported_os:
+- Linux
 urls: []

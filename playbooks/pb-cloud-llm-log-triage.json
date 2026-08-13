@@ -1,0 +1,232 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ef0ff782-a327-4e46-abb5-327a80a8d008",
+  "name": "AI-DFIR: Cloud LLM Invocation Log Triage",
+  "description": "Triage a suspected prompt-injection, data-exfiltration, or abuse incident against a managed LLM service (Amazon Bedrock, Azure OpenAI, Google Vertex AI). Acquires the provider audit and invocation logs, establishes whether prompt/completion content was being retained at all, and searches the retained telemetry for injection and exfiltration indicators. The first branch matters most: if model-invocation logging was never enabled, the prompts and completions do not exist anywhere and the investigation must pivot to network and client-side evidence rather than chasing absent logs.",
+  "playbook_types": [
+    "investigation"
+  ],
+  "playbook_activities": [
+    "analyze-collected-data",
+    "identify-indicators"
+  ],
+  "playbook_processing_summary": {
+    "if_logic": true,
+    "data_markings": true
+  },
+  "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+  "created": "2026-08-12T00:00:00.000Z",
+  "modified": "2026-08-12T00:00:00.000Z",
+  "valid_from": "2026-08-12T00:00:00.000Z",
+  "priority": 25,
+  "severity": 60,
+  "impact": 5,
+  "labels": [
+    "ai-dfir",
+    "bedrock",
+    "azure-openai",
+    "vertex-ai",
+    "prompt-injection",
+    "cosai"
+  ],
+  "external_references": [
+    {
+      "name": "CoSAI AI Incident Response Framework V1.0",
+      "source": "Coalition for Secure AI / OASIS Open, 18 November 2025",
+      "url": "https://www.coalitionforsecureai.org/wp-content/uploads/2026/03/AI-Incident-Response-1.pdf"
+    },
+    {
+      "name": "OWASP Top 10 for LLM Applications 2025",
+      "source": "OWASP GenAI Security Project",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/"
+    }
+  ],
+  "markings": [
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9"
+  ],
+  "playbook_variables": {
+    "__case_id__": {
+      "type": "string",
+      "description": "Incident case identifier.",
+      "value": "IR-0000-000",
+      "external": true
+    },
+    "__cloud_region__": {
+      "type": "string",
+      "description": "Provider region to query.",
+      "value": "us-east-1",
+      "external": true
+    },
+    "__window_start__": {
+      "type": "string",
+      "description": "ISO-8601 start of the investigation window.",
+      "value": "2026-08-01T00:00:00Z",
+      "external": true
+    },
+    "__window_end__": {
+      "type": "string",
+      "description": "ISO-8601 end of the investigation window.",
+      "value": "2026-08-12T00:00:00Z",
+      "external": true
+    },
+    "__evidence_root__": {
+      "type": "string",
+      "description": "Destination root for the case directory.",
+      "value": "/evidence/cases"
+    },
+    "__logging_enabled__": {
+      "type": "string",
+      "description": "Whether model-invocation logging (prompt/completion capture) was configured.",
+      "value": "unknown"
+    }
+  },
+  "workflow_start": "start--5760a34a-f066-4c91-8d4b-db1ded8602c3",
+  "workflow": {
+    "start--5760a34a-f066-4c91-8d4b-db1ded8602c3": {
+      "type": "start",
+      "name": "Start - cloud LLM log triage",
+      "on_completion": "action--808b60f0-e6f4-45f0-87aa-b193ec27b8f8"
+    },
+    "action--808b60f0-e6f4-45f0-87aa-b193ec27b8f8": {
+      "type": "action",
+      "name": "Acquire provider logging configuration and audit trail",
+      "description": "Captures the model-invocation logging configuration first, then the control-plane audit trail. The configuration is itself evidence: it establishes what telemetry could possibly exist for the incident window.",
+      "on_completion": "if-condition--49a5b03c-5477-4ddf-80fe-78db89dbf4ba",
+      "agent": "individual--624befeb-fd75-4340-9fa6-1445328c40b7",
+      "targets": [
+        "http-api--e4382885-0dc9-456f-8a28-080fecc2dd4e"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__cloud_region__",
+        "__window_start__",
+        "__window_end__",
+        "__evidence_root__"
+      ],
+      "out_args": [
+        "__logging_enabled__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Bedrock: logging config, CloudTrail control-plane events, and invocation logs from whichever destination is configured. Substitute the Azure or Vertex collector for those providers.",
+          "command": "./collectors/cloud/pull_bedrock_invocation_logs.sh -c __case_id__:value -r __cloud_region__:value -s __window_start__:value -e __window_end__:value -o __evidence_root__:value",
+          "playbook_activity": "analyze-collected-data"
+        }
+      ]
+    },
+    "if-condition--49a5b03c-5477-4ddf-80fe-78db89dbf4ba": {
+      "type": "if-condition",
+      "name": "Was model-invocation logging enabled for the incident window?",
+      "description": "Model-invocation logging is off by default on the major providers and must have been enabled BEFORE the incident. If it was not, prompt and completion content was never recorded and no amount of querying will produce it.",
+      "condition": "__logging_enabled__:value == 'true'",
+      "on_true": "action--347fcbac-3608-42f8-b037-c7b411934796",
+      "on_false": "action--3cd9b956-d7d8-455c-8ade-2eb9aed47f5a"
+    },
+    "action--347fcbac-3608-42f8-b037-c7b411934796": {
+      "type": "action",
+      "name": "Search retained prompt and completion telemetry for indicators",
+      "description": "Search the retained invocation logs for injection framing, system-prompt extraction attempts, and exfiltration shapes. Correlate by trace_id/session_id per the CoSAI framework so activity is scoped across services rather than viewed per-request.",
+      "on_completion": "action--09bfddc8-c2db-4cbd-afc2-6820c6cb5715",
+      "agent": "individual--624befeb-fd75-4340-9fa6-1445328c40b7",
+      "targets": [
+        "http-api--e4382885-0dc9-456f-8a28-080fecc2dd4e"
+      ],
+      "in_args": [
+        "__case_id__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Injection and system-prompt-extraction framing in retained prompts.",
+          "command": "grep -R -i -E 'ignore (all )?(previous|prior) instructions|disregard (the )?(above|system)|reveal your (system )?prompt|you are now|developer mode' __evidence_root__:value/__case_id__:value/cloud/ | head -n 200",
+          "playbook_activity": "identify-indicators"
+        },
+        {
+          "type": "bash",
+          "description": "Outbound-exfiltration shapes in completions: markdown image beacons and attacker-controlled URLs.",
+          "command": "grep -R -i -E '!\\[[^]]*\\]\\(https?://|https?://[a-z0-9.-]+/[^ \"]*(\\?|&)(q|d|data|c)=' __evidence_root__:value/__case_id__:value/cloud/ | head -n 200",
+          "playbook_activity": "identify-indicators"
+        },
+        {
+          "type": "bash",
+          "description": "Rank principals by invocation volume to surface anomalous automated callers.",
+          "command": "python3 -c \"import json,glob,collections; c=collections.Counter(); [c.update([json.loads(l).get('identity',{}).get('arn','unknown')]) for f in glob.glob('__evidence_root__:value/__case_id__:value/cloud/**/*.json', recursive=True) for l in open(f, errors='replace') if l.strip().startswith('{')]; [print(v,k) for k,v in c.most_common(20)]\"",
+          "playbook_activity": "analyze-collected-data"
+        }
+      ]
+    },
+    "action--3cd9b956-d7d8-455c-8ade-2eb9aed47f5a": {
+      "type": "action",
+      "name": "Pivot to client-side and network evidence",
+      "description": "Prompt and completion content does not exist. Do not report absence of indicators as absence of compromise - report it as an evidence gap. Pivot to sources that captured the interaction independently of the provider.",
+      "on_completion": "action--09bfddc8-c2db-4cbd-afc2-6820c6cb5715",
+      "agent": "individual--624befeb-fd75-4340-9fa6-1445328c40b7",
+      "in_args": [
+        "__case_id__"
+      ],
+      "commands": [
+        {
+          "type": "manual",
+          "description": "Alternate evidence sources.",
+          "command": "Record an explicit evidence gap for case __case_id__:value: model-invocation logging was not enabled, so prompts and completions were never retained. Pivot to application-side logs, gateway/proxy captures, agent session traces on the client, and OpenTelemetry gen_ai spans if instrumented. Recommend enabling invocation logging as a post-incident action.",
+          "playbook_activity": "identify-indicators"
+        }
+      ]
+    },
+    "action--09bfddc8-c2db-4cbd-afc2-6820c6cb5715": {
+      "type": "action",
+      "name": "Consolidate indicators and hash the evidence set",
+      "description": "Produce the indicator list and a verifiable hash manifest of everything acquired, so the cloud evidence carries the same chain of custody as host-side collection.",
+      "on_completion": "end--12944823-2e36-453b-8998-aba3b26f513e",
+      "agent": "individual--624befeb-fd75-4340-9fa6-1445328c40b7",
+      "in_args": [
+        "__case_id__",
+        "__evidence_root__"
+      ],
+      "commands": [
+        {
+          "type": "bash",
+          "description": "Hash manifest across all acquired cloud evidence.",
+          "command": "cd __evidence_root__:value/__case_id__:value/cloud && find . -type f ! -name 'SHA256SUMS' -print0 | xargs -0 sha256sum > SHA256SUMS",
+          "playbook_activity": "identify-indicators"
+        },
+        {
+          "type": "manual",
+          "description": "Reportability assessment.",
+          "command": "Summarize confirmed indicators, affected principals, and the retention posture. Assess whether the incident meets the EU AI Act Article 73 serious-incident threshold and, if so, confirm no alteration of the AI system occurred before notification.",
+          "playbook_activity": "identify-indicators"
+        }
+      ]
+    },
+    "end--12944823-2e36-453b-8998-aba3b26f513e": {
+      "type": "end",
+      "name": "End - cloud LLM log triage"
+    }
+  },
+  "agent_definitions": {
+    "individual--624befeb-fd75-4340-9fa6-1445328c40b7": {
+      "type": "individual",
+      "name": "Cloud DFIR analyst",
+      "description": "Responder with read-only provider credentials (bedrock:Get*, cloudtrail:LookupEvents, logs:FilterLogEvents, s3:GetObject)."
+    }
+  },
+  "target_definitions": {
+    "http-api--e4382885-0dc9-456f-8a28-080fecc2dd4e": {
+      "type": "http-api",
+      "name": "Managed LLM provider control and logging APIs",
+      "description": "Bedrock / Azure OpenAI / Vertex AI management and log-query endpoints."
+    }
+  },
+  "data_marking_definitions": {
+    "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9": {
+      "type": "marking-tlp",
+      "id": "marking-tlp--613f2e26-407d-48c7-9eca-b8e91df99dc9",
+      "created_by": "identity--9f3d2b17-4c8a-4e05-9d61-7a2f0c6b8e34",
+      "created": "2026-08-12T00:00:00.000Z",
+      "tlpv2_level": "TLP:CLEAR"
+    }
+  }
+}
