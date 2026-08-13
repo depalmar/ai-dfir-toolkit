@@ -32,7 +32,7 @@ alert http $EXTERNAL_NET any -> any 11434 (msg:"AI-DFIR Ollama API accessed exte
     http.method; content:"POST"; \
     http.uri; pcre:"/\/api\/(generate|chat|embeddings|pull|push|create|delete|copy)/i"; \
     classtype:misc-attack; \
-    metadata:atlas AML.T0011, owasp LLM10; \
+    metadata:atlas AML.T0011, owasp LLM06; \
     sid:9000400; rev:1;)
 
 alert http any any -> any 11434 (msg:"AI-DFIR Ollama model pull from external host (potential malicious model)"; \
@@ -41,7 +41,7 @@ alert http any any -> any 11434 (msg:"AI-DFIR Ollama model pull from external ho
     http.uri; content:"/api/pull"; nocase; \
     http.request_body; pcre:"/\"name\"\s*:\s*\"[^\"]*[a-z0-9.-]+\.(ngrok|trycloudflare|serveo|loca|burpcollaborator|interactsh)\.(io|com|me)/i"; \
     classtype:trojan-activity; \
-    metadata:atlas AML.T0010, owasp LLM03; \
+    metadata:atlas AML.T0010, owasp LLM04; \
     sid:9000401; rev:1;)
 
 alert http any any -> any 11434 (msg:"AI-DFIR Ollama model deletion via API"; \
@@ -61,7 +61,7 @@ alert http $EXTERNAL_NET any -> any [8000,8888] (msg:"AI-DFIR vLLM OpenAI-compat
     http.uri; pcre:"/\/v1\/(completions|chat\/completions|embeddings)/i"; \
     http.user_agent; content:!"OpenAI"; nocase; \
     classtype:misc-attack; \
-    metadata:atlas AML.T0011, owasp LLM10; \
+    metadata:atlas AML.T0011, owasp LLM06; \
     sid:9000410; rev:1;)
 
 alert http any any -> any any (msg:"AI-DFIR vLLM/OpenAI-compatible API max_tokens cost-based DoS"; \
@@ -70,7 +70,7 @@ alert http any any -> any any (msg:"AI-DFIR vLLM/OpenAI-compatible API max_token
     http.uri; pcre:"/\/v1\/(completions|chat\/completions)/i"; \
     http.request_body; pcre:"/\"max_tokens\"\s*:\s*([4-9]\d{4}|\d{6,})/"; \
     classtype:web-application-attack; \
-    metadata:atlas AML.T0029, owasp LLM10; \
+    metadata:atlas AML.T0029, owasp LLM06; \
     sid:9000411; rev:1;)
 
 # ==========================================================================

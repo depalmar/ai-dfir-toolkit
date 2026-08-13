@@ -1,6 +1,6 @@
 # MAPPINGS — ATLAS, OWASP & CVE Cross-Reference
 
-Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 for LLM Applications (2025), and relevant CVEs / public incident references.
+Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 for LLM Applications (2026), and relevant CVEs / public incident references.
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
@@ -12,37 +12,37 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `prompt_injection_keywords.yml` | Sigma | T0051.000 | LLM01 | OWASP genai 2025 |
+| `prompt_injection_keywords.yml` | Sigma | T0051.000 | LLM01 | OWASP genai 2025, mapping updated to the 2026 list |
 | `jailbreak_personas.yml` | Sigma | T0054 | LLM01 | jailbreakchat.com |
-| `system_prompt_extraction.yml` | Sigma | T0054 | LLM07 | Leaked-system-prompts repo |
+| `system_prompt_extraction.yml` | Sigma | T0054 | LLM08 | Leaked-system-prompts repo |
 | `markdown_image_exfil.yml` | Sigma | T0024 | LLM02 | CVE-2025-32711, CVE-2025-59145 |
-| `adversarial_suffix.yar` | YARA | T0051.000, T0029 | LLM01, LLM10 | Zou et al. 2023 (GCG) |
-| `bedrock_high_token_usage.yml` | Sigma | T0029, T0051, T0054 | LLM01, LLM10 | OWASP LLM10:2025 |
-| `azure_openai_injection.yml` | Sigma | T0051, T0054 | LLM01, LLM07 | OWASP LLM01/LLM07:2025 |
+| `adversarial_suffix.yar` | YARA | T0051.000, T0029 | LLM01, LLM06 | Zou et al. 2023 (GCG) |
+| `bedrock_high_token_usage.yml` | Sigma | T0029, T0051, T0054 | LLM01, LLM06 | OWASP LLM10:2025, now LLM06:2026 |
+| `azure_openai_injection.yml` | Sigma | T0051, T0054 | LLM01, LLM08 | OWASP LLM01/LLM07:2025, now LLM01/LLM08:2026 |
 | `llm_response_base64_exfil.yml` | Sigma | T0024 | LLM02 | embracethered.com |
 
 ## 02 — MCP Attacks
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `mcp_tool_poisoning.yar` | YARA | T0104, T0110, T0086 | LLM06, LLM02 | Invariant Labs 2025 |
-| `mcp_config_tampering.yml` | Sigma | T0010 | LLM03 | CVE-2025-59536 |
+| `mcp_tool_poisoning.yar` | YARA | T0104, T0110, T0086 | LLM03, LLM02 | Invariant Labs 2025 |
+| `mcp_config_tampering.yml` | Sigma | T0010 | LLM04 | CVE-2025-59536 |
 | `mcp_credential_access.yml` | Sigma | T0086 | LLM02 | Cyata 2025 |
-| `mcp_outbound_unknown_domain.rules` | Suricata | T0011, T0086, T0110 | LLM02, LLM06 | CVE-2025-49596, CVE-2025-6514 |
+| `mcp_outbound_unknown_domain.rules` | Suricata | T0011, T0086, T0110 | LLM02, LLM03 | CVE-2025-49596, CVE-2025-6514 |
 | `claude_desktop_config_modify.yml` | Sigma | T0010 | — | CVE-2025-53109, CVE-2025-53110 |
 
 ## 03 — Model & ML Supply Chain
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `pickle_malicious_opcodes.yar` | YARA | T0010.002, T0011, T0018, T0086 | LLM03 | CVE-2025-32444, Trail of Bits 2024 |
-| `keras_lambda_layer_rce.yar` | YARA | T0018 | LLM03 | CVE-2025-1550 |
+| `pickle_malicious_opcodes.yar` | YARA | T0010.002, T0011, T0018, T0086 | LLM04 | CVE-2025-32444, Trail of Bits 2024 |
+| `keras_lambda_layer_rce.yar` | YARA | T0018 | LLM04 | CVE-2025-1550 |
 | `huggingface_token_exposure.yml` | Sigma | T0086 | — | Lasso Security 2024 |
-| `mlflow_path_traversal.rules` | Suricata | T0010, T0011, T0086 | LLM03 | CVE-2023-6831, CVE-2024-0520, CVE-2024-2928, CVE-2023-43472 |
-| `mlflow_unauth_api_access.yml` | Sigma | T0011 | LLM03 | CVE-2024-37059 |
-| `pip_install_typosquat.yml` | Sigma | T0010.002 | LLM03 | torchtriton 2022, alibaba fakes 2024 |
-| `huggingface_cache_unexpected_writer.yml` | Sigma | T0010.003 | LLM03 | HF cache architecture |
-| `model_file_hash_mismatch.yml` | Sigma | T0010.003, T0018 | LLM03 | — |
+| `mlflow_path_traversal.rules` | Suricata | T0010, T0011, T0086 | LLM04 | CVE-2023-6831, CVE-2024-0520, CVE-2024-2928, CVE-2023-43472 |
+| `mlflow_unauth_api_access.yml` | Sigma | T0011 | LLM04 | CVE-2024-37059 |
+| `pip_install_typosquat.yml` | Sigma | T0010.002 | LLM04 | torchtriton 2022, alibaba fakes 2024 |
+| `huggingface_cache_unexpected_writer.yml` | Sigma | T0010.003 | LLM04 | HF cache architecture |
+| `model_file_hash_mismatch.yml` | Sigma | T0010.003, T0018 | LLM04 | — |
 
 ## 04 — AI Infrastructure
 
@@ -64,9 +64,9 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 |------|--------|-------|-------|-----------------|
 | `m365_copilot_sensitive_label_access.yml` | Sigma | T0086 | LLM02 | CW1226324, CVE-2025-32711 |
 | `m365_copilot_anomalous_aggregation.yml` | Sigma | T0024, T0086 | LLM02 | Concentric AI 2024-2025 |
-| `github_copilot_yolo_mode_enabled.yml` | Sigma | T0010, T0011 | LLM06 | CVE-2025-53773 |
-| `copilot_rules_file_backdoor.yar` | YARA | T0010, T0010.002 | LLM03 | Pillar Security 2025 |
-| `cursor_settings_db_modification.yml` | Sigma | T0010 | LLM06 | Check Point MCPoison 2025, CVE-2025-54135 |
+| `github_copilot_yolo_mode_enabled.yml` | Sigma | T0010, T0011 | LLM03 | CVE-2025-53773 |
+| `copilot_rules_file_backdoor.yar` | YARA | T0010, T0010.002 | LLM04 | Pillar Security 2025 |
+| `cursor_settings_db_modification.yml` | Sigma | T0010 | LLM03 | Check Point MCPoison 2025, CVE-2025-54135 |
 | `claude_session_jsonl_unexpected_access.yml` | Sigma | T0086 | — | Claude Code architecture |
 | `chatgpt_paste_sensitive_data.yml` | Sigma | T0086 | LLM02 | Samsung 2023 incident |
 | `ai_assistant_outbound_to_camo_proxy.rules` | Suricata | T0086 | LLM02 | CVE-2025-59145 (CamoLeak), CVE-2025-32711 (EchoLeak) |
@@ -75,11 +75,11 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 
 | Rule | Format | ATLAS | OWASP | Reference |
 |------|--------|-------|-------|-----------|
-| `vector_db_unauth_exposure.rules` | Suricata | T0011, T0024 | LLM02, LLM08 | Shodan 2024 |
-| `vector_db_bulk_exfil.yml` | Sigma | T0024 | LLM02, LLM08 | Princeton embedding-inversion |
-| `rag_document_hidden_text.yar` | YARA | T0020, T0051.001 | LLM01, LLM08 | Greshake 2023, PoisonedRAG 2025 |
-| `chroma_sqlite_unexpected_writer.yml` | Sigma | T0020 | LLM08 | ChromaDB architecture |
-| `vector_db_query_anomaly.yml` | Sigma | T0020, T0024 | LLM02, LLM08 | — |
+| `vector_db_unauth_exposure.rules` | Suricata | T0011, T0024 | LLM02, LLM09 | Shodan 2024 |
+| `vector_db_bulk_exfil.yml` | Sigma | T0024 | LLM02, LLM09 | Princeton embedding-inversion |
+| `rag_document_hidden_text.yar` | YARA | T0020, T0051.001 | LLM01, LLM09 | Greshake 2023, PoisonedRAG 2025 |
+| `chroma_sqlite_unexpected_writer.yml` | Sigma | T0020 | LLM09 | ChromaDB architecture |
+| `vector_db_query_anomaly.yml` | Sigma | T0020, T0024 | LLM02, LLM09 | — |
 
 ## 07 — Runtime AI-Malware
 
@@ -90,14 +90,14 @@ loop are the durable detection surface.
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `script_interpreter_llm_api_dns.yml` | Sigma | T0096, T0086 | LLM06 | PROMPTFLUX / PROMPTSTEAL (GTIG Nov 2025) |
-| `promptflux_artifacts_fileevent.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX (GTIG Nov 2025) |
-| `powershell_llm_api_command_generation.yml` | Sigma | T0096 | LLM06 | FRUITSHELL / PROMPTSTEAL (GTIG Nov 2025) |
-| `runtime_ai_malware_correlation.yml` | Sigma | T0096 | LLM01, LLM06 | PROMPTFLUX kill-chain |
-| `promptflux_thinking_robot.yar` | YARA | T0096 | LLM01, LLM06 | PROMPTFLUX |
-| `promptsteal_lamehug.yar` | YARA | T0096 | LLM06 | PROMPTSTEAL / LAMEHUG (APT28) |
-| `llm_api_prompt_in_script_generic.yar` | YARA | T0096 | LLM01, LLM06 | Just-in-time code creation (class heuristic) |
-| `runtime_llm_api_c2.rules` | Suricata | T0096, T0086 | LLM06 | SesameOp-style AI-service C2 (AML.CS0042) |
+| `script_interpreter_llm_api_dns.yml` | Sigma | T0096, T0086 | LLM03 | PROMPTFLUX / PROMPTSTEAL (GTIG Nov 2025) |
+| `promptflux_artifacts_fileevent.yml` | Sigma | T0096 | LLM01, LLM03 | PROMPTFLUX (GTIG Nov 2025) |
+| `powershell_llm_api_command_generation.yml` | Sigma | T0096 | LLM03 | FRUITSHELL / PROMPTSTEAL (GTIG Nov 2025) |
+| `runtime_ai_malware_correlation.yml` | Sigma | T0096 | LLM01, LLM03 | PROMPTFLUX kill-chain |
+| `promptflux_thinking_robot.yar` | YARA | T0096 | LLM01, LLM03 | PROMPTFLUX |
+| `promptsteal_lamehug.yar` | YARA | T0096 | LLM03 | PROMPTSTEAL / LAMEHUG (APT28) |
+| `llm_api_prompt_in_script_generic.yar` | YARA | T0096 | LLM01, LLM03 | Just-in-time code creation (class heuristic) |
+| `runtime_llm_api_c2.rules` | Suricata | T0096, T0086 | LLM03 | SesameOp-style AI-service C2 (AML.CS0042) |
 
 YARA string sets here are derived from public reporting rather than confirmed
 samples — see the category README before deploying them for blocking.
@@ -111,9 +111,9 @@ ratio of agent actions to human decisions.
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `sesameop_assistants_api_c2.yml` | Sigma | T0096 | LLM06 | SesameOp, Microsoft DART Nov 2025 (AML.CS0042) |
-| `agentic_orchestration_behavior.yml` | Sigma | T0086, T0054 | LLM06 | GTG-1002, Anthropic Nov 2025 |
-| `ai_service_api_c2.rules` | Suricata | T0096, T0086 | LLM06 | SesameOp / agent-as-C2 egress |
+| `sesameop_assistants_api_c2.yml` | Sigma | T0096 | LLM03 | SesameOp, Microsoft DART Nov 2025 (AML.CS0042) |
+| `agentic_orchestration_behavior.yml` | Sigma | T0086, T0054 | LLM03 | GTG-1002, Anthropic Nov 2025 |
+| `ai_service_api_c2.rules` | Suricata | T0096, T0086 | LLM03 | SesameOp / agent-as-C2 egress |
 
 GTG-1002 is vendor-disclosed with no public IOCs, so these are behavioural rather
 than signature-based. `agentic_orchestration_behavior.yml` is threshold-driven and
@@ -128,7 +128,7 @@ leaves the adversary resident.
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `memory_poisoning.yml` | Sigma | T0080, T0080.000, T0081 | LLM01, LLM06 | MITRE/Zenity Labs Oct 2025 |
+| `memory_poisoning.yml` | Sigma | T0080, T0080.000, T0081 | LLM01, LLM03 | MITRE/Zenity Labs Oct 2025 |
 | `memory_poisoning_indicators.yar` | YARA | T0080.000, T0086 | LLM01, LLM02 | spAIware-class persistent exfiltration |
 
 Also here: `analyze_agent_memory.py`, which parses memory stores and reports
@@ -142,18 +142,18 @@ to a single attack class, so they apply across every tool in the catalog.
 
 | Rule | Format | ATLAS | OWASP | CVE / Reference |
 |------|--------|-------|-------|-----------------|
-| `ai_agent_mcp_config_modification.yml` | Sigma | T0081 | LLM06 | — |
-| `ai_agent_spawning_shell.yml` | Sigma | T0053 | LLM06 | — |
-| `ai_agent_spawning_lolbin.yml` | Sigma | T0053 | LLM06 | LOLBAS via MCP marketplace audit 2025 |
-| `local_llm_listener_non_loopback.yml` | Sigma | T0024, T0029 | LLM10 | Pillar Security 2026 (Operation Bizarre Bazaar) |
+| `ai_agent_mcp_config_modification.yml` | Sigma | T0081 | LLM03 | — |
+| `ai_agent_spawning_shell.yml` | Sigma | T0053 | LLM03 | — |
+| `ai_agent_spawning_lolbin.yml` | Sigma | T0053 | LLM03 | LOLBAS via MCP marketplace audit 2025 |
+| `local_llm_listener_non_loopback.yml` | Sigma | T0024, T0029 | LLM06 | Pillar Security 2026 (Operation Bizarre Bazaar) |
 | `ai_agent_credential_file_access.yml` | Sigma | T0082 | LLM02 | — |
 | `ai_inference_endpoint_redirection.yml` | Sigma | T0024 | LLM02 | — |
-| `mcp_server_remote_code_fetch.yml` | Sigma | T0110 | LLM03 | postmark-mcp backdoor 2025 |
-| `browser_agent_session_state_capture.yml` | Sigma | T0086 | LLM02, LLM06 | — |
-| `ai_agent_autostart_persistence.yml` | Sigma | T0081 | LLM06 | — |
-| `langflow_rce_exploitation_attempt.yml` | Sigma | T0053 | LLM03 | CVE-2025-3248 (CISA KEV), CVE-2026-5027 |
-| `ai_agent_docker_socket_mount.yml` | Sigma | T0053 | LLM06 | OpenHands deployment docs |
-| `ai_model_file_written_to_endpoint.yml` | Sigma | T0010.003 | LLM03 | — |
+| `mcp_server_remote_code_fetch.yml` | Sigma | T0110 | LLM04 | postmark-mcp backdoor 2025 |
+| `browser_agent_session_state_capture.yml` | Sigma | T0086 | LLM02, LLM03 | — |
+| `ai_agent_autostart_persistence.yml` | Sigma | T0081 | LLM03 | — |
+| `langflow_rce_exploitation_attempt.yml` | Sigma | T0053 | LLM04 | CVE-2025-3248 (CISA KEV), CVE-2026-5027 |
+| `ai_agent_docker_socket_mount.yml` | Sigma | T0053 | LLM03 | OpenHands deployment docs |
+| `ai_model_file_written_to_endpoint.yml` | Sigma | T0010.003 | LLM04 | — |
 
 Also in this set: `artifacts/detections/osquery/ai-agent-artifacts.conf` — a
 six-query osquery pack for fleet inventory (running agents, listeners, MCP
@@ -190,14 +190,23 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 | T0104    | Publish Poisoned AI Agent Tool | 1 |
 | T0110    | AI Agent Tool Poisoning | 3 |
 
-## OWASP Top 10 for LLM Applications 2025 Index
+## OWASP Top 10 for LLM Applications 2026 Index
 
-| OWASP | Title | Rule count |
-|-------|-------|------------|
-| LLM01    | Prompt Injection | 12 |
-| LLM02    | Sensitive Information Disclosure | 16 |
-| LLM03    | Supply Chain | 12 |
-| LLM06    | Excessive Agency | 22 |
-| LLM07    | System Prompt Leakage | 2 |
-| LLM08    | Vector and Embedding Weaknesses | 5 |
-| LLM10    | Unbounded Consumption | 3 |
+Remapped from the 2025 list on 2026-08-13, against the 2026 publication of
+2026-08-04. Eight of the ten IDs changed meaning between the two editions, so a
+2025 ID read as a 2026 one names the wrong category - `LLM03` was Supply Chain
+and is now Excessive Agency. Categories with no rule are listed so the gaps are
+visible rather than merely absent.
+
+| OWASP | Title | Rule count | Was in 2025 |
+|-------|-------|------------|-------------|
+| LLM01    | Prompt Injection | 12 | LLM01 |
+| LLM02    | Sensitive Information Disclosure | 16 | LLM02 |
+| LLM03    | Excessive Agency | 22 | LLM06 |
+| LLM04    | Supply Chain | 12 | LLM03 |
+| LLM05    | Data and Model Poisoning | 0 | LLM04 |
+| LLM06    | Unbounded Consumption | 3 | LLM10 |
+| LLM07    | Misinformation | 0 | LLM09 |
+| LLM08    | Hidden Context Exposure | 2 | LLM07, renamed and widened |
+| LLM09    | Vector and Embedding Weaknesses | 5 | LLM08 |
+| LLM10    | Improper Output Handling | 0 | LLM05 |

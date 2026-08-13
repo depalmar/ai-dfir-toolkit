@@ -8,11 +8,11 @@ This category is different in kind from 01–07. There, the malicious act is vis
 
 | Threat | ATLAS | OWASP | Reference |
 |--------|-------|-------|-----------|
-| Agent tool invocation at machine tempo | T0086 | LLM06 | GTG-1002, Anthropic Nov 2025 |
-| Mass collection via agent tool chaining | T0086 | LLM06 | GTG-1002 |
-| Agentic killchain progression in one session | T0086, T0054 | LLM06 | GTG-1002 |
-| AI service API used as a C2 relay | T0096 | LLM06 | SesameOp, Microsoft DART Nov 2025 |
-| Non-inference Assistants/Threads API access | T0096 | LLM06 | SesameOp (AML.CS0042) |
+| Agent tool invocation at machine tempo | T0086 | LLM03 | GTG-1002, Anthropic Nov 2025 |
+| Mass collection via agent tool chaining | T0086 | LLM03 | GTG-1002 |
+| Agentic killchain progression in one session | T0086, T0054 | LLM03 | GTG-1002 |
+| AI service API used as a C2 relay | T0096 | LLM03 | SesameOp, Microsoft DART Nov 2025 |
+| Non-inference Assistants/Threads API access | T0096 | LLM03 | SesameOp (AML.CS0042) |
 
 ## Cases referenced
 

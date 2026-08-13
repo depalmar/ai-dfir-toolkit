@@ -22,7 +22,7 @@ rule LLM_Adversarial_Suffix_GCG_Style
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0051.000"
-        owasp       = "LLM01:2025"
+        owasp       = "LLM01:2026"
         reference   = "https://arxiv.org/abs/2307.15043"
         severity    = "high"
 
@@ -52,7 +52,7 @@ rule LLM_Adversarial_Suffix_Repeated_Tokens
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0029"
-        owasp       = "LLM10:2025"
+        owasp       = "LLM06:2026"
         severity    = "medium"
 
     strings:

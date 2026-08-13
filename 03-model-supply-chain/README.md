@@ -6,14 +6,14 @@ Detects malicious model files (pickle exploits, backdoored weights), HuggingFace
 
 | Threat | ATLAS | OWASP | Reference |
 |--------|-------|-------|-----------|
-| Pickle deserialization RCE | T0011, T0018 | LLM03 | Trail of Bits 2024 |
-| Malicious HuggingFace model | T0010.003 | LLM03 | JFrog 2024, ReversingLabs 2025 |
-| Picklescan bypass | T0010.002 | LLM03 | CVE-2025-1716, -10155, -10156, -10157 |
-| Dependency confusion (torchtriton) | T0010.002 | LLM03 | PyTorch 2022 incident |
+| Pickle deserialization RCE | T0011, T0018 | LLM04 | Trail of Bits 2024 |
+| Malicious HuggingFace model | T0010.003 | LLM04 | JFrog 2024, ReversingLabs 2025 |
+| Picklescan bypass | T0010.002 | LLM04 | CVE-2025-1716, -10155, -10156, -10157 |
+| Dependency confusion (torchtriton) | T0010.002 | LLM04 | PyTorch 2022 incident |
 | MLflow path traversal / RCE | T0011 | — | CVE-2023-6831, CVE-2024-0520 |
-| Keras Lambda code execution | T0018 | LLM03 | CVE-2025-1550 |
+| Keras Lambda code execution | T0018 | LLM04 | CVE-2025-1550 |
 | HuggingFace token exposure | T0086 | — | Lasso Security 2024 |
-| Namespace hijacking | T0010.003 | LLM03 | Published security research |
+| Namespace hijacking | T0010.003 | LLM04 | Published security research |
 
 ## Files
 

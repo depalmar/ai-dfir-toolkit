@@ -34,7 +34,7 @@ rule MCP_Tool_Poisoning_Hidden_Instructions
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0104, AML.T0110"
-        owasp       = "LLM06:2025"
+        owasp       = "LLM03:2026"
         reference   = "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks"
         severity    = "critical"
         falsepositives = "Benign tool docs that combine generic phrases (e.g. 'before using this tool, you must first authenticate'). To reduce FPs, prefer the '<tag>' branch or require a coercer that names a sensitive path or exfil action ($coerce_7-$coerce_11) over any '2 of $coerce_*'."
@@ -76,7 +76,7 @@ rule MCP_Tool_Description_Sensitive_Path_Reference
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0086"
-        owasp       = "LLM02:2025"
+        owasp       = "LLM02:2026"
         severity    = "high"
 
     strings:
@@ -104,7 +104,7 @@ rule MCP_Server_Outbound_Exfil_Code
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0086"
-        owasp       = "LLM02:2025"
+        owasp       = "LLM02:2026"
         severity    = "high"
 
     strings:

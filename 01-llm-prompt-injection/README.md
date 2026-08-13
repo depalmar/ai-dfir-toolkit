@@ -6,13 +6,13 @@ Detects prompt injection attempts (direct and indirect), jailbreak patterns, sys
 
 | Threat | ATLAS | OWASP | Reference |
 |--------|-------|-------|-----------|
-| Direct prompt injection | T0051.000 | LLM01 | OWASP LLM01:2025 |
+| Direct prompt injection | T0051.000 | LLM01 | OWASP LLM01:2026 |
 | Indirect prompt injection | T0051.001 | LLM01 | Greshake et al. 2023 |
 | Jailbreak (DAN/Developer Mode/etc.) | T0054 | LLM01 | OWASP genai.owasp.org |
-| System prompt extraction | T0054 | LLM07 | OWASP LLM07:2025 |
+| System prompt extraction | T0054 | LLM08 | OWASP LLM08:2026 |
 | Output exfiltration via markdown image | T0024 | LLM02 | EchoLeak (CVE-2025-32711) |
 | Adversarial suffix attacks | T0051.000 | LLM01 | Zou et al. 2023 (GCG) |
-| Token flooding / unbounded consumption | T0029 | LLM10 | OWASP LLM10:2025 |
+| Token flooding / unbounded consumption | T0029 | LLM06 | OWASP LLM06:2026 |
 
 ## Files
 

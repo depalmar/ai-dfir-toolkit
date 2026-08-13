@@ -83,7 +83,7 @@ alert http any any -> any any (msg:"AI-DFIR MCP tool registration with hidden in
     http.response_body; pcre:"/<IMPORTANT>|<\/s>|<\|im_start\|>system/i"; \
     classtype:web-application-attack; \
     reference:url,invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks; \
-    metadata:atlas AML.T0110, owasp LLM06; \
+    metadata:atlas AML.T0110, owasp LLM03; \
     sid:9000007; rev:1;)
 
 alert http any any -> any any (msg:"AI-DFIR MCP tool description references credential paths"; \

@@ -5,7 +5,7 @@
    Reference: https://www.cve.org/CVERecord?id=CVE-2025-1550
               CVE-2025-1550 — Keras Lambda layers execute code even with safe_mode=True
    ATLAS: AML.T0018
-   OWASP: LLM03:2025
+   OWASP: LLM04:2026
 
    Keras .keras model files are ZIP archives containing config.json
    describing the model. Lambda layers can serialize arbitrary Python
@@ -25,7 +25,7 @@ rule Keras_Lambda_Layer_Present
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         reference   = "https://www.cve.org/CVERecord?id=CVE-2025-1550"
         severity    = "medium"
 
@@ -46,7 +46,7 @@ rule Keras_Lambda_With_Encoded_Bytecode
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0018"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         reference   = "https://www.cve.org/CVERecord?id=CVE-2025-1550"
         severity    = "high"
 

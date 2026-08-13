@@ -5,7 +5,7 @@
    Reference: https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents
               Pillar Security 2025 — "Rules File Backdoor"
    ATLAS: AML.T0010
-   OWASP: LLM03:2025
+   OWASP: LLM04:2026
 
    Detects hidden Unicode characters and steganographic instructions
    embedded in:
@@ -28,7 +28,7 @@ rule Copilot_Rules_File_Hidden_Unicode
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         reference   = "https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents"
         severity    = "high"
 
@@ -63,7 +63,7 @@ rule Copilot_Rules_File_Coercive_Instructions
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
         atlas       = "AML.T0010"
-        owasp       = "LLM03:2025"
+        owasp       = "LLM04:2026"
         severity    = "high"
 
     strings:

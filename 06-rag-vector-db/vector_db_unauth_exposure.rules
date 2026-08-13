@@ -25,7 +25,7 @@ alert http $EXTERNAL_NET any -> any 8000 (msg:"AI-DFIR ChromaDB API accessed ext
     http.uri; pcre:"/\/api\/v[12]\/(collections|tenants|databases)/i"; \
     http.header_names; content:!"authorization"; nocase; \
     classtype:misc-attack; \
-    metadata:atlas AML.T0011, owasp LLM08; \
+    metadata:atlas AML.T0011, owasp LLM09; \
     sid:9000600; rev:1;)
 
 alert http any any -> any 8000 (msg:"AI-DFIR ChromaDB collection bulk dump"; \
@@ -45,7 +45,7 @@ alert http $EXTERNAL_NET any -> any 8080 (msg:"AI-DFIR Weaviate API accessed ext
     http.uri; pcre:"/\/v1\/(schema|objects|graphql|meta)/i"; \
     http.header_names; content:!"authorization"; nocase; \
     classtype:misc-attack; \
-    metadata:atlas AML.T0011, owasp LLM08; \
+    metadata:atlas AML.T0011, owasp LLM09; \
     sid:9000610; rev:1;)
 
 alert http any any -> any 8080 (msg:"AI-DFIR Weaviate GraphQL bulk extraction query"; \
@@ -65,7 +65,7 @@ alert http $EXTERNAL_NET any -> any 6333 (msg:"AI-DFIR Qdrant REST API accessed 
     http.uri; pcre:"/\/collections(\/|$)/i"; \
     http.header_names; content:!"api-key"; nocase; \
     classtype:misc-attack; \
-    metadata:atlas AML.T0011, owasp LLM08; \
+    metadata:atlas AML.T0011, owasp LLM09; \
     sid:9000620; rev:1;)
 
 alert http any any -> any 6333 (msg:"AI-DFIR Qdrant scroll bulk extraction request"; \
