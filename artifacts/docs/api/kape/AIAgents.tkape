@@ -97,6 +97,10 @@ Targets:
         Category: AIAgents
         Path: 'Tabnine.tkape'
     -
+        Name: 'Warp'
+        Category: AIAgents
+        Path: 'Warp.tkape'
+    -
         Name: 'n8n'
         Category: AIAgents
         Path: 'n8n.tkape'

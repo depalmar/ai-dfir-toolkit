@@ -1,0 +1,130 @@
+# AI agent artifact catalog entry
+# AIRT-0047 - Letta
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0047
+name: Letta
+aliases:
+  - MemGPT
+  - letta
+vendor: Letta (formerly MemGPT project, OSS)
+category: agent-framework
+description: Stateful agent framework. Agents live inside a Letta server and their memory is persisted to a database, so state survives process restarts and conversation resets - which makes it a persistence mechanism as well as a data store.
+website: https://www.letta.com
+status: active
+supported_os:
+  - windows
+  - macos
+  - linux
+  - docker
+execution_model: Server-hosted agents with persistent memory, local or remote inference
+capabilities:
+  local_code_execution: true
+  local_listener: true
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: medium
+abuse_potential: >-
+  Persistent agent memory is a persistence mechanism: an instruction written into
+  an agent's memory survives conversation resets and server restarts, and keeps
+  executing until the memory is purged. MITRE ATLAS tracks this as AI Agent
+  Context Poisoning - Memory. The store may also contain whatever the agent was
+  working on, which can include source code, retrieved documents and conversation
+  content, so it carries handling implications of its own.
+artifacts:
+  disk:
+    - path: "~/.letta/"
+      os:
+        - macos
+        - linux
+      artifact_type: data-dir
+      description: >-
+        Server data directory. The default pip installation uses SQLite here; a
+        Docker deployment mounts .persist/pgdata for PostgreSQL instead. Either way
+        this directory is where agent state lives between runs.
+      forensic_value: high
+      evidence_type:
+        - data-access
+        - persistence
+        - timeline
+      install_method: pip install letta
+      confidence: medium
+    - path: "~/.letta/.persist/pgdata"
+      os:
+        - macos
+        - linux
+        - docker
+      artifact_type: database
+      description: >-
+        PostgreSQL data directory in the documented Docker deployment. This is the
+        agent memory store - collect it before the container is removed, because a
+        container teardown destroys the only copy of what the agent knew.
+      forensic_value: high
+      evidence_type:
+        - data-access
+        - persistence
+      confidence: medium
+  network:
+    - direction: listener
+      indicator: Letta server REST API
+      port: 8283/TCP
+      authentication: none
+      exposure_risk: high
+      description: >-
+        The server exposes /v1 on port 8283. An instance reachable beyond loopback
+        gives anyone who finds it the ability to read and rewrite agent memory,
+        which is both a data-disclosure and a persistence problem.
+      confidence: medium
+  process:
+    - name: letta
+      os:
+        - macos
+        - linux
+      typical_parent: uvicorn, started by `letta server`
+      persistence: None (user-invoked) unless run as a service or container
+      confidence: medium
+credentials:
+  - location: LETTA_PG_URI
+    os:
+      - windows
+      - macos
+      - linux
+      - docker
+    secret_type: embedded-credentials
+    storage: plaintext
+    description: >-
+      PostgreSQL connection string, including its password, passed as an
+      environment variable. Recoverable from the process environment and from
+      whatever set it - a compose file, a shell profile, or a systemd unit.
+    confidence: medium
+mcp: []
+collection:
+  triage_priority: p1
+  guidance: >-
+    Collect the memory store before touching the deployment. Memory is a
+    persistence mechanism here, and a container teardown or a database reset
+    destroys the record of what the agent knew and when it learned it. Read the
+    memory contents for injected standing instructions, not only for data - an
+    agent cleaned everywhere else will re-execute an instruction that survived in
+    memory. Check whether 8283 is reachable beyond loopback.
+  velociraptor_artifact: Custom.AIAgents.Letta
+atlas_techniques:
+  - AML.T0080
+  - AML.T0080.000
+  - AML.T0053
+attack_techniques:
+  - T1059
+  - T1552.001
+references:
+  - title: "Run Letta with pip"
+    url: https://docs.letta.com/server/pip
+    accessed: "2026-08-13"
+  - title: "Deploy a Letta server with Docker"
+    url: https://docs.letta.com/v1-sdk/docker
+    accessed: "2026-08-13"
+  - title: "letta/letta on Docker Hub"
+    url: https://hub.docker.com/r/letta/letta
+    accessed: "2026-08-13"
+last_modified: "2026-08-13"

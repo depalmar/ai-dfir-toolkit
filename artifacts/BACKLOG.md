@@ -25,10 +25,10 @@ one up.
 
 | Tool | Vendor | Why it matters | Known starting point |
 |---|---|---|---|
-| Warp | Warp | AI terminal — command history is a rich artifact | `~/.warp/` |
-| vLLM | vLLM project | Common inference server; port 8000 | container/systemd |
+| ~~Warp~~ | Warp | **Done — `AIRT-0046`.** `~/.warp/` was wrong: the database is `warp.sqlite` under a macOS group container, `%LOCALAPPDATA%\warp\Warp\data\` on Windows, and `~/.local/state/warp-terminal/` on Linux | — |
+| ~~vLLM~~ | vLLM project | **Done — `AIRT-0045`.** | — |
 | SGLang | SGLang | Inference server | container |
-| Docker Model Runner | Docker | Ships with Docker Desktop — wide install base | Docker Desktop |
+| ~~Docker Model Runner~~ | Docker | **Done — `AIRT-0048`.** Models live in a named Docker volume, not on the host filesystem, so it has no disk artifacts to collect | — |
 | Foundry Local | Microsoft | Local inference on Windows | unknown |
 | llamafile | Mozilla | Single-file executable model — no install trace | single binary |
 | Msty / AnythingLLM | various | Desktop LLM clients with RAG | app data dirs |
@@ -37,11 +37,11 @@ one up.
 
 | Tool | Vendor | Why it matters | Known starting point |
 |---|---|---|---|
-| Letta (MemGPT) | Letta | Persistent agent memory is a novel artifact class | `~/.letta/` |
-| Semantic Kernel | Microsoft | Enterprise agent framework | library, no fixed path |
-| PydanticAI / Smolagents | various | Growing framework use | library |
-| OpenAI Agents SDK | OpenAI | Library | library |
-| Strands | AWS | Library | library |
+| ~~Letta (MemGPT)~~ | Letta | **Done — `AIRT-0047`.** `~/.letta/` confirmed; `~/.letta/.persist/pgdata` is the store in the documented Docker deployment | — |
+| ~~Semantic Kernel~~ | | **Done — covered by `AIRT-0049` Agent framework libraries.** | — |
+| ~~PydanticAI / Smolagents~~ | | **Done — covered by `AIRT-0049` Agent framework libraries.** | — |
+| ~~OpenAI Agents SDK~~ | | **Done — covered by `AIRT-0049` Agent framework libraries.** | — |
+| ~~Strands~~ | | **Done — covered by `AIRT-0049` Agent framework libraries.** | — |
 | Mastra | Mastra | Targeted by DPRK npm supply-chain attack | npm package |
 | Stagehand | Browserbase | Browser agent | Playwright-based |
 | Nanobrowser / Bytebot | various | Browser and desktop agents | extension / container |
@@ -50,10 +50,17 @@ one up.
 
 The highest-value additions are tools that **open a network listener** or
 **store plaintext credentials**, because those produce findings rather than
-inventory. On that basis vLLM, Warp, Letta, and Docker Model Runner are the ones
-worth doing first.
+inventory. On that basis vLLM, Warp, Letta and Docker Model Runner were the ones
+worth doing first, and all four are now catalogued (`AIRT-0045` to `AIRT-0048`).
+
+Next on the same criterion: **SGLang** and **Foundry Local** (listeners),
+**Msty / AnythingLLM** (desktop clients with app data dirs and likely credential
+stores), and **Mastra**, which was targeted by a DPRK npm supply-chain attack and
+so has a documented incident behind it.
 
 Library-only frameworks (Semantic Kernel, PydanticAI, Agents SDK, Strands) have
-no fixed install path and are best documented as a single "agent framework
-libraries" entry describing how to inventory them by process command line and
-imported module, rather than as separate entries with invented paths.
+no fixed install path and are documented as a single entry, `AIRT-0049`, which
+inventories them by dependency manifest, site-packages presence, process lineage
+and provider egress rather than by path. It says plainly that library presence is
+availability, not use - the evidence an agent actually ran is the egress and the
+child processes, not the import.

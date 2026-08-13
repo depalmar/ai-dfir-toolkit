@@ -110,5 +110,8 @@ atlas_techniques:
 attack_techniques:
   - T1071.001
   - T1105
-references: []
+references:
+  - title: "Tabnine documentation"
+    url: https://docs.tabnine.com/main
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

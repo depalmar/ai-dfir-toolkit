@@ -204,5 +204,8 @@ atlas_techniques:
   - AML.T0054
 attack_techniques:
   - T1059
-references: []
+references:
+  - title: "OpenInterpreter/open-interpreter releases"
+    url: https://github.com/OpenInterpreter/open-interpreter/releases
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

@@ -72,6 +72,9 @@ sources:
   - name: Langflow
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Langflow(Upload=Upload)
+  - name: Letta
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Letta(Upload=Upload)
   - name: Ollama
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Ollama(Upload=Upload)
@@ -102,6 +105,9 @@ sources:
   - name: Tabnine
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Tabnine(Upload=Upload)
+  - name: Warp
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Warp(Upload=Upload)
   - name: n8n
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.n8n(Upload=Upload)

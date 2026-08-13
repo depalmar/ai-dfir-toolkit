@@ -319,6 +319,9 @@ def main() -> int:
         by_os = collect(e)
         if not by_os:
             skipped.append(e["id"])
+            declared = ((e.get("collection") or {}).get("velociraptor_artifact") or "").strip()
+            if declared:
+                mismatches.append((e["id"], declared, "(nothing emitted)"))
             continue
         name = artifact_name(e)
         # The entry declares which artifact collects it, so a reader of the

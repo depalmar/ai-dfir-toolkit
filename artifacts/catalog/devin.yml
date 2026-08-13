@@ -66,5 +66,8 @@ atlas_techniques:
   - AML.T0024
 attack_techniques:
   - T1071.001
-references: []
+references:
+  - title: "Devin documentation"
+    url: https://docs.devin.ai/get-started/devin-intro
+    accessed: "2026-08-13"
 last_modified: "2026-08-11"

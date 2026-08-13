@@ -29,6 +29,7 @@ python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
 python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
 python scripts/export_velociraptor.py         # Velociraptor artifacts (--check likewise)
 python scripts/normalize_notes.py             # note style (--check reports, writes nothing)
+python ../collectors/gen_credential_targets.py     # collector targets, also CI-gated
 python scripts/build_site.py --check          # site data contract, writes nothing
 python scripts/build_site.py                  # regenerate docs/site (CI does this)
 python ../artifacts/scripts/validate_mappings.py   # run this one from the repo root
@@ -42,7 +43,11 @@ there rather than from `artifacts/`.
 
 `validate.py` is the gate CI runs. Never commit while it reports problems.
 Always regenerate the feeds in the same commit as a catalog change, or CI fails
-the staleness check.
+the staleness check. "The feeds" is five scripts, not two: `export.py`,
+`export_forensicartifacts.py`, `export_kape.py`, `export_velociraptor.py` and
+`collectors/gen_credential_targets.py`. The last one is easy to forget because it
+lives outside `artifacts/` — an entry that adds a credential location and skips it
+passes every local check and fails CI.
 
 ## Rules that are not negotiable
 
@@ -134,17 +139,17 @@ the entry and raise its confidence.
 
 ## Current state
 
-45 entries, 265 artifacts, 152 credential locations, 17 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 28 KAPE targets, 35
+49 entries, 283 artifacts, 154 credential locations, 17 MCP config
+locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
 Velociraptor artifacts. Validation clean.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
-Confidence: 28 high, 13 medium, 4 low.
-Provenance: 35/45 entries carry a reference; `validate.py` names the other ten
-on every run. 24/45 carry aliases.
-Risk: 11 critical, 22 high, 10 medium, 2 low.
+Confidence: 28 high, 17 medium, 4 low.
+Provenance: 48/49 entries carry a reference - `validate.py` names the holdout
+(AIRT-0034 OpenAI Operator) on every run. 28/49 carry aliases.
+Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation
 

@@ -1,0 +1,99 @@
+# AI agent artifact catalog entry
+# AIRT-0048 - Docker Model Runner
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0048
+name: Docker Model Runner
+aliases:
+  - model-runner
+  - docker model
+vendor: Docker, Inc.
+category: llm-runtime
+description: Local model runner that ships with Docker Desktop and also runs standalone in Docker CE. Serves an OpenAI-compatible API. Unlike every other runtime in this catalog it can be present on a host where nobody chose to install a local LLM - it arrives with a tool the developer installed for unrelated reasons.
+website: https://www.docker.com
+status: active
+supported_os:
+  - windows
+  - macos
+  - linux
+  - docker
+execution_model: Local inference served through the Docker socket, optionally on a host TCP port
+capabilities:
+  local_code_execution: false
+  local_listener: true
+  plaintext_credentials: false
+  mcp_capable: false
+risk: medium
+confidence: medium
+abuse_potential: >-
+  Reached through the Docker socket by default, so anything already able to talk
+  to the socket can use it for free local inference without opening a port. When
+  host-side TCP is enabled it becomes an unauthenticated OpenAI-compatible
+  endpoint on the host. For shadow-AI inventory the question it raises is not
+  "who installed a runtime" but "which of our Docker Desktop machines can serve
+  models right now".
+artifacts:
+  network:
+    - direction: listener
+      indicator: OpenAI-compatible API, host TCP mode
+      port: 12434/TCP
+      authentication: none
+      exposure_risk: medium
+      description: >-
+        Present only when host-side TCP is enabled - `docker desktop enable
+        model-runner --tcp 12434`. The /engines/v1, /models and /engines endpoints
+        are served here. Absence of the port does not mean the runner is disabled,
+        because the default path is the Docker socket instead.
+      confidence: medium
+    - direction: listener
+      indicator: Docker socket (/var/run/docker.sock)
+      authentication: none
+      exposure_risk: high
+      description: >-
+        Default access path. Anything with socket access can drive the runner, and
+        socket access is already host-root-equivalent, so this is an escalation of
+        an existing exposure rather than a new one.
+      confidence: medium
+  process:
+    - name: model-runner
+      os:
+        - linux
+        - macos
+        - windows
+      service_or_daemon: >-
+        Standalone container in Docker CE, a Docker Desktop component elsewhere.
+        On Desktop it sits inside the Desktop VM, so a host process listing may
+        show nothing at all.
+      persistence: Starts with Docker Desktop
+      confidence: low
+      unverified: true
+credentials: []
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: >-
+    Establish first whether the runner is enabled at all and whether host TCP is
+    on, because the two have completely different exposure. Model storage is a
+    named Docker volume, not a host path - enumerate it with `docker model ls` or
+    the /models endpoint rather than looking for files. On Docker Desktop the
+    runner lives inside the VM, so host process and file collection will miss it;
+    the Docker API is the collection interface. Models live in a dedicated named
+    volume rather than on the host filesystem - deliberate, so the runner can be
+    uninstalled without re-pulling them, but it also means a filesystem sweep
+    finds nothing.
+atlas_techniques:
+  - AML.T0011
+attack_techniques:
+  - T1133
+references:
+  - title: "docker/model-runner"
+    url: https://github.com/docker/model-runner
+    accessed: "2026-08-13"
+  - title: "model-runner README"
+    url: https://github.com/docker/model-runner/blob/main/README.md
+    accessed: "2026-08-13"
+  - title: "Docker - Run LLMs locally, a quickstart guide to Model Runner"
+    url: https://www.docker.com/blog/run-llms-locally/
+    accessed: "2026-08-13"
+last_modified: "2026-08-13"

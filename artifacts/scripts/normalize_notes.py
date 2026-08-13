@@ -49,6 +49,8 @@ ACRONYMS = {
     "GCP", "GGUF", "GPU", "GUI", "HTTP", "HTTPS", "IAM", "ID", "IDE", "IOC",
     "IP", "IR", "JS", "KEV",
     "ITW", "JSON", "JWT", "LLM", "LM", "LOCALAPPDATA", "LOLBIN", "MCP", "MFA",
+    "MITRE", "ATLAS", "ATT&CK", "NIST", "OWASP", "CVE", "NVD", "KEV", "SIEM",
+    "EDR", "DFIR", "TTP", "TTPS", "XDR", "SOC",
     "ML", "MSIX",
     "NPM", "OS", "OSS", "OTLP", "PATH", "PEM", "PID", "PII", "PKCE", "POSIX",
     "PAT", "POST", "PR", "RAG", "REPL", "RCE", "README", "REST", "RPC", "RSA", "SDK", "SQL",

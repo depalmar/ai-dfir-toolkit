@@ -1,0 +1,134 @@
+# AI agent artifact catalog entry
+# AIRT-0049 - Agent framework libraries
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0049
+name: Agent framework libraries
+aliases:
+  - Semantic Kernel
+  - PydanticAI
+  - Smolagents
+  - OpenAI Agents SDK
+  - Strands
+vendor: Various (Microsoft, Pydantic, Hugging Face, OpenAI, AWS)
+category: agent-framework
+description: One entry for the class of agent frameworks that are imported libraries rather than installed applications - Semantic Kernel, PydanticAI, Smolagents, the OpenAI Agents SDK, Strands and their peers. They leave no dot-directory, no listener and no credential store of their own, so they are inventoried by pattern rather than by path.
+status: active
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Imported library; agent loop and tool execution run inside the calling process
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: medium
+confidence: medium
+abuse_potential: >-
+  These frameworks give arbitrary application code an agent loop with tool
+  execution, without any of the install-time signals a packaged agent produces.
+  A script that imports one and points it at a provider key has the same reach as
+  a catalogued coding agent and none of its footprint. The credential is the
+  caller's provider key rather than anything the framework owns, so credential
+  theft here is theft of an environment variable.
+artifacts:
+  disk:
+    - path: "<site-packages>/semantic_kernel/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: install-dir
+      description: >-
+        Presence in site-packages is the inventory signal for this class. It is
+        evidence the library is available, not that an agent ran - absence of a
+        dot-directory is expected here rather than suspicious. The same check
+        applies to pydantic_ai, smolagents, agents (OpenAI Agents SDK) and strands.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: pip install semantic-kernel
+      confidence: medium
+    - path: "<project>/requirements.txt | <project>/pyproject.toml | <project>/uv.lock"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: >-
+        Dependency manifests and lockfiles name the framework and pin its version,
+        and they travel with the repository. Usually the fastest way to answer
+        "was an agent framework in use here" across an estate, because it can be
+        answered from source control rather than from endpoints.
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+        - configuration
+      confidence: medium
+  network:
+    - direction: egress
+      indicator: Model provider API endpoints (api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, api-inference.huggingface.co, bedrock-runtime.*.amazonaws.com)
+      description: >-
+        Often the only network-visible signal, and the only one that distinguishes
+        an installed library from a running agent. The destination identifies the
+        provider; it does not identify which framework called it.
+      confidence: medium
+  process:
+    - name: python
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: A shell, a scheduler, a CI runner or a service manager
+      typical_children: >-
+        Whatever the agent's tools invoke - shells, interpreters, package managers.
+        The child processes are the execution evidence, because the framework
+        itself leaves none.
+      persistence: None - persistence belongs to whatever schedules the calling script
+      confidence: medium
+credentials:
+  - location: OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
+    os:
+      - windows
+      - macos
+      - linux
+    secret_type: api-key
+    storage: plaintext
+    description: >-
+      The credential belongs to the calling code, not to the framework, and is
+      almost always an environment variable or a .env file beside the script. This
+      is shared across every framework in this class, which is why one entry
+      covers them all.
+    confidence: medium
+mcp: []
+collection:
+  triage_priority: p2
+  guidance: >-
+    Inventory by pattern, not by path. Search dependency manifests and lockfiles
+    first - it answers the question across an estate from source control without
+    touching an endpoint. On a host, check site-packages for the module names and
+    the process table for a Python process whose children are shells or package
+    managers. Treat library presence as availability, not use: the evidence that
+    an agent actually ran is the egress and the child processes, not the import.
+    Collect the .env or environment beside the calling script, because the
+    provider key there is the credential artifact for this whole class.
+atlas_techniques:
+  - AML.T0053
+  - AML.T0011
+attack_techniques:
+  - T1059
+  - T1552.001
+references:
+  - title: "microsoft/semantic-kernel"
+    url: https://github.com/microsoft/semantic-kernel
+    accessed: "2026-08-13"
+  - title: "pydantic/pydantic-ai"
+    url: https://github.com/pydantic/pydantic-ai
+    accessed: "2026-08-13"
+  - title: "huggingface/smolagents"
+    url: https://github.com/huggingface/smolagents
+    accessed: "2026-08-13"
+last_modified: "2026-08-13"
