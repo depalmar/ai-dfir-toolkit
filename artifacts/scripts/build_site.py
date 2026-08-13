@@ -294,6 +294,12 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
   background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .sub{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
 .hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* Visible only once focused: the filter rail has six facet groups, one listing
+   45 tools, and a keyboard user otherwise tabs through all of it to reach a row. */
+.skip{position:absolute;left:-9999px;top:0;z-index:100;background:var(--accent);
+  color:var(--on-accent);padding:10px 16px;border-radius:0 0 8px 0;font-size:13px}
+.skip:focus{left:0}
+main.content{min-width:0}
 /* The unverified count keeps the warning colour it had as a stat: it is the one
    figure on the page a reader should feel rather than merely read. */
 #unvBtn .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
@@ -601,10 +607,12 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 .gtoc a.sub{padding-left:16px;font-size:12px;color:var(--muted)}
 .gbody{background:var(--panel);border:1px solid var(--line);border-radius:11px;
   padding:24px 28px;max-width:none;overflow-wrap:break-word}
-.gbody h1{font-size:20px;margin:26px 0 10px;padding-top:10px;border-top:1px solid var(--line-soft)}
-.gbody h1:first-child{margin-top:0;border-top:0;padding-top:0}
-.gbody h2{font-size:16.5px;margin:22px 0 8px}
-.gbody h3{font-size:14px;margin:18px 0 6px}
+/* Levels are shifted down one by site_data._demote_headings so the page keeps a
+   single h1; these sizes track the guide's own hierarchy, not the tag numbers. */
+.gbody h2{font-size:20px;margin:26px 0 10px;padding-top:10px;border-top:1px solid var(--line-soft)}
+.gbody h2:first-child{margin-top:0;border-top:0;padding-top:0}
+.gbody h3{font-size:16.5px;margin:22px 0 8px}
+.gbody h4{font-size:14px;margin:18px 0 6px}
 .gbody p,.gbody li{font-size:13.5px;color:var(--ink)}
 .gbody p{margin:0 0 10px}
 .gbody ul,.gbody ol{margin:0 0 10px;padding-left:20px}
@@ -1200,7 +1208,7 @@ function renderMain(){
   if(view==='guide'){
     main.innerHTML=guideHTML();
     // Prefix rendered heading ids so guide anchors never collide with row anchors.
-    $$('#main .gbody h1,#main .gbody h2').forEach(h=>{
+    $$('#main .gbody h2,#main .gbody h3').forEach(h=>{
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
     renderTabs();renderToast();return;
@@ -1527,6 +1535,7 @@ def main():
 <style>{CSS}</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to results</a>
 <div class="hdr"><div class="hdr-in">
   <div class="hdr-top">
     <div class="hdr-id">
@@ -1558,7 +1567,7 @@ def main():
   <details class="railfold" id="railfold"><summary>Filters</summary>
     <div class="foldbody"></div></details>
 </aside>
-<div>
+<main class="content">
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."
@@ -1572,10 +1581,11 @@ def main():
       <button class="tgl plain" id="jsonBtn" type="button">JSON</button>
     </div>
   </div>
-  <div class="meta-row" id="metaRow"><span class="count" id="count"></span>
+  <div class="meta-row" id="metaRow"><span class="count" id="count"
+    role="status" aria-live="polite" aria-atomic="true"></span>
     <span id="chips" style="display:contents"></span></div>
   <div id="main" role="tabpanel" tabindex="0"></div>
-</div>
+</main>
 </div>
 
 <div class="drawer" id="drawer" hidden role="dialog" aria-modal="false"></div>
