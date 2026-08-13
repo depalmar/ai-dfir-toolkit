@@ -1322,6 +1322,22 @@ def check(rows, tools, rules, guide):
             if value not in enum:
                 problems.append(f"[VOCAB]   {r['anchor']} evidence '{value}' is not in the schema enum")
 
+    # The rule loader discovers category directories rather than listing them,
+    # because it used to list them and three whole categories went missing from
+    # the page while every other document counted them. Compare what was loaded
+    # against what is on disk, so that cannot recur quietly.
+    on_disk = set()
+    for d in ROOT.parent.iterdir():
+        if d.is_dir() and re.match(r"^\d{2}-", d.name):
+            on_disk |= {p.name for p in d.iterdir()
+                        if p.suffix.lower() in (".yml", ".yaml", ".yar", ".rules")}
+    sigma_dir = ROOT / "detections" / "sigma"
+    if sigma_dir.is_dir():
+        on_disk |= {p.name for p in sigma_dir.glob("*.yml")}
+    loaded = {r["file"] for r in rules}
+    for missing in sorted(on_disk - loaded):
+        problems.append(f"[RULES]   {missing} is on disk but the site never loaded it")
+
     # A rule that parses to no title means an extractor broke on a real file.
     for rule in rules:
         if not rule.get("title"):

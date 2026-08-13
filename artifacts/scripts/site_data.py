@@ -24,11 +24,19 @@ from pathlib import Path
 import yaml
 
 REPO = Path(__file__).resolve().parent.parent.parent
-CATEGORY_DIRS = ["01-llm-prompt-injection", "02-mcp-attacks", "03-model-supply-chain",
-                 "04-ai-infrastructure", "05-copilot-assistant-abuse", "06-rag-vector-db"]
 CATALOG_RULES = REPO / "artifacts" / "detections" / "sigma"
 GUIDE = REPO / "docs" / "ai-dfir-investigation-guide.md"
 MAPPINGS = REPO / "MAPPINGS.md"
+
+# Discovered, not listed. This was a hardcoded list of six directories, so every
+# category added after it was written - 07, 08, 09 - was silently absent from the
+# site while README, MAPPINGS and the guide all counted it. The page reported 55
+# detections against 68 on disk, and nothing failed, because a shorter list looks
+# exactly like a complete one.
+CATEGORY_DIRS = sorted(
+    d.name for d in REPO.iterdir()
+    if d.is_dir() and re.match(r"^\d{2}-", d.name)
+)
 
 CATEGORY_LABEL = {
     "01-llm-prompt-injection": "LLM prompt injection",
@@ -37,8 +45,23 @@ CATEGORY_LABEL = {
     "04-ai-infrastructure": "AI infrastructure",
     "05-copilot-assistant-abuse": "Copilot / assistant abuse",
     "06-rag-vector-db": "RAG & vector DB",
+    "07-runtime-ai-malware": "Runtime AI-malware",
+    "08-agentic-orchestration": "Agentic orchestration & C2",
+    "09-agent-memory-forensics": "Agent memory & context",
     "artifacts/detections/sigma": "Agent artifact catalog",
 }
+
+
+def category_label(dirname: str) -> str:
+    """Human label for a rule directory, derived when it is not named above.
+
+    A new category must never be invisible just because nobody updated a dict,
+    which is the failure this whole block exists to prevent.
+    """
+    if dirname in CATEGORY_LABEL:
+        return CATEGORY_LABEL[dirname]
+    stem = re.sub(r"^\d{2}-", "", dirname).replace("-", " ")
+    return stem[:1].upper() + stem[1:]
 
 
 def _norm_atlas(v: str) -> str:
@@ -192,7 +215,7 @@ def load_rules(mapping_rows):
             r.update({
                 "file": path.name,
                 "path": str(path.relative_to(REPO)),
-                "category": CATEGORY_LABEL.get(label, label),
+                "category": category_label(label),
                 "atlas": [a for a in atlas if a],
                 "owasp": [o for o in owasp if o],
                 "reference": row.get("reference", ""),
