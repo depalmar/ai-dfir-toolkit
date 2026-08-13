@@ -268,6 +268,11 @@ def build_tools(entries, rows):
             "description": e.get("description", ""),
             "abuse": e.get("abuse_potential", ""),
             "techniques": aslist(e.get("atlas_techniques")) + aslist(e.get("attack_techniques")),
+            # Also kept apart. The merged list is what the drawer renders, but the
+            # coverage view has to count ATLAS against ATLAS rules and cannot tell
+            # AML.T0053 from T1059 once they are in one array.
+            "atlas": aslist(e.get("atlas_techniques")),
+            "attack": aslist(e.get("attack_techniques")),
             "caps": labels,
             "n": counts.get(e["id"], 0),
         })
@@ -279,7 +284,12 @@ CSS = """
   --bg:#fbfbfa; --panel:#ffffff; --panel-2:#fbfbfa; --hover:#faf7f4;
   --ink:#1c1b19; --muted:#6b6862; --faint:#a09b90;
   --line:#e4e1db; --line-soft:#f0ede8; --field-line:#ddd8d0;
-  --accent:#8a4b2a; --accent-hover:#753d21; --accent-soft:#f2e9e2;
+  /* Deep umber, deliberately below the severity ramp in lightness and
+     saturation. At #8a4b2a the accent was hue 21 / L35, four degrees from the
+     `live` volatility badge (hue 17 / L33) and six from --high (hue 27) - so
+     the one colour that means "interactive" was indistinguishable from two that
+     mean "urgent". Same defect as confidence and forensic value both being blue. */
+  --accent:#5e3a24; --accent-hover:#472a19; --accent-soft:#f2e9e2;
   --accent-soft-2:#ecdfd4; --accent-border:#e0cfc1;
   --on-accent:#ffffff; --on-tone:#ffffff;
   --crit:#a12b2b; --high:#b4611c; --med:#8a7320; --low:#5c7a4a;
@@ -293,7 +303,11 @@ CSS = """
   --bg:#121110; --panel:#1a1917; --panel-2:#211f1c; --hover:#262320;
   --ink:#f1eee9; --muted:#a9a39a; --faint:#7c766e;
   --line:#302d29; --line-soft:#262320; --field-line:#3b3733;
-  --accent:#e9a97d; --accent-hover:#f6bd93; --accent-soft:#2d2118;
+  /* Same separation as light mode, inverted: lighter and less saturated rather
+     than darker. At #e9a97d the dark accent sat at hue 24 between --high (31)
+     and the `live` badge (19) at a matching lightness - the identical collision.
+     Contrast against the panel improves from 8.73 to 10.54 as a side effect. */
+  --accent:#ddc4b0; --accent-hover:#ecd6c4; --accent-soft:#2d2118;
   --accent-soft-2:#3a2b20; --accent-border:#553a29;
   --on-accent:#1a1310; --on-tone:#151210;
   --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
@@ -561,13 +575,29 @@ th .pick.all{vertical-align:middle}
 .srcintro{margin:0 0 16px;font-size:13.5px;color:var(--muted);max-width:70ch}
 .vollegend{display:grid;gap:7px;margin-top:12px}
 .vollegend>div{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:start;font-size:12.5px}
-.src{background:var(--panel);border:1px solid var(--line);border-radius:11px;
-  padding:16px;margin-bottom:12px}
-.srchead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
-  flex-wrap:wrap;margin-bottom:12px}
+details.src{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  padding:0;margin-bottom:10px;overflow:hidden}
+details.src>summary.srchead{display:flex;justify-content:space-between;gap:14px;
+  align-items:center;flex-wrap:wrap;padding:12px 16px 12px 34px;cursor:pointer;
+  list-style:none;position:relative;margin:0}
+details.src>summary::-webkit-details-marker{display:none}
+details.src>summary::before{content:'';position:absolute;left:15px;top:50%;
+  width:0;height:0;border:5px solid transparent;border-left-color:var(--faint);
+  transform:translateY(-50%);transition:transform .12s}
+details.src[open]>summary::before{transform:translateY(-50%) rotate(90deg)}
+details.src>summary:hover{background:var(--hover)}
+details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
+.srcinner{padding:14px 16px 16px}
+.srcstate{margin:0 0 14px;font-size:12.5px;color:var(--muted);max-width:78ch}
+.srcstate b{color:var(--ink)}
 .src h3{margin:0;font-size:15px}
 .srcsub{margin-top:3px;font-size:12px;color:var(--muted)}
-.srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+/* Cap the column count as well as the width. auto-fit alone kept adding columns
+   on a wide screen until each one was a single ragged word, and three columns of
+   prose stretched edge to edge is the opposite problem - both hurt to read. */
+.srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;max-width:1100px}
+.srcgrid p{max-width:52ch}
 .srcgrid h5{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
   letter-spacing:.05em;color:var(--faint)}
 .srcgrid p{margin:0;font-size:12.5px;line-height:1.55}
@@ -585,6 +615,9 @@ th .pick.all{vertical-align:middle}
   border-bottom:1px dotted var(--line)}
 .srcref:hover{color:var(--accent)}
 @media(max-width:640px){.vollegend>div{grid-template-columns:1fr;gap:3px}}
+.locrow{display:flex;gap:8px;align-items:stretch}
+.locrow .locator{flex:1;min-width:0}
+.copybtn{flex:none;align-self:stretch;font-size:11.5px;padding:0 11px}
 .requires{margin:8px 0 0;padding:8px 10px;font-size:12px;color:var(--muted);
   background:var(--alert-bg);border:1px solid var(--alert-line);
   border-left:3px solid var(--med);border-radius:8px}
@@ -685,6 +718,62 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 
 /* ---- case studies ---- */
 .csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+/* --- case study accordion --- */
+details.csfull{padding:0;overflow:hidden}
+details.csfull>summary.cshead{display:flex;justify-content:space-between;gap:14px;
+  align-items:center;flex-wrap:wrap;padding:13px 16px 13px 34px;cursor:pointer;
+  list-style:none;position:relative;margin:0}
+details.csfull>summary::-webkit-details-marker{display:none}
+details.csfull>summary::before{content:'';position:absolute;left:15px;top:50%;
+  width:0;height:0;border:5px solid transparent;border-left-color:var(--faint);
+  transform:translateY(-50%);transition:transform .12s}
+details.csfull[open]>summary::before{transform:translateY(-50%) rotate(90deg)}
+details.csfull>summary:hover{background:var(--hover)}
+details.csfull[open]>summary{border-bottom:1px solid var(--line-soft)}
+.cstally{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.csn{font-size:11px;color:var(--muted);background:var(--panel-2);
+  border:1px solid var(--line);border-radius:20px;padding:1px 9px;white-space:nowrap}
+.csinner{padding:14px 16px 16px}
+.csinner .csjumps{margin-bottom:10px}
+/* --- technique coverage --- */
+.covwrap{border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  overflow:hidden;margin-bottom:18px}
+table.cov{width:100%;border-collapse:collapse;font-size:13px}
+table.cov th{text-align:left;background:var(--panel-2);color:var(--muted);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
+  padding:8px 12px;border-bottom:1px solid var(--line)}
+table.cov td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+table.cov tr:last-child td{border-bottom:0}
+table.cov .num{text-align:right;width:62px;font-family:ui-monospace,Menlo,monospace}
+.covrow:hover{background:var(--hover)}
+.covrow .iid{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink);
+  margin-right:8px}
+.covrow .ittl{color:var(--muted)}
+.covrow .subs{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  color:var(--faint);margin-left:7px}
+.thinflag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--med);border:1px dashed var(--med);border-radius:4px;
+  padding:0 5px;margin-left:8px;opacity:.85}
+.covlink{background:none;border:0;color:var(--accent);cursor:pointer;
+  font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:2px 4px;
+  border-radius:4px;text-decoration:underline;text-underline-offset:2px}
+.covlink:hover{background:var(--accent-soft)}
+.cov .zero{color:var(--faint)}
+.cbar{display:block;position:relative;height:14px;min-width:80px}
+.cbar i{position:absolute;left:0;height:5px;border-radius:3px}
+/* strong, not mid. The mid tokens are tuned for badge fills against a tinted
+   background; side by side as two chart series they read as one colour in dark
+   mode, where conf-mid #7e94ab and val-mid #6f9b96 are barely separable. */
+.cbar .cbt{top:1px;background:var(--conf-strong)}
+.cbar .cbr{top:8px;background:var(--val-strong)}
+.covkey{display:flex;gap:16px;padding:9px 12px;font-size:11.5px;color:var(--muted);
+  background:var(--panel-2);border-top:1px solid var(--line)}
+.covkey i{display:inline-block;width:16px;height:5px;border-radius:3px;
+  margin-right:5px;vertical-align:middle}
+.covkey .cbt{background:var(--conf-strong)}
+.covkey .cbr{background:var(--val-strong)}
+.covnote{font-size:12.5px;color:var(--muted);margin-top:6px}
+@media(max-width:640px){table.cov .ittl{display:none}}
 .cs{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px;
   display:flex;flex-direction:column;gap:10px}
 .cs .cshead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -1159,14 +1248,19 @@ function sourcesHTML(){
     <div class="vollegend">${VOL_TIERS.map(v=>
       `<div><span class="badge vol v-${v}"><i>volatility</i>${v}</span>
        <span>${esc(VOL_MEANING[v])}</span></div>`).join('')}</div>
+    <button class="btn" id="srcAll" data-open="0">Expand all</button>
   </div>`+list.map(s=>`
-    <section class="src" id="src-${esc(s.id)}">
-      <div class="srchead">
+    <details class="src" id="src-${esc(s.id)}">
+      <summary class="srchead">
         <div><h3>${esc(s.name)}</h3>
-          <div class="srcsub">${esc(s.kind)} &middot; ${esc(s.default_state)}</div></div>
+          <div class="srcsub">${esc(s.kind)}${s.n_rows?` &middot; ${s.n_rows} rows`:''}${
+            s.n_eventlog_rows?` &middot; ${s.n_eventlog_rows} event log rows`:''}${
+            s.n_rules?` &middot; ${s.n_rules} rule${s.n_rules>1?'s':''}`:''}</div></div>
         <div class="badgerow"><span class="badge vol v-${esc(s.volatility)}"
           ><i>volatility</i>${esc(s.volatility)}</span>${confBadge(s.confidence)}</div>
-      </div>
+      </summary>
+      <div class="srcinner">
+      <p class="srcstate"><b>By default.</b> ${esc(s.default_state)}</p>
       <div class="srcgrid">
         <div><h5>Turn it on</h5><p>${esc(s.enable)}</p></div>
         <div><h5>Keep it</h5><p>${esc(s.retention)}</p></div>
@@ -1183,7 +1277,8 @@ function sourcesHTML(){
         ${(s.references||[]).map(r=>`<a class="srcref" href="${esc(r.url)}"
           target="_blank" rel="noopener">${esc(r.title)} &#8599;</a>`).join('')}
       </div>
-    </section>`).join('');
+      </div>
+    </details>`).join('');
 }
 
 /* ---------- plan ---------- */
@@ -1234,7 +1329,10 @@ function drawerHTML(r){
   return `<div class="dhead"><b>${esc(r.tool)} <span class="mono" style="color:var(--faint);font-size:11px">${esc(r.entry_id)}</span></b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
-    <div class="dsec"><h4>Locator</h4><div class="locator">${esc(r.artifact)}</div>
+    <div class="dsec"><h4>Locator</h4>
+      <div class="locrow"><div class="locator">${esc(r.artifact)}</div>
+        <button class="btn copybtn" id="dCopyLoc" data-v="${esc(r.artifact)}"
+          aria-label="Copy locator">copy</button></div>
       <div class="badgerow">${fvBadge(r.forensic_value)}
       ${confBadge(r.confidence)}
       ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div></div>
@@ -1278,7 +1376,6 @@ function drawerHTML(r){
   <div class="dfoot">
     <button class="btn ${picks.has(r.anchor)?'outline-accent':'primary'}" id="dPick">
       ${picks.has(r.anchor)?'Remove from collection plan':'Add to collection plan'}</button>
-    <button class="btn" id="dCopyPath" data-v="${esc(r.artifact)}">copy path</button>
   </div>`;
 }
 function openDrawer(anchor,fromEl){
@@ -1292,17 +1389,19 @@ function openDrawer(anchor,fromEl){
   $('#dClose').onclick=closeDrawer;
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
-  $('#dCopyPath').onclick=e=>copy(e.target.dataset.v,e.target);
+  $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     closeDrawer();view='cases';update();
+    // Cases are collapsed by default now, so a jump has to open its target -
+    // otherwise the link scrolls to a closed summary and looks broken.
     const el=document.getElementById('cs-'+b.dataset.cs);
-    if(el)el.scrollIntoView({block:'start'});
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
   $$('#drawer .srcjump').forEach(b=>b.onclick=()=>{
     closeDrawer();view='sources';update();
     const el=document.getElementById('src-'+b.dataset.src);
-    if(el)el.scrollIntoView({block:'start'});
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
   wireTechChips();
   renderMain();
@@ -1396,7 +1495,10 @@ function ruleDrawerHTML(r){
   return `<div class="dhead"><b>${esc(r.title)}</b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
-    <div class="dsec"><h4>Rule file</h4><div class="locator">${esc(r.path)}</div>
+    <div class="dsec"><h4>Rule file</h4>
+      <div class="locrow"><div class="locator">${esc(r.path)}</div>
+        <button class="btn copybtn" id="dCopyLoc" data-v="${esc(r.path)}"
+          aria-label="Copy rule path">copy</button></div>
       <div class="badgerow"><span class="fmt">${esc(r.format)}</span>
         ${r.level?badge(r.level,r.level==='critical','level'):''}
         ${r.status?badge(r.status,false):''}</div></div>
@@ -1414,7 +1516,6 @@ function ruleDrawerHTML(r){
   </div>
   <div class="dfoot">
     <a class="btn primary" href="${REPO_URL}/blob/main/${esc(r.path)}" target="_blank" rel="noopener">View on GitHub</a>
-    <button class="btn" id="dCopyPath" data-v="${esc(r.path)}">copy path</button>
   </div>`;
 }
 function openRuleDrawer(key,fromEl){
@@ -1428,7 +1529,7 @@ function openRuleDrawer(key,fromEl){
   $('#dClose').onclick=closeDrawer;
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
-  $('#dCopyPath').onclick=e=>copy(e.target.dataset.v,e.target);
+  $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
   wireTechChips();
 }
 function wireTechChips(){
@@ -1454,13 +1555,84 @@ function indexHTML(title,sub,items,key){
       <span class="bar"><i style="width:${Math.round(i.count/max*100)}%"></i></span>
     </div>`).join('')+'</div>';
 }
-function mappingsHTML(){
+// Coverage across all three corpora, not just the rules.
+//
+// The old view counted rules per technique and stopped there, which answered
+// "what do we detect" and never "what do we say is out there". The catalog maps
+// 29 tools to AML.T0053 and carries 4 rules for it; that ratio is the useful
+// number and it was not on the page at all.
+//
+// Sub-techniques are rolled into their parent because the two corpora map at
+// different depths: rules cite AML.T0051.000, entries cite AML.T0051. Counting
+// them as separate rows split the evidence and understated both sides.
+const PARENT=id=>String(id||'').split('.').slice(0,2).join('.');
+
+function coverageRows(){
+  const by={};
+  const touch=id=>{const p=PARENT(id);
+    return by[p]=by[p]||{id:p,title:'',subs:new Set(),rules:0,tools:0,cases:0,toolNames:[]}};
+  for(const i of ATLAS_INDEX){const r=touch(i.id);
+    r.rules+=i.count; if(!r.title)r.title=i.title;
+    if(PARENT(i.id)!==i.id)r.subs.add(i.id);
+  }
+  for(const t of TOOLS)for(const a of t.atlas||[]){
+    const r=touch(a); r.tools++; if(r.toolNames.length<3)r.toolNames.push(t.tool);
+    if(PARENT(a)!==a)r.subs.add(a);
+  }
+  for(const c of CASES)for(const a of c.atlas||[]){
+    const r=touch(a); r.cases++; if(PARENT(a)!==a)r.subs.add(a);
+  }
+  // Exposure first: the techniques this catalog says the most tools exhibit are
+  // the ones a reader should weigh their rule count against.
+  return Object.values(by).sort((a,b)=>b.tools-a.tools||b.rules-a.rules
+    ||a.id.localeCompare(b.id));
+}
+
+function coverageHTML(){
+  const rows=coverageRows();
+  const maxT=Math.max(1,...rows.map(r=>r.tools));
+  const maxR=Math.max(1,...rows.map(r=>r.rules));
+  // "Thin" is a ratio, not a threshold on either number alone: many tools and
+  // few rules. Flagged rather than scored, because the right rule count for a
+  // technique is a judgement and the page should not pretend otherwise.
+  const thin=r=>r.tools>=5&&r.rules<=r.tools/3;
   return `<div class="gtop"><div><h2>Technique coverage</h2>
-    <p>Rule counts per MITRE ATLAS technique and OWASP LLM Top 10 category.
-    Click any row to see the rules that cover it.</p></div></div>
-    <div class="idxwrap">
-      ${indexHTML('MITRE ATLAS','Adversarial threat landscape for AI systems.',ATLAS_INDEX,'ratlas')}
-      ${indexHTML('OWASP Top 10 for LLM Applications 2025','Application-layer risk categories.',OWASP_INDEX,'rowasp')}
+    <p>Every MITRE ATLAS technique this project touches, and how much of each
+    corpus sits behind it: detection rules, catalogued tools that exhibit it, and
+    documented incidents that used it. Sub-techniques are counted against their
+    parent, because rules cite them and catalog entries cite the parent.</p>
+    <p class="covnote">A technique with many tools and few rules is not
+    necessarily under-covered - one good rule can cover a whole class. It is
+    where to look first.</p></div></div>
+    <div class="covwrap">
+      <table class="cov"><thead><tr>
+        <th>Technique</th><th class="num">Rules</th><th class="num">Tools</th>
+        <th class="num">Cases</th><th>Exposure</th></tr></thead><tbody>
+        ${rows.map(r=>`<tr class="covrow${thin(r)?' thin':''}">
+          <td><span class="iid">${esc(r.id)}</span>
+            <span class="ittl">${esc(r.title||'')}</span>
+            ${r.subs.size?`<span class="subs">${[...r.subs].sort().map(x=>
+              esc(x.split('.').slice(2).join('.'))).map(x=>'.'+x).join(' ')}</span>`:''}
+            ${thin(r)?'<span class="thinflag">thin</span>':''}</td>
+          <td class="num">${r.rules?`<button class="covlink" data-atlas="${esc(r.id)}"
+            >${r.rules}</button>`:'<span class="zero">0</span>'}</td>
+          <td class="num">${r.tools?`<button class="covlink" data-tooltech="${esc(r.id)}"
+            title="${esc(r.toolNames.join(', '))}${r.tools>3?' and more':''}"
+            >${r.tools}</button>`:'<span class="zero">0</span>'}</td>
+          <td class="num">${r.cases?`<button class="covlink" data-casetech="${esc(r.id)}"
+            >${r.cases}</button>`:'<span class="zero">0</span>'}</td>
+          <td><span class="cbar"><i class="cbt" style="width:${Math.round(r.tools/maxT*100)}%"></i>
+            <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"></i></span></td>
+        </tr>`).join('')}
+      </tbody></table>
+      <div class="covkey"><span><i class="cbt"></i> tools exhibiting</span>
+        <span><i class="cbr"></i> rules covering</span></div>
+    </div>`;
+}
+
+function mappingsHTML(){
+  return coverageHTML()+`<div class="idxwrap">
+      ${indexHTML('OWASP Top 10 for LLM Applications 2025','Application-layer risk categories. Rule counts only - the catalog maps tools to ATLAS, not to OWASP.',OWASP_INDEX,'rowasp')}
     </div>`;
 }
 
@@ -1488,7 +1660,8 @@ function caseStudiesHTML(){
     catalog, with the indicators each left behind and what responders did about it.
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
-    <p class="csconf">Provenance: ${esc(tally)}</p></div></div>`+
+    <p class="csconf">Provenance: ${esc(tally)}</p></div>
+    <button class="btn" id="csAll" data-open="0">Expand all</button></div>`+
   CASES.map(c=>{
     const groups=iocGroups(c.iocs||[]);
     const n=(c.iocs||[]).length;
@@ -1497,17 +1670,31 @@ function caseStudiesHTML(){
     // name more than one, and plenty name none the catalog covers.
     const known=(c.affects_ids||[]).map(id=>TOOLS.find(t=>t.entry_id===id)).filter(Boolean);
     const refs=c.references||[];
+    // A details element rather than 14 full articles stacked on one page. The
+    // summary has to carry enough to decide whether to open it - tool, dates,
+    // indicator count, provenance - because a row of bare titles just moves the
+    // reading cost rather than removing it.
     return `
-    <article class="csfull" id="cs-${esc(c.id)}">
-      <div class="cshead">
+    <details class="csfull" id="cs-${esc(c.id)}">
+      <summary class="cshead">
         <div><div class="csname">${esc(c.title)}</div>
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
-            c.disclosed?' · disclosed '+esc(c.disclosed):''}</div></div>
-        <div class="csjumps">
+            c.disclosed?' · disclosed '+esc(c.disclosed):''}${
+            known.length?' · '+esc(known.map(k=>k.tool).join(', ')):
+            c.affects?' · '+esc(c.affects):''}</div></div>
+        <div class="cstally">
+          ${n?`<span class="csn" title="published indicators">${n} IOC${n>1?'s':''}</span>`:''}
+          ${(c.detections||[]).length?`<span class="csn" title="detection rules in this repo"
+            >${c.detections.length} rule${c.detections.length>1?'s':''}</span>`:''}
+          ${c.confidence?confBadge(c.confidence):''}
+          ${c.contested?'<span class="badge dashed b-crit">disputed</span>':''}
+        </div>
+      </summary>
+      <div class="csinner">
+      <div class="csjumps">
         ${known.length?known.map(k=>`<button class="btn csjump" data-t="${esc(k.tool)}"
           data-id="${esc(k.entry_id)}">${esc(k.tool)} artifacts &#8594;</button>`).join('')
-        :c.affects?`<span class="fmt">${esc(c.affects)}</span>`:''}
-        </div>
+        :''}
       </div>
       <p class="cssum">${esc(c.summary)}</p>
       ${c.confidence?`<div class="csprov">
@@ -1545,7 +1732,8 @@ function caseStudiesHTML(){
           <ul>${refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
             rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
       </div>`:''}
-    </article>`}).join('');
+      </div>
+    </details>`}).join('');
 }
 
 /* ---------- guide ---------- */
@@ -1607,6 +1795,29 @@ function renderMain(){
       el.onclick=()=>go(el);
       el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(el)}};
     });
+    // Every count on a coverage row is a link into the corpus it counts, so the
+    // table is a way in rather than a scoreboard. The rules filter matches
+    // sub-techniques too, since that is the level rules are written at.
+    $$('#main .covlink[data-atlas]').forEach(b=>b.onclick=()=>{
+      resetRuleFilters();view='rules';
+      const p=b.dataset.atlas;
+      rfilters.ratlas=ROPTIONS.ratlas.filter(v=>v===p||v.startsWith(p+'.'));
+      update();
+    });
+    $$('#main .covlink[data-tooltech]').forEach(b=>b.onclick=()=>{
+      resetFilters();view='catalog';
+      const p=b.dataset.tooltech;
+      filters.tool=TOOLS.filter(t=>(t.atlas||[]).some(a=>a===p||a.startsWith(p+'.')))
+        .map(t=>t.tool);
+      update();
+    });
+    $$('#main .covlink[data-casetech]').forEach(b=>b.onclick=()=>{
+      const p=b.dataset.casetech;
+      view='cases';update();
+      const hit=CASES.find(c=>(c.atlas||[]).some(a=>a===p||a.startsWith(p+'.')));
+      if(hit){const d=document.getElementById('cs-'+hit.id);
+        if(d){d.open=true;d.scrollIntoView({block:'start'})}}
+    });
     renderTabs();renderToast();return;
   }
   if(view==='sources'){
@@ -1621,6 +1832,13 @@ function renderMain(){
       ruleSet=new Set(SRCMAP[b.dataset.rules].rules);
       update();
     });
+    const sa=$('#srcAll');
+    if(sa)sa.onclick=()=>{
+      const open=sa.dataset.open!=='1';
+      $$('#main details.src').forEach(d=>d.open=open);
+      sa.dataset.open=open?'1':'0';
+      sa.textContent=open?'Collapse all':'Expand all';
+    };
     renderTabs();renderToast();return;
   }
   if(view==='guide'){
@@ -1668,6 +1886,13 @@ function renderMain(){
       resetFilters();view='rules';$('#q').value=b.dataset.rule;query=b.dataset.rule.toLowerCase();
       update();
     });
+    const all=$('#csAll');
+    if(all)all.onclick=()=>{
+      const open=all.dataset.open!=='1';
+      $$('#main details.csfull').forEach(d=>d.open=open);
+      all.dataset.open=open?'1':'0';
+      all.textContent=open?'Collapse all':'Expand all';
+    };
   }else if(view==='tools'){
     main.innerHTML=toolsHTML();
     $$('#main .tool').forEach(c=>c.onclick=()=>{
@@ -1723,9 +1948,15 @@ function applyHash(){
     if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
     return;
   }
+  if(h.startsWith('cs-')){view='cases';update();
+    const el=document.getElementById(h);
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}
+    return}
   if(h==='sources'){view='sources';update();return}
   if(h.startsWith('src-')){view='sources';update();
-    const el=document.getElementById(h);if(el)el.scrollIntoView();return}
+    const el=document.getElementById(h);
+    if(el){el.open=true;el.scrollIntoView()}
+    return}
   if(h==='guide'){view='guide';update();return}
   if(h.startsWith('g-')){view='guide';update();
     const el=document.getElementById(h);if(el)el.scrollIntoView();return}
