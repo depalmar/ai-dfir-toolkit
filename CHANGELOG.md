@@ -6,6 +6,58 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
+
+### Added
+
+- **Four Wave 3 entries** — `AIRT-0046` Warp, `AIRT-0047` Letta, `AIRT-0048`
+  Docker Model Runner and `AIRT-0049` Agent framework libraries. The last is one
+  entry for Semantic Kernel, PydanticAI, Smolagents, the OpenAI Agents SDK and
+  Strands, inventoried by dependency manifest, site-packages presence, process
+  lineage and provider egress rather than by path. The schema held it unchanged.
+- **`last_verified`**, and staleness reporting against the 90-day cadence.
+  `last_modified` tracks edits and answers the wrong question — a typo fix moves
+  it and verifies nothing. 37 of 49 entries carry a date; `validate.py` names the
+  12 that have never been checked rather than letting them look fresh, and the
+  site drawer says "never verified against a host or a current release" instead
+  of showing nothing.
+- **`scripts/verify_host.py` and `docs/HOST_VERIFICATION.md`** — the path-level
+  work needs a machine, and nothing here made it easy to start. The script stats
+  paths and never opens them, so it cannot leak a token from a credential store.
+  It also refuses to overclaim in the other direction: a MISS is a miss, never a
+  wrong path, because it cannot distinguish a wrong path from an absent tool.
+- **References on 13 more entries**, taking coverage from 35/45 to 48/49. The
+  holdout is `AIRT-0034` OpenAI Operator, left empty rather than padded with a
+  homepage.
+
+### Changed
+
+- **`AIRT-0022` was renamed and changed shape.**
+  `oobabooga/text-generation-webui` is now `oobabooga/textgen` — the same
+  repository object under a new name — and it ships a native Electron desktop app
+  as of v4.7.3 (2026-05-03). The catalogued paths were recorded against the
+  browser UI, and the entry now says so.
+- **`AIRT-0015` has a Rust successor carrying the same name.** The Python
+  `open-interpreter` is still on PyPI and is what the entry documents;
+  `openinterpreter/openinterpreter` is a separate Rust agent built on Codex, and
+  a host running it matches none of the catalogued paths.
+- **`AIRT-0027` AutoGen** has been in maintenance mode since October 2025, not
+  "as of 2026". The part that matters to a responder: AG2 controls the original
+  PyPI package names, so `pip install` may not put Microsoft's AutoGen on disk.
+
+### Fixed
+
+- **Both collection exporters could pass an entry that pointed at nothing.** The
+  declared-vs-emitted check only ran for entries that produced output, so an
+  entry could declare `kape_target` while emitting no target — a catalog entry
+  sending a responder to a file that does not exist. Now gated in both
+  directions.
+- `collectors/targets.yaml` and `docs/api/catalog.json` went stale in the same
+  pull request, both because a catalog edit was not followed by a full
+  regenerate. `CLAUDE.md` said "the feeds" and named two scripts; it is five, and
+  the one that lives outside `artifacts/` is the one that gets forgotten.
+
+
 ## [1.1.0] - 2026-08-13
 
 ### Added
@@ -33,36 +85,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - **`docs/REVERIFICATION.md`** — a repeatable quarterly checklist, so the
   maintenance task the catalog calls existential is not left to memory.
 
-### Changed
-
-- **Badge colours no longer lie.** `confidence`, `forensic_value`, `risk` and
-  `triage_priority` all use the words high/medium/low, and the site rendered all
-  four on one red-to-green alarm ramp — so a well-sourced artifact and a
-  dangerous tool were the same warning orange. Severity keeps the alarm ramp;
-  strength gets its own ramp, with value and sourcing in separate hues and each
-  badge carrying its label.
-- **One note style.** 363 captions had drifted into four styles with a terminal
-  period on half of them, and 95 instances of `PLAINTEXT` duplicated
-  `storage: plaintext` without being filterable. `normalize_notes.py` applies the
-  style and `validate.py` gates it.
-- Select-all moved to the head of the column it acts on; facet groups fold and
-  remember; the filtered view exports as CSV or JSON.
-
-### Fixed
-
-- **Roo Code is archived** — shutdown announced 2026-04-21, repository archived
-  2026-05-15. The entry carried no status and read as current.
-- **AgentGPT repository archived** 2026-01-28; **AutoGen is in maintenance mode**
-  and superseded by Microsoft Agent Framework. Both now carry a status.
-- Three site accessibility defects: filtering was silent to screen readers, the
-  results region was not a landmark and had no skip link, and the investigation
-  guide rendered seven `<h1>`s inside a tab.
-- The site was missing three whole detection categories because the rule loader
-  listed directories instead of discovering them, and the OS facet hid 87 of 425
-  rows.
-
-
-### Added
 
 - **Case studies get their own tab, expanded.** They previously rendered as
   three small cards below 45 tool cards at the bottom of the Tools view, where
@@ -180,7 +202,75 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   resolution, recording which findings were applied, which were declined, and
   why.
 
+### Changed
+
+- **Badge colours no longer lie.** `confidence`, `forensic_value`, `risk` and
+  `triage_priority` all use the words high/medium/low, and the site rendered all
+  four on one red-to-green alarm ramp — so a well-sourced artifact and a
+  dangerous tool were the same warning orange. Severity keeps the alarm ramp;
+  strength gets its own ramp, with value and sourcing in separate hues and each
+  badge carrying its label.
+- **One note style.** 363 captions had drifted into four styles with a terminal
+  period on half of them, and 95 instances of `PLAINTEXT` duplicated
+  `storage: plaintext` without being filterable. `normalize_notes.py` applies the
+  style and `validate.py` gates it.
+- Select-all moved to the head of the column it acts on; facet groups fold and
+  remember; the filtered view exports as CSV or JSON.
+
+
+- **The header stat row is gone.** Everything it carried is still reachable and
+  in a better place: tools, catalog rows, detections and mappings are counts on
+  the tabs, and the credential / MCP split is a facet count in the rail. The one
+  figure with nowhere else to live — `unverified` — moved onto the "Unverified
+  only" toggle, which is where a reader looks for it anyway, keeping its warning
+  colour. Six numbers became one that is attached to the control it describes.
+
+- **The Artifacts tab is now the Catalog tab.** It holds artifacts, credentials
+  and MCP configs, so labelling it "Artifacts" put two different numbers under
+  one word: the tab counted 434 rows while the header stat counted 265. Both were
+  right and the pair looked broken. Renamed, the header now reads as a
+  decomposition of it — 265 artifacts + 152 credentials + 17 MCP configs = 434.
+- **The investigation guide is a pill rather than a quiet link.** Next to five
+  tabs it read as a sixth tab that happened to be greyer, when it is the only
+  long-form document on the site. It stays a real tab, so arrow-key navigation
+  and `aria-selected` still work.
+
+- **`AML.T0104` and `AML.T0110` are now distinguished** in the MCP category. A
+  third-party pack proposed replacing `T0110` with `T0104` throughout, on the
+  premise that `T0104` supersedes it. Verified against ATLAS: both are current
+  and distinct — `T0104` Publish Poisoned AI Agent Tool is Resource Development
+  (the adversary publishes it), `T0110` AI Agent Tool Poisoning covers modifying
+  tools so future invocations execute attacker behaviour. A blanket replace would
+  have mis-tagged the rug-pull rule, so the mapping was split by tactic instead.
+  `mcp_tool_poisoning.yar` carries both, because it matches a poisoned
+  description wherever it lands and cannot tell the two apart. Basis recorded in
+  `artifacts/docs/VERIFICATION.md`.
+- The cross-tool Endpoint section in `MAPPINGS.md` is no longer numbered. It was
+  bumped once per new category (07 → 08) because it competed for numbers with the
+  rule directories while not being one; unnumbering it ends that permanently and
+  lets numbered sections mirror numbered directories.
+- The Investigation guide header entry is a real tab rather than a link inside
+  `role="tablist"`, which had broken arrow-key navigation. The tablist now has
+  roving tabindex, arrow/Home/End keys, and `aria-controls` onto a
+  `role="tabpanel"` container.
+- `localStorage` keys renamed from the dropped `aiart-` working name to
+  `aidfir-theme` / `aidfir-picks`, each reading the old key once so returning
+  visitors keep their theme and saved picks.
+
 ### Fixed
+
+- **Roo Code is archived** — shutdown announced 2026-04-21, repository archived
+  2026-05-15. The entry carried no status and read as current.
+- **AgentGPT repository archived** 2026-01-28; **AutoGen is in maintenance mode**
+  and superseded by Microsoft Agent Framework. Both now carry a status.
+- Three site accessibility defects: filtering was silent to screen readers, the
+  results region was not a landmark and had no skip link, and the investigation
+  guide rendered seven `<h1>`s inside a tab.
+- The site was missing three whole detection categories because the rule loader
+  listed directories instead of discovering them, and the OS facet hid 87 of 425
+  rows.
+
+
 
 - **Filtering was silent to a screen reader.** The result count changed from
   "434 of 434 shown" to "4 of 434 shown" with no live region anywhere on the
@@ -257,46 +347,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   bare-filename links still resolve. `#guide` now deep-links, which it silently
   did not.
 
-### Changed
-
-- **The header stat row is gone.** Everything it carried is still reachable and
-  in a better place: tools, catalog rows, detections and mappings are counts on
-  the tabs, and the credential / MCP split is a facet count in the rail. The one
-  figure with nowhere else to live — `unverified` — moved onto the "Unverified
-  only" toggle, which is where a reader looks for it anyway, keeping its warning
-  colour. Six numbers became one that is attached to the control it describes.
-
-- **The Artifacts tab is now the Catalog tab.** It holds artifacts, credentials
-  and MCP configs, so labelling it "Artifacts" put two different numbers under
-  one word: the tab counted 434 rows while the header stat counted 265. Both were
-  right and the pair looked broken. Renamed, the header now reads as a
-  decomposition of it — 265 artifacts + 152 credentials + 17 MCP configs = 434.
-- **The investigation guide is a pill rather than a quiet link.** Next to five
-  tabs it read as a sixth tab that happened to be greyer, when it is the only
-  long-form document on the site. It stays a real tab, so arrow-key navigation
-  and `aria-selected` still work.
-
-- **`AML.T0104` and `AML.T0110` are now distinguished** in the MCP category. A
-  third-party pack proposed replacing `T0110` with `T0104` throughout, on the
-  premise that `T0104` supersedes it. Verified against ATLAS: both are current
-  and distinct — `T0104` Publish Poisoned AI Agent Tool is Resource Development
-  (the adversary publishes it), `T0110` AI Agent Tool Poisoning covers modifying
-  tools so future invocations execute attacker behaviour. A blanket replace would
-  have mis-tagged the rug-pull rule, so the mapping was split by tactic instead.
-  `mcp_tool_poisoning.yar` carries both, because it matches a poisoned
-  description wherever it lands and cannot tell the two apart. Basis recorded in
-  `artifacts/docs/VERIFICATION.md`.
-- The cross-tool Endpoint section in `MAPPINGS.md` is no longer numbered. It was
-  bumped once per new category (07 → 08) because it competed for numbers with the
-  rule directories while not being one; unnumbering it ends that permanently and
-  lets numbered sections mirror numbered directories.
-- The Investigation guide header entry is a real tab rather than a link inside
-  `role="tablist"`, which had broken arrow-key navigation. The tablist now has
-  roving tabindex, arrow/Home/End keys, and `aria-controls` onto a
-  `role="tabpanel"` container.
-- `localStorage` keys renamed from the dropped `aiart-` working name to
-  `aidfir-theme` / `aidfir-picks`, each reading the old key once so returning
-  visitors keep their theme and saved picks.
 
 ## [1.0.0] - 2026-04-19
 
