@@ -137,10 +137,10 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 
 | OWASP | Title | Rule count |
 |-------|-------|------------|
-| LLM01    | Prompt Injection | 7 |
+| LLM01    | Prompt Injection | 6 |
 | LLM02    | Sensitive Information Disclosure | 15 |
 | LLM03    | Supply Chain | 12 |
 | LLM06    | Excessive Agency | 10 |
-| LLM07    | System Prompt Leakage | 3 |
+| LLM07    | System Prompt Leakage | 2 |
 | LLM08    | Vector and Embedding Weaknesses | 5 |
-| LLM10    | Unbounded Consumption | 4 |
+| LLM10    | Unbounded Consumption | 3 |

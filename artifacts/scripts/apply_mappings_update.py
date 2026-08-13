@@ -75,23 +75,38 @@ def build_section() -> str:
 
 
 def parse_index_counts(text: str) -> tuple[Counter, Counter]:
-    """Count ATLAS and OWASP tags across every rule row in the per-section tables."""
+    """Count ATLAS and OWASP tags across every rule row in the per-section tables.
+
+    Column layout differs between sections - 04 omits OWASP - so the columns are
+    resolved from each table's own header rather than by position.
+
+    Scanning every column from the third onward looks equivalent and is not: the
+    CVE / Reference column carries citations like "OWASP LLM10:2025" and
+    "OWASP LLM01/LLM07:2025", which are references to a category, not mappings
+    to it. Counting those inflates LLM01, LLM07 and LLM10 by one apiece.
+    """
     atlas, owasp = Counter(), Counter()
+    columns: list[str] = []
     for line in text.splitlines():
-        if not line.startswith("| `") or ".yml`" not in line and ".yar`" not in line and ".rules`" not in line:
+        if line.startswith("|") and "Rule" in line and "Format" in line:
+            columns = [c.strip().lower() for c in line.strip().strip("|").split("|")]
             continue
-        cells = [c.strip() for c in line.strip("|").split("|")]
-        if len(cells) < 3:
+        if not re.match(r"^\| `.*\.(yml|yaml|yar|rules)`", line):
             continue
-        # Column layout differs between sections (04 omits OWASP), so match on shape.
-        for cell in cells[2:]:
-            if "ATT&CK" in cell:
-                # e.g. "T1611 (ATT&CK)" - an ATT&CK id, not an ATLAS technique.
-                continue
-            for tag in re.findall(r"\bT\d{4}(?:\.\d{3})?\b", cell):
-                atlas[tag] += 1
-            for tag in re.findall(r"\bLLM\d{2}\b", cell):
-                owasp[tag] += 1
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        for i, name in enumerate(columns):
+            if i >= len(cells):
+                break
+            cell = cells[i]
+            if name == "atlas":
+                if "ATT&CK" in cell:
+                    # e.g. "T1611 (ATT&CK)" - an ATT&CK id, not an ATLAS technique.
+                    continue
+                for tag in re.findall(r"\bT\d{4}(?:\.\d{3})?\b", cell):
+                    atlas[tag] += 1
+            elif name == "owasp":
+                for tag in re.findall(r"\bLLM\d{2}\b", cell):
+                    owasp[tag] += 1
     return atlas, owasp
 
 

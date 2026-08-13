@@ -65,10 +65,25 @@ because the published CSV feed is meant to be filtered, and a field where `log`
 and `logs` and `logfile` coexist cannot be. If something genuinely does not fit,
 extend the schema, the template, and the skill together.
 
-**Detections are Sigma only.** No SPL, no KQL, no vendor dialect. One rule
-converts to any SIEM, and shipping a vendor dialect would both force a platform
-choice on everyone downstream and imply an affiliation this project does not
-have. Verify with `sigma convert -t splunk detections/sigma/<rule>.yml`.
+**Detections are Sigma only.** No SPL, no KQL, no XQL, no ES|QL, no EQL, no
+vendor dialect of any kind. One rule converts to any SIEM, and shipping a vendor
+dialect would both force a platform choice on everyone downstream and imply an
+affiliation this project does not have. Verify with
+`sigma convert -t splunk detections/sigma/<rule>.yml`.
+
+This is the one rule most likely to be argued with, because "just add native
+analytics for platform X" always looks like a free win to whoever uses platform
+X. It is not. The maintainer works for a security vendor, and the project's
+independence disclaimer (`README.md`) only holds while the detection content
+stays neutral — a native dialect for any one vendor reads as capture regardless
+of the rule's quality. pySigma already emits every dialect anyone needs, so the
+capability is not lost by refusing to ship it; only the appearance of neutrality
+would be. Do not name the employer anywhere in the repository either: the
+disclaimer says "any employer" deliberately.
+
+Converting to a specific backend inside CI is fine and is not shipping a
+dialect — `validate.yml` converts to Elastic/lucene and `artifacts.yml` to
+Splunk, purely to prove the rules parse. The backend choice there is arbitrary.
 
 **Defensive content only.** Document where artifacts live and what they prove.
 No exploit code, no working attack tooling, no step-by-step abuse instructions.

@@ -27,11 +27,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Fixed
 
-- **ATLAS and OWASP index counts in `MAPPINGS.md`.** Seven hand-maintained
-  counts disagreed with the tables they summarise (ATLAS `T0010`, `T0020`,
-  `T0024`; OWASP `LLM03`, `LLM06`, `LLM07`), and four techniques were missing
-  rows entirely (`T0051`, `T0053`, `T0081`, `T0082`). The index is now derived
-  from the tables and verified to match them exactly.
+- **ATLAS and OWASP index counts in `MAPPINGS.md`.** Hand-maintained counts
+  disagreed with the tables they summarise (ATLAS `T0010`, `T0020`, `T0024`;
+  OWASP `LLM01`, `LLM03`, `LLM06`, `LLM07`, `LLM10`), and four techniques were
+  missing rows entirely (`T0051`, `T0053`, `T0081`, `T0082`). Counting also has
+  to resolve columns from each table's own header rather than by position: the
+  layout varies (section 04 has no OWASP column) and the CVE / Reference column
+  carries citations like `OWASP LLM10:2025` that reference a category rather
+  than map to it, which inflated `LLM01`, `LLM07` and `LLM10` by one apiece.
+- **`validate_mappings.py` now gates the counts**, not just file existence. It
+  recounts both index tables and the Scope line from the rule rows and fails on
+  any disagreement, so a hand-edited summary cannot drift from its tables again.
 - **Empty "what it proves" on 107 of 298 catalog rows (36%).** The schema
   declares `evidence_type` only on disk artifacts, so every registry, network
   and process row rendered the section blank. These are now derived from

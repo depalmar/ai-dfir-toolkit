@@ -45,6 +45,77 @@ IGNORE_DIRS = {".git", "node_modules", "__pycache__", "docs", "schema", "scripts
                "catalog", "case-studies", ".github"}
 
 
+def index_drift(mappings: Path, on_disk: set[str]) -> list[str]:
+    """Check the ATLAS/OWASP index tables and the Scope line against the rows.
+
+    The index is a hand-readable summary of the per-section tables, so it can
+    disagree with them silently - and did, in both directions, before this
+    existed. Columns are resolved from each table's own header: the layout
+    varies (section 04 has no OWASP column), and the CVE / Reference column
+    carries citations like "OWASP LLM10:2025" that are references to a category
+    rather than mappings to it. Counting those inflates the index.
+    """
+    lines = mappings.read_text(encoding="utf-8").splitlines()
+    atlas: dict[str, int] = {}
+    owasp: dict[str, int] = {}
+    columns: list[str] = []
+    rows = 0
+
+    for line in lines:
+        if line.startswith("|") and "Rule" in line and "Format" in line:
+            columns = [c.strip().lower() for c in line.strip().strip("|").split("|")]
+            continue
+        if not re.match(r"^\| `.*\.(yml|yaml|yar|rules)`", line):
+            continue
+        rows += 1
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        for i, name in enumerate(columns):
+            if i >= len(cells):
+                break
+            if name == "atlas" and "ATT&CK" not in cells[i]:
+                for tag in re.findall(r"\bT\d{4}(?:\.\d{3})?\b", cells[i]):
+                    atlas[tag] = atlas.get(tag, 0) + 1
+            elif name == "owasp":
+                for tag in re.findall(r"\bLLM\d{2}\b", cells[i]):
+                    owasp[tag] = owasp.get(tag, 0) + 1
+
+    def published(heading: str) -> dict[str, int]:
+        out: dict[str, int] = {}
+        try:
+            start = next(i for i, l in enumerate(lines) if l.startswith(heading))
+        except StopIteration:
+            return out
+        for line in lines[start + 1:]:
+            if line.startswith("##"):
+                break
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) == 3 and cells[2].isdigit():
+                out[cells[0]] = int(cells[2])
+        return out
+
+    problems = []
+    for label, heading, counted in (
+        ("ATLAS", "## ATLAS Technique Index", atlas),
+        ("OWASP", "## OWASP Top 10 for LLM Applications 2025 Index", owasp),
+    ):
+        pub = published(heading)
+        for tag in sorted(set(pub) | set(counted)):
+            have, want = pub.get(tag), counted.get(tag, 0)
+            if have is None:
+                problems.append(f"{label} {tag} appears in {want} row(s) but has no index row")
+            elif have != want:
+                problems.append(f"{label} {tag} index says {have}, tables say {want}")
+
+    # The Scope line is the number most often quoted elsewhere, so gate it too.
+    scope = re.search(r"\*\*Scope:\*\* (\d+) rule files", "\n".join(lines))
+    if scope and int(scope.group(1)) != len(on_disk):
+        problems.append(
+            f"Scope line says {scope.group(1)} rule files, {len(on_disk)} are on disk")
+    if rows != len(on_disk):
+        problems.append(f"{rows} indexed rule row(s) but {len(on_disk)} file(s) on disk")
+    return problems
+
+
 def find_repo_root(start: Path) -> Path:
     """Walk up until MAPPINGS.md or .git is found, so the script runs anywhere."""
     for candidate in [start, *start.parents]:
@@ -132,22 +203,26 @@ def main() -> int:
             dangling[reference] = lines
 
     unindexed = sorted(on_disk - referenced_real)
+    drift = index_drift(mappings, on_disk)
 
     if args.json:
         print(json.dumps({
+            "index_drift": drift,
             "on_disk": len(on_disk),
             "referenced": len(references),
             "dangling": {k: v for k, v in sorted(dangling.items())},
             "unindexed": unindexed,
         }, indent=2))
-        return 1 if dangling or unindexed else 0
+        return 1 if dangling or unindexed or drift else 0
 
     if args.fix_list:
         for reference in sorted(dangling):
             print(f"REMOVE  {reference}")
         for path in unindexed:
             print(f"ADD     {path}")
-        return 1 if dangling or unindexed else 0
+        for problem in drift:
+            print(f"RECOUNT {problem}")
+        return 1 if dangling or unindexed or drift else 0
 
     print(f"Rule files on disk:      {len(on_disk)}")
     print(f"References in MAPPINGS:  {len(references)}")
@@ -165,13 +240,20 @@ def main() -> int:
         for path in unindexed:
             print(f"            {path}")
 
-    total = len(dangling) + len(unindexed)
+    if drift:
+        print(f"\n[INDEX] {len(drift)} count(s) in the summary tables disagree with the rows.")
+        print("        The index is hand-readable but must stay machine-true.")
+        for problem in drift:
+            print(f"        {problem}")
+
+    total = len(dangling) + len(unindexed) + len(drift)
     if total:
         print(f"\n{total} problem(s). Either restore the missing files or regenerate "
               f"MAPPINGS.md, then re-run.")
         print("Run with --fix-list for a bare remove/add list.")
     else:
-        print("\nMAPPINGS.md is in sync with the rules on disk.")
+        print("\nMAPPINGS.md is in sync with the rules on disk, and its index "
+              "counts match the tables.")
     return 1 if total else 0
 
 

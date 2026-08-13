@@ -247,15 +247,28 @@ the ATLAS/OWASP indexes, case studies, the guide. Applying the patch copy would
 have reverted working code. The data-contract check was added to
 `build_site.py --check` instead, and that is what CI runs.
 
-**MAPPINGS.md had seven pre-existing miscounts.** Indexing the 12 new rules also
-required recounting, which surfaced hand-maintained errors unrelated to this
-change: ATLAS `T0010` (10→8), `T0020` (4→3), `T0024` (7→6 before the new rules),
-and OWASP `LLM03` (11→9), `LLM06` (5→4), `LLM07` (2→3), plus a missing `T0051`
-row. Four rows were absent entirely — `T0051`, `T0053`, `T0081`, `T0082`. The
-index is now derived from the tables and verified to match them exactly.
-`AML.T0081` (Modify AI Agent Configuration) and `AML.T0082` (RAG Credential
-Harvesting) were confirmed against MITRE ATLAS before being added; `AML.T0053`
-was already confirmed in `VERIFICATION.md`.
+**MAPPINGS.md's index was wrong in more ways than one.** Indexing the 12 new
+rules required recounting, which surfaced hand-maintained errors unrelated to
+this change: ATLAS `T0010` (10→8), `T0020` (4→3), `T0024`, and OWASP `LLM03`
+(11→9), `LLM06` (5→4). Four rows were absent entirely — `T0051`, `T0053`,
+`T0081`, `T0082`. `AML.T0081` (Modify AI Agent Configuration) and `AML.T0082`
+(RAG Credential Harvesting) were confirmed against MITRE ATLAS before being
+added; `AML.T0053` was already confirmed in `VERIFICATION.md`.
+
+The recount was then itself wrong, which is the part worth remembering. Both the
+first implementation and the check written to verify it scanned every column
+from the third onward, on the assumption that only ATLAS and OWASP columns hold
+those tokens. The CVE / Reference column also holds them — `OWASP LLM10:2025`
+and `OWASP LLM01/LLM07:2025` are citations *of* a category, not mappings *to*
+it — so `LLM01`, `LLM07` and `LLM10` were each inflated by one. Two of those
+three were introduced by the recount; `LLM01` was pre-existing and the recount
+preserved it, because a check that shares the original's assumption agrees with
+it by construction rather than by being right.
+
+Columns are now resolved from each table's own header, and
+`validate_mappings.py` recounts both index tables and the Scope line on every
+run, so the summary cannot drift from the tables it summarises. The general
+lesson: an independent check has to differ in *method*, not just in authorship.
 
 **The proposed process-persistence derivation was wrong on this data.** The
 review's version treats a process as persistent unless its `persistence` value
