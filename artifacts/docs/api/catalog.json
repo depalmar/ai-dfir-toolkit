@@ -4541,7 +4541,8 @@
             "linux"
           ],
           "artifact_type": "log",
-          "description": "Purged after 14 days - collect early, short retention window",
+          "description": "Collect early - this is one of the few agent stores with a documented purge window",
+          "retention": "Purged after 14 days",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",

@@ -359,6 +359,10 @@
           "type": "boolean",
           "description": "Set true when the artifact is single-source or otherwise not independently corroborated. Required to carry a low-confidence artifact inside a high-confidence entry."
         },
+        "retention": {
+          "type": "string",
+          "description": "How long the artifact survives on its own, when the tool documents a purge or rotation window. Omit it otherwise - an absent field means 'until uninstall', and a guessed one tells a responder they have longer than they do. Its presence promotes a disk row to rotating volatility regardless of artifact_type."
+        },
         "confidence": {
           "$ref": "#/$defs/confidence"
         }
@@ -630,6 +634,10 @@
         "unverified": {
           "type": "boolean",
           "description": "Set true when the artifact is single-source or otherwise not independently corroborated."
+        },
+        "retention": {
+          "type": "string",
+          "description": "How long the artifact survives on its own, when the tool documents a purge or rotation window. Omit it otherwise - an absent field means 'until uninstall', and a guessed one tells a responder they have longer than they do. Its presence promotes a disk row to rotating volatility regardless of artifact_type."
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
