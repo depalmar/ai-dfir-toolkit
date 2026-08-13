@@ -1,0 +1,55 @@
+# AI agent artifact case study
+# AIRT-CS-0012 - PoisonedRAG: Five Documents Against a Corpus of Millions
+
+id: AIRT-CS-0012
+title: "PoisonedRAG - Five Documents Against a Corpus of Millions"
+date_range: 2024 (preprint) to Aug 2025 (USENIX Security 2025)
+disclosed: "2025-08-13"
+affects: RAG vector stores - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Peer-reviewed and presented at USENIX Security 2025, with published code. This is
+  demonstrated research rather than an observed intrusion, and is recorded as such -
+  the artifact list describes where the evidence would live, not what was recovered
+  from a victim.
+atlas:
+  - AML.T0082
+summary: >-
+  The first knowledge poisoning attack against retrieval-augmented generation. Zou
+  et al. formulate knowledge corruption as an optimisation problem, with black-box
+  and white-box variants, and show that injecting five adversarial texts per target
+  question into a knowledge base of millions reliably causes the system to return an
+  attacker-chosen answer, at around a 90% success rate. Several defences were
+  evaluated and none were sufficient. There is no malicious code anywhere in the
+  attack - nothing to detonate and nothing to sandbox.
+iocs:
+  - type: behavior
+    value: Vector store records whose ingestion provenance is missing or unattributable
+    description: Chroma, Pinecone, Weaviate, Qdrant, pgvector and FAISS all store this differently
+  - type: behavior
+    value: Retrieval log showing the same small document set returned for a narrow question set
+    description: The retrieval side of the attack; visible before the answer is
+  - type: behavior
+    value: Ingestion pipeline record with no upstream source or an unexpected one
+    description: When a document entered and from where - usually the only provenance that exists
+  - type: pattern
+    value: Embedding whose nearest neighbours are inconsistent with its stated topic
+    description: Anomaly signal in embedding space rather than in file content
+response_actions:
+  - "Treat this as data-integrity work, not malware work: the investigation is retrieval provenance, ingestion history and embedding-space anomaly."
+  - Pull retrieval logs for the affected question set first; which documents were returned is cheaper to establish than which documents are poisoned.
+  - Reconstruct ingestion history for the returned documents - when each entered the store and through which pipeline.
+  - Preserve the vector store and its metadata together; the embeddings without the ingestion metadata cannot answer the provenance question.
+  - "Scope by question rather than by document. A handful of records among millions is not findable by sweeping the corpus."
+lesson: >-
+  The needle-to-haystack ratio is brutal - a handful of poisoned records among
+  millions, with no malicious code anywhere. Endpoint-trained instincts do not
+  transfer: there is nothing to detonate, no process lineage, and no hash to sweep.
+  What the investigation actually needs is retrieval provenance and ingestion
+  history, which means the controls that make it investigable have to be in place
+  before the incident.
+references:
+  - title: "USENIX Security 2025 - PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models"
+    url: https://www.usenix.org/conference/usenixsecurity25/presentation/zou-poisonedrag
+  - title: "USENIX - PoisonedRAG paper (PDF)"
+    url: https://www.usenix.org/system/files/usenixsecurity25-zou-poisonedrag.pdf

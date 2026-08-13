@@ -1,0 +1,59 @@
+# AI agent artifact case study
+# AIRT-CS-0008 - EchoLeak (CVE-2025-32711): Zero-Click Exfiltration from M365 Copilot
+
+id: AIRT-CS-0008
+title: "EchoLeak (CVE-2025-32711) - Zero-Click Exfiltration from M365 Copilot"
+date_range: Jan 2025 (reported) to Jun 2025 (disclosed and fixed)
+disclosed: "2025-06-11"
+affects: Microsoft 365 Copilot - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Assigned CVE, CVSS 9.3, vendor-patched server-side, and independently written up
+  by the discovering research team and in a subsequent academic paper. Microsoft
+  states there was no exploitation in the wild.
+atlas:
+  - AML.T0051
+  - AML.T0024
+summary: >-
+  An untrusted inbound email carried instructions that Microsoft 365 Copilot
+  processed while assembling context. The assistant, holding privileged access to
+  tenant data, was induced to pull sensitive content and emit it inside an
+  auto-fetched markdown image reference, exfiltrating the data through the rendering
+  path. Aim Labs named the underlying flaw an LLM Scope Violation - untrusted input
+  reaching a component that holds privileged scope. No click, no attachment, no user
+  action. Anything inside Copilot's scope was reachable, including chat history,
+  OneDrive, SharePoint and Teams content. Microsoft fixed it server-side and reports
+  no in-the-wild exploitation.
+iocs:
+  - type: pattern
+    value: Markdown image reference in a completion whose URL carries content as parameters
+    description: The exfiltration primitive; the render path fetches it without user action
+  - type: behavior
+    value: Copilot interaction events for a user who never invoked Copilot on that content
+    description: Recorded in the M365 unified audit log / Purview if AI interaction auditing is on
+  - type: behavior
+    value: Outbound fetch from an image proxy immediately after a completion
+    description: The beacon carrying the payload; not on the endpoint at all
+  - type: pattern
+    value: Inbound mail containing assistant-directed instructions
+    description: Looks like ordinary mail; only the instruction text distinguishes it
+response_actions:
+  - "Confirm AI interaction logging is enabled before anything else. If prompt and completion capture was off, the decisive evidence was never written and the investigation is over before it starts."
+  - Pull M365 unified audit and Purview records for Copilot interactions in the window, keyed on the affected user rather than on a process.
+  - Correlate completions containing markdown image references with image-proxy fetch logs, since the fetch is where the data actually left.
+  - Retrieve the originating message and preserve it intact; the payload is in the body text, and it looks unremarkable.
+  - "Scope by Copilot's access rather than by the user's activity: everything in scope was reachable, whether or not the user ever opened it."
+lesson: >-
+  Every user-behaviour assumption in traditional IR breaks here. There is no click
+  to reconstruct, no credential to trace, no endpoint execution - the interaction
+  happened between an email, an assistant and a rendering proxy. The decisive
+  lesson is about posture rather than hunting: if prompt and completion logging was
+  not already enabled, the evidence does not exist retrospectively. AI logging
+  posture has to be established before AI hunting is possible.
+references:
+  - title: "NVD - CVE-2025-32711"
+    url: https://nvd.nist.gov/vuln/detail/CVE-2025-32711
+  - title: "arXiv:2509.10540 - EchoLeak: The First Real-World Zero-Click Prompt Injection Exploit in a Production LLM System"
+    url: https://arxiv.org/abs/2509.10540
+  - title: "The Hacker News - Zero-Click AI Vulnerability Exposes Microsoft 365 Copilot Data Without User Interaction"
+    url: https://thehackernews.com/2025/06/zero-click-ai-vulnerability-exposes.html

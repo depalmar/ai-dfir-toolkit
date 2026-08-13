@@ -1,0 +1,77 @@
+# AI agent artifact case study
+# AIRT-CS-0007 - PROMPTSTEAL / LAMEHUG: An LLM Writing Collection Commands at Runtime
+
+id: AIRT-CS-0007
+title: "PROMPTSTEAL / LAMEHUG - An LLM Writing Collection Commands at Runtime"
+date_range: Jul 2025 (CERT-UA report) to 5 Nov 2025 (GTIG report)
+disclosed: "2025-07-17"
+affects: Hugging Face inference API - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Two independent reporting parties describing the same malware: CERT-UA published
+  it as LAMEHUG on 17 Jul 2025 from live phishing activity, and GTIG published it as
+  PROMPTSTEAL on 5 Nov 2025. Third-party technical analyses (Cato CTRL, Picus)
+  followed. The behaviour is well corroborated; the attribution is not the same
+  thing, and is recorded separately below.
+contested: >-
+  CERT-UA tracks the actor as UAC-0001 and attributes it to APT28 (Fancy Bear) with
+  moderate confidence. GTIG describes it as APT28 use. Attribution should be carried
+  as an assessment rather than a fact; the malware behaviour is what is
+  independently established.
+atlas:
+  - AML.T0096
+summary: >-
+  A Python data miner, PyInstaller-compiled and delivered by phishing mail
+  impersonating Ukrainian ministry correspondence and sent from compromised
+  accounts, initially against Ukraine's security and defence sector. GTIG describes
+  the sample as presenting itself as an image generation utility. At execution it
+  submits base64-encoded prompts to the
+  Qwen2.5-Coder-32B-Instruct model through the Hugging Face inference API, asking
+  the model to generate Windows commands for system reconnaissance and document
+  collection, then executes what comes back. It stages Office, PDF and TXT files
+  from common user folders and exfiltrates over SFTP or HTTP POST. GTIG described
+  it as their first observation of malware querying an LLM in live operations.
+iocs:
+  - type: domain
+    value: api-inference.huggingface.co
+    description: Inference API egress from a compiled desktop utility is the pivot
+  - type: pattern
+    value: Hard-coded hf_ API token inside a binary
+    description: Hugging Face token; usable for provider-side scoping
+  - type: pattern
+    value: Qwen2.5-Coder-32B-Instruct referenced as the target model
+    description: Model selector observed in samples
+  - type: file
+    value: "Додаток.pdf.zip"
+    description: Phishing archive name reported by CERT-UA; carries a PyInstaller executable beside a decoy PDF
+  - type: behavior
+    value: Command execution parented by a desktop utility rather than a shell
+    description: The executed commands never appear in the sample, so process lineage is the evidence
+  - type: behavior
+    value: Staged collection from Documents, Desktop and Downloads
+    description: Collection targets Office, PDF and TXT files
+  - type: behavior
+    value: Exfiltration over SFTP or HTTP POST
+    description: Two observed channels
+response_actions:
+  - "Reconstruct capability from process lineage and egress, not from the sample: static analysis under-reports because the commands are generated after execution."
+  - Hunt for outbound requests to inference API hosts from compiled desktop applications that have no reason to reach one.
+  - Recover any hf_ token from the binary and use it to scope provider-side activity and other samples sharing the key.
+  - Treat every Office, PDF and TXT file in the user profile as candidate exfiltration scope, since collection was breadth-first rather than targeted.
+  - Check for SFTP and outbound HTTP POST from the same process, and preserve the staging directory before it is cleaned up.
+lesson: >-
+  Paired with PROMPTFLUX this shows the two shapes of runtime LLM abuse - rewriting
+  self, and generating actions - and the second is the harder one to investigate.
+  The executed commands exist only in the model's response, so the investigator has
+  to reason about what the model would have been asked to produce and treat the API
+  egress as the pivot. It is also the better-evidenced of the pair: an independent
+  national CERT reported it from live operations months before the vendor tracker did.
+references:
+  - title: "CERT-UA #16039 - LAMEHUG (17 Jul 2025)"
+    url: https://cert.gov.ua/article/6284730
+  - title: "The Hacker News - CERT-UA Discovers LAMEHUG Malware Linked to APT28, Using LLM for Phishing Campaign"
+    url: https://thehackernews.com/2025/07/cert-ua-discovers-lamehug-malware.html
+  - title: "Cato CTRL - Analyzing LAMEHUG, first known LLM-powered malware with links to APT28"
+    url: https://www.catonetworks.com/blog/cato-ctrl-threat-research-analyzing-lamehug/
+  - title: "GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)"
+    url: https://services.google.com/fh/files/misc/advances-in-threat-actor-usage-of-ai-tools-en.pdf

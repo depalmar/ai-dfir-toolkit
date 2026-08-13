@@ -272,17 +272,36 @@ def load_case_studies():
                              "description": str(i.get("description", ""))})
             else:
                 iocs.append({"type": "", "value": str(i), "description": ""})
+        refs = []
+        for r in (c.get("references") or []):
+            if isinstance(r, dict):
+                refs.append({"title": str(r.get("title", "")), "url": str(r.get("url", ""))})
+            else:
+                refs.append({"title": str(r), "url": str(r)})
+
+        affects = c.get("affects", "")
+        affects = affects if isinstance(affects, str) else ", ".join(affects or [])
         out.append({
             "id": c.get("id", path.stem),
             "title": c.get("title", ""),
             "date_range": str(c.get("date_range", "")),
             "disclosed": str(c.get("disclosed", "")),
-            "affects": c.get("affects", "") if isinstance(c.get("affects"), str)
-                       else ", ".join(c.get("affects") or []),
+            "affects": affects,
+            # A case can touch several catalogued tools, so the jump targets are a
+            # list pulled out of whatever affects says - prose and ids both.
+            "affects_ids": re.findall(r"AIRT-\d{4}", affects),
             "summary": c.get("summary", ""),
+            # Provenance, on the same scale entries use. A case study asserts things
+            # about someone else's incident, so where the claim came from travels
+            # with it rather than living in a commit message.
+            "confidence": str(c.get("confidence", "")),
+            "basis": str(c.get("basis", "")),
+            "contested": str(c.get("contested", "")),
+            "atlas": [str(a) for a in (c.get("atlas") or [])],
             "iocs": iocs,
             "response_actions": [str(a) for a in (c.get("response_actions") or [])],
             "lesson": c.get("lesson", ""),
+            "references": refs,
         })
     return out
 

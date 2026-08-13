@@ -59,6 +59,17 @@ verify it or downgrade the entry.
 **Omit rather than guess.** A missing field is honest. A guessed one becomes
 somebody's broken detection during an actual incident.
 
+**Case studies carry their provenance.** A case study asserts things about
+somebody else's incident, usually from a single reporting party, so
+`confidence`, `basis` and at least one `references` entry are required, and
+`build_site.py --check` fails without them. Where analysts disagree, record the
+disagreement in `contested` rather than picking a side — the Mexico breach and
+GTG-1002 are both in the catalog specifically because the argument about how
+autonomous the AI was is the thing a responder has to be able to adjudicate.
+Vendor disclosure of an incident is not the same as vendor documentation of a
+path: an incident claim nobody else has corroborated is `medium`, whatever the
+vendor's reputation.
+
 **Controlled vocabularies.** `artifact_type`, `evidence_type`, `secret_type`,
 and `storage` are closed enums in `schema/artifact.schema.json`. They exist
 because the published CSV feed is meant to be filtered, and a field where `log`
@@ -110,7 +121,7 @@ the entry and raise its confidence.
 ## Current state
 
 45 entries, 265 artifacts, 152 credential locations, 17 MCP config
-locations, 12 endpoint Sigma rules, 3 case studies. Validation clean.
+locations, 12 endpoint Sigma rules, 14 case studies. Validation clean.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.

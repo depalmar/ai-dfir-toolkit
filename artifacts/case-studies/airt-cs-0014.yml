@@ -1,0 +1,68 @@
+# AI agent artifact case study
+# AIRT-CS-0014 - ShadowRay: AI Compute Clusters Exploited in the Wild
+
+id: AIRT-CS-0014
+title: "ShadowRay - AI Compute Clusters Exploited in the Wild"
+date_range: Mar 2024 (first campaign) to Nov 2025 (ShadowRay 2.0)
+disclosed: "2024-03-26"
+affects: Ray (distributed compute) - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Vendor research by Oligo Security with in-the-wild exploitation observed across
+  two campaigns, widely corroborated in trade press. CVE-2023-48022 is a published
+  CVE record.
+contested: >-
+  CVE-2023-48022 is disputed. Anyscale's position is that unauthenticated job
+  submission is intended behaviour for a framework meant to run inside a trusted
+  network, so the CVE was never directly fixed. That disagreement is why exposure
+  persists and why this is an exposure-management finding rather than a patching one.
+summary: >-
+  Ray's Jobs API accepts job submissions without authentication. Internet-exposed
+  clusters therefore give an attacker code execution on machines holding models,
+  training data and cloud credentials. Oligo disclosed ShadowRay in March 2024 as
+  the first known attack campaign against AI workloads in the wild, with thousands
+  of exposed servers already compromised. In November 2025 Oligo documented
+  ShadowRay 2.0, a global campaign turning exposed clusters into a self-propagating
+  cryptomining botnet - multi-stage Bash and Python payloads that abuse Ray's own
+  orchestration to deploy across every node and to spread cluster to cluster,
+  running XMRig.
+iocs:
+  - type: behavior
+    value: Job submission to the Ray Jobs API from outside the cluster network
+    description: Recorded in Ray dashboard and jobs API access logs
+  - type: behavior
+    value: Submitted job definition carrying a multi-stage Bash or Python payload
+    description: The job definition is the payload record and is retained by Ray
+  - type: process
+    value: XMRig or equivalent miner on a GPU host
+    description: Observed payload in the ShadowRay 2.0 campaign
+  - type: behavior
+    value: Orchestration used to fan a job out to every node
+    description: Ray's own scheduling is the lateral movement mechanism
+  - type: behavior
+    value: Outbound job submission from one cluster to another
+    description: Cluster-to-cluster propagation observed in ShadowRay 2.0
+  - type: pattern
+    value: Ray dashboard reachable from the internet
+    description: The precondition; the exposure is the vulnerability here
+response_actions:
+  - "Inventory exposure first. There is no patch to apply, so the finding is which clusters are reachable and from where."
+  - Collect Ray dashboard and jobs API access logs, and the submitted job definitions - the definitions hold the payload and are the best evidence available.
+  - "Scope the AI-specific impact separately from the miner: model weights, training data and pipeline credentials are what an attacker actually gained."
+  - Harvest and rotate every cloud credential reachable from the cluster environment, including instance-profile and mounted secret material.
+  - Check neighbouring clusters, since ShadowRay 2.0 propagated cluster to cluster rather than only host to host.
+lesson: >-
+  Not every AI incident is an AI-native attack. This one is a conventional
+  unauthenticated-RCE intrusion whose impact is AI-specific - models, training data
+  and pipeline credentials - and it anchors the point that responders need to
+  understand the AI stack as infrastructure before reaching for exotic explanations.
+  It also shows what a disputed CVE does to a defender: with no fix coming, the only
+  control is exposure management, and the artifact of record is an access log rather
+  than a patch level.
+references:
+  - title: "Oligo Security - ShadowRay: First Known Attack Campaign Targeting AI Workloads Exploited In The Wild"
+    url: https://www.oligo.security/blog/shadowray-attack-ai-workloads-actively-exploited-in-the-wild
+  - title: "Oligo Security - ShadowRay 2.0: Active Global Campaign Hijacks Ray AI Infrastructure Into Self-Propagating Botnet"
+    url: https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+  - title: "NVD - CVE-2023-48022"
+    url: https://nvd.nist.gov/vuln/detail/CVE-2023-48022

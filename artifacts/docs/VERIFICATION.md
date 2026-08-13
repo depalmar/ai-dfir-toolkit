@@ -43,3 +43,23 @@ This file exists so a reader can audit why a field says what it says.
 | `VOCAB` | artifact_type | 52 ad-hoc values | **17 controlled values** | Surfaced by the live authoring test. Near-duplicates (log/logs, agent-def/agent-definition, env-var/env-file/env-override) made the published CSV feed unfilterable. Collapsed and locked as a schema enum; negative-tested. |
 | `VOCAB` | secret_type | 17 null values | **backfilled + required** | Every credential entry now carries a typed secret_type from a closed enum, so credential-access hunting can filter by secret class. |
 | `SCOPE` | detections | none | **vendor-neutral Sigma + osquery** | Detection content added as Sigma (the vendor-neutral detection standard, convertible to any SIEM via sigma-cli) plus an osquery pack for inventory. No product-specific query language ships in the repo. |
+
+
+## Verification Pass 3 — Case study research, August 2026
+
+Eleven cases were carried over from an external handoff and researched against
+primary sources before being authored into `artifacts/case-studies/`. Every case
+now records `confidence`, `basis` and `references`, and `build_site.py --check`
+fails without them. The corrections below are places where the handoff and the
+primary source disagreed.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-CS-0006` | maturity | presented as an operational metamorphic threat | **assessed by GTIG as in development or testing** | CORRECTED. GTIG states PROMPTFLUX was not capable of compromising a victim environment, and the sample's own `AttemptToUpdateSelf` routine was commented out. The handoff's framing would have had a responder scope for in-the-wild impact that the discloser does not claim. Confidence recorded as medium for the same reason. |
+| `AIRT-CS-0009` | attribution | MCPoison credited to 'JFrog · Oligo · others' | **Check Point (CVE-2025-54136, CVSS 7.2, fixed in Cursor 1.3)** | CORRECTED. JFrog disclosed CVE-2025-6514 (mcp-remote) and Oligo CVE-2025-49596 (MCP Inspector); MCPoison is Check Point's and affects Cursor specifically. |
+| `AIRT-CS-0009` | scale | '50+ tracked issues, 13 rated critical' | **omitted** | DROPPED. The aggregate comes from the Vulnerable MCP Project, which could not be reached to verify from this environment. The three CVEs are recorded from their own advisories instead. Per 'omit rather than guess', an unverifiable count does not ship. |
+| `AIRT-CS-0013` | actor / scope | 'a lone actor', '~10 government bodies' | **a small group per Gambit Security; nine agencies** | CORRECTED. Reporting differs on whether it was one person or a small group, so the disagreement is recorded in `contested` rather than resolved. The second model is identified as GPT-4.1, and Claude is reported to have executed ~75% of remote commands. |
+| `AIRT-CS-0005` | indicators | four prose bullets | **11 typed indicators** | EXPANDED from Microsoft's own report: marker file `C:\Windows\Temp\Netapi64.start`, exception log `Netapi64.Exception`, mutexes `Netapi64` and `OpenAI APIS`, and the `TextFile1` resource holding `<key>|<dict>|<proxy>`. None of these were in the handoff. |
+| `AIRT-CS-0007` | corroboration | single-source (GTIG, Nov 2025) | **CERT-UA #16039, 17 Jul 2025, plus GTIG** | RAISED to high. CERT-UA published the same malware as LAMEHUG four months earlier, from live phishing against Ukraine's security and defence sector, tracking the actor as UAC-0001. Two independent reporting parties, so behaviour is high confidence; the APT28 attribution stays an assessment (CERT-UA states moderate confidence). |
+| `AIRT-CS-0004` | confidence | — | **medium, contested** | The autonomy figure rests on one reporting party and is publicly disputed, and Anthropic's own report notes the model 'frequently overstated findings' and fabricated data. MITRE ATT&CK adopted the campaign as C0062, which corroborates that it happened, not how autonomous it was. |
+| `AIRT-CS-0001` | date_range | 2025-08-24 (commit) | **2025-08-24 commit date; force-push reported 2026-06-08** | CORRECTED via `contested`. StepSecurity reports the payload was force-pushed after a co-founder's GitHub account was compromised on 2026-06-08, while the commit carries an August 2025 author date. Commit dates are attacker-controlled; scope from the push and the clone. Payload identified as a Shai-Hulud variant. |

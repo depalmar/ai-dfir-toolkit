@@ -1,0 +1,63 @@
+# AI agent artifact case study
+# AIRT-CS-0010 - SpAIware: Prompt Injection That Persists in Assistant Memory
+
+id: AIRT-CS-0010
+title: "SpAIware - Prompt Injection That Persists in Assistant Memory"
+date_range: Sep 2024 (published) to 2025 (adopted into MITRE ATLAS)
+disclosed: "2024-09-24"
+affects: ChatGPT memory (macOS app) - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Publicly reproducible research by Johann Rehberger with a documented vendor fix,
+  subsequently adopted into the MITRE ATLAS technique set as AI Agent Context
+  Poisoning - Memory (AML.T0080.000).
+summary: >-
+  An injected instruction, delivered through a malicious site or a booby-trapped
+  document, is committed to ChatGPT's persistent memory and directs the assistant to
+  end all future responses with a markdown image whose URL carries the previous
+  question and answer as parameters. Because it lives in memory rather than in a
+  conversation, it survives session resets and applies to every subsequent chat
+  until memory is purged. OpenAI closed the exfiltration channel in ChatGPT
+  1.2024.247; untrusted content invoking the memory tool to store arbitrary
+  memories was not itself eliminated, which is why memory remains an evidence source
+  rather than a closed issue.
+atlas:
+  - AML.T0080
+  - AML.T0080.000
+  - AML.T0086
+iocs:
+  - type: behavior
+    value: Memory store entry containing a standing instruction rather than a user preference
+    description: The persistence mechanism; reads as configuration, not as an attack
+  - type: file
+    value: Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)
+    description: The same primitive in coding agents - an on-disk file that is context every run
+  - type: file
+    value: Framework checkpoint stores (LangGraph SQLite and equivalents)
+    description: Where an agent framework persists state between invocations
+  - type: behavior
+    value: Repeating outbound fetch, one per assistant response
+    description: Regular beacon in proxy logs, cadence tied to conversation turns rather than to a timer
+  - type: pattern
+    value: Markdown image URL carrying conversation text as query parameters
+    description: Exfiltration primitive; spaces escaped
+response_actions:
+  - "Acquire the memory store before touching the host. Memory is the persistence mechanism, and it is the step responders skip."
+  - Read agent instruction files and framework checkpoint stores as part of the same sweep - they are the on-disk equivalent of the same primitive.
+  - Look for a repeating outbound fetch whose cadence tracks conversation turns rather than a clock; that distinguishes it from ordinary beaconing.
+  - "Put memory purge in the eradication phase and purge verification in recovery. Cleaning the host and rotating credentials does not remove it."
+  - Establish which turn wrote each surviving entry, so a legitimate stored preference is not deleted alongside the injected one.
+lesson: >-
+  Memory is a persistence mechanism and it is routinely skipped. A team can clean
+  the host, rotate every credential and remove the malicious integration, and the
+  agent will re-execute the attacker's instruction on its next invocation because
+  nobody looked at the memory store. That makes memory purge a distinct eradication
+  step and purge verification a distinct recovery step - a new line item in the IR
+  lifecycle rather than a variation on an existing one.
+references:
+  - title: "Embrace The Red - Spyware Injection Into Your ChatGPT's Long-Term Memory (SpAIware)"
+    url: https://embracethered.com/blog/posts/2024/chatgpt-macos-app-persistent-data-exfiltration/
+  - title: "MITRE ATLAS - AML.T0080.000, AI Agent Context Poisoning: Memory"
+    url: https://atlas.mitre.org/techniques/AML.T0080.000
+  - title: "The Hacker News - ChatGPT macOS Flaw Could've Enabled Long-Term Spyware via Memory Function"
+    url: https://thehackernews.com/2024/09/chatgpt-macos-flaw-couldve-enabled-long.html

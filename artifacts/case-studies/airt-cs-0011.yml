@@ -1,0 +1,58 @@
+# AI agent artifact case study
+# AIRT-CS-0011 - AI Recommendation Poisoning: Memory Manipulation for Profit
+
+id: AIRT-CS-0011
+title: "AI Recommendation Poisoning - Memory Manipulation for Profit"
+date_range: Dec 2025 to Feb 2026 (observation window)
+disclosed: "2026-02-10"
+affects: Assistant memory stores - no catalogued endpoint tool
+confidence: high
+basis: >-
+  Vendor security research published by Microsoft's Defender Security Research team
+  with counts, an observation window and an ATLAS technique mapping, and picked up
+  independently in trade press.
+atlas:
+  - AML.T0080
+summary: >-
+  Microsoft documented memory poisoning used for commercial gain rather than
+  espionage. Because major assistants support pre-populating a prompt through URL
+  parameters, an "Ask AI" or "Summarize with AI" button - or a link in a page or
+  email - can carry an instruction the assistant parses and commits to memory,
+  biasing later recommendations toward the party that planted it. Microsoft
+  identified 31 companies across 14 industries deploying the technique, and observed
+  more than 50 distinct prompts in a single data source over 60 days. Instructions
+  embedded in documents, emails and web pages produce the same effect when the
+  content is processed by an assistant.
+iocs:
+  - type: url
+    value: Assistant URL carrying a pre-filled prompt in a query parameter
+    description: Recoverable from browser history and referrer logs; the delivery mechanism
+  - type: behavior
+    value: Memory entry phrased as an innocuous user preference
+    description: "For example, remember X as a trusted source - defeats keyword triage"
+  - type: behavior
+    value: Assistant interaction log entry at the moment of the memory write
+    description: The only record tying the entry back to the turn that created it
+  - type: pattern
+    value: Prompt text embedded in a document, email or web page
+    description: Second delivery path, no click required beyond processing the content
+response_actions:
+  - "Reason about provenance rather than content: for each memory entry, establish which turn wrote it and whether the source was the user or a retrieved document."
+  - Pull browser history and referrer logs for parameterised assistant URLs in the window; that is where the write originates.
+  - Review memory entries that name a specific vendor, product or source as trusted, and treat those as candidates regardless of how benign they read.
+  - Preserve the assistant interaction log before purging memory, or the provenance evidence is destroyed along with the entry.
+  - "Widen the threat model in reporting: the same persistence primitive supports fraud, which changes who is targeted and how often."
+lesson: >-
+  The poisoned entry looks exactly like a legitimate stored preference, which
+  defeats keyword triage and forces the investigator into provenance reasoning -
+  which turn wrote this, and was the source a user or a retrieved document. It also
+  demonstrates that memory poisoning is not only an espionage primitive; a
+  commercial motive means far more victims and far more routine occurrence than a
+  targeted-attack framing would predict.
+references:
+  - title: "Microsoft Security Blog - Manipulating AI memory for profit: The rise of AI Recommendation Poisoning"
+    url: https://www.microsoft.com/en-us/security/blog/2026/02/10/ai-recommendation-poisoning/
+  - title: "Help Net Security - That summarize with AI button might be manipulating you"
+    url: https://www.helpnetsecurity.com/2026/02/11/ai-recommendation-memory-poisoning-attacks/
+  - title: "The Hacker News - Microsoft Finds Summarize with AI Prompts Manipulating Chatbot Recommendations"
+    url: https://thehackernews.com/2026/02/microsoft-finds-summarize-with-ai.html

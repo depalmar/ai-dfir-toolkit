@@ -6,6 +6,13 @@ title: Langflow CVE-2025-3248 Mass Exploitation and Flodrix Botnet Deployment
 date_range: 2025-04 (disclosure) onward; CISA KEV listed 2025-05-05
 disclosed: "2025-04-09"
 affects: AIRT-0044
+confidence: high
+basis: >-
+  Assigned CVE with a CISA Known Exploited Vulnerabilities listing, which is a
+  government assertion of in-the-wild exploitation, plus independent malware
+  analysis from Trend Micro naming the post-exploitation payload.
+atlas:
+  - AML.T0011
 summary: Langflow versions before 1.3.0 expose /api/v1/validate/code, which passes user-supplied Python to exec() with no authentication and no sandbox. Payloads hidden in function decorators and default arguments execute in the server context. CVSS 9.8. CISA added it to the Known Exploited Vulnerabilities catalog on 2025-05-05. Trend Micro documented in-the-wild exploitation deploying the Flodrix botnet, with operators first enumerating publicly exposed Langflow servers via Shodan or FOFA. A second flaw, CVE-2026-5027 (CVSS 8.8, path traversal via POST /api/v2/files) affects 1.8.4 and earlier.
 iocs:
   - type: endpoint
@@ -34,3 +41,10 @@ response_actions:
   - Run Langflow as a non-root least-privilege user so arbitrary file writes cannot land in root-owned paths.
   - Rotate every credential stored in flows and in the Langflow database.
 lesson: "This is the clearest proof that AI agent infrastructure is now a mass-exploitation target rather than a theoretical one: a CISA KEV listing, a named botnet payload, and internet-wide scanning for the default port. Self-hosted agent platforms deployed by developers rarely sit in the asset inventory that vulnerability management actually scans, which is why an inventory sweep for these listeners is the highest-value first control."
+references:
+  - title: "NVD - CVE-2025-3248"
+    url: https://nvd.nist.gov/vuln/detail/CVE-2025-3248
+  - title: "CISA - Known Exploited Vulnerabilities Catalog"
+    url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
+  - title: "Trend Micro - Langflow CVE-2025-3248 exploited to deliver the Flodrix botnet"
+    url: https://www.trendmicro.com/en_us/research/25/f/langflow-flodrix-botnet.html

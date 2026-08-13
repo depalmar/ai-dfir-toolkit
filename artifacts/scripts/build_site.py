@@ -590,6 +590,30 @@ pre.yaml{margin:0;background:var(--panel-2);border:1px solid var(--line-soft);bo
 .csact li{margin:0 0 6px}
 .muted{margin:0;font-size:12.5px;color:var(--muted)}
 @media(max-width:820px){.csbody{grid-template-columns:minmax(0,1fr);gap:16px}}
+.csconf{margin:8px 0 0;font-size:12px;color:var(--faint);
+  font-family:ui-monospace,Menlo,monospace}
+.csjumps{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+/* Provenance sits directly under the summary, so a reader meets the evidence
+   standard before the indicators rather than after them. */
+.csprov{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.csbasis{font-size:12px;color:var(--muted);flex:1 1 320px;min-width:0}
+.csdispute{background:var(--alert-bg);border:1px solid var(--alert-line);
+  border-left:3px solid var(--crit);border-radius:8px;padding:10px;font-size:12.5px;
+  color:var(--muted);margin:0 0 14px}
+.csdispute b{color:var(--crit)}
+.csfoot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;
+  margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
+.csfoot h5{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--faint);display:flex;align-items:center;gap:7px}
+.csfoot h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+  background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.csatlas{display:flex;flex-direction:column;align-items:flex-start}
+.tech{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
+  border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;margin:0 4px 4px 0;
+  text-decoration:none}
+.csrefs ul{margin:0;padding-left:17px;font-size:12.5px}
+.csrefs li{margin:0 0 5px;color:var(--muted)}
+@media(max-width:820px){.csfoot{grid-template-columns:minmax(0,1fr);gap:16px}}
 .lesson{background:var(--alert-bg);border:1px solid var(--alert-line);
   border-left:3px solid var(--accent);border-radius:8px;padding:10px;font-size:12.5px;
   color:var(--muted)}
@@ -1111,26 +1135,42 @@ function iocGroups(iocs){
 }
 function caseStudiesHTML(){
   if(!CASES.length)return`<div class="empty">No case studies.</div>`;
+  const byConf={};
+  for(const c of CASES){const k=c.confidence||'unrated'; byConf[k]=(byConf[k]||0)+1}
+  const tally=['high','medium','low','unrated'].filter(k=>byConf[k])
+    .map(k=>`${byConf[k]} ${k}`).join(' · ');
   return `<div class="gtop"><div><h2>Case studies</h2>
-    <p>Documented incidents against the tools in this catalog, with the indicators
-    each left behind and what responders did about it.</p></div></div>`+
+    <p>Documented incidents and published research involving the tools in this
+    catalog, with the indicators each left behind and what responders did about it.
+    Every case records where its claims came from, because several of these rest on
+    a single reporting party.</p>
+    <p class="csconf">Provenance: ${esc(tally)}</p></div></div>`+
   CASES.map(c=>{
     const groups=iocGroups(c.iocs||[]);
     const n=(c.iocs||[]).length;
     // The affected tool is a link when the catalog knows it, because the useful
-    // next move is always "show me every artifact this tool leaves".
-    const known=TOOLS.find(t=>t.entry_id===c.affects);
+    // next move is always "show me every artifact this tool leaves". A case can
+    // name more than one, and plenty name none the catalog covers.
+    const known=(c.affects_ids||[]).map(id=>TOOLS.find(t=>t.entry_id===id)).filter(Boolean);
+    const refs=c.references||[];
     return `
     <article class="csfull">
       <div class="cshead">
         <div><div class="csname">${esc(c.title)}</div>
           <div class="csmeta">${esc(c.id)}${c.date_range?' · '+esc(c.date_range):''}${
             c.disclosed?' · disclosed '+esc(c.disclosed):''}</div></div>
-        ${known?`<button class="btn csjump" data-t="${esc(known.tool)}" data-id="${esc(known.entry_id)}"
-          >${esc(known.tool)} artifacts &#8594;</button>`
+        <div class="csjumps">
+        ${known.length?known.map(k=>`<button class="btn csjump" data-t="${esc(k.tool)}"
+          data-id="${esc(k.entry_id)}">${esc(k.tool)} artifacts &#8594;</button>`).join('')
         :c.affects?`<span class="fmt">${esc(c.affects)}</span>`:''}
+        </div>
       </div>
       <p class="cssum">${esc(c.summary)}</p>
+      ${c.confidence?`<div class="csprov">
+        ${badge(c.confidence,false,'confidence')}
+        ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
+      </div>`:''}
+      ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
       <div class="csbody">
         <div class="cscol">
           <h5>Indicators <span class="n">${n}</span></h5>
@@ -1148,6 +1188,14 @@ function caseStudiesHTML(){
         </div>
       </div>
       ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
+      ${(c.atlas||[]).length||refs.length?`<div class="csfoot">
+        ${(c.atlas||[]).length?`<div class="csatlas"><h5>ATLAS</h5>${
+          c.atlas.map(a=>`<a class="tech" href="https://atlas.mitre.org/techniques/${esc(a)}"
+            target="_blank" rel="noopener">${esc(a)}</a>`).join('')}</div>`:''}
+        ${refs.length?`<div class="csrefs"><h5>Sources <span class="n">${refs.length}</span></h5>
+          <ul>${refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
+            rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
+      </div>`:''}
     </article>`}).join('');
 }
 
@@ -1398,7 +1446,45 @@ THEME_BOOT = (
 )
 
 
-def check(rows, tools, rules, guide):
+def check_cases(cases, tools):
+    """Case-study invariants. Returns a list of problems.
+
+    A case study asserts things about somebody else's incident, mostly from a
+    single reporting party, so the load-bearing field is provenance rather than
+    the indicator list. An unsourced case is the thing that turns a catalog into
+    a liability: a reader has no way to re-check it and no way to notice when
+    the story changes. So confidence and at least one reference are required,
+    and an id claimed in `affects` has to resolve to a real entry - the last
+    time it did not, a case pointed at a renamed id and silently lost its link
+    to the tool it describes.
+    """
+    problems = []
+    ids = {t["entry_id"] for t in tools}
+    seen = set()
+    for c in cases:
+        cid = c["id"]
+        if cid in seen:
+            problems.append(f"[CASE]    {cid} is used by more than one file")
+        seen.add(cid)
+        if c["confidence"] not in ("high", "medium", "low"):
+            problems.append(f"[CASE]    {cid} confidence '{c['confidence']}' "
+                            f"is not high/medium/low")
+        if not c["basis"]:
+            problems.append(f"[CASE]    {cid} states a confidence with no basis")
+        if not c["references"]:
+            problems.append(f"[CASE]    {cid} has no references")
+        for r in c["references"]:
+            if not r["url"].startswith("https://"):
+                problems.append(f"[CASE]    {cid} reference is not an https URL: {r['url']}")
+        for eid in c["affects_ids"]:
+            if eid not in ids:
+                problems.append(f"[CASE]    {cid} affects {eid}, which is not a catalog entry")
+        if not c["iocs"]:
+            problems.append(f"[CASE]    {cid} publishes no indicators")
+    return problems
+
+
+def check(rows, tools, rules, guide, cases=()):
     """Assert the invariants the page depends on. Returns a problem count.
 
     Runs on every pull request, while the page itself is only built on push to
@@ -1476,6 +1562,8 @@ def check(rows, tools, rules, guide):
     for h in guide.get("missing_diagrams") or []:
         problems.append(f"[DIAGRAM] no rendered SVG for mermaid block {h}")
 
+    problems += check_cases(cases, tools)
+
     by_class = {}
     for r in rows:
         by_class[r["cls"]] = by_class.get(r["cls"], 0) + 1
@@ -1500,7 +1588,7 @@ def main():
     guide = site_data.load_guide()
 
     if "--check" in sys.argv:
-        return 1 if check(rows, tools, rules, guide) else 0
+        return 1 if check(rows, tools, rules, guide, cases) else 0
 
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
