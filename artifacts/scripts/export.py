@@ -10,6 +10,7 @@ breaking consumers.
 import csv
 import glob
 import json
+import sys
 from pathlib import Path
 
 import yaml
@@ -29,8 +30,24 @@ def write_lf(path: Path, text: str) -> None:
     with path.open("w", encoding="utf-8", newline="\n") as fh:
         fh.write(text)
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from data_sources import volatility_of  # noqa: E402  (same-directory helper)
+
 entries = [yaml.safe_load(Path(p).read_text())
            for p in sorted(glob.glob(str(ROOT / "catalog" / "*.yml")))]
+
+
+def locator(kind, a):
+    """The identifier a responder types into a query bar, per artifact class.
+
+    Every class has its own key, and the fallback chain here missed eventlog
+    when that class was added - which shipped 30 rows to the published CSV with
+    an empty artifact column. Match on the class instead of guessing from the
+    keys present, so a seventh class fails loudly rather than silently.
+    """
+    if kind == "eventlog":
+        return f"{a.get('channel', '')} EID {a.get('event_id', '')}".strip()
+    return a.get("path") or a.get("key") or a.get("indicator") or a.get("name") or ""
 
 write_lf(OUT / "catalog.json", json.dumps(entries, indent=2))
 
@@ -45,12 +62,17 @@ for e in entries:
                 "category": e["category"],
                 "entry_risk": e["risk"],
                 "artifact_class": kind,
-                "artifact": a.get("path") or a.get("key") or a.get("indicator") or a.get("name"),
+                "artifact": locator(kind, a),
                 "os": "|".join(a.get("os", [])) if isinstance(a.get("os"), list) else "",
                 "forensic_value": a.get("forensic_value", ""),
                 "evidence_type": "|".join(a.get("evidence_type", [])),
                 "description": a.get("description", ""),
                 "confidence": a.get("confidence", ""),
+                # Appended, never inserted: docs/api/artifacts.csv is a
+                # published feed and a column that moves breaks every consumer
+                # that reads by position.
+                "volatility": volatility_of(kind, a),
+                "retention": a.get("retention", ""),
             })
     for c in e.get("credentials", []):
         rows.append({
@@ -62,6 +84,8 @@ for e in entries:
             "evidence_type": "credential-access",
             "description": f"{c.get('storage', '')}: {c.get('description', '')}",
             "confidence": c.get("confidence", ""),
+            "volatility": volatility_of("credential", c),
+            "retention": "",
         })
     for m in e.get("mcp", []):
         rows.append({
@@ -72,6 +96,8 @@ for e in entries:
             "evidence_type": "execution|persistence",
             "description": m.get("notes", ""),
             "confidence": "high",
+            "volatility": volatility_of("mcp-config", m),
+            "retention": "",
         })
 
 with (OUT / "artifacts.csv").open("w", newline="", encoding="utf-8") as fh:

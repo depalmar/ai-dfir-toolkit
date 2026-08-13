@@ -176,6 +176,22 @@ def main() -> int:
         for m in no_mcp:
             print(f"[MCP]      {m}")
 
+    # Data source coverage. Every row class, every Sigma logsource category and
+    # every event log channel in the corpus has to map to a defined telemetry
+    # source, and no source may claim coverage the corpus does not supply. This
+    # is a hard gate rather than a report, because it fails the moment somebody
+    # adds a rule in a new logsource category - which is exactly when the
+    # "what do I need to be logging" answer would otherwise go quietly stale.
+    try:
+        from data_sources import audit, coverage, load_sources
+    except ImportError:
+        audit = None
+    if audit:
+        entries = [yaml.safe_load(Path(p).read_text()) for p in files]
+        for problem in audit(coverage(load_sources(), entries)):
+            print(f"[SOURCE] {problem}")
+            failures += 1
+
     unsourced = []
     # Verification age, on the quarterly cadence docs/REVERIFICATION.md sets.
     # last_modified tracks edits and answers the wrong question - a typo fix moves

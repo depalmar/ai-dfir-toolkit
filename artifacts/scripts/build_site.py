@@ -29,6 +29,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import data_sources
 import site_data  # noqa: E402  (same-directory build helper)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -171,6 +172,12 @@ def build_rows(entries):
                     # default. Without this a reader takes the row as evidence
                     # waiting to be collected, when on most hosts it is absent.
                     "requires": a.get("requires", ""),
+                    # Will it still be there when you get to the host. Derived
+                    # from the class and the artifact type rather than authored,
+                    # for the same reason evidence_type is derived above: 507
+                    # hand-set copies of one rule drift, one function does not.
+                    "vol": data_sources.volatility_of(kind, a),
+                    "retention": a.get("retention", ""),
                 })
         for c in (e.get("credentials") or []):
             rows.append({
@@ -187,6 +194,11 @@ def build_rows(entries):
                 "description": " · ".join(x for x in (
                     ": ".join(y for y in (c.get("storage"), c.get("secret_type")) if y),
                     c.get("description", "")) if x),
+                # The file survives reboot. The token inside it may already have
+                # rotated, which is a different question and belongs to the
+                # description rather than to volatility.
+                "vol": data_sources.volatility_of("credential", c),
+                "retention": "",
             })
         for m in (e.get("mcp") or []):
             loc = m.get("config_path", "")
@@ -201,6 +213,8 @@ def build_rows(entries):
                 "evidence": ["execution", "persistence"],
                 "unverified": False,
                 "description": m.get("notes", ""),
+                "vol": data_sources.volatility_of("mcp-config", m),
+                "retention": "",
             })
     seen = {}
     for r in rows:
@@ -519,6 +533,53 @@ th .pick.all{vertical-align:middle}
   background:var(--panel-2);border-radius:8px;padding:10px}
 .badgerow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .evrow{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}
+/* Volatility gets its own palette again, for the reason confidence and forensic
+   value did: it is a third scale, and reusing either ramp would make "live" read
+   as a severity. Cool-to-warm by urgency of collection instead. */
+.badge.vol{border-radius:5px;padding:1px 7px;font-size:11px;border:1px solid}
+.badge.vol i{font-style:normal;opacity:.6;margin-right:5px;font-size:10px;text-transform:uppercase;letter-spacing:.03em}
+.v-live{background:#fdf0ec;border-color:#e9b9a8;color:#8a3c1c}
+.v-rotating{background:#fbf5e6;border-color:#e0cd9a;color:#7a5c15}
+.v-stable{background:#eef3f7;border-color:#b9cbd9;color:#2f5570}
+:root[data-theme=dark] .v-live,html:not([data-theme=light]) .v-live{background:#3a1d12;border-color:#7a4128;color:#f0b193}
+:root[data-theme=dark] .v-rotating,html:not([data-theme=light]) .v-rotating{background:#332a12;border-color:#6d5a24;color:#e6cd8c}
+:root[data-theme=dark] .v-stable,html:not([data-theme=light]) .v-stable{background:#18262f;border-color:#33556b;color:#a8c9dd}
+.volwhy{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.dsrc{margin:10px 0 0;font-size:12px;color:var(--muted)}
+.dsrc b{display:block;margin-bottom:5px;color:var(--ink);font-size:11px;
+  text-transform:uppercase;letter-spacing:.04em}
+.srcjump{display:block;width:100%;text-align:left;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:7px;padding:6px 9px;margin-bottom:5px;
+  color:var(--ink);font-size:12px;cursor:pointer}
+.srcjump:hover{border-color:var(--accent);background:var(--accent-soft-2)}
+/* --- data sources view --- */
+.srcintro{margin:0 0 16px;font-size:13.5px;color:var(--muted);max-width:70ch}
+.vollegend{display:grid;gap:7px;margin-top:12px}
+.vollegend>div{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:start;font-size:12.5px}
+.src{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  padding:16px;margin-bottom:12px}
+.srchead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+  flex-wrap:wrap;margin-bottom:12px}
+.src h3{margin:0;font-size:15px}
+.srcsub{margin-top:3px;font-size:12px;color:var(--muted)}
+.srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.srcgrid h5{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--faint)}
+.srcgrid p{margin:0;font-size:12.5px;line-height:1.55}
+.srcloss p{color:var(--ink)}
+.srcloss h5{color:var(--med)}
+.srcfoot{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:14px;
+  padding-top:12px;border-top:1px solid var(--line-soft)}
+.srcstat{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;
+  padding:3px 11px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.srcstat b{color:var(--ink);font-family:ui-monospace,Menlo,monospace}
+.srcstat:hover{border-color:var(--accent)}
+.srcstat.flat{cursor:default}
+.srcstat.flat:hover{border-color:var(--line)}
+.srcref{font-size:11.5px;color:var(--muted);text-decoration:none;
+  border-bottom:1px dotted var(--line)}
+.srcref:hover{color:var(--accent)}
+@media(max-width:640px){.vollegend>div{grid-template-columns:1fr;gap:3px}}
 .requires{margin:8px 0 0;padding:8px 10px;font-size:12px;color:var(--muted);
   background:var(--alert-bg);border:1px solid var(--alert-line);
   border-left:3px solid var(--med);border-radius:8px}
@@ -831,10 +892,20 @@ const TONE={critical:'b-crit',p1:'b-crit',high:'b-high',p2:'b-high',medium:'b-me
 const STRENGTH={high:'s-high',medium:'s-med',low:'s-low'};
 const TOOLMAP=Object.fromEntries(TOOLS.map(t=>[t.entry_id,t]));
 const ROWMAP=Object.fromEntries(ROWS.map(r=>[r.anchor,r]));
-const GROUPS={cls:'Artifact class',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
-const FIELD={cls:r=>[r.cls],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
+const SRCMAP=Object.fromEntries(SOURCES.map(s=>[s.id,s]));
+const VOL_ORDER=Object.fromEntries(VOL_TIERS.map((v,i)=>[v,i]));
+// class -> the sources that make it visible, so a row can name its own
+// dependencies without the catalog carrying a second copy of the mapping.
+const SOURCES_FOR=(()=>{const m={};
+  for(const s of SOURCES)for(const c of s.covers.classes||[])(m[c]=m[c]||[]).push(s.id);
+  return m})();
+const GROUPS={cls:'Artifact class',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
+const FIELD={cls:r=>[r.cls],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
 const OPTIONS={
   cls:[...new Set(ROWS.map(r=>r.cls))].sort(),
+  // Collection order, not alphabetical: this facet is the one place the page
+  // states which rows stop existing first.
+  vol:VOL_TIERS,
   os:['windows','macos','linux'],
   fv:['high','medium','low'],
   conf:['high','medium','low'],
@@ -857,7 +928,7 @@ const ROPTIONS={
 
 let view='catalog', query='', unvOnly=false, dense=false,
     sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
-const filters={cls:[],os:[],fv:[],conf:[],tool:[]};
+const filters={cls:[],vol:[],os:[],fv:[],conf:[],tool:[]};
 const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
 // 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
 // into this repo. Read the old key once so anyone who saved picks under it
@@ -1052,19 +1123,70 @@ function toolsHTML(){
     </button>`}).join('')+'</div>';
 }
 
+/* ---------- data sources ---------- */
+// The catalog answers "what did this tool leave behind". This view answers the
+// question that comes first: whether any of it will still be there, and what
+// somebody had to switch on before the incident for it to exist at all.
+//
+// Every count below is derived at build time by scripts/data_sources.py, and
+// its audit fails the build if a source claims coverage the corpus does not
+// supply, or if a rule or a row maps to no source. Nothing here is typed twice.
+function sourcesHTML(){
+  const list=[...SOURCES].sort((a,b)=>
+    (VOL_ORDER[a.volatility]-VOL_ORDER[b.volatility])||b.n_rows-a.n_rows);
+  return `<div class="srcintro">
+    <p>Ordered by how fast the evidence disappears, not by how useful it is. A
+    source further down this page is not less important - it is just still going
+    to be there tomorrow.</p>
+    <div class="vollegend">${VOL_TIERS.map(v=>
+      `<div><span class="badge vol v-${v}"><i>volatility</i>${v}</span>
+       <span>${esc(VOL_MEANING[v])}</span></div>`).join('')}</div>
+  </div>`+list.map(s=>`
+    <section class="src" id="src-${esc(s.id)}">
+      <div class="srchead">
+        <div><h3>${esc(s.name)}</h3>
+          <div class="srcsub">${esc(s.kind)} &middot; ${esc(s.default_state)}</div></div>
+        <div class="badgerow"><span class="badge vol v-${esc(s.volatility)}"
+          ><i>volatility</i>${esc(s.volatility)}</span>${confBadge(s.confidence)}</div>
+      </div>
+      <div class="srcgrid">
+        <div><h5>Turn it on</h5><p>${esc(s.enable)}</p></div>
+        <div><h5>Keep it</h5><p>${esc(s.retention)}</p></div>
+        <div class="srcloss"><h5>Without it you cannot answer</h5><p>${esc(s.without_it)}</p></div>
+      </div>
+      <div class="srcfoot">
+        ${s.n_eventlog_rows?`<button class="srcstat" data-cls="eventlog"
+          ><b>${s.n_eventlog_rows}</b> event log rows</button>`:''}
+        ${(s.covers.classes||[]).map(c=>`<button class="srcstat" data-cls="${esc(c)}"
+          ><b>${CLS_COUNT[c]||0}</b> ${esc(c)} rows</button>`).join('')}
+        ${s.n_rules?`<button class="srcstat" data-rules="${esc(s.id)}"
+          ><b>${s.n_rules}</b> detection rule${s.n_rules>1?'s':''}</button>`:''}
+        ${s.n_tools?`<span class="srcstat flat"><b>${s.n_tools}</b> tools affected</span>`:''}
+        ${(s.references||[]).map(r=>`<a class="srcref" href="${esc(r.url)}"
+          target="_blank" rel="noopener">${esc(r.title)} &#8599;</a>`).join('')}
+      </div>
+    </section>`).join('');
+}
+
 /* ---------- plan ---------- */
 function planGroups(){
   const by={};
   for(const a of picks){const r=ROWMAP[a];if(!r)continue;(by[r.entry_id]=by[r.entry_id]||[]).push(r)}
   const groups=Object.entries(by).map(([id,rows])=>({t:TOOLMAP[id],rows}));
   groups.sort((a,b)=>(RANK[a.t.triage]??9)-(RANK[b.t.triage]??9)||a.t.tool.localeCompare(b.t.tool));
-  for(const g of groups)g.rows.sort((a,b)=>(RANK[a.forensic_value]??9)-(RANK[b.forensic_value]??9));
+  // Volatility outranks forensic value inside a tool, which is the whole point
+  // of recording it: a high-value config file is still there after the reboot
+  // that took the process list with it. Value breaks the tie.
+  for(const g of groups)g.rows.sort((a,b)=>
+    (VOL_ORDER[a.vol]??9)-(VOL_ORDER[b.vol]??9)||
+    (RANK[a.forensic_value]??9)-(RANK[b.forensic_value]??9));
   return groups;
 }
 function planHTML(){
   const groups=planGroups();
   const head=`<div class="planhead"><div><h2>Collection plan</h2>
-    <p>Picked artifacts grouped by tool and ordered by triage priority. Work top to bottom.</p></div>
+    <p>Picked artifacts grouped by tool, tools ordered by triage priority and
+    rows within each tool by how fast they disappear. Work top to bottom.</p></div>
     <div class="acts"><button class="btn" id="cpLinks">Copy permalinks</button>
     <button class="btn primary" id="cpList">Copy as triage list</button></div></div>`;
   if(!groups.length)return head+`<div class="plan-empty">Nothing picked yet.
@@ -1114,7 +1236,13 @@ function drawerHTML(r){
       ${CASES_BY_TOOL[r.entry_id].map(c=>
         `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     <div class="dsec"><h4>Collection order</h4>
-      <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}</div>
+      <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}
+        <span class="badge vol v-${esc(r.vol)}" title="Volatility: ${esc(VOL_MEANING[r.vol]||'')}"
+          ><i>volatility</i>${esc(r.vol)}</span></div>
+      <p class="volwhy">${esc(VOL_MEANING[r.vol]||'')}</p>
+      ${r.retention?`<div class="requires"><b>Retention.</b> ${esc(r.retention)} - this window is the tool's own, and it runs whether or not anyone is investigating.</div>`:''}
+      ${(SOURCES_FOR[r.cls]||[]).length?`<div class="dsrc"><b>Depends on</b>
+        ${(SOURCES_FOR[r.cls]).map(id=>`<button class="srcjump" data-src="${esc(id)}">${esc(SRCMAP[id].name)}</button>`).join('')}</div>`:''}
       ${t.guidance?`<p>${esc(t.guidance)}</p>`:''}</div>
     ${t.techniques&&t.techniques.length?`<div class="dsec"><h4>Mapped techniques</h4>
       <div class="tech">${t.techniques.map(x=>
@@ -1149,6 +1277,11 @@ function openDrawer(anchor,fromEl){
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     closeDrawer();view='cases';update();
     const el=document.getElementById('cs-'+b.dataset.cs);
+    if(el)el.scrollIntoView({block:'start'});
+  });
+  $$('#drawer .srcjump').forEach(b=>b.onclick=()=>{
+    closeDrawer();view='sources';update();
+    const el=document.getElementById('src-'+b.dataset.src);
     if(el)el.scrollIntoView({block:'start'});
   });
   wireTechChips();
@@ -1200,7 +1333,12 @@ function ruleMatches(r,skip){
     r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+r.logsource).toLowerCase();
   return hay.includes(query);
 }
-const filteredRules=()=>RULES.filter(r=>ruleMatches(r,null));
+// A data source covers a named set of rule files, which is not a facet and not
+// a substring - the search box could only ever match one of the five. This is
+// the same shape as `filters`, just keyed by filename, and it clears with them.
+let ruleSet=null;
+const filteredRules=()=>RULES.filter(r=>
+  (!ruleSet||ruleSet.has(r.file))&&ruleMatches(r,null));
 
 function ruleRailHTML(){
   return Object.keys(RGROUPS).map(g=>{
@@ -1282,7 +1420,8 @@ function wireTechChips(){
     view='rules'; update();
   });
 }
-function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];query='';$('#q').value=''}
+function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
+  ruleSet=null;query='';$('#q').value=''}
 
 /* ---------- mappings ---------- */
 function indexHTML(title,sub,items,key){
@@ -1419,9 +1558,16 @@ function renderMain(){
   if(view==='rules'){
     const rules=filteredRules();
     $('#count').textContent=`${rules.length} of ${RULES.length} shown`;
-    $('#chips').innerHTML=Object.keys(rfilters).flatMap(g=>rfilters[g].map(v=>
+    $('#chips').innerHTML=(ruleSet?`<button class="chip" data-rset="1"
+      >${ruleSet.size} rule${ruleSet.size>1?'s':''} for one data source <s>&#10005;</s></button>`:'')
+      +Object.keys(rfilters).flatMap(g=>rfilters[g].map(v=>
       `<button class="chip" data-rg="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`)).join('');
+    // One handler for every chip in this bar. The data-source chip is not a
+    // facet, so it has no rfilters group - wiring it separately meant this
+    // loop reassigned .onclick over the top of it and then threw on the
+    // undefined group.
     $$('#chips .chip').forEach(c=>c.onclick=()=>{
+      if(c.dataset.rset){ruleSet=null;update();return}
       const a=rfilters[c.dataset.rg],i=a.indexOf(c.dataset.v);
       if(i>=0)a.splice(i,1);
       update();
@@ -1440,6 +1586,20 @@ function renderMain(){
     $$('#main .irow').forEach(el=>{
       el.onclick=()=>go(el);
       el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(el)}};
+    });
+    renderTabs();renderToast();return;
+  }
+  if(view==='sources'){
+    main.innerHTML=sourcesHTML();
+    // Every stat on a source card is a way into the rows or the rules it
+    // covers, so the page reads as one catalog rather than as a second one.
+    $$('#main .srcstat[data-cls]').forEach(b=>b.onclick=()=>{
+      resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();
+    });
+    $$('#main .srcstat[data-rules]').forEach(b=>b.onclick=()=>{
+      resetRuleFilters();view='rules';
+      ruleSet=new Set(SRCMAP[b.dataset.rules].rules);
+      update();
     });
     renderTabs();renderToast();return;
   }
@@ -1543,6 +1703,9 @@ function applyHash(){
     if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
     return;
   }
+  if(h==='sources'){view='sources';update();return}
+  if(h.startsWith('src-')){view='sources';update();
+    const el=document.getElementById(h);if(el)el.scrollIntoView();return}
   if(h==='guide'){view='guide';update();return}
   if(h.startsWith('g-')){view='guide';update();
     const el=document.getElementById(h);if(el)el.scrollIntoView();return}
@@ -1700,7 +1863,7 @@ def check_cases(cases, tools, rules=()):
     return problems
 
 
-def check(rows, tools, rules, guide, cases=()):
+def check(rows, tools, rules, guide, cases=(), source_problems=()):
     """Assert the invariants the page depends on. Returns a problem count.
 
     Runs on every pull request, while the page itself is only built on push to
@@ -1711,7 +1874,10 @@ def check(rows, tools, rules, guide, cases=()):
     stored against them, so a duplicate or a fragment-unsafe character silently
     sends a reader to the wrong row.
     """
-    problems = []
+    # Passed in rather than computed here so the printed count is the whole
+    # count. A tail of extra failures under a "0 problem(s)" line is how a gate
+    # gets read as green.
+    problems = [f"[SOURCE]  {p}" for p in source_problems]
     ids = {t["entry_id"] for t in tools}
 
     seen = {}
@@ -1727,6 +1893,14 @@ def check(rows, tools, rules, guide, cases=()):
             problems.append(f"[ORPHAN]  {r['anchor']} has no tool entry")
         if re.search(r"[^A-Za-z0-9/_.\-]", r["anchor"]):
             problems.append(f"[SLUG]    {r['anchor']} is not URL-fragment safe")
+
+    # Same failure mode as the OS facet below, one facet along: a row with a
+    # volatility the facet does not offer is filtered out of every view of the
+    # page and looks like it was never catalogued.
+    for r in rows:
+        if r.get("vol") not in data_sources.VOLATILITY_ORDER:
+            problems.append(f"[VOL]     {r['anchor']} volatility "
+                            f"{r.get('vol')!r} is not a facet option")
 
     # A row with no OS matches no OS facet, so it vanishes the moment a reader
     # clicks one. That is the worst failure mode this page has - not an error
@@ -1803,8 +1977,16 @@ def main():
     cases = site_data.load_case_studies()
     guide = site_data.load_guide()
 
+    # Coverage is computed, never authored. audit() is also a hard gate in
+    # validate.py; running it here too means a stale source table cannot reach
+    # the deployed page even if somebody skips the validator.
+    cov = data_sources.coverage(data_sources.load_sources(), entries)
+    sources = cov["sources"]
+    cls_count = cov["per_class"]
+
     if "--check" in sys.argv:
-        return 1 if check(rows, tools, rules, guide, cases) else 0
+        return 1 if check(rows, tools, rules, guide, cases,
+                          data_sources.audit(cov)) else 0
 
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
@@ -1858,6 +2040,7 @@ def main():
     <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
     <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
+    <button role="tab" data-v="sources">Data sources <span class="n">{len(sources)}</span></button>
     <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n">0</span></button>
     <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
@@ -1920,6 +2103,10 @@ const RULES={json.dumps(rules, separators=(",", ":"))};
 const ATLAS_INDEX={json.dumps(atlas_index, separators=(",", ":"))};
 const OWASP_INDEX={json.dumps(owasp_index, separators=(",", ":"))};
 const CASES={json.dumps(cases, separators=(",", ":"))};
+const SOURCES={json.dumps(sources, separators=(",", ":"))};
+const VOL_MEANING={json.dumps(data_sources.VOLATILITY_MEANING, separators=(",", ":"))};
+const VOL_TIERS={json.dumps(data_sources.VOLATILITY_ORDER, separators=(",", ":"))};
+const CLS_COUNT={json.dumps(cls_count, separators=(",", ":"))};
 const GUIDE={json.dumps(guide, separators=(",", ":"))};
 {JS}
 </script>

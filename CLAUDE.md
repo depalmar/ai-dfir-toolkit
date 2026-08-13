@@ -29,6 +29,7 @@ python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
 python scripts/export_kape.py                 # KAPE targets (--check validates, writes nothing)
 python scripts/export_velociraptor.py         # Velociraptor artifacts (--check likewise)
 python scripts/normalize_notes.py             # note style (--check reports, writes nothing)
+python scripts/data_sources.py                # telemetry coverage (--check audits only)
 python scripts/verify_host.py                 # check catalogued paths on THIS machine
 python ../collectors/gen_credential_targets.py     # collector targets, also CI-gated
 python scripts/build_site.py --check          # site data contract, writes nothing
@@ -96,6 +97,23 @@ would have set the convention by accident - the same way `artifact_type` reached
 52 ad-hoc values before it was locked down. `eventlogArtifact` is now defined
 like the other five. If you add a sixth class, define it before you populate it.
 
+**Volatility and retention are derived, not authored.** `data_sources.py` owns
+both. Volatility falls out of the row class and the artifact type, so 507 rows
+cannot drift apart; the one authored input is `retention`, and a disk row that
+carries one is promoted to `rotating` whatever its `artifact_type` says. Only
+write `retention` where the tool documents a purge window - exactly one row
+does. An absent retention means "until uninstall", which is honest; a guessed
+one tells a responder they have longer than they do.
+
+`docs/data-sources.yml` holds only the prose a machine cannot derive: how you
+switch a source on, what it costs to keep, what you cannot answer without it.
+Every count on the Data sources tab is computed at build time, and `audit()`
+fails **both** directions - a row class, Sigma logsource category or event log
+channel that maps to no source, and a source claiming coverage the corpus does
+not supply. The second half matters as much as the first: an over-claiming
+source makes an estate look better instrumented than it is. `validate.py` and
+`build_site.py --check` both run it.
+
 **Controlled vocabularies.** `artifact_type`, `evidence_type`, `secret_type`,
 and `storage` are closed enums in `schema/artifact.schema.json`. They exist
 because the published CSV feed is meant to be filtered, and a field where `log`
@@ -154,7 +172,9 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 49 entries, 313 artifacts, 154 credential locations, 30 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 29 KAPE targets, 37
-Velociraptor artifacts. Validation clean.
+Velociraptor artifacts, 9 telemetry sources. Validation clean.
+
+Volatility across the 507 site rows: 101 live, 43 rotating, 363 stable.
 
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
@@ -183,6 +203,10 @@ Three things worth not relearning:
 
 - `docs/api/artifacts.csv` is a published feed. Never change an existing column
   in place; add new ones. Display-only reshaping belongs in the site build.
+  `volatility` and `retention` were appended that way. The exporter's locator
+  fallback (`path or key or indicator or name`) had no branch for `eventlog` and
+  shipped 30 rows with an empty `artifact` column - it switches on the class
+  now, so a seventh class fails loudly instead of quietly.
 - Row **anchors**, not row indexes, are what picks and permalinks persist
   against. `--check` enforces that they are unique and URL-safe.
 - "What it proves" is derived for registry, network and process rows, because

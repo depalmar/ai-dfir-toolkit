@@ -170,6 +170,10 @@ def each_note(entry):
     for arts in (entry.get("artifacts") or {}).values():
         for a in arts or []:
             yield a, "description"
+            # retention renders in the same column as a description and drifts
+            # the same way. "Purged after 14 days" and "PURGED AFTER 14 DAYS."
+            # would both be accepted if this were left out.
+            yield a, "retention"
     for c in entry.get("credentials") or []:
         yield c, "description"
     for m in entry.get("mcp") or []:
@@ -180,7 +184,7 @@ def each_note(entry):
 # Indented only. The entry-level `description:` sits at column 0 and is prose
 # about the tool, not a caption on a row - it keeps its full stop and is out of
 # scope here.
-DESC = re.compile(r"^(\s+)(description|notes):(\s*)(.*)$")
+DESC = re.compile(r"^(\s+)(description|notes|retention):(\s*)(.*)$")
 PROSE_KEY = re.compile(r"^(abuse_potential):(\s*)(.*)$")
 BLOCK = re.compile(r"^[|>][+-]?\d*$")
 

@@ -37,6 +37,11 @@ artifacts:
       forensic_value: high
       evidence_type: [configuration, execution]
       install_method: npm -g example
+      # retention: Purged after 14 days
+      #   Only when the tool documents a purge or rotation window. Omitting it
+      #   means "until uninstall", which is the honest default; guessing one
+      #   tells a responder they have longer than they do. Where it is present
+      #   the site marks the row volatile and sorts it up the collection order.
       confidence: high
   registry:
     - key: HKCU\Software\Microsoft\Windows\CurrentVersion\Run

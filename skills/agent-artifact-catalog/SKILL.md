@@ -174,6 +174,34 @@ Two rules when writing one:
   auditing is enabled. A row that omits this reads as though the evidence is
   always waiting to be collected, and on most hosts it is not there at all.
 
+### `retention`: only when the tool documents it
+
+A disk row's default lifetime is "until somebody uninstalls the tool", and that
+is what an omitted `retention` means. Fill it in only where the vendor documents
+a purge or rotation window - one row in the whole catalog does, and a guessed
+second one would tell a responder they have longer than they do. Where it is
+present the site promotes the row to `rotating` volatility and sorts it up the
+collection plan, so the field changes behaviour rather than just reading well.
+
+Volatility itself is never authored. It is derived from the row class and the
+artifact type by `scripts/data_sources.py`, for the same reason `evidence_type`
+is derived for the classes that do not declare it: one function cannot drift,
+507 hand-set copies of one rule will.
+
+## Data sources
+
+`docs/data-sources.yml` records what somebody had to switch on **before** the
+incident for an artifact class or a Sigma rule to have produced anything. Add a
+source there when you add a rule in a logsource category no existing source
+covers - `validate.py` fails until one does, and it fails the other way too if a
+source claims coverage nothing in the corpus supplies.
+
+Write only the prose a machine cannot derive: how to enable it, what retention
+it needs, and the investigative question that goes unanswerable without it. Every
+count is computed. `enable`, `retention`, `default_state`, `without_it` and at
+least one reference are all required, on the same reasoning as a catalog entry -
+an unsourced claim about somebody's estate is a guess.
+
 ## MCP entries need extra care
 
 An MCP config is simultaneously a persistence mechanism and an execution

@@ -60,21 +60,19 @@ jobs:
       - name: Validate every Sigma rule parses and converts
         run: |
           failed=0
-          # Not every YAML file in the repo is a Sigma rule. The artifact catalog
-          # stores entries, case studies, and its schema template as YAML data;
-          # those are validated by scripts/validate.py in the artifact-catalog
-          # workflow. Sigma rules shipped with the catalog live in
-          # artifacts/detections/sigma/ and stay in scope here.
-          # collectors/ and playbooks/ hold data files, not detection content -
-          # a target registry and CACAO playbooks are validated by their own
-          # checks in the artifact-catalog workflow.
-          for f in $(find . -name '*.yml' \
-                       -not -path './.github/*' \
-                       -not -path './artifacts/catalog/*' \
-                       -not -path './artifacts/case-studies/*' \
-                       -not -path './artifacts/schema/*' \
-                       -not -path './collectors/*' \
-                       -not -path './playbooks/*'); do
+          # Sigma rules live in the numbered attack-class directories and in
+          # artifacts/detections/. Everything else in the repo that happens to be
+          # YAML - catalog entries, case studies, the schema template, the
+          # collector registry, CACAO playbooks, the data-source table - is data,
+          # validated by scripts/validate.py in the artifact-catalog workflow.
+          #
+          # This was a deny-list of those data directories until a new YAML data
+          # file landed in one that was not on it and got parsed as a rule. An
+          # allow-list cannot fail that way: adding a data file anywhere is
+          # invisible here, and adding a rule directory is a deliberate edit.
+          # scripts/validate_mappings.py and scripts/data_sources.py both
+          # discover rules the same way.
+          for f in $(find ./0*-* ./artifacts/detections -name '*.yml'); do
             # Correlation rules reference sibling rules by name, so they cannot
             # resolve one file at a time, and lucene cannot express them at all.
             # They are validated as collections in the next step instead.

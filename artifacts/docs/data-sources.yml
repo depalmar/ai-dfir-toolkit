@@ -1,0 +1,293 @@
+# Telemetry sources the catalog depends on.
+#
+# The catalog answers "what did this tool leave on the host." This file answers
+# the question that comes before it: "will any of that still be there when I go
+# looking, and what did I have to switch on beforehand."
+#
+# Only the prose lives here - what a source is, how you enable it, what it costs
+# to keep, and what you cannot answer without it. Every number that describes
+# coverage (how many rows, how many rules, which tools) is DERIVED from the
+# catalog and the rule corpus by scripts/data_sources.py, and the audit in that
+# script fails if a source claims coverage that does not exist or if a row or a
+# rule maps to no source at all. A hand-maintained coverage table drifts out of
+# true the first time somebody adds a rule; this one cannot.
+#
+# Fields
+#   id             stable slug, referenced by the site and by the audit
+#   name           display name
+#   kind           eventlog | file | live | network - how you get at it
+#   enable         what has to be switched on. "" means nothing does.
+#   default_state  what a stock host does before anyone configures it
+#   retention      how long the source holds evidence, and what to raise it to
+#   volatility     live | rotating | stable - see scripts/data_sources.py
+#   without_it     the investigative question that becomes unanswerable
+#   covers:
+#     classes      catalog row classes this source makes visible
+#     sigma        Sigma logsource categories this source satisfies
+#     eventlog     [channel, event_id] pairs, matched against catalog rows
+#   confidence     provenance of the facts in `enable` and `retention`
+#   references     where those facts came from
+
+sources:
+  - id: sysmon-process-creation
+    name: Sysmon Event ID 1 - process creation
+    kind: eventlog
+    enable: >-
+      Install Sysmon and load a configuration that does not exclude the image.
+      Most published baseline configurations filter aggressively on ProcessCreate
+      to control volume, and several exclude common developer binaries by name -
+      check that node.exe, python.exe and the agent binaries in this catalog are
+      not among them before relying on this source.
+    default_state: Absent. Sysmon is not installed on a stock Windows host.
+    retention: >-
+      The channel defaults to 64 MB, which on a workstation running a coding
+      agent is days rather than months - these tools spawn a child process per
+      tool call. Raise the channel or forward the events off the host; the
+      default assumes a machine that starts a few dozen processes an hour.
+    volatility: rotating
+    without_it: >-
+      Whether the agent ran at all, and what it spawned. Disk artifacts prove a
+      tool is installed; only a process creation record proves it executed, and
+      the child processes of that record are the only evidence of what the agent
+      actually did with its shell access.
+    covers:
+      classes:
+        - process
+      sigma:
+        - process_creation
+      eventlog:
+        - ["Microsoft-Windows-Sysmon/Operational", "1"]
+    confidence: medium
+    references:
+      - title: Sysmon - Sysinternals
+        url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+        accessed: "2026-08-13"
+      - title: "Windows Event Logging and Forwarding (ACSC)"
+        url: https://www.cyber.gov.au/sites/default/files/2023-03/PROTECT%20-%20Windows%20Event%20Logging%20and%20Forwarding%20(October%202021).pdf
+        accessed: "2026-08-13"
+
+  - id: security-4688
+    name: Security 4688 - process creation, with command line
+    kind: eventlog
+    enable: >-
+      Two settings, not one. Audit Process Creation under Advanced Audit
+      Configuration - Detailed Tracking turns the event on; Include command line
+      in process creation events, under Administrative Templates - System - Audit
+      Process Creation, is what puts the command line in it. Enabling only the
+      first produces events that cannot distinguish one agent from another.
+    default_state: >-
+      Not configured. The event is off, and the Process Command Line field is
+      empty even where the event has been switched on separately.
+    retention: >-
+      The Security log defaults to 20 MB and cannot be configured below it.
+      Process creation is high volume and shares that channel with
+      authentication, so 4688 is usually the first thing to age out.
+    volatility: rotating
+    without_it: >-
+      The fallback when Sysmon is not deployed. Roughly half this catalog runs
+      under a shared interpreter - node or python - so without the command line
+      one agent process is indistinguishable from another, and from any other
+      program on the host that happens to use the same runtime.
+    covers:
+      classes:
+        - process
+      sigma:
+        - process_creation
+      eventlog: []
+    confidence: high
+    references:
+      - title: Command line process auditing
+        url: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/component-updates/command-line-process-auditing
+        accessed: "2026-08-13"
+      - title: "Event Log Service: Security maximum log size forces a minimum of 20480 KB"
+        url: https://learn.microsoft.com/en-us/archive/blogs/asiasupp/event-log-service-security-maximum-log-size-kb-forces-a-minimum-size-of-20480-kb
+        accessed: "2026-08-13"
+
+  - id: sysmon-network
+    name: Sysmon Event ID 3 - network connection
+    kind: eventlog
+    enable: >-
+      Sysmon with NetworkConnect enabled. It is off in some baseline
+      configurations because it is the highest-volume event Sysmon produces.
+    default_state: Absent.
+    retention: >-
+      Shares the Sysmon channel, and outweighs every other event in it. Sizing
+      the channel for process creation alone will not survive NetworkConnect
+      being switched on.
+    volatility: rotating
+    without_it: >-
+      Which model endpoint the agent actually talked to. The catalog records the
+      default endpoints, but the interesting finding is a local runtime pointed
+      at somewhere other than its default, and that is a connection record rather
+      than a file.
+    covers:
+      classes:
+        - network
+      sigma:
+        - network_connection
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Sysmon - Sysinternals
+        url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+        accessed: "2026-08-13"
+
+  - id: sysmon-file-create
+    name: Sysmon Event ID 11 - file create
+    kind: eventlog
+    enable: Sysmon with FileCreate rules covering the agent data directories.
+    default_state: Absent.
+    retention: Shares the Sysmon channel.
+    volatility: rotating
+    without_it: >-
+      When a config or a session transcript first appeared. The file is still on
+      disk either way, but its creation time is the only thing that dates the
+      config change, and a rewritten file carries the time of the rewrite.
+    covers:
+      classes: []
+      sigma:
+        - file_event
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Sysmon - Sysinternals
+        url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+        accessed: "2026-08-13"
+
+  - id: sysmon-registry
+    name: Sysmon Event IDs 12-14 - registry
+    kind: eventlog
+    enable: Sysmon with RegistryEvent rules covering the keys in this catalog.
+    default_state: Absent.
+    retention: Shares the Sysmon channel.
+    volatility: rotating
+    without_it: >-
+      When a Run key or a protocol handler was written. The key itself survives,
+      so this source buys the timeline rather than the fact.
+    covers:
+      classes:
+        - registry
+      sigma:
+        - registry_set
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Sysmon - Sysinternals
+        url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+        accessed: "2026-08-13"
+
+  - id: file-collection
+    name: Host file collection
+    kind: file
+    enable: >-
+      Nothing on the host. This is an acquisition capability rather than a
+      logging one - KAPE targets and Velociraptor artifacts for every path in
+      this catalog are generated under docs/api/, and most EDR platforms can
+      fetch a named file.
+    default_state: >-
+      Available on any host you can reach. The constraint is reaching it before
+      the tool is uninstalled, not switching anything on.
+    retention: >-
+      Until somebody uninstalls the tool or clears its data directory, with the
+      exception of the rows that carry an explicit retention window - those are
+      flagged as rotating in the catalog and are the ones to collect first.
+    volatility: stable
+    without_it: >-
+      Almost everything. This is the source the catalog is mostly about: configs,
+      credentials, MCP definitions, session transcripts, and the record of what
+      the agent was authorised to run.
+    covers:
+      classes:
+        - disk
+        - credential
+        - mcp-config
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: "ai-dfir-toolkit: generated KAPE targets and Velociraptor artifacts"
+        url: https://github.com/depalmar/ai-dfir-toolkit/tree/main/artifacts/docs/api
+        accessed: "2026-08-13"
+
+  - id: file-access-telemetry
+    name: File read telemetry on credential paths
+    kind: file
+    enable: >-
+      EDR file-access events, or a Windows SACL on the credential paths with
+      Audit Object Access enabled. Neither is on by default, and the SACL route
+      needs the audit entry applied per path.
+    default_state: Absent.
+    retention: >-
+      Wherever the EDR keeps it, which is usually the shortest retention in the
+      estate. Object access auditing lands in the Security log and competes with
+      everything else there.
+    volatility: rotating
+    without_it: >-
+      Whether anything other than the owning agent opened the token. This
+      catalog lists 154 plaintext credential locations; without read telemetry
+      the only available answer to "was it taken" is "assume yes and rotate",
+      which is the answer most incidents end on.
+    covers:
+      classes: []
+      sigma:
+        - file_access
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Apply a basic audit policy on a file or folder
+        url: https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/apply-a-basic-audit-policy-on-a-file-or-folder
+        accessed: "2026-08-13"
+
+  - id: inference-api-log
+    name: Local inference API access log
+    kind: network
+    enable: >-
+      Per runtime. Several of the local servers in this catalog log requests to
+      stdout or to a file only when started at a raised verbosity, and a runtime
+      launched from a desktop UI usually is not.
+    default_state: Varies by tool, and is off more often than it is on.
+    retention: >-
+      Whatever the process was writing to, which for a foreground server is
+      often a terminal buffer that does not survive the window closing.
+    volatility: rotating
+    without_it: >-
+      What was asked of a locally hosted model. An unauthenticated inference
+      endpoint bound to a routable address is in this catalog as a network row;
+      the access log is the only thing that says whether anyone used it.
+    covers:
+      classes: []
+      sigma:
+        - webserver
+      eventlog: []
+    confidence: medium
+    references:
+      - title: "ai-dfir-toolkit: local inference runtime entries"
+        url: https://github.com/depalmar/ai-dfir-toolkit/tree/main/artifacts/catalog
+        accessed: "2026-08-13"
+
+  - id: live-response
+    name: Live response - running processes and open sockets
+    kind: live
+    enable: >-
+      Nothing, but it has to happen while the host is still running. A process
+      list and a socket table taken during triage, before isolation reboots the
+      machine.
+    default_state: Available until the process exits or the host reboots.
+    retention: >-
+      None. This is the source with no retention at all - it is a snapshot, and
+      the only copy is the one you took.
+    volatility: live
+    without_it: >-
+      Which agents and which MCP servers were running at the time, and what they
+      were connected to. Every other source answers this in the past tense.
+    covers:
+      classes:
+        - process
+        - network
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: "RFC 3227: Guidelines for Evidence Collection and Archiving"
+        url: https://www.rfc-editor.org/rfc/rfc3227
+        accessed: "2026-08-13"
