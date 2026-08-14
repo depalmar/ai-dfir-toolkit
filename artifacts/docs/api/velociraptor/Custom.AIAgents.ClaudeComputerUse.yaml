@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.anthropic/api_key', '/Users/*/.aws', '/Users/*/.config/gcloud/application_default_credentials.json']
+      LET Globs = ['/Users/*/.anthropic/system_prompt', '/Users/*/.anthropic/error_*.md', '/Users/*/.anthropic/api_key', '/Users/*/.aws', '/Users/*/.config/gcloud/application_default_credentials.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.anthropic/api_key', '/home/*/.aws', '/home/*/.config/gcloud/application_default_credentials.json']
+      LET Globs = ['/home/*/.anthropic/system_prompt', '/home/*/.anthropic/error_*.md', '/home/*/.anthropic/api_key', '/home/*/.aws', '/home/*/.config/gcloud/application_default_credentials.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

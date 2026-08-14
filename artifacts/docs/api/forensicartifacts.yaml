@@ -271,6 +271,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.anthropic/api_key'
+    - '%%users.homedir%%/.anthropic/system_prompt'
     - '%%users.homedir%%/.aws'
     - '%%users.homedir%%/.config/gcloud/application_default_credentials.json'
     separator: /
@@ -280,6 +281,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.anthropic/api_key'
+    - '%%users.homedir%%/.anthropic/system_prompt'
     - '%%users.homedir%%/.aws'
     - '%%users.homedir%%/.config/gcloud/application_default_credentials.json'
     separator: /

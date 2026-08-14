@@ -662,6 +662,84 @@ Binaries, `~/.local/share/amazon-q/`, the qlog directory and the `/tmp` download
 all removed and confirmed absent. `.bashrc`, `.zshrc` and `.profile` were checked
 before and after and were never modified.
 
+## 2026-08-14 (ninth pass) - AIRT-0033, the listener rows the entry never had
+
+`capabilities.local_listener: true` with **no listener rows in the network
+block**. The entry declared the property and then failed to say what listens,
+which is the one thing that property exists to answer. Four listeners are
+published by every documented `docker run`, and all four were absent:
+
+| Port | What | Auth | Risk |
+|---|---|---|---|
+| 5900/TCP | x11vnc on the desktop the agent drives | **none** - `-nopw` | critical |
+| 6080/TCP | noVNC proxy to that session | none | critical |
+| 8080/TCP | static-content HTTP server | none | medium |
+| 8501/TCP | Streamlit control surface | none | high |
+
+The 5900 row is the one that matters: `x11vnc -display $DISPLAY -forever -shared
+-wait 50 -rfbport 5900 -nopw`, quoted verbatim from `x11vnc_startup.sh`. That is
+an unauthenticated VNC server on the desktop this agent controls, with
+`-forever -shared` allowing concurrent viewers. Anyone who reaches the port sees
+and drives the same session the agent does.
+
+8080 is the one a sweep misses. `http_server.py` sets `address_family =
+socket.AF_INET6` and `server_address = ("::", 8080)`, so it answers on IPv6 and,
+on a dual-stack host, IPv4 as well - a check that looks for `0.0.0.0` bindings
+does not see it. Recorded in `default_bind` rather than left implicit.
+
+### The egress row was scoped without saying so
+
+`api.anthropic.com` was the entry's only network row. `loop.py` branches on
+`APIProvider.ANTHROPIC`, `APIProvider.BEDROCK` and `APIProvider.VERTEX`, and on
+the Bedrock and Vertex paths there is no traffic to that host at all. Both are
+first-class documented recipes. The row now says what it covers; a detection
+keyed on it alone sees one of three supported configurations.
+
+The concrete Bedrock and Vertex endpoint hostnames are **not** added. The source
+confirms the provider branching and the environment selectors, not the
+destination hostnames, and inventing them is how a responder gets a rule that
+never fires. Left as follow-up.
+
+### Three disk rows and a credential
+
+`~/.anthropic/system_prompt` records what the operator told the agent to do and
+is bind-mounted from the host, so it outlives the container.
+`~/.anthropic/error_*.md` is globbed rather than matched on an integer epoch,
+because `save_to_storage(f"error_{datetime.now().timestamp()}.md", ...)` yields a
+float and the real filename carries a fractional part.
+`/tmp/outputs/screenshot_<uuid4hex>.png` is the highest-value artifact the tool
+produces and is **not** bind-mounted - carried as `retention`, because capturing
+it means capturing the running container or nothing.
+
+`GOOGLE_APPLICATION_CREDENTIALS` joins the credentials block. It names an
+arbitrary service-account key file at an operator-chosen path, so a sweep looking
+only for `~/.config/gcloud/application_default_credentials.json` misses it.
+
+### Two normalizer corrections, found by the gate
+
+`normalize_notes.py` wanted to write "Unauthenticated **vnc**" - the CWD failure
+the file's own comments warn about. `VNC` is now on the acronym allowlist, which
+is what those comments instruct when a new tool speaks a new acronym.
+
+It also wanted "**Streamlit**.py". `SENTENCE` captures only `[a-z][a-z'-]*`, so
+in "...prompt. streamlit.py persists..." the match stops at the dot and the
+extension never reaches the identifier test. `streamlit` joins `LOWERCASE_NAMES`
+alongside `node` and `docker`. The same pattern with `computer.py` was fixed by
+rewriting the sentence instead - "computer" is an ordinary English word and
+suppressing its capitalisation everywhere to protect one filename is the wrong
+trade.
+
+Left alone deliberately: the normalizer de-shouted `ANTHROPIC / BEDROCK / VERTEX`
+to lowercase. Those are `StrEnum` members, not acronyms, so they are written
+`APIProvider.ANTHROPIC` and friends - dotted, which is both correct Python and
+carries the structural marker the identifier test looks for.
+
+### Not applied
+
+The five AIRT-0007 Devin rows in the research file stay out. That entry is
+blocked on the AIRT-0007 / AIRT-0006 scoping decision, and the handover is
+explicit that no rows go into either until it is made.
+
 | Scope | Field | Was | Now | Basis |
 |---|---|---|---|---|
 | `AIRT-0008` | MCP config set | three files | **four** | The catalog carried `~/.aws/amazonq/mcp.json`, `.amazonq/mcp.json` and `~/.aws/amazonq/default.json`, and missed `<repo>/.amazonq/default.json`. That is the current-format workspace file, and the vendor states "Q Developer gives precedence to workspace level configurations" - so the missing file is also the winning file. |

@@ -67,6 +67,10 @@ ACRONYMS = {
     # that speaks a new acronym means adding the acronym, or the normalizer
     # quietly writes "wsl".
     "URL", "UUID", "VM", "VPN", "VS", "WAL", "XML", "YAML", "YOLO", "ZIP",
+    # VNC arrived with the AIRT-0033 listener rows, which are the first notes in
+    # the corpus to name a remote-desktop protocol. Without it the normalizer
+    # wrote "Unauthenticated vnc", which is the CWD failure again.
+    "VNC",
 }
 
 # Shouted proper nouns take title case, not lowercase.
@@ -85,6 +89,12 @@ LOWERCASE_NAMES = {
     "jq", "macOS", "iOS", "iPadOS", "watchOS", "tvOS", "systemd", "launchd",
     "journalctl", "sudo", "bash", "zsh", "sh", "cmd", "powershell", "node",
     "python", "python3", "docker", "kubectl", "ssh", "scp", "rsync",
+    # streamlit belongs here for the same reason node and docker do, but it also
+    # covers a case the identifier test cannot reach: SENTENCE captures only
+    # [a-z][a-z'-]*, so in "...prompt. streamlit.py persists..." the match stops
+    # at the dot and the extension never reaches IDENTIFIER. The word looked like
+    # prose and was sentence-cased into "Streamlit.py".
+    "streamlit",
 }
 
 WORD = re.compile(r"[A-Za-z][A-Za-z'-]*")

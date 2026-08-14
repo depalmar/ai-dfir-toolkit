@@ -1764,6 +1764,28 @@ targets:
     paths:
       - "~/.lmstudio/settings.json"
     notes: "config-file, forensic_value high, catalog confidence low."
+  - id: art_airt_0033_anthropic_system_prompt
+    name: "Claude Computer Use artifact (AIRT-0033)"
+    repo_cat: "art"
+    cosai: []
+    os: [docker, container, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.anthropic/system_prompt"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0033_tmp_outputs_screenshot_uuid4hex_png
+    name: "Claude Computer Use artifact (AIRT-0033)"
+    repo_cat: "art"
+    cosai: []
+    os: [docker, container]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/tmp/outputs/screenshot_<uuid4hex>.png"
+    notes: "session-artifact, forensic_value high, catalog confidence high."
   - id: art_airt_0036_codex_config_toml
     name: "OpenAI Codex CLI artifact (AIRT-0036)"
     repo_cat: "art"
