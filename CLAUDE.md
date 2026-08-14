@@ -311,15 +311,60 @@ Three things worth not relearning:
 
 ## What is next, in priority order
 
-1. **Verify the medium-confidence entries** against real installs. Note this
-   buys row-level honesty rather than entry upgrades: most medium rows sit inside
-   entries already rated `high`, so expect few confidence changes.
-2. **Wave 3 tools** — see `artifacts/BACKLOG.md`. Prioritise the ones that open
-   a listener or store plaintext credentials (vLLM, Warp, Letta, Docker Model
-   Runner), because those produce findings rather than inventory.
-3. **Quarterly re-verification.** Paths change between tool releases. A catalog
+For counts, run `python artifacts/scripts/verification_worklist.py --summary`.
+Numbers are not written down here on purpose - this section and issue #8 both
+carried hardcoded totals that had silently drifted before anyone noticed.
+
+**Two decisions are blocked on a human, not on effort.** Neither should be
+resolved by whoever picks this up next without asking.
+
+1. **AIRT-0007 Devin now overlaps AIRT-0006 Windsurf.** Cognition rebranded
+   Windsurf's desktop app as Devin Desktop and `docs.windsurf.com` redirects to
+   `docs.devin.ai`, so the two entries describe partly the same binary. Entry IDs
+   are permanent, so how the two are split is a scoping call. Do not add rows to
+   either until it is made. AIRT-0007 is the last never-verified entry and this
+   is why.
+2. **AIRT-0008 has vendor documentation contradicting vendor source.** The
+   troubleshooting page gives the Windows CLI log directory as `%TEMP%\qlog\`;
+   the vendor's own `crates/chat-cli/src/util/paths.rs` builds
+   `%TEMP%\amazon-q\logs` on Windows and uses `qlog` only in the unix branch.
+   Both are vendor sources. Settle it on a live host - committing to either on
+   documentation alone is how a responder collects nothing.
+
+**Then, in order of value:**
+
+3. **Apply the rest of `docs/RESEARCH-2026-08-14.md`.** Roughly thirty candidate
+   rows survived adversarial verification and were deliberately not committed,
+   mostly for AIRT-0008, AIRT-0033 and AIRT-0018. Each carries its sourcing label
+   and the URL it came from. Treat `inferred` rows as unverified regardless of
+   how plausible they read. Note that the Cursor macOS target has research but
+   **no** adversarial pass - its verifier died mid-run - so it is single-source.
+4. **The decisive MSIX experiment.** Install Claude Desktop's MSIX on a Windows
+   host with **no** pre-existing `%APPDATA%\Claude`, launch it once, and observe
+   where `claude_desktop_config.json` is created. That settles whether the
+   container copy wins on a clean packaged install, which is currently reasoned
+   from Microsoft's documented mechanism rather than observed. It has not been
+   run; do not let anyone tell you it has.
+5. **macOS rows across the catalog.** Nothing has been host-verified on macOS.
+   Row-level `last_verified` now makes that visible in the data rather than only
+   in prose, so the gap is auditable - `grep -L last_verified` per row is the
+   query. LM Studio has a known macOS discrepancy on record (bug-tracker #1371).
+6. **Port the UI improvements into `build_site.py`.** A `/` search shortcut,
+   active-filter chips, copy-path buttons and a sticky table header are all worth
+   having. The site is generated and **never hand-edited**, so they go in the
+   generator. Do not accept a hand-written `index.html` as a starting point: the
+   one offered carried three catalogue claims that were wrong, including a
+   `medium` MSIX row displayed as `High`.
+7. **Quarterly re-verification.** Paths change between tool releases. A catalog
    nobody re-verifies decays into a liability, which is worse than one that never
    existed, because people trust it.
+
+**The query that actually finds things** is not the medium-confidence list. It is
+*entries with a HIT and an unexplained MISS on the same host* - a path that
+misses while the tool is demonstrably present. That found the Cursor, LM Studio
+and Open WebUI corrections. A staleness gate cannot see a wrong path, so a `high`
+entry with a fresh `last_verified` can still be wrong: AIRT-0018 was checked the
+previous day and had three wrong `high` paths.
 
 ## Reference
 
