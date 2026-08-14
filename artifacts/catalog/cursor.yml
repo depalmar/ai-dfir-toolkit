@@ -37,7 +37,7 @@ artifacts:
       os:
         - windows
       artifact_type: binary
-      description: Main process, under the _ subdirectory since 3.8.22
+      description: Main process, under the _ subdirectory on 3.8.22
       forensic_value: medium
       evidence_type:
         - execution
@@ -59,7 +59,7 @@ artifacts:
       os:
         - windows
       artifact_type: install-dir
-      description: Auto-update staging, absent on 3.8.22 which uses inno_updater.exe
+      description: Auto-update staging, absent on 3.8.22; a legacy-generation marker
       forensic_value: low
       evidence_type:
         - program-presence

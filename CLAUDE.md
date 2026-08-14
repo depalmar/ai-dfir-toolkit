@@ -245,12 +245,28 @@ and vLLM. They are unverified because nobody has checked them, not because they
 cannot be checked.
 
 **Cursor** and **Claude Desktop** left that list on 2026-08-14, verified on a
-Windows host that had both installed. Both produced corrections rather than
-ticks, and the Claude Desktop one inverts what the catalog previously told a
-responder: the MSIX build declares `unvirtualizedResources`, so the config lives
-in real `%APPDATA%\Claude\` and the container path the entry called authoritative
-does not exist. See `docs/VERIFICATION.md` for the full set. A live host beats a
-vendor page for anything installable, so prefer it where one is available.
+Windows host that had both installed. See `docs/VERIFICATION.md` for the full
+set. A live host beats a vendor page for anything installable, but it is one
+host, and the Claude Desktop pass is a standing warning about what that misses:
+the first conclusion drawn from it was wrong, and only a documentation pass
+caught it.
+
+**The MSIX config question has no single answer, and do not let anyone give it
+one.** Claude Desktop's packaged build is a sideloaded enterprise MSIX deployed
+by Intune/DISM - not a Microsoft Store listing, and no Anthropic page documents a
+config path for it. Its manifest declares the `unvirtualizedResources`
+capability, which only *permits* the disabling elements; it disables **registry**
+write virtualization globally, but for the filesystem it excludes exactly two
+LocalAppData directories, so **filesystem virtualization stays active for
+`%APPDATA%\Claude`**. Precedence is therefore decided by Windows per file and by
+install history: the OS reads the container copy first and falls back to real
+AppData, and a config that existed before the packaged install stays
+unvirtualized. So `%APPDATA%\Claude\` wins on an upgraded host and the container
+copy wins on a clean packaged install. Collect **both**, plus the manifest from
+`WindowsApps`, and resolve per host. Container copies are not removed on
+uninstall. Reasoning from `unvirtualizedResources` to "writes are not
+virtualized" is the specific trap here - it was refuted five times over in
+verification, and it is the error this catalog made first.
 Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation

@@ -11,14 +11,14 @@ Targets:
         FileMask: 'claude_desktop_config.json'
         Comment: 'AIRT-0011 | Primary execution primitive'
     -
-        Name: 'Container-redirected path, absent on builds declaring unvirtualizedResources'
+        Name: 'Container-redirected config, live when no %APPDATA% copy predates the install'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\'
         FileMask: 'claude_desktop_config.json'
-        Comment: 'AIRT-0011 | [confidence: low] Container-redirected path, absent on builds declaring unvirtualizedResources'
+        Comment: 'AIRT-0011 | [confidence: medium] Container-redirected config, live when no %APPDATA% copy predates the install'
     -
-        Name: 'MCP server stdout/stderr, one file per server as mcp-server-<name>.log'
+        Name: 'Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Roaming\Claude\logs\'
         FileMask: 'mcp*.log'
-        Comment: 'AIRT-0011 | MCP server stdout/stderr, one file per server as mcp-server-<name>.log'
+        Comment: 'AIRT-0011 | Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript'

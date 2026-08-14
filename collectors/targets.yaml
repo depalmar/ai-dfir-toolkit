@@ -1628,7 +1628,7 @@ targets:
     sensitivity: normal
     paths:
       - "~/.config/Claude/claude_desktop_config.json"
-    notes: "mcp-config, forensic_value high, catalog confidence high."
+    notes: "mcp-config, forensic_value high, catalog confidence low."
   - id: art_airt_0011_library_application_support_claude_claud
     name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
     repo_cat: "art"
@@ -1650,7 +1650,7 @@ targets:
     sensitivity: normal
     paths:
       - "~/Library/Logs/Claude/mcp*.log"
-    notes: "log, forensic_value high, catalog confidence medium."
+    notes: "log, forensic_value high, catalog confidence high."
   - id: art_airt_0018_lmstudio_settings_json
     name: "LM Studio artifact (AIRT-0018)"
     repo_cat: "art"

@@ -55,27 +55,27 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: Container-redirected path, absent on builds declaring unvirtualizedResources
+      description: Container-redirected config, live when no %APPDATA% copy predates the install
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
-      install_method: MS Store
-      unverified: true
-      confidence: low
+      install_method: MSIX (Intune/DISM)
+      confidence: medium
     - path: ~/.config/Claude/claude_desktop_config.json
       os:
         - linux
       artifact_type: mcp-config
-      description: Primary execution primitive
+      description: Inferred Linux config path, not documented by the vendor
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
-      install_method: deb/AppImage
-      confidence: high
+      install_method: deb (Anthropic apt repo)
+      unverified: true
+      confidence: low
     - path: "*.mcpb (Desktop Extension)"
       os:
         - windows
@@ -92,7 +92,7 @@ artifacts:
       os:
         - windows
       artifact_type: log
-      description: "MCP server stdout/stderr, one file per server as mcp-server-<name>.log"
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
       forensic_value: high
       evidence_type:
         - timeline
@@ -103,19 +103,19 @@ artifacts:
       os:
         - macos
       artifact_type: log
-      description: MCP server stdout/stderr
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
       forensic_value: high
       evidence_type:
         - timeline
         - execution
       install_method: n/a
-      confidence: medium
+      confidence: high
   registry:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude"
       value: InstallLocation, DisplayVersion
       type: REG_SZ
       description: >-
-        Install metadata for the EXE installer. A Store install creates no
+        Install metadata for the EXE installer. A packaged MSIX install creates no
         uninstall key at all, so absence here does not mean the app is absent -
         query Get-AppxPackage before concluding.
       persistence: false
@@ -126,8 +126,8 @@ artifacts:
       value: Claude
       type: REG_SZ
       description: >-
-        Auto-start, which launches every configured MCP server on login. The
-        Store build checked carried no Claude value under Run, which is equally
+        Auto-start, which launches every configured MCP server on login. The MSIX
+        build checked carried no Claude value under Run, which is equally
         consistent with the launch-at-login setting being off, so absence here
         is not evidence against the mechanism.
       persistence: true
@@ -137,7 +137,7 @@ artifacts:
       value: (Default)
       type: REG_SZ
       description: >-
-        The claude:// protocol handler, and a deep-link vector. On a Store
+        The claude:// protocol handler, and a deep-link vector. On an MSIX
         install its default value is the full WindowsApps path, which yields the
         package full name and version without querying the package manager.
       persistence: true
@@ -147,8 +147,8 @@ artifacts:
       value: "-"
       type: Key
       description: >-
-        Store package registration. The parent ActivatableClasses\Package key
-        did not exist under HKCU on the Store install checked, so this location
+        Packaged app registration. The parent ActivatableClasses\Package key
+        did not exist under HKCU on the MSIX install checked, so this location
         is not a reliable indicator of a packaged Claude Desktop.
       persistence: false
       forensic_value: medium
@@ -174,7 +174,7 @@ artifacts:
       service_or_daemon: "No"
       persistence: >-
         Run key on installs that register one, which launches every configured
-        MCP server at login. The Store build checked registered none.
+        MCP server at login. The MSIX build checked registered none.
       confidence: high
     - name: Claude
       os:
@@ -244,8 +244,8 @@ mcp:
     persistence_trigger: Every app start (+ Run key)
     triage_priority: p1
     notes: >-
-      Used by the EXE installer, and by Store builds declaring
-      unvirtualizedResources. Check this path first on either install shape.
+      Vendor-documented path, and the live config on a host where it predates a
+      later MSIX install. Not authoritative by itself - see the container row.
   - mechanism: config-file
     config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
     config_key: mcpServers
@@ -254,9 +254,13 @@ mcp:
     persistence_trigger: Every app start
     triage_priority: p1
     notes: >-
-      Container-redirected path, present only on packaged builds that do not
-      declare unvirtualizedResources. Absent on 1.30096.1.0, which uses the
-      roaming path above.
+      MSIX container copy. Precedence is decided per file by install history,
+      not by a global switch: the OS opens the container copy first and falls
+      back to real AppData, and a file that already existed in AppData before
+      the packaged install stays unvirtualized. So this is the live config on a
+      host where the packaged build created it fresh, and dormant on a host that
+      had it already. Collect both, and the manifest from WindowsApps, then
+      resolve precedence per host. Container copies survive uninstall.
   - mechanism: config-file
     config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
     config_key: mcpServers
@@ -302,5 +306,17 @@ references:
   - title: "Connect to MCP servers"
     url: https://code.claude.com/docs/en/mcp-quickstart
     accessed: "2026-08-13"
+  - title: "Deploy Claude Desktop for Windows - MSIX via Intune, SCCM, Group Policy or PowerShell"
+    url: https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows
+    accessed: "2026-08-14"
+  - title: "Claude Desktop for Linux - Debian package from Anthropic's apt repository"
+    url: https://code.claude.com/docs/en/desktop-linux
+    accessed: "2026-08-14"
+  - title: "Behind the scenes - MSIX AppData redirection and per-file precedence"
+    url: https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes
+    accessed: "2026-08-14"
+  - title: "Flexible virtualization - registry and filesystem write virtualization elements"
+    url: https://learn.microsoft.com/en-us/windows/msix/desktop/flexible-virtualization
+    accessed: "2026-08-14"
 last_verified: "2026-08-14"
 last_modified: "2026-08-14"

@@ -300,3 +300,34 @@ per the process that comment prescribes.
 The macOS and Linux rows on both entries remain host-unverified; only the
 Windows subset was checked against reality. Nine entries are still on the
 never-verified list.
+
+## 2026-08-14 (second pass) - correcting the entry above
+
+A documentation pass run after the host pass overturned its central conclusion.
+Recording this as its own section rather than editing the one above, because the
+failure mode is the point: a single host produced a correct **observation** and a
+wrong **explanation**, and the wrong explanation was the part that got written
+into the catalog, into `CLAUDE.md`, and into a commit message.
+
+| Scope | Field | Was (first pass) | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | MSIX container config row | `low` + `unverified`, "absent on builds declaring unvirtualizedResources" | **`medium`, per-host precedence rule** | The first pass reasoned from the `unvirtualizedResources` capability to "writes are not redirected". That inference is invalid. The capability only *permits* the disabling elements. The manifest for 1.30096.1.0 disables **registry** write virtualization globally, but its `virtualization:FileSystemWriteVirtualization/ExcludedDirectories` names exactly two directories - `%LOCALAPPDATA%\Microsoft\Office\16.0\WEF` and `%LOCALAPPDATA%\Claude-3p` - and there is no `desktop6:FileSystemWriteVirtualization` element at all. Filesystem virtualization is **active** for `%APPDATA%\Claude`. |
+| `AIRT-0011` | container path existence | "the container path does not exist" | **the container exists and is populated** | Factually sloppy the first time. `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\` holds `Local\`, `LocalLow\` and `Roaming\`, with `Roaming\Claude-3p`, `Roaming\go`, `Roaming\Microsoft` and `Roaming\notesmd-cli`. Only the `Roaming\Claude` subtree is missing. |
+| `AIRT-0011` | which config the app reads | "the roaming path, on any Store install" | **decided per file, per host** | Microsoft documents the mechanism: new files under `Roaming` are redirected to the package-private location; on open the OS tries that location first and falls back to real AppData; and files that already existed in AppData are read and written unvirtualized. `%APPDATA%\Claude\` predated the packaged install on the host checked, which is why it wins **there**. On a clean packaged install the container copy would be the live one - which means the circulating IR guidance is not simply wrong, it describes the other case. Corroborating: `Roaming\Claude-3p` **is** redirected into the container while `%LOCALAPPDATA%\Claude-3p` sits unvirtualized, exactly as the manifest's LocalAppData-only exclusion predicts. |
+| `AIRT-0011` | provenance label | "MS Store" / "Store install" | **sideloaded enterprise MSIX** | Anthropic ships MSIX packages for Intune/SCCM/Group Policy/PowerShell deployment on Team and Enterprise plans. There is no Microsoft Store listing. This matters for acquisition: Store provenance implies delivery-optimization logs, sideloaded provenance implies Intune/DISM/PowerShell traces. |
+| `AIRT-0011` | `~/.config/Claude/claude_desktop_config.json` | `high` | **`low` + `unverified`** | The highest-risk row found in either pass, and structurally identical to the Windsurf burn this file already records. Neither `code.claude.com/docs/en/desktop-linux` nor the install article documents any Linux config path. An official Linux build does exist, but it is Debian-only from Anthropic's own apt repo, and the config location is convention plus one untriaged bug report - not documentation. |
+| `AIRT-0011` | `~/Library/Logs/Claude/mcp*.log` | `medium` | **`high`** | Vendor-documented alongside the Windows directory. |
+| `AIRT-0011` | MCP log description | "stdout/stderr" | **full JSON-RPC transcript** | The vendor docs understate it and so did we. `mcp.log` records bidirectional JSON-RPC including tool names, complete tool arguments and accessed file paths, per server. That makes it a p1 acquisition target closer to a command-history artifact than to a log, and it must be handled as potentially containing secrets, since arguments are logged verbatim. |
+| `AIRT-0002` | Cursor `_\` layout | "since 3.8.22" | **"on 3.8.22"** | No first-party source documents the Windows install layout at all, so the version boundary was an assertion the evidence did not support. The layout itself holds: `_\resources\app\product.json` reports 3.8.22, the Inno uninstall entry registered that install location on the install date, and no orphaned top-level `Cursor.exe` remains - so it is the real layout, not a staging state. |
+| `AIRT-0002` | `cursor-updater\` | "legacy or per-channel location" | **legacy-generation marker, kept deliberately** | Absence on one upgraded host does not establish retirement at any version. Keep the row: if it persists elsewhere it dates an older install generation, which is worth more to a responder than a deleted row. |
+
+Two Windows facts worth keeping from the manifest read, neither of which the
+first pass noticed: **registry** write virtualization *is* globally disabled on
+this build, so HKCU writes by the packaged app land in the real hive - which is
+why the `claude://` handler was readable under HKCU at all. And the manifest
+excludes `%LOCALAPPDATA%\Claude-3p` from virtualization deliberately, which
+suggests that tree matters; whether it is succeeding
+`claude_desktop_config.json` is an open question.
+
+The decisive experiment nobody has run: install the MSIX on a host with no
+pre-existing `%APPDATA%\Claude` and observe where the config is created.

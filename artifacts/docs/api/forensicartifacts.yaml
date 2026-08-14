@@ -340,6 +340,7 @@ supported_os:
 urls:
 - https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop
 - https://code.claude.com/docs/en/mcp-quickstart
+- https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows
 ---
 name: ClineArtifacts
 doc: Cline (AIRT-0039) - VS Code extension ID saoudrizwan.claude-dev (formerly Claude

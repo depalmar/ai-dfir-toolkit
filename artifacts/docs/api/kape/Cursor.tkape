@@ -12,11 +12,11 @@ Targets:
         Recursive: true
         Comment: 'AIRT-0002 | Electron app root'
     -
-        Name: 'Main process, under the _ subdirectory since 3.8.22'
+        Name: 'Main process, under the _ subdirectory on 3.8.22'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\Programs\cursor\_\'
         FileMask: 'Cursor.exe'
-        Comment: 'AIRT-0002 | Main process, under the _ subdirectory since 3.8.22'
+        Comment: 'AIRT-0002 | Main process, under the _ subdirectory on 3.8.22'
     -
         Name: 'CLI shim, beside cursor.cmd and cursor-tunnel.exe'
         Category: AIAgents
@@ -24,12 +24,12 @@ Targets:
         FileMask: 'cursor'
         Comment: 'AIRT-0002 | CLI shim, beside cursor.cmd and cursor-tunnel.exe'
     -
-        Name: 'Auto-update staging, absent on 3.8.22 which uses inno_updater.exe'
+        Name: 'Auto-update staging, absent on 3.8.22; a legacy-generation marker'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\cursor-updater\'
         FileMask: '*'
         Recursive: true
-        Comment: 'AIRT-0002 | [confidence: low] Auto-update staging, absent on 3.8.22 which uses inno_updater.exe'
+        Comment: 'AIRT-0002 | [confidence: low] Auto-update staging, absent on 3.8.22; a legacy-generation marker'
     -
         Name: 'settings.json, globalStorage, workspaceStorage'
         Category: AIAgents
