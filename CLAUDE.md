@@ -24,6 +24,7 @@ write LF endings on every platform so the generated feeds stay byte-identical.
 ```bash
 python scripts/validate.py                    # schema + sigma + confidence gate
 python scripts/validate_techniques.py         # ATLAS/ATT&CK ids exist (--refresh re-pins)
+python scripts/readme_counts.py               # README Contents block (--check gates it)
 python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
 python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
