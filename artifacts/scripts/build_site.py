@@ -495,7 +495,15 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
-.tablescroll{overflow-x:auto}
+/* The height cap is what makes the sticky th below actually stick. overflow-x
+   computes overflow-y to auto, so this element was already the scrollport - but
+   with no height constraint it grew to content height, never scrolled
+   vertically, and the header left the screen with the page. From about row 30
+   the Value and Conf columns were unlabelled pills separated only by hue at
+   11px, which is also why the bare-badge decision further down is safe again
+   once this is capped: that comment's premise is "the column header already
+   names the scale there", and the header has to be on screen for it to hold. */
+.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 210px);min-height:320px}
 table{border-collapse:collapse;width:100%;min-width:940px}
 th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
 th{position:sticky;top:0;z-index:2;background:var(--panel-2);cursor:pointer;
