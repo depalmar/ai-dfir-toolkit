@@ -5,7 +5,7 @@ Id: af4b36c8-e574-54e0-b12b-1023e519242c
 RecreateDirectories: true
 Targets:
     -
-        Name: 'Execution primitive. Same globalStorage shape as Cline and Roo Code, under a dif'
+        Name: 'Execution primitive. Same globalStorage shape as Cline and Roo Code, under...'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Roaming\Code\User\globalStorage\kilocode.kilo-code\settings\'
         FileMask: 'mcp_settings.json'
