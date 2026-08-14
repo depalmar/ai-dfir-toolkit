@@ -67,6 +67,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 <project>/langgraph.json
 <repo>/.aider.chat.history.md
 <repo>/.aider.input.history
+<repo>/.amazonq/default.json
 <repo>/.amazonq/mcp.json
 <repo>/.claude/settings.local.json
 <repo>/.codex/config.toml

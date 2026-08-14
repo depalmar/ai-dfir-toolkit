@@ -21,7 +21,7 @@ execution_model: Cloud inference + local agent
 capabilities:
   local_code_execution: true
   local_listener: false
-  plaintext_credentials: false
+  plaintext_credentials: true
   mcp_capable: true
 risk: medium
 confidence: low
@@ -84,7 +84,7 @@ artifacts:
   eventlog:
     - channel: Microsoft-Windows-Sysmon/Operational
       event_id: "1"
-      selector: "Image is a shared interpreter (node (aws-lsp-codewhisperer-token-binary.js)) and CommandLine contains amazon-q-developer"
+      selector: "Image is a shared interpreter (node (aws-lsp-codewhisperer-token-binary.js)) and CommandLine contains aws-lsp-codewhisperer"
       description: >-
         Proves the agent ran, which disk presence does not. The image name is not
         the discriminator here, because the process is a shared interpreter that
@@ -133,6 +133,19 @@ mcp:
     triage_priority: p1
     notes: Workspace scope. Travels with the repo.
   - mechanism: config-file
+    config_path: "<repo>/.amazonq/default.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at agent start
+    secrets_location: env block
+    persistence_trigger: Every agent start
+    triage_priority: p1
+    confidence: high
+    notes: >-
+      Current-format workspace scope, and the file the vendor says wins - "Q
+      Developer gives precedence to workspace level configurations". The catalog
+      carried the other three and missed this one, so the highest-precedence
+      config was the one not collected.
+  - mechanism: config-file
     config_path: "~/.aws/amazonq/default.json"
     config_key: Agent configuration, global scope in the IDE
     spawn_mechanism: Child process at IDE start
@@ -161,4 +174,5 @@ references:
   - title: "Amazon Q Developer in the AWS Toolkit for VS Code"
     url: https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html
     accessed: "2026-08-13"
-last_modified: "2026-08-11"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

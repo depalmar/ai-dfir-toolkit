@@ -288,7 +288,7 @@ supported_os:
 - Linux
 urls:
 - https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool
-- https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo
+- https://github.com/anthropics/claude-quickstarts/tree/main/computer-use-demo
 ---
 name: ClaudeDesktopMcpHostArtifacts
 doc: Claude Desktop (MCP host) (AIRT-0011) - Desktop chat client that launches arbitrary

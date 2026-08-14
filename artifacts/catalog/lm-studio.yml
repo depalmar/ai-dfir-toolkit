@@ -196,8 +196,12 @@ mcp:
     secrets_location: env block (plaintext)
     persistence_trigger: Every app start
     triage_priority: p1
-    confidence: high
-    notes: Cursor's mcp.json notation. This is the documented path; see the row below before concluding it is absent.
+    confidence: medium
+    notes: >-
+      Documented in exactly one place, the 0.3.17 release post, and only for the
+      default-home case. The current docs state no path at all, and the home
+      itself is relocatable - see the home-pointer row. Downgraded from high on
+      that basis; see the row below before concluding it is absent.
   - mechanism: config-file
     config_path: ~/.cache/lm-studio/mcp.json
     config_key: mcpServers

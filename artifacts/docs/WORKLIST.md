@@ -12,7 +12,7 @@ documentation, correct what is wrong, then set `last_verified` and raise
 correction in `docs/VERIFICATION.md` with its basis.
 
 
-## Never verified — 4
+## Never verified — 2
 
 No `last_verified` at all. These are listed on every `validate.py` run.
 
@@ -26,22 +26,6 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `low` <- network: `app.devin.ai, *.cognition.ai`
     - `high`   network: `*.devinapps.com (IDE/Desktop iframes), app.devin.ai`
 
-### AIRT-0008 — Amazon Q Developer (ex-CodeWhisperer)
-
-- entry confidence: `low`
-- check against:
-    - [Amazon Q Developer User Guide](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/)
-    - [Amazon Q Developer in the AWS Toolkit for VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html)
-- 8 claim(s) to confirm:
-    - `high`   disk: `node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio`
-    - `high`   disk: `%USERPROFILE%\.vscode\extensions\amazonwebservices.amazon-q-vscode-*`
-    - `medium` <- disk: `<repo>/.amazonq/rules/*.md`
-    - `high`   network: `q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start`
-    - `high`   credential: `~/.aws/sso/cache/*.json`
-    - `?` <- mcp: `~/.aws/amazonq/mcp.json`
-    - `?` <- mcp: `<repo>/.amazonq/mcp.json`
-    - `?` <- mcp: `~/.aws/amazonq/default.json`
-
 ### AIRT-0014 — Microsoft Copilot Studio Agents
 
 - entry confidence: `high` · **cloud-hosted, no endpoint paths to check**
@@ -49,25 +33,27 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - [Microsoft Copilot Studio documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
     - [What is Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
 
-### AIRT-0033 — Claude Computer Use
 
-- entry confidence: `high`
-- check against:
-    - [Computer use tool - Claude Platform Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool)
-    - [anthropics/anthropic-quickstarts - computer-use-demo](https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo)
-- 7 claim(s) to confirm:
-    - `high`   disk: `Docker container running the reference implementation`
-    - `high`   network: `api.anthropic.com`
-    - `high`   credential: `~/.anthropic/api_key`
-    - `high`   credential: `ANTHROPIC_API_KEY`
-    - `high`   credential: `~/.aws`
-    - `high`   credential: `AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN`
-    - `high`   credential: `~/.config/gcloud/application_default_credentials.json`
-
-
-## Medium or low confidence — 21
+## Medium or low confidence — 22
 
 Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks these.
+
+### AIRT-0008 — Amazon Q Developer (ex-CodeWhisperer)
+
+- entry confidence: `low`
+- check against:
+    - [Amazon Q Developer User Guide](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/)
+    - [Amazon Q Developer in the AWS Toolkit for VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html)
+- 9 claim(s) to confirm:
+    - `high`   disk: `node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio`
+    - `high`   disk: `%USERPROFILE%\.vscode\extensions\amazonwebservices.amazon-q-vscode-*`
+    - `medium` <- disk: `<repo>/.amazonq/rules/*.md`
+    - `high`   network: `q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start`
+    - `high`   credential: `~/.aws/sso/cache/*.json`
+    - `?` <- mcp: `~/.aws/amazonq/mcp.json`
+    - `?` <- mcp: `<repo>/.amazonq/mcp.json`
+    - `high`   mcp: `<repo>/.amazonq/default.json`
+    - `?` <- mcp: `~/.aws/amazonq/default.json`
 
 ### AIRT-0009 — Tabnine
 
