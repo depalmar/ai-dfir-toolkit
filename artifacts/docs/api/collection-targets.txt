@@ -73,6 +73,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <project>/langgraph.json
 <repo>/.aider.chat.history.md
 <repo>/.aider.input.history
+<repo>/.amazonq/cli-agents/*.json
 <repo>/.amazonq/default.json
 <repo>/.amazonq/mcp.json
 <repo>/.claude/settings.local.json
@@ -181,6 +182,7 @@ webui.db (user and API key tables)
 ~/.autogenstudio/.env
 ~/.autogenstudio/database.sqlite
 ~/.aws
+~/.aws/amazonq/cli-agents/*.json
 ~/.aws/amazonq/default.json
 ~/.aws/amazonq/mcp.json
 ~/.aws/sso/cache/*.json

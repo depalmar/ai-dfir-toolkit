@@ -87,6 +87,7 @@ sources:
   attributes:
     paths:
     - $XDG_RUNTIME_DIR/qlog/cli.log
+    - '%%users.homedir%%/.aws/amazonq/cli-agents/*.json'
     - '%%users.homedir%%/.aws/amazonq/default.json'
     - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
@@ -97,6 +98,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.aws/amazonq/cli-agents/*.json'
     - '%%users.homedir%%/.aws/amazonq/default.json'
     - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
@@ -106,6 +108,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.aws/amazonq/cli-agents/*.json'
     - '%%users.homedir%%/.aws/amazonq/default.json'
     - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'

@@ -1665,6 +1665,17 @@ targets:
     paths:
       - "~/.continue/config.ts"
     notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0008_aws_amazonq_cli_agents_json
+    name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.aws/amazonq/cli-agents/*.json"
+    notes: "agent-definition, forensic_value high, catalog confidence high."
   - id: art_airt_0008_local_share_amazon_q_data_sqlite3
     name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
     repo_cat: "art"
@@ -1676,6 +1687,17 @@ targets:
     paths:
       - "~/.local/share/amazon-q/data.sqlite3"
     notes: "database, forensic_value high, catalog confidence high."
+  - id: art_airt_0008_repo_amazonq_cli_agents_json
+    name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: glob
+    sensitivity: normal
+    paths:
+      - "<repo>/.amazonq/cli-agents/*.json"
+    notes: "agent-definition, forensic_value high, catalog confidence high."
   - id: art_airt_0008_xdg_runtime_dir_qlog_cli_log
     name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
     repo_cat: "art"

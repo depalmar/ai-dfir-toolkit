@@ -94,7 +94,7 @@ LOWERCASE_NAMES = {
     # [a-z][a-z'-]*, so in "...prompt. streamlit.py persists..." the match stops
     # at the dot and the extension never reaches IDENTIFIER. The word looked like
     # prose and was sentence-cased into "Streamlit.py".
-    "streamlit",
+    "streamlit", "webpack",
 }
 
 WORD = re.compile(r"[A-Za-z][A-Za-z'-]*")

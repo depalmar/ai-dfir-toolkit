@@ -10,3 +10,9 @@ Targets:
         Path: 'C:\Users\%user%\.vscode\extensions\'
         FileMask: 'amazonwebservices.amazon-q-vscode-*'
         Comment: 'AIRT-0008 | Extension Dir for Amazon Q Developer (ex-CodeWhisperer)'
+    -
+        Name: 'Global CLI agent definitions. One file carries mcpServers, allowedTools and...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.aws\amazonq\cli-agents\'
+        FileMask: '*.json'
+        Comment: 'AIRT-0008 | Global CLI agent definitions. One file carries mcpServers, allowedTools and hooks at once, so it is the config that records both what the agent could reach and what it was told to '
