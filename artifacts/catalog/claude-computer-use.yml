@@ -35,11 +35,136 @@ artifacts:
         - program-presence
       install_method: docker run
       confidence: high
+    - path: "~/.anthropic/system_prompt"
+      os:
+        - docker
+        - container
+        - macos
+        - linux
+      artifact_type: config-file
+      description: >-
+        Operator-authored suffix appended to the agent's system prompt.
+        streamlit.py persists the Custom System Prompt Suffix field via
+        save_to_storage("system_prompt", ...) and loop.py appends it to
+        SYSTEM_PROMPT. It records what the operator told the agent to do, and it
+        is bind-mounted from the host at $HOME/.anthropic, so it survives
+        container teardown.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - user-activity
+        - prompt-injection-surface
+      install_method: docker run
+      confidence: high
+    - path: "~/.anthropic/error_*.md"
+      os:
+        - docker
+        - container
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: >-
+        Error records written by _render_error() via
+        save_to_storage(f"error_{datetime.now().timestamp()}.md", body). The
+        timestamp is a float, so the filename carries a fractional part -
+        error_1771000000.123456.md - and a collection rule must glob error_*.md
+        rather than match an integer epoch. Content varies by branch: the
+        generic branch writes str(error) plus a traceback, the RateLimitError
+        branch writes a message with no traceback.
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - timeline
+      install_method: docker run
+      confidence: high
+    - path: "/tmp/outputs/screenshot_<uuid4hex>.png"
+      os:
+        - docker
+        - container
+      artifact_type: session-artifact
+      description: >-
+        The screenshot loop's output, and the highest-value artifact this tool
+        produces - a frame-by-frame record of the desktop the agent saw.
+        OUTPUT_DIR is set to "/tmp/outputs" in computer.py, which writes
+        screenshot_{uuid4().hex}.png on nearly every action, with shell()
+        defaulting to take_screenshot=True. Inside the container filesystem, so
+        it is lost on teardown unless the container is captured live.
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - timeline
+        - data-access
+      install_method: docker run
+      retention: >-
+        Container-local. Written under /tmp inside the container and not
+        bind-mounted by the documented docker run, so it does not survive
+        teardown - capture the running container or nothing.
+      confidence: high
   network:
     - direction: egress
       indicator: api.anthropic.com
       port: 443/TCP
-      description: High-volume image (screenshot) uploads - distinctive egress volume signature
+      description: >-
+        High-volume image (screenshot) uploads - distinctive egress volume
+        signature. Scoped to the default provider: loop.py branches on
+        APIProvider.ANTHROPIC, APIProvider.BEDROCK and APIProvider.VERTEX, and
+        on the Bedrock and Vertex paths there is no traffic to this host at all.
+        Both are first-class
+        documented recipes, selected by API_PROVIDER=bedrock with AWS_REGION or
+        API_PROVIDER=vertex with CLOUD_ML_REGION and ANTHROPIC_VERTEX_PROJECT_ID.
+        A detection keyed on this indicator alone sees one of three supported
+        configurations.
+      confidence: high
+    - direction: listener
+      indicator: x11vnc (VNC server on the desktop the agent drives)
+      port: 5900/TCP
+      default_bind: >-
+        All host interfaces. Started without -localhost, and the documented
+        docker run publishes it with -p 5900:5900.
+      authentication: >-
+        None. Started with -nopw, and with -forever -shared, so viewers may
+        connect concurrently and repeatedly.
+      exposure_risk: critical
+      description: >-
+        Unauthenticated VNC to the desktop this agent controls, from
+        x11vnc_startup.sh verbatim: x11vnc -display $DISPLAY -forever -shared
+        -wait 50 -rfbport 5900 -nopw. Anyone who reaches the port sees and
+        drives the same session the agent does.
+      confidence: high
+    - direction: listener
+      indicator: noVNC proxy (browser access to the VNC session)
+      port: 6080/TCP
+      default_bind: All host interfaces, published by the documented docker run
+      authentication: None - proxies to localhost:5900, which itself has none
+      exposure_risk: critical
+      description: >-
+        novnc_startup.sh runs /opt/noVNC/utils/novnc_proxy --vnc localhost:5900
+        --listen 6080 --web /opt/noVNC, putting the unauthenticated VNC session
+        on a browser-reachable port
+      confidence: high
+    - direction: listener
+      indicator: static content HTTP server
+      port: 8080/TCP
+      default_bind: >-
+        Dual-stack, all interfaces. http_server.py sets address_family =
+        socket.AF_INET6 and server_address = ("::", 8080), so it answers on
+        IPv6 and, on a default dual-stack host, IPv4 as well.
+      authentication: None
+      exposure_risk: medium
+      description: >-
+        SimpleHTTPRequestHandler serving the demo's static_content directory. A
+        sweep that checks 0.0.0.0 bindings only will not see this one.
+      confidence: high
+    - direction: listener
+      indicator: Streamlit UI
+      port: 8501/TCP
+      default_bind: All host interfaces, published by the documented docker run
+      authentication: None
+      exposure_risk: high
+      description: >-
+        entrypoint.sh runs STREAMLIT_SERVER_PORT=8501 python -m streamlit run
+        computer_use_demo/streamlit.py. This is the control surface - it holds
+        the API key field and the system-prompt field.
       confidence: high
 credentials:
   - location: ~/.anthropic/api_key
@@ -90,6 +215,19 @@ credentials:
       Plaintext Google Application Default Credentials (refresh token / service-account
       material) bind-mounted file-for-file from the host into the container in the
       documented Vertex AI setup
+    confidence: high
+  - location: GOOGLE_APPLICATION_CREDENTIALS
+    os: [docker, container]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      Environment variable naming an arbitrary service-account key file at an
+      operator-chosen path. The README's Vertex section documents it immediately
+      after the docker run block - "You can also set
+      GOOGLE_APPLICATION_CREDENTIALS to use an arbitrary credential file" - so a
+      sweep that looks only for ~/.config/gcloud/application_default_credentials.json
+      misses it entirely. The pointer itself is recoverable from docker inspect
+      and from host shell history even when the file it names is not.
     confidence: high
 mcp: []
 collection:

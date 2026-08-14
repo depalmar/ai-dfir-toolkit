@@ -38,6 +38,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 /etc/codex/config.toml
 /etc/gemini-cli/settings.json
 /home/node/.flowise/encryption.key
+/tmp/outputs/screenshot_<uuid4hex>.png
 <Jan data dir>/mcp_config.json
 <LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)
 <LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on Linux/Docker)
@@ -103,6 +104,7 @@ Client-side MCP in the LocalAI WebUI - the browser connects to the MCP server di
 Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)
 FLOWISE_SECRETKEY_OVERWRITE
 Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself
+GOOGLE_APPLICATION_CREDENTIALS
 Goose session logs
 HF_TOKEN
 INIT_PASSWORD
@@ -175,6 +177,7 @@ webui.db (user and API key tables)
 ~/.aider.conf.yml
 ~/.aider/oauth-keys.env
 ~/.anthropic/api_key
+~/.anthropic/system_prompt
 ~/.autogenstudio/.env
 ~/.autogenstudio/database.sqlite
 ~/.aws
