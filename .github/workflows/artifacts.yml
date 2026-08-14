@@ -36,6 +36,11 @@ jobs:
       # change under test. Bump the pin with --refresh, which shows up in review.
       - name: Resolve ATLAS and ATT&CK technique ids
         run: python scripts/validate_techniques.py
+      # The Contents block is the first thing a reader sees and every number in
+      # it was hand-typed and had drifted - 44 tools against 51, 258 artifacts
+      # against 601. Derived and gated now, like the feeds.
+      - name: Check README counts against the catalog
+        run: python scripts/readme_counts.py --check
       # validate_mappings.py walks the repository root to find the 0N-* rule
       # directories, so it cannot run under this job's `artifacts` default.
       - name: Validate MAPPINGS.md against rules on disk
