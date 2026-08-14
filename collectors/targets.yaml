@@ -921,11 +921,33 @@ targets:
     paths:
       - "~/.supermaven/config.json"
     notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0011_appdata_claude
+    name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\Claude\\"
+    notes: "encrypted/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0011_config_claude
+    name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/Claude/"
+    notes: "encrypted/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0011_library_application_support_claude
     name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
     repo_cat: "cred"
     cosai: []
-    os: [macos, windows, linux]
+    os: [macos]
     scope: user
     type: file
     sensitivity: secret

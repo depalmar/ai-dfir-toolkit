@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\logs\mcp*.log', 'C:\Users\*\Library\Application Support\Claude\ (Windows: %APPDATA%\Claude\, Linux: ~\.config\Claude\)', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json', 'C:\Users\*\.config\Claude\claude_desktop_config.json']
+      LET Globs = ['C:\Users\*\AppData\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json', 'C:\Users\*\AppData\Roaming\Claude\logs\mcp*.log', 'C:\Users\*\AppData\Roaming\Claude\**', 'C:\Users\*\Library\Application Support\Claude\claude_desktop_config.json', 'C:\Users\*\.config\Claude\claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/Users/*/Library/Logs/Claude/mcp*.log', '/Users/*/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)', '/Users/*/.config/Claude/claude_desktop_config.json']
+      LET Globs = ['/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/Users/*/Library/Logs/Claude/mcp*.log', '/Users/*/Library/Application Support/Claude/**', '/Users/*/.config/Claude/claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.config/Claude/claude_desktop_config.json', '/home/*/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
+      LET Globs = ['/home/*/.config/Claude/claude_desktop_config.json', '/home/*/.config/Claude/**', '/home/*/Library/Application Support/Claude/claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

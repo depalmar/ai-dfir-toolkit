@@ -55,14 +55,15 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: Virtualized PATH - the app reads this one. Commonly missed by IR.
+      description: Container-redirected path, absent on builds declaring unvirtualizedResources
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
       install_method: MS Store
-      confidence: high
+      unverified: true
+      confidence: low
     - path: ~/.config/Claude/claude_desktop_config.json
       os:
         - linux
@@ -91,13 +92,13 @@ artifacts:
       os:
         - windows
       artifact_type: log
-      description: MCP server stdout/stderr - forensic goldmine
+      description: "MCP server stdout/stderr, one file per server as mcp-server-<name>.log"
       forensic_value: high
       evidence_type:
         - timeline
         - execution
       install_method: n/a
-      confidence: medium
+      confidence: high
     - path: "~/Library/Logs/Claude/mcp*.log"
       os:
         - macos
@@ -113,31 +114,46 @@ artifacts:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude"
       value: InstallLocation, DisplayVersion
       type: REG_SZ
-      description: Install metadata
+      description: >-
+        Install metadata for the EXE installer. A Store install creates no
+        uninstall key at all, so absence here does not mean the app is absent -
+        query Get-AppxPackage before concluding.
       persistence: false
       forensic_value: medium
-      confidence: medium
+      unverified: true
+      confidence: low
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       value: Claude
       type: REG_SZ
-      description: Auto-start - launches all configured MCP servers on login
+      description: >-
+        Auto-start, which launches every configured MCP server on login. The
+        Store build checked carried no Claude value under Run, which is equally
+        consistent with the launch-at-login setting being off, so absence here
+        is not evidence against the mechanism.
       persistence: true
       forensic_value: high
       confidence: medium
     - key: "HKCU\\Software\\Classes\\claude\\shell\\open\\command"
       value: (Default)
       type: REG_SZ
-      description: "claude:// protocol handler - deep-link vector"
+      description: >-
+        The claude:// protocol handler, and a deep-link vector. On a Store
+        install its default value is the full WindowsApps path, which yields the
+        package full name and version without querying the package manager.
       persistence: true
       forensic_value: medium
-      confidence: medium
+      confidence: high
     - key: "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*"
       value: "-"
       type: Key
-      description: Store package registration
+      description: >-
+        Store package registration. The parent ActivatableClasses\Package key
+        did not exist under HKCU on the Store install checked, so this location
+        is not a reliable indicator of a packaged Claude Desktop.
       persistence: false
       forensic_value: medium
-      confidence: medium
+      unverified: true
+      confidence: low
   network:
     - direction: egress
       indicator: api.anthropic.com, claude.ai
@@ -156,7 +172,9 @@ artifacts:
       typical_parent: explorer.exe
       typical_children: node.exe, npx.cmd, python.exe, docker.exe, uvx
       service_or_daemon: "No"
-      persistence: Run key - LAUNCHES ALL MCP SERVERS ON LOGIN
+      persistence: >-
+        Run key on installs that register one, which launches every configured
+        MCP server at login. The Store build checked registered none.
       confidence: high
     - name: Claude
       os:
@@ -199,16 +217,23 @@ credentials:
       %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\... Path. Treat every literal value
       as an exposed credential and rotate.
     confidence: high
-  - location: '~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)'
-    os: [macos, windows, linux]
+  - location: '~/Library/Application Support/Claude/'
+    os: [macos]
     storage: encrypted
     secret_type: oauth-token
-    description: >-
-      OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are
-      written into the application-data directory as ciphertext, encrypted using OS
-      secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here,
-      but is not usable without the key - see the keyring row. Vendor does not name the
-      specific file.
+    description: OAuth token ciphertext, encrypted under Keychain
+    confidence: medium
+  - location: '%APPDATA%\Claude\'
+    os: [windows]
+    storage: encrypted
+    secret_type: oauth-token
+    description: OAuth token ciphertext, encrypted under DPAPI
+    confidence: medium
+  - location: '~/.config/Claude/'
+    os: [linux]
+    storage: encrypted
+    secret_type: oauth-token
+    description: OAuth token ciphertext in the application-data directory
     confidence: medium
 mcp:
   - mechanism: config-file
@@ -218,7 +243,9 @@ mcp:
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start (+ Run key)
     triage_priority: p1
-    notes: Standard EXE-installer path
+    notes: >-
+      Used by the EXE installer, and by Store builds declaring
+      unvirtualizedResources. Check this path first on either install shape.
   - mechanism: config-file
     config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
     config_key: mcpServers
@@ -226,7 +253,10 @@ mcp:
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start
     triage_priority: p1
-    notes: "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
+    notes: >-
+      Container-redirected path, present only on packaged builds that do not
+      declare unvirtualizedResources. Absent on 1.30096.1.0, which uses the
+      roaming path above.
   - mechanism: config-file
     config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
     config_key: mcpServers
@@ -272,4 +302,5 @@ references:
   - title: "Connect to MCP servers"
     url: https://code.claude.com/docs/en/mcp-quickstart
     accessed: "2026-08-13"
-last_modified: "2026-08-11"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

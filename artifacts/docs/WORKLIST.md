@@ -12,43 +12,11 @@ documentation, correct what is wrong, then set `last_verified` and raise
 correction in `docs/VERIFICATION.md` with its basis.
 
 
-## Never verified â€” 11
+## Never verified — 9
 
 No `last_verified` at all. These are listed on every `validate.py` run.
 
-### AIRT-0002 â€” Cursor
-
-- entry confidence: `high`
-- check against:
-    - [Cursor documentation](https://cursor.com/docs)
-- 25 claim(s) to confirm:
-    - `high`   disk: `%LOCALAPPDATA%\Programs\cursor\`
-    - `high`   disk: `%LOCALAPPDATA%\Programs\cursor\Cursor.exe`
-    - `high`   disk: `%LOCALAPPDATA%\Programs\cursor\resources\app\bin\cursor`
-    - `high`   disk: `%LOCALAPPDATA%\cursor-updater\`
-    - `high`   disk: `%APPDATA%\Cursor\User\`
-    - `high`   disk: `~/Library/Application Support/Cursor/User/`
-    - `high`   disk: `~/.config/Cursor/User/`
-    - `high`   disk: `~/.cursor/mcp.json`
-    - `high`   disk: `<repo>/.cursor/mcp.json`
-    - `high`   disk: `<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc`
-    - `medium` <- disk: `%APPDATA%\Cursor\User\skills\`
-    - `high`   registry: `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\<Cursor GUID>`
-    - `medium` <- registry: `HKCU\Software\Classes\cursor\shell\open\command`
-    - `medium` <- registry: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
-    - `medium` <- network: `*.cursor.sh, api2.cursor.sh, *.anysphere.co`
-    - `medium` <- credential: `~/Library/Application Support/Cursor/User/globalStorage/state.vscdb`
-    - `medium` <- credential: `~/.config/Cursor/User/globalStorage/state.vscdb`
-    - `medium` <- credential: `%APPDATA%\Cursor\User\globalStorage\state.vscdb`
-    - `high`   credential: `~/.cursor/mcp.json`
-    - `high`   credential: `<repo>/.cursor/mcp.json`
-    - `medium` <- credential: `~/.config/cursor/auth.json`
-    - `medium` <- credential: `macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token / cursor-api-key, account cursor-user`
-    - `low` <- credential: `macOS login Keychain: generic-password service 'Cursor Safe Storage', account 'Cursor Key'`
-    - `?` <- mcp: `~/.cursor/mcp.json`
-    - `?` <- mcp: `<repo>/.cursor/mcp.json`
-
-### AIRT-0006 â€” Codeium / Windsurf
+### AIRT-0006 — Codeium / Windsurf
 
 - entry confidence: `high`
 - check against:
@@ -70,9 +38,9 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `<nvim stdpath('cache')>/codeium/config.json`
     - `?` <- mcp: `~/.codeium/windsurf/mcp_config.json`
 
-### AIRT-0007 â€” Devin
+### AIRT-0007 — Devin
 
-- entry confidence: `medium` Â· **cloud-hosted, no endpoint paths to check**
+- entry confidence: `medium` · **cloud-hosted, no endpoint paths to check**
 - check against:
     - [Devin documentation](https://docs.devin.ai/get-started/devin-intro)
 - 3 claim(s) to confirm:
@@ -80,7 +48,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `low` <- network: `app.devin.ai, *.cognition.ai`
     - `high`   network: `*.devinapps.com (IDE/Desktop iframes), app.devin.ai`
 
-### AIRT-0008 â€” Amazon Q Developer (ex-CodeWhisperer)
+### AIRT-0008 — Amazon Q Developer (ex-CodeWhisperer)
 
 - entry confidence: `low`
 - check against:
@@ -96,7 +64,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `?` <- mcp: `<repo>/.amazonq/mcp.json`
     - `?` <- mcp: `~/.aws/amazonq/default.json`
 
-### AIRT-0009 â€” Tabnine
+### AIRT-0009 — Tabnine
 
 - entry confidence: `medium`
 - check against:
@@ -114,42 +82,14 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `medium` <- mcp: `<repo>/.tabnine/mcp_servers.json`
     - `medium` <- mcp: `~/.tabnine/mcp_servers.json`
 
-### AIRT-0011 â€” Claude Desktop (MCP host)
+### AIRT-0014 — Microsoft Copilot Studio Agents
 
-- entry confidence: `high`
-- check against:
-    - [Getting started with local MCP servers on Claude Desktop](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop)
-    - [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart)
-- 20 claim(s) to confirm:
-    - `high`   disk: `~/Library/Application Support/Claude/claude_desktop_config.json`
-    - `high`   disk: `%APPDATA%\Claude\claude_desktop_config.json`
-    - `high`   disk: `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json`
-    - `high`   disk: `~/.config/Claude/claude_desktop_config.json`
-    - `high`   disk: `*.mcpb (Desktop Extension)`
-    - `medium` <- disk: `%APPDATA%\Claude\logs\mcp*.log`
-    - `medium` <- disk: `~/Library/Logs/Claude/mcp*.log`
-    - `medium` <- registry: `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Claude`
-    - `medium` <- registry: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
-    - `medium` <- registry: `HKCU\Software\Classes\claude\shell\open\command`
-    - `medium` <- registry: `HKCU\Software\Classes\ActivatableClasses\Package\Claude_pzs8sxrjxfjjc*`
-    - `high`   network: `api.anthropic.com, claude.ai`
-    - `high`   network: `registry.npmjs.org (npx MCP server fetch)`
-    - `high`   credential: `claude_desktop_config.json -> mcpServers.<name>.env`
-    - `medium` <- credential: `~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)`
-    - `?` <- mcp: `%APPDATA%\Claude\claude_desktop_config.json`
-    - `?` <- mcp: `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json`
-    - `?` <- mcp: `~/Library/Application Support/Claude/claude_desktop_config.json`
-    - `?` <- mcp: `~/.config/Claude/claude_desktop_config.json`
-    - `?` <- mcp: `*.mcpb / *.dxt bundle files`
-
-### AIRT-0014 â€” Microsoft Copilot Studio Agents
-
-- entry confidence: `high` Â· **cloud-hosted, no endpoint paths to check**
+- entry confidence: `high` · **cloud-hosted, no endpoint paths to check**
 - check against:
     - [Microsoft Copilot Studio documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
     - [What is Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
 
-### AIRT-0033 â€” Claude Computer Use
+### AIRT-0033 — Claude Computer Use
 
 - entry confidence: `high`
 - check against:
@@ -164,7 +104,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN`
     - `high`   credential: `~/.config/gcloud/application_default_credentials.json`
 
-### AIRT-0041 â€” Kiro
+### AIRT-0041 — Kiro
 
 - entry confidence: `high`
 - status: `active`
@@ -191,7 +131,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `?` <- mcp: `~/.kiro/settings/mcp.json`
     - `?` <- mcp: `<repo>/.kiro/settings/mcp.json`
 
-### AIRT-0042 â€” Open WebUI
+### AIRT-0042 — Open WebUI
 
 - entry confidence: `high`
 - status: `active`
@@ -221,7 +161,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `Tools and Functions Python source stored in webui.db`
     - `medium` <- mcp: `<mcpo config> (Claude Desktop format, path set at mcpo launch)`
 
-### AIRT-0045 â€” vLLM
+### AIRT-0045 — vLLM
 
 - entry confidence: `high`
 - check against:
@@ -239,11 +179,11 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `HF_TOKEN`
 
 
-## Medium or low confidence â€” 20
+## Medium or low confidence — 20
 
 Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks these.
 
-### AIRT-0010 â€” Supermaven
+### AIRT-0010 — Supermaven
 
 - entry confidence: `low`
 - check against:
@@ -255,7 +195,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `low` <- credential: `~/.supermaven/config.json`
     - `low` <- credential: `<project>/.supermaven/config.json`
 
-### AIRT-0012 â€” AutoGPT
+### AIRT-0012 — AutoGPT
 
 - entry confidence: `medium`
 - check against:
@@ -265,7 +205,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- disk: `<install>/workspace/  |  auto_gpt_workspace/`
     - `medium` <- credential: `<install>/.env`
 
-### AIRT-0013 â€” AgentGPT
+### AIRT-0013 — AgentGPT
 
 - entry confidence: `low`
 - status: `unmaintained`
@@ -280,7 +220,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `MySQL database "reworkd_platform", table Account (docker volume agentgpt_db -> /var/lib/mysql in container agentgpt_db)`
     - `high`   credential: `REWORKD_PLATFORM_SECRET_SIGNING_KEY  (read from <install>/platform/.env)`
 
-### AIRT-0016 â€” GPT Pilot
+### AIRT-0016 — GPT Pilot
 
 - entry confidence: `low`
 - check against:
@@ -292,7 +232,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `<install>/data/database/pythagora.db`
     - `high`   credential: `OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY`
 
-### AIRT-0019 â€” Jan.ai
+### AIRT-0019 — Jan.ai
 
 - entry confidence: `medium`
 - check against:
@@ -305,7 +245,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `Jan local API / headless`
     - `medium` <- mcp: `<Jan data dir>/mcp_config.json`
 
-### AIRT-0022 â€” text-generation-webui (oobabooga)
+### AIRT-0022 — text-generation-webui (oobabooga)
 
 - entry confidence: `medium`
 - check against:
@@ -316,7 +256,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- disk: `<install>/extensions/`
     - `medium` <- network: `Gradio UI / OpenAI-compatible API`
 
-### AIRT-0023 â€” KoboldCpp
+### AIRT-0023 — KoboldCpp
 
 - entry confidence: `medium`
 - check against:
@@ -325,7 +265,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
 - 1 claim(s) to confirm:
     - `medium` <- network: `Kobold API + web UI`
 
-### AIRT-0024 â€” LocalAI
+### AIRT-0024 — LocalAI
 
 - entry confidence: `medium`
 - check against:
@@ -335,7 +275,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `OpenAI-compatible API`
     - `medium` <- mcp: `<models path>/<model>.yaml`
 
-### AIRT-0028 â€” CrewAI
+### AIRT-0028 — CrewAI
 
 - entry confidence: `medium`
 - check against:
@@ -347,7 +287,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- disk: `<project>/src/<name>/crew.py`
     - `medium` <- credential: `<project>/.env`
 
-### AIRT-0029 â€” Dify
+### AIRT-0029 — Dify
 
 - entry confidence: `medium`
 - check against:
@@ -363,7 +303,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `INIT_PASSWORD`
     - `high`   credential: `<install>/docker/volumes/db/data`
 
-### AIRT-0030 â€” Flowise
+### AIRT-0030 — Flowise
 
 - entry confidence: `medium`
 - check against:
@@ -381,7 +321,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `JWT_AUTH_TOKEN_SECRET`
     - `medium` <- credential: `<install>/packages/server/.env`
 
-### AIRT-0032 â€” Browser-Use
+### AIRT-0032 — Browser-Use
 
 - entry confidence: `medium`
 - check against:
@@ -398,9 +338,9 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `<project>/.env`
     - `high`   credential: `OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY / NOVITA_API_KEY / AZURE_OPENAI_KEY`
 
-### AIRT-0034 â€” OpenAI Operator / CUA
+### AIRT-0034 — OpenAI Operator / CUA
 
-- entry confidence: `medium` Â· **cloud-hosted, no endpoint paths to check**
+- entry confidence: `medium` · **cloud-hosted, no endpoint paths to check**
 - status: `eol`
 - check against:
     - [Introducing ChatGPT agent: bridging research and action](https://openai.com/index/introducing-chatgpt-agent/)
@@ -410,7 +350,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `operator.chatgpt.com (sunset)`
     - `medium` <- network: `chatgpt.com, *.openai.com`
 
-### AIRT-0035 â€” Skyvern
+### AIRT-0035 — Skyvern
 
 - entry confidence: `medium`
 - check against:
@@ -432,7 +372,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `~/.skyvern/data.db`
     - `high`   credential: `<install>/browser_sessions/`
 
-### AIRT-0046 â€” Warp
+### AIRT-0046 — Warp
 
 - entry confidence: `medium`
 - status: `active`
@@ -450,7 +390,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- mcp: `~/.warp_cli/.mcp.json`
     - `medium` <- mcp: `<repo>/.warp/.mcp.json`
 
-### AIRT-0047 â€” Letta
+### AIRT-0047 — Letta
 
 - entry confidence: `medium`
 - status: `active`
@@ -465,7 +405,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `Letta server REST API`
     - `medium` <- credential: `LETTA_PG_URI`
 
-### AIRT-0048 â€” Docker Model Runner
+### AIRT-0048 — Docker Model Runner
 
 - entry confidence: `medium`
 - status: `active`
@@ -477,7 +417,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `OpenAI-compatible API, host TCP mode`
     - `medium` <- network: `Docker socket (/var/run/docker.sock)`
 
-### AIRT-0049 â€” Agent framework libraries
+### AIRT-0049 — Agent framework libraries
 
 - entry confidence: `medium`
 - status: `active`
@@ -492,7 +432,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- network: `Model provider API endpoints (api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, api-inference.huggingface.co, bedrock-runtime.*.amazonaws.com)`
     - `medium` <- credential: `OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials`
 
-### AIRT-0050 â€” Zed AI
+### AIRT-0050 — Zed AI
 
 - entry confidence: `medium`
 - status: `active`
@@ -511,7 +451,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- mcp: `~/.config/zed/settings.json`
     - `medium` <- mcp: `<repo>/.zed/settings.json`
 
-### AIRT-0051 â€” Kilo Code
+### AIRT-0051 — Kilo Code
 
 - entry confidence: `medium`
 - status: `active`

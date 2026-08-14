@@ -33,22 +33,22 @@ artifacts:
         - program-presence
       install_method: MSI/EXE
       confidence: high
-    - path: "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe"
+    - path: "%LOCALAPPDATA%\\Programs\\cursor\\_\\Cursor.exe"
       os:
         - windows
       artifact_type: binary
-      description: Main process
+      description: Main process, under the _ subdirectory since 3.8.22
       forensic_value: medium
       evidence_type:
         - execution
         - program-presence
       install_method: MSI/EXE
       confidence: high
-    - path: "%LOCALAPPDATA%\\Programs\\cursor\\resources\\app\\bin\\cursor"
+    - path: "%LOCALAPPDATA%\\Programs\\cursor\\_\\resources\\app\\bin\\cursor"
       os:
         - windows
       artifact_type: binary
-      description: CLI shim
+      description: CLI shim, beside cursor.cmd and cursor-tunnel.exe
       forensic_value: medium
       evidence_type:
         - execution
@@ -59,12 +59,13 @@ artifacts:
       os:
         - windows
       artifact_type: install-dir
-      description: Auto-update staging - watch for unsigned writes
+      description: Auto-update staging, absent on 3.8.22 which uses inno_updater.exe
       forensic_value: low
       evidence_type:
         - program-presence
       install_method: MSI/EXE
-      confidence: high
+      unverified: true
+      confidence: low
     - path: "%APPDATA%\\Cursor\\User\\"
       os:
         - windows
@@ -150,17 +151,23 @@ artifacts:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Cursor GUID>"
       value: InstallLocation, DisplayVersion
       type: REG_SZ
-      description: Install metadata + version
+      description: >-
+        Install metadata and version. A per-user install writes an Inno Setup
+        product code suffixed _is1, with DisplayName "Cursor (User)" and
+        InstallLocation pointing at the install root rather than the binary.
       persistence: false
       forensic_value: medium
       confidence: high
     - key: "HKCU\\Software\\Classes\\cursor\\shell\\open\\command"
       value: (Default)
       type: REG_SZ
-      description: "cursor:// protocol handler"
+      description: >-
+        The cursor:// protocol handler. Its default value carries the launch
+        command with --open-url, and on 3.8.22 names the parent install path
+        rather than the _ subdirectory the binary actually occupies.
       persistence: true
       forensic_value: medium
-      confidence: medium
+      confidence: high
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       value: Cursor
       type: REG_SZ
@@ -230,9 +237,7 @@ credentials:
     storage: sqlite
     secret_type: oauth-token
     description: >-
-      Windows path for the same Cursor IDE session store. ItemTable rows
-      cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the
-      SQLite DB.
+      Windows Cursor IDE session store, cursorAuth/* rows in plaintext
     confidence: medium
   - location: ~/.cursor/mcp.json
     os: [windows, macos, linux]
@@ -317,4 +322,5 @@ references:
   - title: "Cursor documentation"
     url: https://cursor.com/docs
     accessed: "2026-08-13"
-last_modified: "2026-08-11"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

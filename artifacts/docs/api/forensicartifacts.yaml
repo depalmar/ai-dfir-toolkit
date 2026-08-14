@@ -299,6 +299,7 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
@@ -311,6 +312,7 @@ sources:
     paths:
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Application Support/Claude/'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Logs/Claude/mcp*.log'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
@@ -321,6 +323,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\Claude\'
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.appdata%%\Claude\logs\mcp*.log'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
@@ -346,7 +349,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: /
   supported_os:
   - Linux
@@ -354,7 +357,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: /
   supported_os:
   - Darwin
@@ -362,7 +365,7 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: \
   supported_os:
   - Windows
@@ -1216,7 +1219,7 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
     separator: /
   supported_os:
   - Linux
@@ -1224,7 +1227,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json'
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
     separator: /
   supported_os:
   - Darwin
@@ -1232,7 +1235,7 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json'
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+    - "\xE2\u20AC\xA6/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
     separator: \
   supported_os:
   - Windows

@@ -1,4 +1,5 @@
 $CLAUDE_CONFIG_DIR/.credentials.json
+%APPDATA%\Claude\
 %APPDATA%\Claude\claude_desktop_config.json
 %APPDATA%\Claude\logs\mcp*.log
 %APPDATA%\Code\User\globalStorage\kilocode.kilo-code\settings\mcp_settings.json
@@ -176,6 +177,7 @@ webui.db (user and API key tables)
 ~/.codex/history.jsonl
 ~/.codex/logs/codex-tui.log
 ~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl
+~/.config/Claude/
 ~/.config/Claude/claude_desktop_config.json
 ~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
@@ -239,7 +241,7 @@ webui.db (user and API key tables)
 ~/.tabnine/mcp_servers.json
 ~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.warp_cli/.mcp.json
-~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
+~/Library/Application Support/Claude/
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
@@ -248,5 +250,5 @@ webui.db (user and API key tables)
 ~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
 ~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite
 ~/Library/Logs/Claude/mcp*.log
-…/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
-…/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+â€¦/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
+â€¦/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json

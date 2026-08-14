@@ -1893,7 +1893,7 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "Virtualized PATH - the app reads this one. Commonly missed by IR.",
+          "description": "Container-redirected path, absent on builds declaring unvirtualizedResources",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
@@ -1901,7 +1901,8 @@
             "configuration"
           ],
           "install_method": "MS Store",
-          "confidence": "high"
+          "unverified": true,
+          "confidence": "low"
         },
         {
           "path": "~/.config/Claude/claude_desktop_config.json",
@@ -1941,14 +1942,14 @@
             "windows"
           ],
           "artifact_type": "log",
-          "description": "MCP server stdout/stderr - forensic goldmine",
+          "description": "MCP server stdout/stderr, one file per server as mcp-server-<name>.log",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",
             "execution"
           ],
           "install_method": "n/a",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/Library/Logs/Claude/mcp*.log",
@@ -1971,16 +1972,17 @@
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude",
           "value": "InstallLocation, DisplayVersion",
           "type": "REG_SZ",
-          "description": "Install metadata",
+          "description": "Install metadata for the EXE installer. A Store install creates no uninstall key at all, so absence here does not mean the app is absent - query Get-AppxPackage before concluding.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "unverified": true,
+          "confidence": "low"
         },
         {
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
           "value": "Claude",
           "type": "REG_SZ",
-          "description": "Auto-start - launches all configured MCP servers on login",
+          "description": "Auto-start, which launches every configured MCP server on login. The Store build checked carried no Claude value under Run, which is equally consistent with the launch-at-login setting being off, so absence here is not evidence against the mechanism.",
           "persistence": true,
           "forensic_value": "high",
           "confidence": "medium"
@@ -1989,19 +1991,20 @@
           "key": "HKCU\\Software\\Classes\\claude\\shell\\open\\command",
           "value": "(Default)",
           "type": "REG_SZ",
-          "description": "claude:// protocol handler - deep-link vector",
+          "description": "The claude:// protocol handler, and a deep-link vector. On a Store install its default value is the full WindowsApps path, which yields the package full name and version without querying the package manager.",
           "persistence": true,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*",
           "value": "-",
           "type": "Key",
-          "description": "Store package registration",
+          "description": "Store package registration. The parent ActivatableClasses\\Package key did not exist under HKCU on the Store install checked, so this location is not a reliable indicator of a packaged Claude Desktop.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "unverified": true,
+          "confidence": "low"
         }
       ],
       "network": [
@@ -2029,7 +2032,7 @@
           "typical_parent": "explorer.exe",
           "typical_children": "node.exe, npx.cmd, python.exe, docker.exe, uvx",
           "service_or_daemon": "No",
-          "persistence": "Run key - LAUNCHES ALL MCP SERVERS ON LOGIN",
+          "persistence": "Run key on installs that register one, which launches every configured MCP server at login. The Store build checked registered none.",
           "confidence": "high"
         },
         {
@@ -2077,15 +2080,33 @@
         "confidence": "high"
       },
       {
-        "location": "~/Library/Application Support/Claude/ (Windows: %APPDATA%\\Claude\\, Linux: ~/.config/Claude/)",
+        "location": "~/Library/Application Support/Claude/",
         "os": [
-          "macos",
-          "windows",
+          "macos"
+        ],
+        "storage": "encrypted",
+        "secret_type": "oauth-token",
+        "description": "OAuth token ciphertext, encrypted under Keychain",
+        "confidence": "medium"
+      },
+      {
+        "location": "%APPDATA%\\Claude\\",
+        "os": [
+          "windows"
+        ],
+        "storage": "encrypted",
+        "secret_type": "oauth-token",
+        "description": "OAuth token ciphertext, encrypted under DPAPI",
+        "confidence": "medium"
+      },
+      {
+        "location": "~/.config/Claude/",
+        "os": [
           "linux"
         ],
         "storage": "encrypted",
         "secret_type": "oauth-token",
-        "description": "OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are written into the application-data directory as ciphertext, encrypted using OS secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here, but is not usable without the key - see the keyring row. Vendor does not name the specific file.",
+        "description": "OAuth token ciphertext in the application-data directory",
         "confidence": "medium"
       }
     ],
@@ -2098,7 +2119,7 @@
         "secrets_location": "mcpServers.<name>.env",
         "persistence_trigger": "Every app start (+ Run key)",
         "triage_priority": "p1",
-        "notes": "Standard EXE-installer path"
+        "notes": "Used by the EXE installer, and by Store builds declaring unvirtualizedResources. Check this path first on either install shape."
       },
       {
         "mechanism": "config-file",
@@ -2108,7 +2129,7 @@
         "secrets_location": "mcpServers.<name>.env",
         "persistence_trigger": "Every app start",
         "triage_priority": "p1",
-        "notes": "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
+        "notes": "Container-redirected path, present only on packaged builds that do not declare unvirtualizedResources. Absent on 1.30096.1.0, which uses the roaming path above."
       },
       {
         "mechanism": "config-file",
@@ -2170,7 +2191,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0039",
@@ -2195,7 +2217,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled \u2014 env-embedded keys in mcpServers blocks can leave the endpoint.",
+    "abuse_potential": "MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled \u00e2\u20ac\u201d env-embedded keys in mcpServers blocks can leave the endpoint.",
     "artifacts": {
       "disk": [
         {
@@ -2335,7 +2357,7 @@
     "mcp": [
       {
         "mechanism": "config-file",
-        "config_path": "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+        "config_path": "\u00e2\u20ac\u00a6/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
         "secrets_location": "env block (plaintext)",
@@ -3158,12 +3180,12 @@
           "confidence": "high"
         },
         {
-          "path": "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe",
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\_\\Cursor.exe",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "Main process",
+          "description": "Main process, under the _ subdirectory since 3.8.22",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -3173,12 +3195,12 @@
           "confidence": "high"
         },
         {
-          "path": "%LOCALAPPDATA%\\Programs\\cursor\\resources\\app\\bin\\cursor",
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\_\\resources\\app\\bin\\cursor",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "CLI shim",
+          "description": "CLI shim, beside cursor.cmd and cursor-tunnel.exe",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -3193,13 +3215,14 @@
             "windows"
           ],
           "artifact_type": "install-dir",
-          "description": "Auto-update staging - watch for unsigned writes",
+          "description": "Auto-update staging, absent on 3.8.22 which uses inno_updater.exe",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
           ],
           "install_method": "MSI/EXE",
-          "confidence": "high"
+          "unverified": true,
+          "confidence": "low"
         },
         {
           "path": "%APPDATA%\\Cursor\\User\\",
@@ -3316,7 +3339,7 @@
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Cursor GUID>",
           "value": "InstallLocation, DisplayVersion",
           "type": "REG_SZ",
-          "description": "Install metadata + version",
+          "description": "Install metadata and version. A per-user install writes an Inno Setup product code suffixed _is1, with DisplayName \"Cursor (User)\" and InstallLocation pointing at the install root rather than the binary.",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -3325,10 +3348,10 @@
           "key": "HKCU\\Software\\Classes\\cursor\\shell\\open\\command",
           "value": "(Default)",
           "type": "REG_SZ",
-          "description": "cursor:// protocol handler",
+          "description": "The cursor:// protocol handler. Its default value carries the launch command with --open-url, and on 3.8.22 names the parent install path rather than the _ subdirectory the binary actually occupies.",
           "persistence": true,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
@@ -3409,7 +3432,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "oauth-token",
-        "description": "Windows path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the SQLite DB.",
+        "description": "Windows Cursor IDE session store, cursorAuth/* rows in plaintext",
         "confidence": "medium"
       },
       {
@@ -3514,7 +3537,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0007",
@@ -4653,7 +4677,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) \u2014 but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers.",
+    "abuse_potential": "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) \u00e2\u20ac\u201d but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers.",
     "artifacts": {
       "disk": [
         {
@@ -8998,7 +9022,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "Project-scoped .roo/mcp.json travels with the repo \u2014 an untrusted clone ships an execution primitive.",
+    "abuse_potential": "Project-scoped .roo/mcp.json travels with the repo \u00e2\u20ac\u201d an untrusted clone ships an execution primitive.",
     "artifacts": {
       "disk": [
         {
@@ -9112,7 +9136,7 @@
     "mcp": [
       {
         "mechanism": "config-file",
-        "config_path": "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+        "config_path": "\u00e2\u20ac\u00a6/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
         "secrets_location": "env block (plaintext)",

@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\AppData\Local\Programs\cursor\**', 'C:\Users\*\AppData\Local\Programs\cursor\Cursor.exe', 'C:\Users\*\AppData\Local\Programs\cursor\resources\app\bin\cursor', 'C:\Users\*\AppData\Local\cursor-updater\**', 'C:\Users\*\AppData\Roaming\Cursor\User\**', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\AppData\Roaming\Cursor\User\skills\**', 'C:\Users\*\AppData\Roaming\Cursor\User\globalStorage\state.vscdb']
+      LET Globs = ['C:\Users\*\AppData\Local\Programs\cursor\**', 'C:\Users\*\AppData\Local\Programs\cursor\_\Cursor.exe', 'C:\Users\*\AppData\Local\Programs\cursor\_\resources\app\bin\cursor', 'C:\Users\*\AppData\Local\cursor-updater\**', 'C:\Users\*\AppData\Roaming\Cursor\User\**', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\AppData\Roaming\Cursor\User\skills\**', 'C:\Users\*\AppData\Roaming\Cursor\User\globalStorage\state.vscdb']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

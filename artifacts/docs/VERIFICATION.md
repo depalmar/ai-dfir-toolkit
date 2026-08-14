@@ -233,3 +233,70 @@ is worth stating plainly: an entry that quietly kept listing the retired domain
 would have implied a discriminator that no longer exists.
 
 Provenance is now 49/49.
+
+## 2026-08-14 - AIRT-0011 and AIRT-0002 verified on a live Windows host
+
+The first pass run from a machine with both tools installed. Every row below was
+checked with `lstat`, `Test-Path` or `Get-ItemProperty` on key metadata. No file
+contents and no registry values were read, so the credential stores
+(`state.vscdb`, `%APPDATA%\Claude\`) were confirmed for existence and type only.
+
+Host: Windows 11 Pro 26200. Claude Desktop `1.30096.1.0` (MSIX,
+`Claude_pzs8sxrjxfjjc`). Cursor `3.8.22` (Inno Setup per-user install).
+
+### AIRT-0011 Claude Desktop
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | `%LOCALAPPDATA%\Packages\...\LocalCache\Roaming\Claude\claude_desktop_config.json` | `high`, "Virtualized PATH - the app reads this one" | **`low` + `unverified`, description corrected** | The strongest correction in this pass. On an MSIX install the container exists but holds no `Claude` directory: `LocalCache\Roaming` contains `Claude-3p`, `go`, `Microsoft` and `notesmd-cli` only. `AppxManifest.xml` for 1.30096.1.0 declares `unvirtualizedResources`, so writes go to real `%APPDATA%\Claude\` and are not redirected. The catalog told a responder the roaming file was the decoy and the container file was authoritative; on this build it is exactly backwards. |
+| `AIRT-0011` | `%APPDATA%\Claude\logs\mcp*.log` | `medium` | **`high`** | Present on a live host. Naming is one file per configured server, `mcp-server-<name>.log`, alongside `main.log` and the `claude.ai-web` logs. |
+| `AIRT-0011` | `HKCU\...\Uninstall\Claude` | `medium` | **`low` + `unverified`** | No Claude uninstall key exists in HKCU, HKLM or WOW6432Node on this host. A Store install creates none by design, so absence is not evidence of absence of the app - `Get-AppxPackage` is the check. |
+| `AIRT-0011` | `HKCU\...\Classes\claude\shell\open\command` | `medium` | **`high`** | Present. Its default value carries the full `WindowsApps` path, which yields the package full name and version without querying the package manager - a cheaper version pivot than the uninstall key it replaces on Store installs. |
+| `AIRT-0011` | `HKCU\...\ActivatableClasses\Package\Claude_pzs8sxrjxfjjc*` | `medium` | **`low` + `unverified`** | The parent `ActivatableClasses\Package` key does not exist under HKCU at all on this host, so the location is not a reliable indicator of a packaged install. |
+| `AIRT-0011` | `HKCU\...\Run` | `medium` | **`medium`, description corrected** | Deliberately not downgraded. The Run key held no Claude value, but that is equally consistent with launch-at-login being switched off, so absence is not evidence against the mechanism. Recorded rather than acted on. |
+| `AIRT-0011` | credential locator `~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)` | one row, three OSes, prose inside the locator | **three rows, one per OS** | The field packed three paths and two parentheticals into a single locator, so it could not resolve on any platform and reported MISS everywhere. Confidence stays `medium` on all three: the directories exist, but the OAuth-ciphertext claim is about contents that were not read. |
+
+### AIRT-0002 Cursor
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0002` | `%LOCALAPPDATA%\Programs\cursor\Cursor.exe` | `high` | **path corrected to `...\cursor\_\Cursor.exe`** | The Electron payload sits in a `_` subdirectory on 3.8.22; the parent holds only `_`, `resources`, `tools` and the uninstaller. The documented path finds nothing. Worth recording rather than flattening: the `cursor://` handler still names the parent path, so the registry references a `Cursor.exe` that is not on disk. |
+| `AIRT-0002` | `%LOCALAPPDATA%\Programs\cursor\resources\app\bin\cursor` | `high` | **path corrected to `...\cursor\_\resources\app\bin\cursor`** | Same `_` shift. A top-level `resources\app` exists but contains no `bin`, so the documented path resolves partway and then fails - the worst failure shape for a collection script. |
+| `AIRT-0002` | `%LOCALAPPDATA%\cursor-updater\` | `high` | **`low` + `unverified`** | Absent. 3.8.22 stages updates through `tools\inno_updater.exe` inside the install directory. The absence is meaningful rather than incidental: six other `*-updater` directories exist on this host, so that convention is present on the machine and Cursor simply does not use it. |
+| `AIRT-0002` | `HKCU\...\Classes\cursor\shell\open\command` | `medium` | **`high`** | Present, with `--open-url` in the launch command. |
+| `AIRT-0002` | `HKCU\...\Uninstall\<Cursor GUID>` | `high`, description unchanged | **`high`, description expanded** | Confirmed. A per-user install writes an Inno Setup product code suffixed `_is1`, `DisplayName` "Cursor (User)", `InstallLocation` pointing at the install root rather than the binary. |
+| `AIRT-0002` | `%APPDATA%\Cursor\User\globalStorage\state.vscdb` | `medium` | **`medium`, description expanded** | Deliberately not raised, against the sweep's own suggestion. File presence is confirmed on a live host, but the row's claim is that `cursorAuth/*` rows hold plaintext tokens, and confirming that means opening a credential store. Existence verified, content claim still third-party. |
+
+### Tooling corrections found while doing the above
+
+`scripts/verify_host.py` did not check registry rows at all. `rows_for()` walked
+`artifacts.disk`, `credentials` and `mcp` only, while its docstring claimed
+"every locator on an entry that is checkable on this OS". Twenty-four entries
+carry registry claims that the sweep silently skipped, which is why the rows in
+this pass were checked by hand first. Registry support is added here, by key
+existence only - a registry value can hold a token exactly as a file can, and the
+script's guarantee is that it reads neither. Full-sweep coverage on this host
+went from 26 found to 51.
+
+Two traps in that addition, both caught by running it:
+
+- A key like `...\CurrentVersion\Run` exists on every Windows host. Reporting key
+  existence as a HIT would have manufactured evidence for a tool that registered
+  nothing. Rows naming a specific value now report `KEY?` and are excluded from
+  the upgrade suggestions.
+- `<Cursor GUID>` reduces to a bare `*`, which matched the first unrelated
+  product code under `Uninstall` and reported it as Cursor's. A wildcard
+  component that reduces to nothing but stars is now `unresolvable`, because
+  telling those siblings apart requires `DisplayName` - a value.
+
+`scripts/normalize_notes.py` downcased `HKCU` to `hkcu` and `EXE` to `exe` in the
+new notes. These registry rows are the first in the corpus to name a hive or an
+installer kind in running prose, so neither token was on the derived allowlist -
+the same failure the module comment records for `CWD` and `PKCE`. Both added,
+per the process that comment prescribes.
+
+### Not done in this pass
+
+The macOS and Linux rows on both entries remain host-unverified; only the
+Windows subset was checked against reality. Nine entries are still on the
+never-verified list.

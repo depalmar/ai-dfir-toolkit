@@ -6,11 +6,15 @@ documentation-derived paths into verified ones. It answers three questions per
 path - does it exist, what mode is it, and is it a file or a directory - and
 nothing else.
 
-It NEVER reads file contents. Several catalogued paths are credential stores
-holding live tokens (~/.claude/.credentials.json, ~/.codex/auth.json,
-~/.gemini/oauth_creds.json). The forensic question is "does this exist and what
-mode is it"; the secret must not end up in a transcript, a commit or a log. This
-script cannot leak one because it never opens a file - it stats them.
+Registry keys are checked on Windows too, by existence only.
+
+It NEVER reads file contents, and never reads a registry value. Several
+catalogued paths are credential stores holding live tokens
+(~/.claude/.credentials.json, ~/.codex/auth.json, ~/.gemini/oauth_creds.json).
+The forensic question is "does this exist and what mode is it"; the secret must
+not end up in a transcript, a commit or a log. This script cannot leak one
+because it never opens a file - it stats them - and it opens a registry key only
+to learn whether it is there, never to enumerate what it holds.
 
 Usage:
     python scripts/verify_host.py                  # everything for this OS
@@ -31,6 +35,7 @@ is wrong - that judgement is yours, and it needs the tool actually present.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import glob
 import os
 import platform
@@ -90,6 +95,85 @@ def mode_of(path: Path) -> str:
     return stat.filemode(st.st_mode)
 
 
+# Registry rows were unchecked until AIRT-0011 and AIRT-0002 were verified by
+# hand, because rows_for() only walked disk, credentials and mcp - so 24 entries
+# carrying registry claims were silently skipped by a script whose docstring
+# said it covered every locator. Key existence only: a value can hold a token
+# just as a file can, and this script's whole guarantee is that it reads none.
+HIVES = {
+    "HKCU": "HKEY_CURRENT_USER",
+    "HKEY_CURRENT_USER": "HKEY_CURRENT_USER",
+    "HKLM": "HKEY_LOCAL_MACHINE",
+    "HKEY_LOCAL_MACHINE": "HKEY_LOCAL_MACHINE",
+    "HKCR": "HKEY_CLASSES_ROOT",
+    "HKEY_CLASSES_ROOT": "HKEY_CLASSES_ROOT",
+    "HKU": "HKEY_USERS",
+    "HKEY_USERS": "HKEY_USERS",
+}
+
+
+def registry_hit(raw: str) -> tuple[str, str | None]:
+    """Resolve one catalogued registry key on this host.
+
+    Returns (status, resolved) where status is hit, miss or unresolvable.
+    A <placeholder> or trailing star is a wildcard over one path component,
+    which is how the catalog writes an install-specific product code. A
+    component that reduces to a bare star is NOT resolvable: it matches every
+    sibling, so reporting the first match would invent a hit for an unrelated
+    key - AIRT-0002's <Cursor GUID> matched a stranger's product code that way.
+    Telling those apart needs DisplayName, and this script does not read values.
+    Never opens a value.
+    """
+    if OS_NAME != "windows":
+        return ("unresolvable", None)
+    key = str(raw or "").strip().replace("/", "\\")
+    if not key:
+        return ("unresolvable", None)
+    hive_name, _, sub = key.partition("\\")
+    hive_const = HIVES.get(hive_name.upper())
+    if not hive_const or not sub:
+        return ("unresolvable", None)
+    import winreg
+    hive = getattr(winreg, hive_const)
+    sub = re.sub(r"<[^>]+>", "*", sub)
+
+    parts = sub.split("\\")
+    wild = next((i for i, p in enumerate(parts) if "*" in p or "?" in p), None)
+    if wild is None:
+        try:
+            winreg.CloseKey(winreg.OpenKey(hive, sub))
+            return ("hit", f"{hive_name}\\{sub}")
+        except OSError:
+            return ("miss", None)
+    if parts[wild].strip("*?") == "":
+        return ("unresolvable", None)
+
+    parent = "\\".join(parts[:wild])
+    try:
+        handle = winreg.OpenKey(hive, parent) if parent else hive
+    except OSError:
+        return ("miss", None)
+    try:
+        for i in range(0, 4096):
+            try:
+                child = winreg.EnumKey(handle, i)
+            except OSError:
+                break
+            if not fnmatch.fnmatch(child.lower(), parts[wild].lower()):
+                continue
+            rest = "\\".join(parts[wild + 1:])
+            full = "\\".join(filter(None, [parent, child, rest]))
+            try:
+                winreg.CloseKey(winreg.OpenKey(hive, full))
+                return ("hit", f"{hive_name}\\{full}")
+            except OSError:
+                continue
+    finally:
+        if parent:
+            winreg.CloseKey(handle)
+    return ("miss", None)
+
+
 def rows_for(entry: dict):
     """Every locator on an entry that is checkable on this OS."""
     for art in (entry.get("artifacts") or {}).get("disk") or []:
@@ -97,15 +181,18 @@ def rows_for(entry: dict):
         if oses and OS_NAME not in oses:
             continue
         yield ("disk", art.get("path", ""), art.get("confidence", ""),
-               art.get("description", ""))
+               art.get("description", ""), "")
     for cred in entry.get("credentials") or []:
         oses = [o.lower() for o in (cred.get("os") or entry.get("supported_os") or [])]
         if oses and OS_NAME not in oses:
             continue
         yield ("credential", cred.get("location", ""), cred.get("confidence", ""),
-               cred.get("description", ""))
+               cred.get("description", ""), "")
+    for reg in (entry.get("artifacts") or {}).get("registry") or []:
+        yield ("registry", reg.get("key", ""), reg.get("confidence", ""),
+               reg.get("description", ""), str(reg.get("value") or ""))
     for mcp in entry.get("mcp") or []:
-        yield ("mcp", mcp.get("config_path", ""), "", mcp.get("description", ""))
+        yield ("mcp", mcp.get("config_path", ""), "", mcp.get("description", ""), "")
 
 
 def main() -> int:
@@ -133,7 +220,31 @@ def main() -> int:
     upgradable = []
     for e in entries:
         lines = []
-        for cls, raw, conf, note in rows_for(e):
+        for cls, raw, conf, note, value in rows_for(e):
+            if cls == "registry":
+                if OS_NAME != "windows":
+                    unresolved += 1
+                    continue
+                status, rhit = registry_hit(raw)
+                if status == "unresolvable":
+                    unresolved += 1
+                    continue
+                if status == "miss":
+                    missing += 1
+                    if not args.only_found:
+                        lines.append(("MISS", cls, raw, conf, "-"))
+                    continue
+                # A row naming a specific value is a claim about that value, and
+                # this script will not read one. Keys like ...\CurrentVersion\Run
+                # exist on every Windows host, so key existence alone would
+                # manufacture a HIT for a tool that never registered anything.
+                named = value.strip() and value.strip() not in ("(Default)", "-")
+                found += 1
+                lines.append(("KEY?" if named else "HIT ", cls, rhit, conf,
+                              "key" if not named else "key, value unread"))
+                if conf in ("medium", "low") and not named:
+                    upgradable.append((e["id"], e["name"], rhit, conf))
+                continue
             cands = expand(raw)
             if not cands:
                 unresolved += 1
@@ -152,13 +263,14 @@ def main() -> int:
         if not lines:
             continue
         if args.markdown:
+            verdict = {"HIT": "**HIT**", "KEY?": "key only"}
             for res, cls, path, conf, mode in lines:
                 print(f"| {e['id']} | {cls} | `{path}` | {conf or '-'} | "
-                      f"{'**HIT**' if res.strip() == 'HIT' else 'miss'} | `{mode}` |")
+                      f"{verdict.get(res.strip(), 'miss')} | `{mode}` |")
         else:
             print(f"{e['id']}  {e['name']}")
             for res, cls, path, conf, mode in lines:
-                print(f"   {res} {cls:11} {conf or '-':7} {mode:11} {path}")
+                print(f"   {res} {cls:11} {conf or '-':7} {mode:17} {path}")
             print()
 
     print(f"\nfound {found} · missing {missing} · not resolvable here {unresolved}")
@@ -168,7 +280,8 @@ def main() -> int:
               f"tool version, then raise the\nconfidence and log it in docs/VERIFICATION.md:")
         for eid, name, path, conf in upgradable:
             print(f"   {eid}  {conf:6}  {path}   ({name})")
-    print("\nNo file contents were read. Existence, type and mode only.")
+    print("\nNo file contents and no registry values were read. Existence, type "
+          "and mode only.")
     return 0
 
 
