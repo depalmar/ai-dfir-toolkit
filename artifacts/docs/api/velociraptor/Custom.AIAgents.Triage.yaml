@@ -78,6 +78,9 @@ sources:
   - name: Letta
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Letta(Upload=Upload)
+  - name: MicrosoftCopilotStudioAgents
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.MicrosoftCopilotStudioAgents(Upload=Upload)
   - name: Ollama
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Ollama(Upload=Upload)

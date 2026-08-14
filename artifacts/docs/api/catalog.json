@@ -7176,22 +7176,218 @@
     ],
     "vendor": "Microsoft",
     "category": "cloud-agent",
-    "description": "Low-code agent builder hosted in Microsoft cloud. Endpoint footprint is browser only.",
+    "description": "Low-code agent builder hosted in Microsoft cloud. Authoring is browser only, but the computer use tool runs agent actions on a customer Windows machine through the Power Automate for desktop runtime, which is where the endpoint evidence is.",
     "supported_os": [
-      "cloud"
+      "cloud",
+      "windows"
     ],
-    "execution_model": "Fully cloud-hosted",
+    "execution_model": "Cloud orchestration, with agent actions executed on a registered Windows host",
     "capabilities": {
-      "local_code_execution": false,
+      "local_code_execution": true,
       "local_listener": false,
       "plaintext_credentials": false,
       "mcp_capable": true
     },
-    "risk": "low",
-    "confidence": "high",
-    "abuse_potential": "Primary telemetry is M365/Purview audit, not endpoint. CrowdStrike ships AIDR for Copilot Studio Agents.",
-    "artifacts": {},
-    "credentials": [],
+    "risk": "high",
+    "confidence": "medium",
+    "abuse_potential": "A cloud-triggered agent drives a real desktop session on a customer host under maker-supplied credentials. The same runtime carries documented switches that suppress its own evidence - action logging, error screenshots and run-file cleanup are all disableable by registry value - so a host configured to be quiet is itself the finding. CrowdStrike ships AIDR for Copilot Studio agents, which is a tenant-side telemetry source rather than an endpoint one.",
+    "artifacts": {
+      "disk": [
+        {
+          "path": "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Scripts",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "Execution logs and cache for cloud-triggered flows",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\DesktopFlowModules",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Tenant-supplied modules fetched onto the host at run time",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Designer\\Scripts",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "Designer-triggered runs, which is a different provenance",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "timeline"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "C:\\Windows\\ServiceProfiles\\UIFlowService\\AppData\\Local\\Cache  |  C:\\Windows\\ServiceProfiles\\UIFlowService\\AppData\\Local\\Users",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Service-account cache under the default runtime identity",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "C:\\Windows\\ServiceProfiles\\UIFlowService\\AppData\\Local\\Microsoft\\Power Automate Desktop\\Cache",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Third cache location used by newer runtime versions",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "execution",
+            "program-presence"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "%programdata%\\Microsoft\\Power Automate\\Logs",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "Registration and cloud runtime logs, admin rights to read",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "confidence": "high"
+        },
+        {
+          "path": "%temp%\\Power Automate for desktop_*.log",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "Installer logs, in the installing user temp directory",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "timeline",
+            "program-presence"
+          ],
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKLM\\SOFTWARE\\Microsoft\\Power Automate Desktop\\Global",
+          "value": "DisableFlowExecutionActionLogging, DisableScreenshotCaptureOnError, DisableRunFilesCleanup, VideoLoggerModeOverride, VideoLogOutputPath",
+          "type": "DWORD",
+          "description": "Evidence suppression and evidence generation in one key. Action logging, error screenshots and run-file cleanup are each disableable, and the video family from 2.66 onward writes a recording to a path this key chooses, so a static collector target can be redirected. Treat non-default values as an anti-forensics signal.",
+          "persistence": false,
+          "forensic_value": "high",
+          "confidence": "high"
+        },
+        {
+          "key": "HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\Power Automate Desktop\\Registration",
+          "value": "AllowedRegistrationTenants, AllowRegisteringOutsideOfAADJoinedTenant, AllowTenantSwitching",
+          "type": "REG_SZ",
+          "description": "Cross-tenant registration control. A host registered to a tenant it is not Entra-joined to is a cross-tenant agent foothold.",
+          "persistence": false,
+          "forensic_value": "high",
+          "confidence": "high"
+        },
+        {
+          "key": "HKLM\\SOFTWARE\\Microsoft\\Power Automate Desktop",
+          "value": "Cloud, ProxyServer, ProxyNetworkCredentialsKey, DisableUNCPaths, AllowVerboseLogging",
+          "type": "REG_SZ",
+          "description": "Runtime configuration. Cloud resolves which sovereign cloud the host talks to, and ProxyNetworkCredentialsKey names a Windows Credential Manager entry rather than holding the secret itself.",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\SOFTWARE\\Microsoft\\Power Automate Desktop",
+          "value": "DisableAskBeforeRunningASharedFlow",
+          "type": "DWORD",
+          "description": "Set to 1 this suppresses the confirmation prompt for running a shared flow from an untrusted author, which is a security-check bypass",
+          "persistence": false,
+          "forensic_value": "high",
+          "confidence": "high"
+        }
+      ],
+      "network": [
+        {
+          "direction": "egress",
+          "indicator": "*.servicebus.windows.net, *.gateway.prod.island.powerapps.com",
+          "port": "443/TCP",
+          "description": "Machine connectivity. The host holds an outbound Service Bus Relay connection, which is the channel a cloud-triggered agent run arrives on.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "msedgedriver.azureedge.net, chromedriver.storage.googleapis.com",
+          "port": "443/TCP",
+          "description": "WebDriver downloads for browser automation. The Google-hosted domain is a distinctive indicator that browser automation was provisioned here.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "*.directline.botframework.com",
+          "port": "443/TCP",
+          "description": "Agent conversation channel, documented over both HTTPS and WebSocket",
+          "confidence": "high"
+        }
+      ],
+      "process": [
+        {
+          "name": "UIFlowService",
+          "os": [
+            "windows"
+          ],
+          "typical_parent": "services.exe",
+          "service_or_daemon": "Power Automate Service",
+          "persistence": "Windows service, default identity NT Service\\UIFlowService",
+          "confidence": "high"
+        }
+      ]
+    },
+    "credentials": [
+      {
+        "location": "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Cache\\MSI\\Account  |  %LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Cache\\MSIX\\Account",
+        "os": [
+          "windows"
+        ],
+        "storage": "encrypted",
+        "secret_type": "session-state",
+        "description": "Token cache and signed-in account state, in the branch matching the install type. Deleting it signs the machine out. Record existence and timestamps only.",
+        "confidence": "high"
+      },
+      {
+        "location": "Azure Key Vault named per computer-use tool, by subscription, resource group and vault name",
+        "os": [
+          "cloud"
+        ],
+        "storage": "encrypted",
+        "secret_type": "admin-credential",
+        "description": "Second documented secret store for computer use. Where a vault is used its access policy and Azure diagnostic logs are in scope, outside Power Platform entirely.",
+        "confidence": "high"
+      }
+    ],
     "mcp": [
       {
         "mechanism": "cloud",
@@ -7206,7 +7402,9 @@
       }
     ],
     "collection": {
-      "triage_priority": "p3",
+      "triage_priority": "p2",
+      "kape_target": "MicrosoftCopilotStudioAgents",
+      "velociraptor_artifact": "Custom.AIAgents.MicrosoftCopilotStudioAgents",
       "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
     },
     "atlas_techniques": [
@@ -7227,7 +7425,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0025",

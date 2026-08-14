@@ -12,7 +12,7 @@ documentation, correct what is wrong, then set `last_verified` and raise
 correction in `docs/VERIFICATION.md` with its basis.
 
 
-## Never verified — 2
+## Never verified — 1
 
 No `last_verified` at all. These are listed on every `validate.py` run.
 
@@ -26,15 +26,8 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `low` <- network: `app.devin.ai, *.cognition.ai`
     - `high`   network: `*.devinapps.com (IDE/Desktop iframes), app.devin.ai`
 
-### AIRT-0014 — Microsoft Copilot Studio Agents
 
-- entry confidence: `high` · **cloud-hosted, no endpoint paths to check**
-- check against:
-    - [Microsoft Copilot Studio documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
-    - [What is Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
-
-
-## Medium or low confidence — 22
+## Medium or low confidence — 23
 
 Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks these.
 
@@ -109,6 +102,30 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `high`   credential: `Browser Local Storage, key "agentgpt-settings-storage-v2" (browser profile Local Storage LevelDB, AgentGPT origin - http://localhost:3000 self-hosted)`
     - `high`   credential: `MySQL database "reworkd_platform", table Account (docker volume agentgpt_db -> /var/lib/mysql in container agentgpt_db)`
     - `high`   credential: `REWORKD_PLATFORM_SECRET_SIGNING_KEY  (read from <install>/platform/.env)`
+
+### AIRT-0014 — Microsoft Copilot Studio Agents
+
+- entry confidence: `medium` · **cloud-hosted, no endpoint paths to check**
+- check against:
+    - [Microsoft Copilot Studio documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
+    - [What is Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
+- 16 claim(s) to confirm:
+    - `high`   disk: `%LOCALAPPDATA%\Microsoft\Power Automate Desktop\Scripts`
+    - `high`   disk: `%LOCALAPPDATA%\Microsoft\Power Automate Desktop\DesktopFlowModules`
+    - `high`   disk: `%LOCALAPPDATA%\Microsoft\Power Automate Desktop\Designer\Scripts`
+    - `high`   disk: `C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Cache  |  C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Users`
+    - `high`   disk: `C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Microsoft\Power Automate Desktop\Cache`
+    - `high`   disk: `%programdata%\Microsoft\Power Automate\Logs`
+    - `high`   disk: `%temp%\Power Automate for desktop_*.log`
+    - `high`   registry: `HKLM\SOFTWARE\Microsoft\Power Automate Desktop\Global`
+    - `high`   registry: `HKLM\SOFTWARE\WOW6432Node\Microsoft\Power Automate Desktop\Registration`
+    - `high`   registry: `HKLM\SOFTWARE\Microsoft\Power Automate Desktop`
+    - `high`   registry: `HKCU\SOFTWARE\Microsoft\Power Automate Desktop`
+    - `high`   network: `*.servicebus.windows.net, *.gateway.prod.island.powerapps.com`
+    - `high`   network: `msedgedriver.azureedge.net, chromedriver.storage.googleapis.com`
+    - `high`   network: `*.directline.botframework.com`
+    - `high`   credential: `%LOCALAPPDATA%\Microsoft\Power Automate Desktop\Cache\MSI\Account  |  %LOCALAPPDATA%\Microsoft\Power Automate Desktop\Cache\MSIX\Account`
+    - `high`   credential: `Azure Key Vault named per computer-use tool, by subscription, resource group and vault name`
 
 ### AIRT-0016 — GPT Pilot
 

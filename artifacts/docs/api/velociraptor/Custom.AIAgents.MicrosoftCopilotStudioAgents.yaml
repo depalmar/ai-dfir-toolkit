@@ -1,0 +1,24 @@
+name: Custom.AIAgents.MicrosoftCopilotStudioAgents
+description: |
+  Low-code agent builder hosted in Microsoft cloud. Authoring is browser only, but the computer use tool runs agent actions on a customer Windows machine through 
+
+  Generated from the AI agent artifact catalog (AIRT-0014). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Local\Microsoft\Power Automate Desktop\Scripts', 'C:\Users\*\AppData\Local\Microsoft\Power Automate Desktop\DesktopFlowModules', 'C:\Users\*\AppData\Local\Microsoft\Power Automate Desktop\Designer\Scripts', 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Cache', 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Users', 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Microsoft\Power Automate Desktop\Cache', 'C:\ProgramData\Microsoft\Power Automate\Logs']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

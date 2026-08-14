@@ -998,6 +998,18 @@ targets:
     paths:
       - "<install>/platform/.env"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0014_localappdata_microsoft_power_automate_de
+    name: "Microsoft Copilot Studio Agents credential store (AIRT-0014)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Cache\\MSI\\Account"
+      - "%LOCALAPPDATA%\\Microsoft\\Power Automate Desktop\\Cache\\MSIX\\Account"
+    notes: "encrypted/session-state, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0015_config_open_interpreter_profiles_default
     name: "Open Interpreter credential store (AIRT-0015)"
     repo_cat: "cred"

@@ -73,6 +73,10 @@ Targets:
         Category: AIAgents
         Path: 'Langflow.tkape'
     -
+        Name: 'MicrosoftCopilotStudioAgents'
+        Category: AIAgents
+        Path: 'MicrosoftCopilotStudioAgents.tkape'
+    -
         Name: 'Ollama'
         Category: AIAgents
         Path: 'Ollama.tkape'
