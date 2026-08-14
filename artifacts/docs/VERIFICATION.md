@@ -545,6 +545,123 @@ What went in below is the subset with unambiguous vendor evidence and no
 judgement call. The rest is captured with its sourcing so the next pass starts
 from evidence rather than from scratch.
 
+## 2026-08-14 (eighth pass) - AIRT-0008 on a live host, and a contradiction that dissolved
+
+The handover listed AIRT-0008's Windows CLI log directory as one of two items
+blocked on a human: vendor troubleshooting documentation gives `%TEMP%\qlog\`,
+vendor source builds `%TEMP%\amazon-q\logs`. Both are vendor sources. The
+instruction was to settle it on a live host.
+
+**It is not settleable on Windows, because there is no Windows build.**
+
+| Check | Result |
+|---|---|
+| `winget search "amazon q"` | No CLI package. Only `Amazon.Quick`, an unrelated product. |
+| GitHub releases, latest `v1.19.7` | No Windows asset. |
+| `aws/amazon-q-developer-cli` issue #153, "Windows support" | **Open**, last updated 2025-10-20. |
+
+The source resolves the rest. `crates/chat-cli/src/util/paths.rs`:
+
+```rust
+pub fn logs_dir() -> Result<PathBuf> {
+    cfg_if::cfg_if! {
+        if #[cfg(unix)] {
+            Ok(runtime_dir()?.join("qlog"))
+        } else if #[cfg(windows)] {
+            Ok(std::env::temp_dir().join("amazon-q").join("logs"))
+        }
+    }
+}
+```
+
+`runtime_dir()` on Linux resolves `$XDG_RUNTIME_DIR`, then `$TMPDIR`, then
+`temp_dir()`. So neither branch can produce `%TEMP%\qlog\`: that string welds the
+unix directory name onto a Windows environment variable and matches nothing the
+code does. It is a documentation error, not a competing claim. The
+`%TEMP%\amazon-q\logs` branch is correct for a Windows target and is unreachable
+on any shipped build.
+
+### Settled on a live host - WSL Ubuntu 22.04.5, uid 1000
+
+Installed `q 1.19.7` (`BUILD_HASH=b654a1be`, target `x86_64-unknown-linux-gnu`)
+from `desktop-release.q.us-east-1.amazonaws.com`, ran it, observed, then removed
+it. `Q_SKIP_SETUP=1` was used so the installer placed binaries only and never
+touched a shell rc, which made removal exact and verifiable.
+
+`$XDG_RUNTIME_DIR` was `/run/user/1000/`, so the predicted path was
+`/run/user/1000/qlog`. That is what appeared. **Not** `/tmp/qlog`.
+
+**The directory is not created by default.** This was isolated with a controlled
+sweep, deleting the directory between each run of the same `q doctor` command:
+
+| `Q_LOG_LEVEL` | Result |
+|---|---|
+| unset | no qlog |
+| `error` | no qlog |
+| `warn` | no qlog |
+| `info` | no qlog |
+| `debug` | qlog created, `cli.log` 4874 b |
+| `trace` | qlog created, `cli.log` 9673 b |
+
+A responder finding no `qlog` has learned nothing about whether the CLI was used.
+That is the opposite of what a log row normally implies, so it is written into the
+row description rather than left to inference.
+
+`/run/user/1000` is **tmpfs**. Even when the log exists it dies on reboot or
+session end and never reaches a disk image. Recorded as `retention`, which the
+schema uses to promote a disk row to rotating volatility.
+
+`cli.log` content is worth the collection: argv for each invocation
+(`Command ran command=["q", "doctor"]`), telemetry events naming the subcommand,
+and Builder ID token lookups against the secret store.
+
+### The better execution witness
+
+`~/.local/share/amazon-q/data.sqlite3` and `settings.json` are created on the
+**first run, before authentication and regardless of `Q_LOG_LEVEL`**. `q doctor`
+failed on `Not authenticated` and they were written anyway. For proving the CLI
+ran on a host, the database beats the log, because the log is conditional and
+volatile and the database is neither.
+
+### Applied
+
+Three disk rows on AIRT-0008, each `confidence: high` with row-level
+`last_verified: 2026-08-14`, all scoped `os: [linux]`:
+`$XDG_RUNTIME_DIR/qlog/cli.log`, `~/.local/share/amazon-q/data.sqlite3`,
+`~/.local/share/amazon-q/settings.json`. The entry previously carried no log
+artifacts at all.
+
+`collection.guidance` gained the Windows consequence: the CLI runs inside WSL, so
+its artifacts are in the distro filesystem - live at `\\wsl$\<distro>\home\<user>\`,
+at rest inside the distro `ext4.vhdx` under `%LOCALAPPDATA%\Packages`. Collecting
+`%TEMP%` on the Windows side returns nothing for this tool.
+
+### Not applied, deliberately
+
+**No Windows log row was added.** `%TEMP%\amazon-q\logs` is source-derived for a
+target with no released binary; a row pointing there sends a responder to a
+directory that cannot exist. An absent row is better than a row that is wrong in
+the field.
+
+**No `last_verified` on any Windows or macOS row.** The observation was Linux.
+Stamping it wider is exactly what the row-level field was added to prevent.
+
+**The research file's log-file list is not confirmed.** `RESEARCH-2026-08-14.md`
+carries a candidate row citing `chat.log`, `qchat.log`, `mcp.log` and
+`translate.log` from the vendor troubleshooting page. Only `cli.log` was observed,
+from the `q` binary. The other three plausibly come from `qchat` and from
+authenticated sessions, neither of which this pass exercised - no AWS Builder ID
+was used. Scope-limited, not refuted.
+
+Entry-level `confidence` left at `low`. Three verified Linux rows do not make the
+Windows and macOS surface verified, and the entry is still mostly the IDE plugin.
+
+### Removal verified
+
+Binaries, `~/.local/share/amazon-q/`, the qlog directory and the `/tmp` download
+all removed and confirmed absent. `.bashrc`, `.zshrc` and `.profile` were checked
+before and after and were never modified.
+
 | Scope | Field | Was | Now | Basis |
 |---|---|---|---|---|
 | `AIRT-0008` | MCP config set | three files | **four** | The catalog carried `~/.aws/amazonq/mcp.json`, `.amazonq/mcp.json` and `~/.aws/amazonq/default.json`, and missed `<repo>/.amazonq/default.json`. That is the current-format workspace file, and the vendor states "Q Developer gives precedence to workspace level configurations" - so the missing file is also the winning file. |

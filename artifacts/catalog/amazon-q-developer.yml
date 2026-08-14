@@ -64,6 +64,62 @@ artifacts:
         - prompt-injection-surface
       install_method: n/a
       confidence: medium
+    - path: "$XDG_RUNTIME_DIR/qlog/cli.log"
+      os:
+        - linux
+      artifact_type: log
+      description: >-
+        CLI debug log. Records argv for every invocation, telemetry events
+        naming the subcommand run, and Builder ID token lookups against the
+        secret store. Created only when Q_LOG_LEVEL is debug or trace - error,
+        warn, info and unset produce no file and no directory, so an absent
+        qlog is not evidence the CLI went unused. Vendor troubleshooting
+        documentation gives this location as %TEMP%\qlog\, which matches
+        neither branch of the source and is a documentation error.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - user-activity
+        - timeline
+      install_method: zip installer
+      retention: >-
+        Volatile. $XDG_RUNTIME_DIR is tmpfs, so the directory and its contents
+        are lost on reboot or session end and never reach a disk image. Collect
+        live or not at all.
+      confidence: high
+      last_verified: "2026-08-14"
+    - path: "~/.local/share/amazon-q/data.sqlite3"
+      os:
+        - linux
+      artifact_type: database
+      description: >-
+        SQLite state database created on the first CLI run, before any
+        authentication and regardless of Q_LOG_LEVEL. Its presence proves the
+        CLI executed on the host even when no log was ever written and the user
+        never signed in, which makes it the more reliable execution witness of
+        the two.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: zip installer
+      confidence: high
+      last_verified: "2026-08-14"
+    - path: "~/.local/share/amazon-q/settings.json"
+      os:
+        - linux
+      artifact_type: config-file
+      description: >-
+        CLI settings file, written as an empty object on first run and
+        populated as the user changes settings. Co-located with the state
+        database and created in the same first-run write.
+      forensic_value: low
+      evidence_type:
+        - configuration
+        - program-presence
+      install_method: zip installer
+      confidence: high
+      last_verified: "2026-08-14"
   network:
     - direction: egress
       indicator: "q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start"
@@ -155,7 +211,15 @@ mcp:
     notes: Where the IDE stores a server added at global scope
 collection:
   triage_priority: p2
-  guidance: Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run.
+  guidance: >-
+    Collect config and credential paths before any reboot or agent restart;
+    several agents rotate or truncate session logs. Capture the MCP config
+    before remediation - it records what the agent was authorised to run. There
+    is no native Windows build of the command-line client, so on a Windows host
+    the CLI runs inside WSL and its log and state database live in the distro
+    filesystem, reachable live at \\wsl$\<distro>\home\<user>\ and at rest
+    inside the distro ext4.vhdx under %LOCALAPPDATA%\Packages. Collecting
+    %TEMP% on the Windows side returns nothing for this tool.
   kape_target: AmazonQDeveloper
   velociraptor_artifact: Custom.AIAgents.AmazonQDeveloper
 atlas_techniques:
