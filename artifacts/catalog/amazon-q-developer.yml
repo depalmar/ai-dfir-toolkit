@@ -64,6 +64,67 @@ artifacts:
         - prompt-injection-surface
       install_method: n/a
       confidence: medium
+    - path: "~/.aws/amazonq/cli-agents/*.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: >-
+        Global CLI agent definitions. One file carries mcpServers, allowedTools
+        and hooks at once, so it is the config that records both what the agent
+        could reach and what it was told to run. The hooks field takes a command
+        string on documented triggers - agentSpawn, userPromptSubmit, preToolUse,
+        postToolUse and stop - which is arbitrary local execution on agent start
+        and on every tool call. The vendor documents that the CLI creates this
+        directory automatically if it does not exist.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - persistence
+        - execution
+        - prompt-injection-surface
+      install_method: zip installer
+      confidence: high
+    - path: "<repo>/.amazonq/cli-agents/*.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: >-
+        Workspace CLI agent definitions, same shape as the global directory and
+        the same hooks execution surface. The vendor states that where both
+        define an agent of the same name, the local agent takes precedence - so
+        collecting the global directory alone reports the definition that did
+        not run. Travels with the repository.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - persistence
+        - execution
+        - prompt-injection-surface
+      install_method: zip installer
+      confidence: high
+    - path: node .../language-server/build/aws-lsp-codewhisperer-iam-binary.js --stdio
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: binary
+      description: >-
+        The second standalone node bundle from the same build. The catalog
+        carried only the token bundle, so a rule keyed on that filename alone
+        misses IAM-authenticated installs. webpack.config.js builds both from one
+        module - nodeJsBearerTokenBundleConfig and nodeJsIamBundleConfig - the
+        other two exported configs being browser and webworker targets that do
+        not land on an endpoint.
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: IDE extension
+      confidence: high
     - path: "$XDG_RUNTIME_DIR/qlog/cli.log"
       os:
         - linux

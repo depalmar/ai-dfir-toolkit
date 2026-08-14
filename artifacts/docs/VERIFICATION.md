@@ -740,6 +740,44 @@ The five AIRT-0007 Devin rows in the research file stay out. That entry is
 blocked on the AIRT-0007 / AIRT-0006 scoping decision, and the handover is
 explicit that no rows go into either until it is made.
 
+## 2026-08-14 (tenth pass) - AIRT-0008 CLI agents, and a hooks execution surface
+
+Three vendor-documented rows the entry never had. The first two matter more than
+their artifact type suggests.
+
+`~/.aws/amazonq/cli-agents/*.json` and `<repo>/.amazonq/cli-agents/*.json` carry
+`mcpServers`, `allowedTools` **and** `hooks` in one file. The catalog already
+treated MCP config as the agent's spawn surface; `hooks` is a second one sitting
+in the same JSON, and it was not recorded anywhere. `agent-format.md` documents
+five triggers verbatim - `agentSpawn`, `userPromptSubmit`, `preToolUse`,
+`postToolUse`, `stop` - each taking a required `command` string, with the
+vendor's own examples running `git status`, `ls -la`, and shell redirection into
+`/tmp`. That is arbitrary local command execution on agent start and on every
+tool call, and `preToolUse` can block the tool use. Both rows carry
+`persistence` and `execution` in `evidence_type` for that reason.
+
+Precedence is the collection trap. The vendor states that where both directories
+define an agent of the same name, the local one wins, so collecting the global
+directory alone reports the definition that did not run. Recorded in the
+workspace row rather than left implicit.
+
+`aws-lsp-codewhisperer-iam-binary.js` is the second standalone node bundle from
+the same build. The catalog carried only the token bundle, so a rule keyed on
+that filename alone misses IAM-authenticated installs. `webpack.config.js`
+exports four configs; the other two are browser and webworker targets and do not
+land on an endpoint, so two node bundles is the right framing for this catalog.
+
+None of these three were stamped `last_verified`. They are vendor-documented, not
+host-checked - Amazon Q was removed from this machine after the eighth pass, and
+these paths only exist where the tool is installed.
+
+`webpack` joins `LOWERCASE_NAMES` in the normalizer, for the same reason
+`streamlit` did in the pass above: the sentence-start rule matched `webpack`,
+stopped at the dot, and wanted `Webpack.config.js`. Both are lowercase-by-
+convention tool names and belong beside `node` and `docker`. That is now three
+instances of one defect, and the third was found by the gate rather than by
+reading, which is the gate working.
+
 | Scope | Field | Was | Now | Basis |
 |---|---|---|---|---|
 | `AIRT-0008` | MCP config set | three files | **four** | The catalog carried `~/.aws/amazonq/mcp.json`, `.amazonq/mcp.json` and `~/.aws/amazonq/default.json`, and missed `<repo>/.amazonq/default.json`. That is the current-format workspace file, and the vendor states "Q Developer gives precedence to workspace level configurations" - so the missing file is also the winning file. |
