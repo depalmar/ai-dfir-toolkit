@@ -18,7 +18,7 @@ except ImportError:
     sys.exit("Install deps first:  pip install pyyaml jsonschema")
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA = json.loads((ROOT / "schema" / "artifact.schema.json").read_text())
+SCHEMA = json.loads((ROOT / "schema" / "artifact.schema.json").read_text(encoding="utf-8"))
 validator = Draft202012Validator(SCHEMA)
 
 def main() -> int:
@@ -33,7 +33,7 @@ def main() -> int:
     for path in files:
         name = Path(path).name
         try:
-            doc = yaml.safe_load(Path(path).read_text())
+            doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         except yaml.YAMLError as exc:
             print(f"[YAML]   {name}: {exc}")
             failures += 1
@@ -104,7 +104,7 @@ def main() -> int:
     for path in sigma_files:
         name = Path(path).name
         try:
-            rule = yaml.safe_load(Path(path).read_text())
+            rule = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         except yaml.YAMLError as exc:
             print(f"[SIGMA]  {name}: {exc}")
             failures += 1
@@ -134,7 +134,7 @@ def main() -> int:
     # and the exporters understand. Anything else belongs in `description`.
     prose_in_locator = re.compile(r"\([A-Za-z]|  ->  ")
     for path in files:
-        doc = yaml.safe_load(Path(path).read_text())
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         rows = [("disk", a.get("path"))
                 for a in (doc.get("artifacts") or {}).get("disk") or []]
         rows += [("credential", c.get("location")) for c in doc.get("credentials") or []]
@@ -166,7 +166,7 @@ def main() -> int:
     if clean:
         drift = 0
         for path in files:
-            doc = yaml.safe_load(Path(path).read_text())
+            doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
             for holder, key in each_note(doc):
                 before = holder.get(key) or ""
                 if clean(before) != before:
@@ -203,7 +203,7 @@ def main() -> int:
     # all before going looking for its config.
     no_mcp = []
     for path in files:
-        doc = yaml.safe_load(Path(path).read_text())
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         if (doc.get("capabilities") or {}).get("mcp_capable") is True \
                 and not (doc.get("mcp") or []):
             no_mcp.append(f"{doc.get('id')} {doc.get('name')}")
@@ -227,7 +227,7 @@ def main() -> int:
     except ImportError:
         audit = None
     if audit:
-        entries = [yaml.safe_load(Path(p).read_text()) for p in files]
+        entries = [yaml.safe_load(Path(p).read_text(encoding="utf-8")) for p in files]
         for problem in audit(coverage(load_sources(), entries)):
             print(f"[SOURCE] {problem}")
             failures += 1
@@ -240,7 +240,7 @@ def main() -> int:
     stale, never = [], []
     today = date.today()
     for path in files:
-        doc = yaml.safe_load(Path(path).read_text())
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         label = f"{doc.get('id')} {doc.get('name')}"
         if not (doc.get("references") or []):
             unsourced.append(label)

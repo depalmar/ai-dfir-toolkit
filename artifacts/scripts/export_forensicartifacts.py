@@ -41,7 +41,7 @@ def camel(name: str) -> str:
 def main() -> int:
     definitions = []
     for f in sorted(glob.glob(str(ROOT / "catalog" / "*.yml"))):
-        entry = yaml.safe_load(Path(f).read_text())
+        entry = yaml.safe_load(Path(f).read_text(encoding="utf-8"))
 
         # Only file-backed artifacts map cleanly onto the FILE source type.
         paths_by_os: dict[str, list[str]] = {}

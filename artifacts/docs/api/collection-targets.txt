@@ -258,5 +258,5 @@ webui.db (user and API key tables)
 ~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
 ~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite
 ~/Library/Logs/Claude/mcp*.log
-â€¦/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
-â€¦/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+…/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
+…/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json

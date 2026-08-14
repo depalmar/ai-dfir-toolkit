@@ -2237,7 +2237,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled \u00e2\u20ac\u201d env-embedded keys in mcpServers blocks can leave the endpoint.",
+    "abuse_potential": "MCP settings JSON is plaintext and syncs via VS Code Settings Sync if enabled \u2014 env-embedded keys in mcpServers blocks can leave the endpoint.",
     "artifacts": {
       "disk": [
         {
@@ -2377,7 +2377,7 @@
     "mcp": [
       {
         "mechanism": "config-file",
-        "config_path": "\u00e2\u20ac\u00a6/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+        "config_path": "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
         "secrets_location": "env block (plaintext)",
@@ -4697,7 +4697,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) \u00e2\u20ac\u201d but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers.",
+    "abuse_potential": "Secrets default to the OS keyring (service `goose`, username `secrets`, one JSON blob) \u2014 but GOOSE_DISABLE_KEYRING falls back to plaintext ~/.config/goose/secrets.yaml (0600), common in headless/CI/containers.",
     "artifacts": {
       "disk": [
         {
@@ -9229,7 +9229,7 @@
     },
     "risk": "high",
     "confidence": "high",
-    "abuse_potential": "Project-scoped .roo/mcp.json travels with the repo \u00e2\u20ac\u201d an untrusted clone ships an execution primitive.",
+    "abuse_potential": "Project-scoped .roo/mcp.json travels with the repo \u2014 an untrusted clone ships an execution primitive.",
     "artifacts": {
       "disk": [
         {
@@ -9343,7 +9343,7 @@
     "mcp": [
       {
         "mechanism": "config-file",
-        "config_path": "\u00e2\u20ac\u00a6/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+        "config_path": "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
         "config_key": "mcpServers",
         "spawn_mechanism": "Child process at IDE start",
         "secrets_location": "env block (plaintext)",

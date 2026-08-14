@@ -33,7 +33,7 @@ def write_lf(path: Path, text: str) -> None:
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from data_sources import volatility_of  # noqa: E402  (same-directory helper)
 
-entries = [yaml.safe_load(Path(p).read_text())
+entries = [yaml.safe_load(Path(p).read_text(encoding="utf-8"))
            for p in sorted(glob.glob(str(ROOT / "catalog" / "*.yml")))]
 
 
@@ -115,7 +115,7 @@ write_lf(OUT / "collection-targets.txt", "\n".join(manifest) + "\n")
 # Detection index so consumers can pull rules without walking the tree.
 detections = []
 for path in sorted(glob.glob(str(ROOT / "detections" / "sigma" / "*.yml"))):
-    rule = yaml.safe_load(Path(path).read_text())
+    rule = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     detections.append({
         "file": f"detections/sigma/{Path(path).name}",
         "id": rule.get("id"),
