@@ -301,6 +301,7 @@ sources:
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/logs/mcp*.log'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
     - '*.mcpb / *.dxt bundle files'

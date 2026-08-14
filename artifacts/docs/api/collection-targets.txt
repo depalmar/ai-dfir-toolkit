@@ -185,6 +185,7 @@ webui.db (user and API key tables)
 ~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl
 ~/.config/Claude/
 ~/.config/Claude/claude_desktop_config.json
+~/.config/Claude/logs/mcp*.log
 ~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
 ~/.config/Cursor/User/globalStorage/state.vscdb

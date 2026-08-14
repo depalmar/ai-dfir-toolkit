@@ -440,6 +440,42 @@ Docker-only and became a gate failure the moment Windows rows existed. Set to
 to `high`. `AIRT-0017` Ollama `~/.ollama/id_ed25519`, `medium` to `high`, noting
 the platform actually checked rather than implying all three.
 
+## 2026-08-14 (fifth pass) - the Linux config path, settled on a live host
+
+The highest-risk row in the catalog, resolved. `claude-desktop 1.30096.1` from
+Anthropic's apt repository, Ubuntu 22.04 under WSL2 with WSLg.
+
+**The first attempt was a false negative, and the reason is worth recording.**
+The sweep was run from a `root@` shell, so `~` resolved to `/root` while the
+package was installed under `rdepal`. Four MISSes against a home directory the
+application had never touched. WSL reports the same hostname for every distro,
+so the prompt gives no clue which one you are in either. Check `id -un` and
+`echo $HOME` before trusting a MISS.
+
+The second attempt was also uninformative: the package was installed but had
+**never been launched**, and this application creates its data directory lazily
+on first run. `dpkg -L` proves installation, not execution. Launching it once -
+and only once, killed at the sign-in screen, never signed in - created the
+directory and settled the question.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | `~/.config/Claude/` | not catalogued | **new row, `high`** | Created on first launch at mode 0700. This is the parent the whole Linux question turned on, and it was never a row of its own. |
+| `AIRT-0011` | `~/.config/Claude/logs/mcp*.log` | not catalogued | **new row, `high`** | `logs/` contains `main.log`, `mcp.log` and `ssh.log` after a single launch. This confirms the one lead the documentation pass could only reach at search-snippet level - a support article reportedly listing a Linux log directory - and the naming matches the documented macOS and Windows convention exactly. |
+| `AIRT-0011` | `~/.config/Claude/config.json` | not catalogued | **new row, `high`** | 42 bytes, mode 0600. Application settings, and a different file from the MCP config that shares the directory - collecting one is not collecting the other. |
+| `AIRT-0011` | `~/.config/Claude/ant-did` | not catalogued | **new row, `high`** | 48 bytes, mode 0600, written at first launch. A per-install device identifier, which correlates an install across telemetry. Filed as `config-file` because `artifact_type` has no identifier member; extending the enum for one row was not worth the schema, template and skill change it would require. |
+| `AIRT-0011` | `~/.config/Claude/claude_desktop_config.json` | `low` + `unverified` | **`medium`** | Still not seen. But its parent directory is now confirmed on a live host, and the file is absent for the same reason it is absent on a fresh macOS or Windows install: the application does not write it until MCP servers are configured. Absence after a bare first launch is not evidence against it. `medium` reflects a confirmed directory plus a convention matching two other platforms - not a sighting. |
+
+Deliberately **not** upgraded: the `~/.config/Claude/` credential row, which the
+sweep suggested. The directory is confirmed; the row's claim is that OAuth token
+ciphertext lives in it, and the application was killed at the sign-in screen and
+never authenticated. Existence verified, content claim not - the same line drawn
+for Cursor's `state.vscdb`.
+
+Note for whoever picks this up: launching the application left a real
+`~/.config/Claude/` on that host. It is the application's own data directory and
+contains no account state, since sign-in never happened.
+
 ### A latent YAML defect in 21 files
 
 `warp.yml` carried `mcp: []` immediately followed by `mcp:` with real content -

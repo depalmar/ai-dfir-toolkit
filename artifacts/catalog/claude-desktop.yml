@@ -67,15 +67,56 @@ artifacts:
       os:
         - linux
       artifact_type: mcp-config
-      description: Inferred Linux config path, not documented by the vendor
+      description: MCP config, in a confirmed directory but not itself seen yet
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
       install_method: deb (Anthropic apt repo)
-      unverified: true
-      confidence: low
+      confidence: medium
+    - path: ~/.config/Claude/
+      os:
+        - linux
+      artifact_type: config-dir
+      description: Application data root, mode 0700, created on first launch
+      forensic_value: high
+      evidence_type:
+        - program-presence
+        - configuration
+      install_method: deb (Anthropic apt repo)
+      confidence: high
+    - path: ~/.config/Claude/logs/mcp*.log
+      os:
+        - linux
+      artifact_type: log
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: high
+    - path: ~/.config/Claude/config.json
+      os:
+        - linux
+      artifact_type: config-file
+      description: Application settings, distinct from the MCP config beside it
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.config/Claude/ant-did
+      os:
+        - linux
+      artifact_type: config-file
+      description: Per-install device identifier, written at first launch
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
     - path: "*.mcpb (Desktop Extension)"
       os:
         - windows
