@@ -37,7 +37,7 @@ artifacts:
         - execution
         - persistence
         - configuration
-      install_method: DMG
+      install_method: pkg (recommended for enterprise) or dmg
       confidence: high
     - path: "%APPDATA%\\Claude\\claude_desktop_config.json"
       os:

@@ -2097,7 +2097,7 @@
             "persistence",
             "configuration"
           ],
-          "install_method": "DMG",
+          "install_method": "pkg (recommended for enterprise) or dmg",
           "confidence": "high"
         },
         {
