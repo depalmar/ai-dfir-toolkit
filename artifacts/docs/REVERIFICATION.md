@@ -13,6 +13,28 @@ remembered, and so partial progress is still worth a pull request.
 Cadence: **quarterly**. Monthly is not sustainable for a side project; annual is
 too slow for this ecosystem's release pace.
 
+## Where you can run this from
+
+Two of the four checks below need a network that can reach vendor documentation,
+and that is not a given. On a restricted Claude Code runner every vendor docs
+domain tested was blocked - cursor.com, docs.anthropic.com,
+modelcontextprotocol.io, docs.codeium.com, kiro.dev, docs.aws.amazon.com,
+docs.tabnine.com, docs.openwebui.com, docs.vllm.ai - while GitHub and web search
+stayed reachable.
+
+That is enough to corroborate a project that keeps its docs in its own
+repository, and not enough for anything else. A search engine's summary of a
+vendor page is not a check of that page: this project has already been burned
+once by trusting a third-party rendering, when an aggregator gave Windsurf's MCP
+path as `~/.windsurf/mcp.json` against a vendor-documented
+`~/.codeium/windsurf/mcp_config.json`.
+
+**Do not set `last_verified` from a search summary.** The field means somebody
+checked, and the staleness gate is only worth having while that is true. If the
+docs are unreachable, say so in the pass notes and leave the entry listed as
+never verified - a visible gap is the honest outcome and the one that gets
+fixed.
+
 ## Before you start
 
 Record the pass in `docs/VERIFICATION.md` as you go, not at the end. The audit
