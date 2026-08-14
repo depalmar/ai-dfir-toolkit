@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/app/backend/data/  (DATA_DIR; Docker volume open-webui)', '/app/backend/data/webui.db', '/app/backend/data/.webui_secret_key', '/app/backend/data/config.json', '/app/backend/data/uploads/ and vector store directory']
+      LET Globs = ['/app/backend/data/**', '/app/backend/data/webui.db', '/app/backend/data/.webui_secret_key', '/app/backend/data/config.json', '/app/backend/data/uploads/ and vector store directory']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

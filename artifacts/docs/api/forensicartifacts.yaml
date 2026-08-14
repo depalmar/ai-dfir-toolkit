@@ -629,6 +629,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -639,6 +640,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -648,6 +650,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -670,6 +673,7 @@ sources:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: /
   supported_os:
@@ -679,6 +683,7 @@ sources:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: /
   supported_os:
@@ -689,6 +694,7 @@ sources:
     - '%%users.appdata%%\goose\config.yaml'
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: \
   supported_os:
@@ -861,6 +867,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.langflow/data/database.db'
     - LANGFLOW_DATABASE_URL
     - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
@@ -870,6 +877,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\com.LangflowDesktop\data\database.db'
     - LANGFLOW_DATABASE_URL
     - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
@@ -1104,6 +1112,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - /app/backend/data/
     - /app/backend/data/.webui_secret_key
     - /app/backend/data/config.json
     - /app/backend/data/uploads/ and vector store directory
@@ -1179,6 +1188,8 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
     - JWT_SECRET
     - LLM_API_KEY
     - docker-compose.yml / docker run invocation
@@ -1198,6 +1209,8 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
     - JWT_SECRET
     - LLM_API_KEY
     separator: \

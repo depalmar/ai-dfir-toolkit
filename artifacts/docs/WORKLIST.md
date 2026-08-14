@@ -145,7 +145,7 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - [Open WebUI docs - MCP support](https://docs.openwebui.com/features/extensibility/mcp/)
     - [open-webui/mcpo - MCP-to-OpenAPI proxy](https://github.com/open-webui/mcpo)
 - 15 claim(s) to confirm:
-    - `high`   disk: `/app/backend/data/  (DATA_DIR; Docker volume open-webui)`
+    - `high`   disk: `/app/backend/data/`
     - `high`   disk: `/app/backend/data/webui.db`
     - `high`   disk: `/app/backend/data/.webui_secret_key`
     - `high`   disk: `/app/backend/data/config.json`
@@ -190,7 +190,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - [supermaven-inc/supermaven-nvim](https://github.com/supermaven-inc/supermaven-nvim)
 - 5 claim(s) to confirm:
     - `low` <- disk: `Downloaded Supermaven agent binary (editor-managed)`
-    - `medium` <- disk: `~/.config/zed/settings.json  ->  inline_completion_provider: supermaven`
+    - `medium` <- disk: `~/.config/zed/settings.json`
     - `low` <- network: `*.supermaven.com`
     - `low` <- credential: `~/.supermaven/config.json`
     - `low` <- credential: `<project>/.supermaven/config.json`

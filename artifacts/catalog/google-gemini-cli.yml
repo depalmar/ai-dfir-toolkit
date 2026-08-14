@@ -122,14 +122,14 @@ credentials:
     secret_type: api-key
     description: Bound Google account identity - user attribution artifact
     confidence: high
-  - location: ~/.gemini/.env  (plus cwd-upward .env search)
+  - location: ~/.gemini/.env
     os:
       - windows
       - macos
       - linux
     storage: plaintext
     secret_type: api-key
-    description: GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY
+    description: GEMINI_API_KEY, distinct from Vertex GOOGLE_API_KEY. Also loaded from .env files found searching upward from the working directory.
     confidence: high
 mcp:
   - mechanism: config-file

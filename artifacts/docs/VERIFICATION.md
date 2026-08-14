@@ -331,3 +331,65 @@ suggests that tree matters; whether it is succeeding
 
 The decisive experiment nobody has run: install the MSIX on a host with no
 pre-existing `%APPDATA%\Claude` and observe where the config is created.
+
+## 2026-08-14 (third pass) - 21 broken globs, and a gate so they stay fixed
+
+The malformed AIRT-0011 locator corrected above was not a one-off. It was one
+instance of a defect in **seven** entries, and the broken output was shipping.
+
+`path`, `location` and `config_path` are emitted verbatim into the KAPE,
+Velociraptor and forensicartifacts feeds. A parenthetical inside one does not
+degrade gracefully - it becomes a glob that matches nothing, silently. The
+published Velociraptor artifacts carried **21** of them, including
+`'/home/*/.openhands/secrets.json  (mounted to /.openhands/secrets.json)'` and
+`'C:\Users\*\.n8n\  (Docker: \home\node\.n8n)'`. Every one collected zero while
+looking like coverage.
+
+| Entry | Was | Now |
+|---|---|---|
+| `AIRT-0025` n8n | `~/.n8n/  (Docker: /home/node/.n8n)` | `~/.n8n/  \|  /home/node/.n8n` |
+| `AIRT-0043` OpenHands, 4 rows | `~/.openhands/…  (mounted to /.openhands/…)` | `~/.openhands/…  \|  /.openhands/…` |
+| `AIRT-0037` Gemini CLI | `~/.gemini/.env  (plus cwd-upward .env search)` | path cleaned, search behaviour moved to description |
+| `AIRT-0038` Goose | `~/.config/goose/secrets.yaml (mode 0600)` | path cleaned; the 0600 mode was already in `abuse_potential`, so nothing was lost |
+| `AIRT-0044` Langflow, 3 rows | `~/.langflow/  (LANGFLOW_CONFIG_DIR)` and two `(Langflow Desktop)` | paths cleaned, `LANGFLOW_CONFIG_DIR` moved to description |
+| `AIRT-0042` Open WebUI | `/app/backend/data/  (DATA_DIR; Docker volume open-webui)` | path cleaned, `DATA_DIR` already in description |
+| `AIRT-0010` Supermaven | `~/.config/zed/settings.json  ->  inline_completion_provider: supermaven` | path cleaned, key name moved to description |
+
+Where the parenthetical named a **real second location** - n8n's Docker path,
+OpenHands' container mounts - the fix is not to delete it. The corpus already has
+a spelling for two locations in one field, ` | `, which `expand()` splits and the
+exporters understand. Those rows now emit both globs instead of neither.
+
+`validate.py` gates it now: a `path`, `location` or `config_path` that looks like
+a filesystem path and contains `(` followed by a letter, or `  ->  `, fails.
+Fields that are legitimately prose - keyring service descriptions, registry-style
+locators - are not judged, because the exporters already skip them. Verified by
+reintroducing the n8n defect, confirming `[LOCATOR]` fired, and restoring it.
+Broken globs in the published feeds: **21 to 0**.
+
+## 2026-08-14 - Linux sweep from WSL
+
+Ubuntu 22.04.5 under WSL2. Confirms rather than corrects, which is worth
+recording as such rather than inflating.
+
+**It did not answer the Linux question that matters.** The host runs Claude
+*Code*, not Claude *Desktop*: `/usr/local/bin/claude` is present, `dpkg -l` shows
+no `claude-desktop`, there is no Anthropic apt source or keyring, and
+`~/.config/Claude/` does not exist. So `~/.config/Claude/claude_desktop_config.json`
+stays `low` + `unverified`. It needs a host with the `.deb` actually installed.
+
+Confirmed on Linux, all already `high`, all now carrying a fresher check:
+`AIRT-0001` Claude Code (`/usr/local/bin/claude`, `~/.claude/`, `~/.claude.json`
+mode 600, and `~/.claude/.credentials.json` mode **600** - existence and mode
+only, contents never read, tool version 2.1.63); `AIRT-0003` GitHub Copilot
+(`~/.copilot` mode 700); `AIRT-0017` Ollama (`/usr/local/bin/ollama`,
+`/etc/systemd/system/ollama.service`, `/usr/share/ollama/.ollama/models`);
+`AIRT-0031` Playwright MCP (`~/.cache/ms-playwright`).
+
+No `medium` or `low` row was hit, so the sweep produced **no upgrades**.
+
+One trap declined: `AIRT-0033` Claude Computer Use hit on `~/.aws`, and
+`AIRT-0033` is on the never-verified list. `~/.aws` is a generic AWS credential
+directory whose presence says nothing about whether the computer-use demo was
+ever installed, so the entry stays unverified. A HIT on a path the tool merely
+*shares* is not evidence the tool was there.

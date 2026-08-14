@@ -5,8 +5,8 @@ Id: b3e3f8cb-4f65-55c5-a838-f84a408193a0
 RecreateDirectories: true
 Targets:
     -
-        Name: 'Zed Config for Supermaven'
+        Name: 'Zed config, with supermaven named under inline_completion_provider'
         Category: AIAgents
         Path: 'C:\Users\%user%\.config\zed\'
-        FileMask: 'settings.json  ->  inline_completion_provider: supermaven'
-        Comment: 'AIRT-0010 | [confidence: medium] Zed Config for Supermaven'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0010 | [confidence: medium] Zed config, with supermaven named under inline_completion_provider'

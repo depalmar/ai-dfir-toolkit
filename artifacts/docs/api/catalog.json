@@ -1682,7 +1682,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -4466,7 +4466,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -4617,7 +4617,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.gemini/.env  (plus cwd-upward .env search)",
+        "location": "~/.gemini/.env",
         "os": [
           "windows",
           "macos",
@@ -4625,7 +4625,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY",
+        "description": "GEMINI_API_KEY, distinct from Vertex GOOGLE_API_KEY. Also loaded from .env files found searching upward from the working directory.",
         "confidence": "high"
       }
     ],
@@ -4822,7 +4822,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.config/goose/secrets.yaml (mode 0600)",
+        "location": "~/.config/goose/secrets.yaml",
         "os": [
           "windows",
           "macos",
@@ -6093,14 +6093,14 @@
     "artifacts": {
       "disk": [
         {
-          "path": "~/.langflow/  (LANGFLOW_CONFIG_DIR)",
+          "path": "~/.langflow/",
           "os": [
             "windows",
             "macos",
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "Config and database root",
+          "description": "Config and database root, relocatable via LANGFLOW_CONFIG_DIR",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence"
@@ -6320,7 +6320,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.langflow/data/database.db  (Langflow Desktop)",
+        "location": "~/.langflow/data/database.db",
         "os": [
           "macos"
         ],
@@ -6330,7 +6330,7 @@
         "confidence": "high"
       },
       {
-        "location": "%APPDATA%\\com.LangflowDesktop\\data\\database.db  (Langflow Desktop)",
+        "location": "%APPDATA%\\com.LangflowDesktop\\data\\database.db",
         "os": [
           "windows"
         ],
@@ -7110,7 +7110,7 @@
     "artifacts": {
       "disk": [
         {
-          "path": "~/.n8n/  (Docker: /home/node/.n8n)",
+          "path": "~/.n8n/  |  /home/node/.n8n",
           "os": [
             "windows",
             "macos",
@@ -7564,7 +7564,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -7893,7 +7893,7 @@
     "artifacts": {
       "disk": [
         {
-          "path": "/app/backend/data/  (DATA_DIR; Docker volume open-webui)",
+          "path": "/app/backend/data/",
           "os": [
             "linux",
             "docker"
@@ -8554,7 +8554,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.openhands-state/  (mounted to /.openhands-state)",
+          "path": "~/.openhands-state/  |  /.openhands-state",
           "os": [
             "linux",
             "docker"
@@ -8569,7 +8569,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.openhands/  (mounted to /.openhands)",
+          "path": "~/.openhands/  |  /.openhands",
           "os": [
             "linux",
             "docker"
@@ -8709,7 +8709,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.openhands/settings.json  (mounted to /.openhands/settings.json)",
+        "location": "~/.openhands/settings.json  |  /.openhands/settings.json",
         "os": [
           "linux",
           "windows",
@@ -8721,7 +8721,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)",
+        "location": "~/.openhands/secrets.json  |  /.openhands/secrets.json",
         "os": [
           "linux",
           "windows",
@@ -9014,7 +9014,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -9500,14 +9500,14 @@
           "unverified": true
         },
         {
-          "path": "~/.config/zed/settings.json  ->  inline_completion_provider: supermaven",
+          "path": "~/.config/zed/settings.json",
           "os": [
             "windows",
             "macos",
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Zed Config for Supermaven",
+          "description": "Zed config, with supermaven named under inline_completion_provider",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"

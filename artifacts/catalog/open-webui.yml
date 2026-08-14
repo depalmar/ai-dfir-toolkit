@@ -39,7 +39,7 @@ abuse_potential: >-
 
 artifacts:
   disk:
-    - path: /app/backend/data/  (DATA_DIR; Docker volume open-webui)
+    - path: /app/backend/data/
       os: [linux, docker]
       artifact_type: data-dir
       description: >-

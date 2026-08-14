@@ -37,13 +37,13 @@ artifacts:
       install_method: Editor extension
       confidence: low
       unverified: true
-    - path: "~/.config/zed/settings.json  ->  inline_completion_provider: supermaven"
+    - path: "~/.config/zed/settings.json"
       os:
         - windows
         - macos
         - linux
       artifact_type: config-file
-      description: Zed Config for Supermaven
+      description: Zed config, with supermaven named under inline_completion_provider
       forensic_value: low
       evidence_type:
         - program-presence

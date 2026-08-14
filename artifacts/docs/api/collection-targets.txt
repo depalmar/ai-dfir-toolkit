@@ -8,7 +8,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\Cursor\User\globalStorage\state.vscdb
 %APPDATA%\Windsurf\User\globalStorage\state.vscdb
 %APPDATA%\Zed\settings.json
-%APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)
+%APPDATA%\com.LangflowDesktop\data\database.db
 %APPDATA%\goose\config.yaml
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
 %LOCALAPPDATA%\github-copilot\apps.json
@@ -18,7 +18,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
 .env (deployment directory)
-/app/backend/data/  (DATA_DIR; Docker volume open-webui)
+/app/backend/data/
 /app/backend/data/.webui_secret_key
 /app/backend/data/config.json
 /app/backend/data/uploads/ and vector store directory
@@ -195,7 +195,7 @@ webui.db (user and API key tables)
 ~/.config/github-copilot/hosts.json
 ~/.config/goose/config.yaml
 ~/.config/goose/permission.yaml ; permissions/tool_permissions.json
-~/.config/goose/secrets.yaml (mode 0600)
+~/.config/goose/secrets.yaml
 ~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml
 ~/.config/vllm/usage_stats.json
 ~/.config/zed/settings.json
@@ -212,12 +212,12 @@ webui.db (user and API key tables)
 ~/.cursor/mcp.json
 ~/.flowise/database.sqlite
 ~/.flowise/encryption.key
-~/.gemini/.env  (plus cwd-upward .env search)
+~/.gemini/.env
 ~/.gemini/google_accounts.json
 ~/.gemini/oauth_creds.json
 ~/.gemini/settings.json
 ~/.kiro/settings/mcp.json
-~/.langflow/data/database.db  (Langflow Desktop)
+~/.langflow/data/database.db
 ~/.letta/
 ~/.letta/.persist/pgdata
 ~/.lmstudio/mcp.json
@@ -227,8 +227,8 @@ webui.db (user and API key tables)
 ~/.ollama/id_ed25519  |  id_ed25519.pub
 ~/.openhands/agent_settings.json
 ~/.openhands/config.toml
-~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)
-~/.openhands/settings.json  (mounted to /.openhands/settings.json)
+~/.openhands/secrets.json  |  /.openhands/secrets.json
+~/.openhands/settings.json  |  /.openhands/settings.json
 ~/.openinterpreter/.credentials.json
 ~/.openinterpreter/auth.json
 ~/.openinterpreter/config.toml

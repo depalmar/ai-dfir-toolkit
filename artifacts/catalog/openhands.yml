@@ -36,7 +36,7 @@ artifacts:
         - configuration
       install_method: Docker/source
       confidence: high
-    - path: ~/.openhands-state/  (mounted to /.openhands-state)
+    - path: ~/.openhands-state/  |  /.openhands-state
       os:
         - linux
         - docker
@@ -47,7 +47,7 @@ artifacts:
         - program-presence
       install_method: Docker
       confidence: high
-    - path: ~/.openhands/  (mounted to /.openhands)
+    - path: ~/.openhands/  |  /.openhands
       os:
         - linux
         - docker
@@ -151,7 +151,7 @@ credentials:
       model_dump_json(context={'expose_secrets': True}) before writing, so the key is
       written unredacted. No OS keyring is involved.
     confidence: high
-  - location: ~/.openhands/settings.json  (mounted to /.openhands/settings.json)
+  - location: ~/.openhands/settings.json  |  /.openhands/settings.json
     os: [linux, windows, docker]
     storage: plaintext
     secret_type: api-key
@@ -163,7 +163,7 @@ credentials:
       app image sets FILE_STORE=local and FILE_STORE_PATH=/.openhands, and the
       documented run command mounts -v ~/.openhands:/.openhands.
     confidence: high
-  - location: ~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)
+  - location: ~/.openhands/secrets.json  |  /.openhands/secrets.json
     os: [linux, windows, docker]
     storage: plaintext
     secret_type: oauth-token

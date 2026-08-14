@@ -23,13 +23,13 @@ confidence: high
 abuse_potential: CVE-2025-3248 (CVSS 9.8, unauthenticated RCE via /api/v1/validate/code) is on the CISA KEV catalog and was mass-exploited to deploy the Flodrix botnet; attackers enumerated exposed instances with Shodan/FOFA first. CVE-2026-5027 (CVSS 8.8) adds path traversal to arbitrary file write via POST /api/v2/files.
 artifacts:
   disk:
-    - path: ~/.langflow/  (LANGFLOW_CONFIG_DIR)
+    - path: ~/.langflow/
       os:
         - windows
         - macos
         - linux
       artifact_type: data-dir
-      description: Config and database root
+      description: Config and database root, relocatable via LANGFLOW_CONFIG_DIR
       forensic_value: medium
       evidence_type:
         - program-presence
@@ -218,7 +218,7 @@ credentials:
       credential compromise. Note the default path is inside the venv or the clone, not
       ~/.langflow as the current catalog disk row states.
     confidence: high
-  - location: ~/.langflow/data/database.db  (Langflow Desktop)
+  - location: ~/.langflow/data/database.db
     os: [macos]
     storage: sqlite
     secret_type: api-key
@@ -228,7 +228,7 @@ credentials:
       encrypted API keys and credential variables, plus flows and users. This is the
       only place the ~/.langflow path the catalog currently uses is actually correct.
     confidence: high
-  - location: '%APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)'
+  - location: '%APPDATA%\com.LangflowDesktop\data\database.db'
     os: [windows]
     storage: sqlite
     secret_type: api-key

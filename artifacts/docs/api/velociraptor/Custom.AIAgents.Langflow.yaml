@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.langflow\  (LANGFLOW_CONFIG_DIR)', 'C:\Users\*\AppData\Roaming\com.LangflowDesktop\data\database.db  (Langflow Desktop)']
+      LET Globs = ['C:\Users\*\.langflow\**', 'C:\Users\*\AppData\Roaming\com.LangflowDesktop\data\database.db']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.langflow/  (LANGFLOW_CONFIG_DIR)', '/Users/*/.langflow/data/database.db  (Langflow Desktop)']
+      LET Globs = ['/Users/*/.langflow/**', '/Users/*/.langflow/data/database.db']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.langflow/  (LANGFLOW_CONFIG_DIR)']
+      LET Globs = ['/home/*/.langflow/**']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

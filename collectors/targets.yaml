@@ -1518,6 +1518,7 @@ targets:
     sensitivity: secret
     paths:
       - "~/.openhands/secrets.json"
+      - "/.openhands/secrets.json"
     notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0043_openhands_settings_json
     name: "OpenHands credential store (AIRT-0043)"
@@ -1529,6 +1530,7 @@ targets:
     sensitivity: secret
     paths:
       - "~/.openhands/settings.json"
+      - "/.openhands/settings.json"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0043_project_config_toml
     name: "OpenHands credential store (AIRT-0043)"

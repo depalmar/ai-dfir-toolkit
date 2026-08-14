@@ -25,7 +25,7 @@ confidence: high
 abuse_potential: Code node = arbitrary JS/Python execution. Exposed 5678 without auth = full workflow + credential compromise. Webhook nodes are ingress.
 artifacts:
   disk:
-    - path: "~/.n8n/  (Docker: /home/node/.n8n)"
+    - path: "~/.n8n/  |  /home/node/.n8n"
       os:
         - windows
         - macos
