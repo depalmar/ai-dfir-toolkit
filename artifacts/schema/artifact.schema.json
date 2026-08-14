@@ -254,7 +254,7 @@
     "last_verified": {
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-      "description": "When this entry was last checked against reality, as opposed to last edited. last_modified tracks edits; a typo fix moves it and verifies nothing. Left unset means never checked, which is a truthful state and is reported as such."
+      "description": "When this entry was last checked against reality, as opposed to last edited. last_modified tracks edits; a typo fix moves it and verifies nothing. Left unset means never checked, which is a truthful state and is reported as such. This field says somebody looked at the entry - it does NOT mean every row was confirmed. Where a check covered only some rows, set the per-row last_verified on those rows so the partial coverage is visible in the data rather than only in docs/VERIFICATION.md."
     }
   },
   "$defs": {
@@ -365,6 +365,11 @@
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
+        },
+        "last_verified": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "When THIS ROW was last checked against reality. Optional, and it exists because the entry-level last_verified cannot express a partial check: an entry whose Windows rows were confirmed on a live host and whose macOS rows were never touched still reads as fully verified. Set it on the rows you actually checked. An absent value means this row inherits nothing - it has not been individually verified, whatever the entry says."
         }
       }
     },
@@ -401,6 +406,11 @@
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
+        },
+        "last_verified": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "When THIS ROW was last checked against reality. Optional, and it exists because the entry-level last_verified cannot express a partial check: an entry whose Windows rows were confirmed on a live host and whose macOS rows were never touched still reads as fully verified. Set it on the rows you actually checked. An absent value means this row inherits nothing - it has not been individually verified, whatever the entry says."
         }
       }
     },
@@ -539,6 +549,11 @@
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
+        },
+        "last_verified": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "When THIS ROW was last checked against reality. Optional, and it exists because the entry-level last_verified cannot express a partial check: an entry whose Windows rows were confirmed on a live host and whose macOS rows were never touched still reads as fully verified. Set it on the rows you actually checked. An absent value means this row inherits nothing - it has not been individually verified, whatever the entry says."
         }
       }
     },
@@ -592,6 +607,11 @@
         },
         "confidence": {
           "$ref": "#/$defs/confidence"
+        },
+        "last_verified": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "When THIS ROW was last checked against reality. Optional, and it exists because the entry-level last_verified cannot express a partial check: an entry whose Windows rows were confirmed on a live host and whose macOS rows were never touched still reads as fully verified. Set it on the rows you actually checked. An absent value means this row inherits nothing - it has not been individually verified, whatever the entry says."
         },
         "unverified": {
           "type": "boolean"

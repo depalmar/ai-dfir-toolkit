@@ -70,7 +70,8 @@ credentials:
       bind-mounted into the container at /home/computeruse/.aws in the documented
       Bedrock profile setup. Anything running in the container inherits the user's full
       AWS identity, so scope the blast radius to every profile in that directory, not
-      just the one named.
+      just the one named. Deliberately not row-verified: ~/.aws exists on hosts
+      that never ran this demo, so its presence is not evidence of this tool.
     confidence: high
   - location: AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
     os: [docker, container]

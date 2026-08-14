@@ -1335,7 +1335,8 @@
             "program-presence"
           ],
           "install_method": "npm -g",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.claude/",
@@ -1351,7 +1352,8 @@
             "program-presence"
           ],
           "install_method": "All",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.claude.json",
@@ -1367,7 +1369,8 @@
             "configuration"
           ],
           "install_method": "All",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "<repo>/.claude/settings.json",
@@ -1530,7 +1533,8 @@
         "storage": "plaintext",
         "secret_type": "oauth-token",
         "description": "Plaintext OAuth credential file. Mode 0600 on Linux; on Windows the path is %USERPROFILE%\\.claude\\.credentials.json and it inherits user-profile ACLs. Vendor-documented for Linux and Windows only, not macOS.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "$CLAUDE_CONFIG_DIR/.credentials.json",
@@ -1598,7 +1602,8 @@
         "storage": "plaintext",
         "secret_type": "embedded-credentials",
         "description": "Plaintext third-party secrets embedded in local- and user-scoped MCP server definitions: mcpServers.<name>.env values and mcpServers.<name>.headers (for example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header flags write the value straight into this file",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "<project>/.mcp.json",
@@ -1783,7 +1788,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "aws-sso-token",
-        "description": "The host AWS credential directory (credentials, config, sso/cache/) is bind-mounted into the container at /home/computeruse/.aws in the documented Bedrock profile setup. Anything running in the container inherits the user's full AWS identity, so scope the blast radius to every profile in that directory, not just the one named.",
+        "description": "The host AWS credential directory (credentials, config, sso/cache/) is bind-mounted into the container at /home/computeruse/.aws in the documented Bedrock profile setup. Anything running in the container inherits the user's full AWS identity, so scope the blast radius to every profile in that directory, not just the one named. Deliberately not row-verified: ~/.aws exists on hosts that never ran this demo, so its presence is not evidence of this tool.",
         "confidence": "high"
       },
       {
@@ -1945,7 +1950,8 @@
             "configuration"
           ],
           "install_method": "deb (Anthropic apt repo)",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.config/Claude/logs/mcp*.log",
@@ -1960,7 +1966,8 @@
             "execution"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.config/Claude/config.json",
@@ -1974,7 +1981,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.config/Claude/ant-did",
@@ -1988,7 +1996,8 @@
             "program-presence"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "*.mcpb (Desktop Extension)",
@@ -2167,7 +2176,8 @@
         "storage": "encrypted",
         "secret_type": "oauth-token",
         "description": "OAuth token ciphertext, encrypted under DPAPI",
-        "confidence": "medium"
+        "confidence": "medium",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "~/.config/Claude/",
@@ -2177,7 +2187,8 @@
         "storage": "encrypted",
         "secret_type": "oauth-token",
         "description": "OAuth token ciphertext in the application-data directory",
-        "confidence": "medium"
+        "confidence": "medium",
+        "last_verified": "2026-08-14"
       }
     ],
     "mcp": [
@@ -3394,7 +3405,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "<repo>/.cursor/mcp.json",
@@ -3545,7 +3557,8 @@
         "storage": "sqlite",
         "secret_type": "oauth-token",
         "description": "Windows Cursor IDE session store, cursorAuth/* rows in plaintext",
-        "confidence": "medium"
+        "confidence": "medium",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "~/.cursor/mcp.json",
@@ -3557,7 +3570,8 @@
         "storage": "plaintext",
         "secret_type": "api-key",
         "description": "Global MCP server definitions. The per-server env block routinely carries plaintext API keys and bearer tokens for whatever the agent was authorised to call. Already declared as a secrets location by this catalog's own MCP block for this entry.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "<repo>/.cursor/mcp.json",
@@ -4304,7 +4318,8 @@
             "program-presence"
           ],
           "install_method": "Copilot CLI",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.copilot/mcp-config.json",
@@ -4432,7 +4447,8 @@
         "storage": "plaintext",
         "secret_type": "oauth-token",
         "description": "Plaintext fallback for the Copilot CLI OAuth token. Vendor: when the system keychain is unavailable (e.g. Headless Linux without libsecret) the CLI prompts to store the token in a plaintext configuration file here. The same file also holds CLI-managed internal application state including authentication data. Relocated wholesale if COPILOT_HOME is set.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "~/.copilot/mcp-oauth-config/",
@@ -6835,7 +6851,8 @@
             "program-presence"
           ],
           "install_method": "Created after first GUI run",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "llmster",
@@ -6868,7 +6885,8 @@
             "data-access"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.lmstudio/settings.json",
@@ -6899,7 +6917,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.lmstudio/.internal/last-synced-mcp-state.json",
@@ -6914,7 +6933,8 @@
             "execution"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "~/.lmstudio/credentials/",
@@ -6928,7 +6948,8 @@
             "program-presence"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         }
       ],
       "registry": [
@@ -7659,7 +7680,8 @@
             "program-presence"
           ],
           "install_method": "install.sh",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%USERPROFILE%\\.ollama\\models\\",
@@ -7721,7 +7743,8 @@
             "configuration"
           ],
           "install_method": "install.sh",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "/usr/share/ollama/.ollama/models/",
@@ -7736,7 +7759,8 @@
             "data-access"
           ],
           "install_method": "install.sh",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "journalctl -u ollama",
@@ -7876,7 +7900,8 @@
         "storage": "plaintext",
         "secret_type": "api-key",
         "description": "Instance identity keypair. Confirmed on a live Windows host.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       }
     ],
     "mcp": [],
@@ -8354,7 +8379,8 @@
             "program-presence"
           ],
           "install_method": "EXE installer",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%LOCALAPPDATA%\\open-webui-updater\\",
@@ -8368,7 +8394,8 @@
             "program-presence"
           ],
           "install_method": "EXE installer",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%APPDATA%\\open-webui\\",
@@ -8383,7 +8410,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%APPDATA%\\open-webui\\config.json",
@@ -8397,7 +8425,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%APPDATA%\\open-webui\\data\\",
@@ -8412,7 +8441,8 @@
             "data-access"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%APPDATA%\\open-webui\\data\\webui.db",
@@ -8427,7 +8457,8 @@
             "configuration"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "%APPDATA%\\open-webui\\data\\uploads\\  |  %APPDATA%\\open-webui\\data\\vector_db\\",
@@ -8441,7 +8472,8 @@
             "data-access"
           ],
           "install_method": "n/a",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         }
       ],
       "registry": [
@@ -8491,7 +8523,8 @@
         "storage": "plaintext",
         "secret_type": "jwt-signing-key",
         "description": "Session signing key on the desktop build. Named .key here, not .webui_secret_key as in the container layout - collecting only the documented container name misses it entirely.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "%APPDATA%\\open-webui\\data\\webui.db",
@@ -8501,7 +8534,8 @@
         "storage": "sqlite",
         "secret_type": "api-key",
         "description": "Desktop copy of the user and API key tables, plus Tools and Functions Python source. Quit the app before acquisition so the WAL is checkpointed.",
-        "confidence": "high"
+        "confidence": "high",
+        "last_verified": "2026-08-14"
       },
       {
         "location": "/app/backend/data/.webui_secret_key",
@@ -9372,7 +9406,8 @@
             "program-presence"
           ],
           "install_method": "first run",
-          "confidence": "high"
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         },
         {
           "path": "outputDir (config) - screenshots, traces, PDFs",

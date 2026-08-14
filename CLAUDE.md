@@ -66,6 +66,20 @@ The validator blocks a `confidence: high` entry that hides an unmarked
 low-confidence artifact. Do not work around it by upgrading the artifact; either
 verify it or downgrade the entry.
 
+**`last_verified` exists at two levels.** The entry-level field says somebody
+looked at the entry. It cannot say *how much* of it they looked at, and that gap
+produced a real problem: AIRT-0002, AIRT-0011 and AIRT-0018 were checked on a
+Windows host, stamped, and read as fully verified while their macOS rows had
+never been touched. Rows now carry their own optional `last_verified`. Set it on
+the rows you actually confirmed, and leave it off the rest - an absent row-level
+date means that row has not been individually verified, whatever the entry says.
+
+Two rules for it. Only stamp a row you confirmed *on a host or on the vendor's
+page*, not one you reasoned about. And never stamp a row whose path the tool
+merely shares with other software: `~/.aws` hits for AIRT-0033 on machines that
+never ran the computer-use demo, so that row is deliberately left unstamped and
+carries a note saying why.
+
 **Omit rather than guess.** A missing field is honest. A guessed one becomes
 somebody's broken detection during an actual incident.
 

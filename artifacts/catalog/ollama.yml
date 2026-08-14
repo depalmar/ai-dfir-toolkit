@@ -56,6 +56,7 @@ artifacts:
         - program-presence
       install_method: install.sh
       confidence: high
+      last_verified: "2026-08-14"
     - path: "%USERPROFILE%\\.ollama\\models\\"
       os:
         - windows
@@ -102,6 +103,7 @@ artifacts:
         - configuration
       install_method: install.sh
       confidence: high
+      last_verified: "2026-08-14"
     - path: /usr/share/ollama/.ollama/models/
       os:
         - linux
@@ -113,6 +115,7 @@ artifacts:
         - data-access
       install_method: install.sh
       confidence: high
+      last_verified: "2026-08-14"
     - path: journalctl -u ollama
       os:
         - linux
@@ -223,6 +226,7 @@ credentials:
     secret_type: api-key
     description: Instance identity keypair. Confirmed on a live Windows host.
     confidence: high
+    last_verified: "2026-08-14"
 mcp: []
 collection:
   triage_priority: p1

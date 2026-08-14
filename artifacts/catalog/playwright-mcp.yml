@@ -68,6 +68,7 @@ artifacts:
         - program-presence
       install_method: first run
       confidence: high
+      last_verified: "2026-08-14"
     - path: outputDir (config) - screenshots, traces, PDFs
       os:
         - windows
