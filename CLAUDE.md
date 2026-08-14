@@ -162,6 +162,30 @@ Splunk, purely to prove the rules parse. The backend choice there is arbitrary.
 **Defensive content only.** Document where artifacts live and what they prove.
 No exploit code, no working attack tooling, no step-by-step abuse instructions.
 
+## What a restricted runner cannot verify
+
+A documentation pass is not a substitute for a host, but it is not available
+everywhere either. Claude Code sessions on the web run behind an egress policy,
+and on the one this catalog has mostly been built from, **every vendor
+documentation domain is blocked** - cursor.com, docs.anthropic.com,
+modelcontextprotocol.io, docs.codeium.com, kiro.dev, docs.aws.amazon.com,
+docs.tabnine.com, docs.openwebui.com, docs.vllm.ai. GitHub is reachable and
+search is reachable; the docs themselves are not.
+
+That matters for `last_verified`, which means "somebody checked this on this
+date". A search engine's summary of a vendor page is not that check - it is a
+third party's rendering of it, and this project has already been burned once by
+trusting one (an aggregator gave Windsurf's MCP path as `~/.windsurf/mcp.json`
+when the vendor documents `~/.codeium/windsurf/mcp_config.json`). Stamping
+`last_verified` from a summary would inflate the exact field the staleness gate
+was built around, which is worse than leaving the entry visibly unchecked.
+
+So: verify from a network that can reach the vendor, or from the tool installed
+on a host. Corroborating from a project's own GitHub repository is legitimate and
+works from here - that is where several of these projects keep their docs - but
+check that the repo really is the source rather than a README pointing at a site
+you cannot open.
+
 ## When verifying paths on a real machine
 
 This is the highest-value work available, because 13 entries are `medium` and 4
@@ -206,10 +230,18 @@ directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 Confidence: 28 high, 19 medium, 4 low.
 Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
 sourcing it turned up a correction rather than a citation - Operator is EOL and
-its only network indicator was a domain that had been sunset. 28/49 carry aliases. 37/49 carry
-`last_verified`; the 12 without it are vendor-hosted entries that the first
-lifecycle sweep could not check through a repository API, and `validate.py`
-lists them as never verified rather than letting them look fresh.
+its only network indicator was a domain that had been sunset. 28/51 carry aliases.
+40/51 carry `last_verified`, and `validate.py` lists the other 11 as never
+verified rather than letting them look fresh.
+
+That set was previously described here as "vendor-hosted entries that could not
+be checked through a repository API". That was wrong, and worth correcting
+because this file loads into every session. Only three of the eleven are
+vendor-hosted - Devin, Copilot Studio and the Claude computer-use demo. The rest
+are installable software: **Cursor** and **Claude Desktop**, the two most widely
+deployed entries in the catalog, plus Windsurf, Tabnine, Kiro, Amazon Q, Open
+WebUI and vLLM. They are unverified because nobody has checked them, not because
+they cannot be checked.
 Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation
