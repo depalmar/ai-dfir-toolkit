@@ -981,6 +981,29 @@ urls:
 - https://lmstudio.ai/docs/cli
 - https://github.com/lmstudio-ai/docs
 ---
+name: MicrosoftCopilotStudioAgentsArtifacts
+doc: Microsoft Copilot Studio Agents (AIRT-0014) - Low-code agent builder hosted in
+  Microsoft cloud. Authoring is browser only, but the computer use tool runs agent
+  actions on a customer Windows machine through the Power Automate for desktop runtime,
+  which is where the endpoint evidence is.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Cache\MSI\Account  |  %%users.localappdata%%\Microsoft\Power
+      Automate Desktop\Cache\MSIX\Account'
+    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\DesktopFlowModules'
+    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Scripts'
+    - '%programdata%\Microsoft\Power Automate\Logs'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Windows
+urls:
+- https://learn.microsoft.com/en-us/microsoft-copilot-studio/
+- https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio
+---
 name: N8nAiAgentLangchainNodesArtifacts
 doc: n8n (AI Agent / LangChain nodes) (AIRT-0025) - Self-hostable workflow automation
   with native AI Agent / SQL Agent LangChain nodes and MCP support.

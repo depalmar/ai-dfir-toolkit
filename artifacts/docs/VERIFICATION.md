@@ -593,3 +593,55 @@ The adversarial stage earned its place. It caught a citation-hygiene failure on
 AIRT-0008 - three source files quoted verbatim but absent from the fetch list -
 and one of those omitted files was `paths.rs`, the one containing the `qlog`
 contradiction. The omission hid a refutation.
+
+## 2026-08-14 (eighth pass) - AIRT-0014 was vacuous, not cloud-only
+
+The entry read `description: ... Endpoint footprint is browser only`,
+`artifacts: {}`, `credentials: []`, `risk: low` and `confidence: high`. An entry
+with no rows and high confidence is either correct or vacuous. This one was
+vacuous: Copilot Studio's **computer use** tool executes agent actions on a
+customer Windows machine through the Power Automate for desktop runtime, and
+that host carries a substantial documented footprint.
+
+Filled from vendor documentation only - no Windows host with the runtime
+installed was available, so every row is `documented by the vendor` rather than
+`verified on a live host`, and the entry sits at `medium` rather than `high`.
+
+| Field | Was | Now |
+|---|---|---|
+| `description` | endpoint footprint is browser only | authoring is browser only; agent actions run on a registered Windows host |
+| `supported_os` | `cloud` | `cloud`, `windows` |
+| `local_code_execution` | `false` | **`true`** |
+| `risk` | `low` | **`high`** |
+| `confidence` | `high` | **`medium`** - documented, not host-verified |
+| `artifacts` | `{}` | 7 disk, 4 registry, 3 network, 1 process |
+| `credentials` | `[]` | 2 |
+
+The row that matters most is `HKLM\SOFTWARE\Microsoft\Power Automate Desktop\Global`.
+It carries `DisableFlowExecutionActionLogging`, `DisableScreenshotCaptureOnError`
+and `DisableRunFilesCleanup` - a documented, supported way to make the runtime
+stop producing the evidence the other rows depend on. The same key holds the
+2.66+ video family, including `VideoLogOutputPath`, which relocates the
+recording and so defeats a static collector target. A host configured quiet is
+itself the finding.
+
+Three transcription corrections the research caught, each of which would have
+shipped a path that resolves to nothing or reads backwards:
+
+- `Cache\(MSI or MSIX)\Account` is Microsoft's disjunctive prose, not a
+  directory. Split into the two concrete branches.
+- `Designer\Scripts` is **designer**-triggered, not agent-triggered. The
+  cloud-triggered tree is the sibling `Scripts`. Presenting the Designer tree as
+  agent evidence would mislead a responder about what caused a run.
+- `%programdata%` is written lowercase by the vendor. Cosmetic on Windows, but
+  the catalog's rule is exact transcription.
+
+`supported_os` deliberately does **not** claim Windows Home. The vendor lists
+Home as supported for Power Automate for desktop generally, but Home cannot run
+cloud-triggered desktop flows, and Copilot Studio computer use is cloud-
+triggered. Carrying Home here would be a false positive a responder acts on.
+
+Not catalogued, on purpose: desktop flows are documented as **not** supported as
+a tool in Copilot Studio, so no desktop-flow-as-tool rows were added. The
+endpoint is reached through computer use on a registered machine, not through
+flows exposed as agent tools.

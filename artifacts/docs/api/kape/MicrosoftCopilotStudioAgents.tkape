@@ -1,0 +1,36 @@
+Description: 'Microsoft Copilot Studio Agents - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: d42668cc-0edd-5b05-b4cd-2c763182f1d9
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Execution logs and cache for cloud-triggered flows'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Microsoft\Power Automate Desktop\'
+        FileMask: 'Scripts'
+        Comment: 'AIRT-0014 | Execution logs and cache for cloud-triggered flows'
+    -
+        Name: 'Tenant-supplied modules fetched onto the host at run time'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Microsoft\Power Automate Desktop\'
+        FileMask: 'DesktopFlowModules'
+        Comment: 'AIRT-0014 | Tenant-supplied modules fetched onto the host at run time'
+    -
+        Name: 'Designer-triggered runs, which is a different provenance'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Microsoft\Power Automate Desktop\Designer\'
+        FileMask: 'Scripts'
+        Comment: 'AIRT-0014 | Designer-triggered runs, which is a different provenance'
+    -
+        Name: 'Service-account cache under the default runtime identity'
+        Category: AIAgents
+        Path: 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Cache  |  C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\'
+        FileMask: 'Users'
+        Comment: 'AIRT-0014 | Service-account cache under the default runtime identity'
+    -
+        Name: 'Third cache location used by newer runtime versions'
+        Category: AIAgents
+        Path: 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Microsoft\Power Automate Desktop\'
+        FileMask: 'Cache'
+        Comment: 'AIRT-0014 | Third cache location used by newer runtime versions'

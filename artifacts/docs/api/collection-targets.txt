@@ -16,11 +16,15 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\open-webui\data\.key
 %APPDATA%\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\
 %APPDATA%\open-webui\data\webui.db
+%LOCALAPPDATA%\Microsoft\Power Automate Desktop\Cache\MSI\Account  |  %LOCALAPPDATA%\Microsoft\Power Automate Desktop\Cache\MSIX\Account
+%LOCALAPPDATA%\Microsoft\Power Automate Desktop\DesktopFlowModules
+%LOCALAPPDATA%\Microsoft\Power Automate Desktop\Scripts
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
 %LOCALAPPDATA%\github-copilot\apps.json
 %LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml
 %LOCALAPPDATA%\warp\Warp\data\warp.sqlite
 %USERPROFILE%\.codeium\windsurf\mcp_config.json
+%programdata%\Microsoft\Power Automate\Logs
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
 .env (deployment directory)
@@ -87,6 +91,7 @@ ANTHROPIC_API_KEY
 ANTHROPIC_AUTH_TOKEN
 AWS Builder ID / IAM Identity Center token cache
 AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
+Azure Key Vault named per computer-use tool, by subscription, resource group and vault name
 BROWSER_USE_API_KEY
 Browser Local Storage, key "agentgpt-settings-storage-v2" (browser profile Local Storage LevelDB, AgentGPT origin - http://localhost:3000 self-hosted)
 CLAUDE_CODE_OAUTH_TOKEN
