@@ -5,14 +5,14 @@ Id: 7a36cab8-622d-5393-a5c7-ee56dbc73043
 RecreateDirectories: true
 Targets:
     -
-        Name: 'Windows location of the command database. Same contents as the macOS path.'
+        Name: 'Windows location of the command database. Same contents as the macOS path....'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\warp\Warp\data\'
         FileMask: 'warp.sqlite'
-        Comment: 'AIRT-0046 | [confidence: medium] Windows location of the command database. Same contents as the macOS path.'
+        Comment: 'AIRT-0046 | Windows location of the command database. Same contents as the macOS path. Confirmed on a live host.'
     -
-        Name: 'Settings, including any configured AI and MCP behaviour'
+        Name: 'Settings, including any configured AI and MCP behaviour. Confirmed on a...'
         Category: AIAgents
         Path: 'C:\Users\%user%\AppData\Local\warp\Warp\config\'
         FileMask: 'settings.toml'
-        Comment: 'AIRT-0046 | [confidence: medium] Settings, including any configured AI and MCP behaviour'
+        Comment: 'AIRT-0046 | Settings, including any configured AI and MCP behaviour. Confirmed on a live host.'

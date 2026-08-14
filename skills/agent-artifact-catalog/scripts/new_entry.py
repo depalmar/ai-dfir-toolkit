@@ -14,7 +14,7 @@ TEMPLATE = ROOT / "schema" / "entry-template.yml"
 def next_id() -> str:
     used = []
     for f in CATALOG.glob("*.yml"):
-        m = re.search(r"^id:\s*(AIRT-\d{4})", f.read_text(), re.M)
+        m = re.search(r"^id:\s*(AIRT-\d{4})", f.read_text(encoding="utf-8"), re.M)
         if m:
             used.append(int(m.group(1).split("-")[1]))
     return f"AIRT-{max(used) + 1:04d}" if used else "AIRT-0001"
@@ -32,7 +32,7 @@ def main() -> int:
         print(f"{dest.name} already exists - update it instead of duplicating.")
         return 1
     new_id = next_id()
-    body = TEMPLATE.read_text().replace("AIRT-XXXX", new_id).replace("Tool Name", name)
+    body = TEMPLATE.read_text(encoding="utf-8").replace("AIRT-XXXX", new_id).replace("Tool Name", name)
     with dest.open("w", encoding="utf-8", newline="\n") as fh:
         fh.write(body)
     print(f"Created {dest.relative_to(ROOT)} with id {new_id}")

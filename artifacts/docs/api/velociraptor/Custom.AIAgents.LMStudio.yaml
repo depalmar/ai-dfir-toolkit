@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\AppData\Local\Programs\lm-studio\LM Studio.exe', 'C:\Users\*\.lmstudio\bin\lms', 'C:\Users\*\.lmstudio\models\**', 'C:\Users\*\.lmstudio\settings.json', 'C:\Users\*\.lmstudio\mcp.json', 'C:\Users\*\.cache\lm-studio\mcp.json']
+      LET Globs = ['C:\Users\*\AppData\Local\Programs\LM Studio\LM Studio.exe', 'C:\Users\*\.lmstudio\bin\lms', 'C:\Users\*\.lmstudio\bin\lms.exe', 'C:\Users\*\.lmstudio\models\**', 'C:\Users\*\.lmstudio\settings.json', 'C:\Users\*\.lmstudio\.internal\**', 'C:\Users\*\.lmstudio\.internal\last-synced-mcp-state.json', 'C:\Users\*\.lmstudio\credentials\**', 'C:\Users\*\.lmstudio\mcp.json', 'C:\Users\*\.cache\lm-studio\mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.lmstudio/bin/lms', '/Users/*/.lmstudio/models/**', '/Users/*/.lmstudio/settings.json', '/Users/*/.lmstudio/mcp.json', '/Users/*/.cache/lm-studio/mcp.json']
+      LET Globs = ['/Users/*/.lmstudio/bin/lms', '/Users/*/.lmstudio/bin/lms.exe', '/Users/*/.lmstudio/models/**', '/Users/*/.lmstudio/settings.json', '/Users/*/.lmstudio/mcp.json', '/Users/*/.cache/lm-studio/mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.lmstudio/bin/lms', '/home/*/.lmstudio/models/**', '/home/*/.lmstudio/settings.json', '/home/*/.lmstudio/mcp.json', '/home/*/.cache/lm-studio/mcp.json']
+      LET Globs = ['/home/*/.lmstudio/bin/lms', '/home/*/.lmstudio/bin/lms.exe', '/home/*/.lmstudio/models/**', '/home/*/.lmstudio/settings.json', '/home/*/.lmstudio/mcp.json', '/home/*/.cache/lm-studio/mcp.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

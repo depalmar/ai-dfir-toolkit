@@ -7,6 +7,6 @@ Targets:
     -
         Name: 'database.sqlite, config, encryptionKey'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.n8n\  (Docker: \home\node\'
-        FileMask: '.n8n)'
+        Path: 'C:\Users\%user%\.n8n\  |  \home\node\'
+        FileMask: '.n8n'
         Comment: 'AIRT-0025 | database.sqlite, config, encryptionKey'

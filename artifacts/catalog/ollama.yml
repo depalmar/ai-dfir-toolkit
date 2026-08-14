@@ -221,8 +221,8 @@ credentials:
       - linux
     storage: plaintext
     secret_type: api-key
-    description: Instance identity keypair
-    confidence: medium
+    description: Instance identity keypair. Confirmed on a live Windows host.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1
@@ -245,5 +245,5 @@ references:
   - title: "Ollama docs - API reference (no MCP client surface)"
     url: https://github.com/ollama/ollama/blob/main/docs/api.md
     accessed: "2026-08-13"
-last_verified: "2026-08-13"
+last_verified: "2026-08-14"
 last_modified: "2026-08-11"

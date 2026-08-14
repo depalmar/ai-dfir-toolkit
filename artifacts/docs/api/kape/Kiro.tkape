@@ -5,7 +5,7 @@ Id: 68a9249e-4fc2-5280-adf5-9bfb32418e3c
 RecreateDirectories: true
 Targets:
     -
-        Name: 'User-scope MCP servers, applied across every workspace. Powers installed from th'
+        Name: 'User-scope MCP servers, applied across every workspace. Powers installed...'
         Category: AIAgents
         Path: 'C:\Users\%user%\.kiro\settings\'
         FileMask: 'mcp.json'

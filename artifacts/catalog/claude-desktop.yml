@@ -55,25 +55,67 @@ artifacts:
       os:
         - windows
       artifact_type: mcp-config
-      description: Virtualized PATH - the app reads this one. Commonly missed by IR.
+      description: Container-redirected config, live when no %APPDATA% copy predates the install
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
-      install_method: MS Store
-      confidence: high
+      install_method: MSIX (Intune/DISM)
+      confidence: medium
     - path: ~/.config/Claude/claude_desktop_config.json
       os:
         - linux
       artifact_type: mcp-config
-      description: Primary execution primitive
+      description: MCP config, in a confirmed directory but not itself seen yet
       forensic_value: high
       evidence_type:
         - execution
         - persistence
         - configuration
-      install_method: deb/AppImage
+      install_method: deb (Anthropic apt repo)
+      confidence: medium
+    - path: ~/.config/Claude/
+      os:
+        - linux
+      artifact_type: config-dir
+      description: Application data root, mode 0700, created on first launch
+      forensic_value: high
+      evidence_type:
+        - program-presence
+        - configuration
+      install_method: deb (Anthropic apt repo)
+      confidence: high
+    - path: ~/.config/Claude/logs/mcp*.log
+      os:
+        - linux
+      artifact_type: log
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
+      forensic_value: high
+      evidence_type:
+        - timeline
+        - execution
+      install_method: n/a
+      confidence: high
+    - path: ~/.config/Claude/config.json
+      os:
+        - linux
+      artifact_type: config-file
+      description: Application settings, distinct from the MCP config beside it
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.config/Claude/ant-did
+      os:
+        - linux
+      artifact_type: config-file
+      description: Per-install device identifier, written at first launch
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: n/a
       confidence: high
     - path: "*.mcpb (Desktop Extension)"
       os:
@@ -91,53 +133,68 @@ artifacts:
       os:
         - windows
       artifact_type: log
-      description: MCP server stdout/stderr - forensic goldmine
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
       forensic_value: high
       evidence_type:
         - timeline
         - execution
       install_method: n/a
-      confidence: medium
+      confidence: high
     - path: "~/Library/Logs/Claude/mcp*.log"
       os:
         - macos
       artifact_type: log
-      description: MCP server stdout/stderr
+      description: "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript"
       forensic_value: high
       evidence_type:
         - timeline
         - execution
       install_method: n/a
-      confidence: medium
+      confidence: high
   registry:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude"
       value: InstallLocation, DisplayVersion
       type: REG_SZ
-      description: Install metadata
+      description: >-
+        Install metadata for the EXE installer. A packaged MSIX install creates no
+        uninstall key at all, so absence here does not mean the app is absent -
+        query Get-AppxPackage before concluding.
       persistence: false
       forensic_value: medium
-      confidence: medium
+      unverified: true
+      confidence: low
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       value: Claude
       type: REG_SZ
-      description: Auto-start - launches all configured MCP servers on login
+      description: >-
+        Auto-start, which launches every configured MCP server on login. The MSIX
+        build checked carried no Claude value under Run, which is equally
+        consistent with the launch-at-login setting being off, so absence here
+        is not evidence against the mechanism.
       persistence: true
       forensic_value: high
       confidence: medium
     - key: "HKCU\\Software\\Classes\\claude\\shell\\open\\command"
       value: (Default)
       type: REG_SZ
-      description: "claude:// protocol handler - deep-link vector"
+      description: >-
+        The claude:// protocol handler, and a deep-link vector. On an MSIX
+        install its default value is the full WindowsApps path, which yields the
+        package full name and version without querying the package manager.
       persistence: true
       forensic_value: medium
-      confidence: medium
+      confidence: high
     - key: "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*"
       value: "-"
       type: Key
-      description: Store package registration
+      description: >-
+        Packaged app registration. The parent ActivatableClasses\Package key
+        did not exist under HKCU on the MSIX install checked, so this location
+        is not a reliable indicator of a packaged Claude Desktop.
       persistence: false
       forensic_value: medium
-      confidence: medium
+      unverified: true
+      confidence: low
   network:
     - direction: egress
       indicator: api.anthropic.com, claude.ai
@@ -156,7 +213,9 @@ artifacts:
       typical_parent: explorer.exe
       typical_children: node.exe, npx.cmd, python.exe, docker.exe, uvx
       service_or_daemon: "No"
-      persistence: Run key - LAUNCHES ALL MCP SERVERS ON LOGIN
+      persistence: >-
+        Run key on installs that register one, which launches every configured
+        MCP server at login. The MSIX build checked registered none.
       confidence: high
     - name: Claude
       os:
@@ -199,16 +258,23 @@ credentials:
       %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\... Path. Treat every literal value
       as an exposed credential and rotate.
     confidence: high
-  - location: '~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)'
-    os: [macos, windows, linux]
+  - location: '~/Library/Application Support/Claude/'
+    os: [macos]
     storage: encrypted
     secret_type: oauth-token
-    description: >-
-      OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are
-      written into the application-data directory as ciphertext, encrypted using OS
-      secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here,
-      but is not usable without the key - see the keyring row. Vendor does not name the
-      specific file.
+    description: OAuth token ciphertext, encrypted under Keychain
+    confidence: medium
+  - location: '%APPDATA%\Claude\'
+    os: [windows]
+    storage: encrypted
+    secret_type: oauth-token
+    description: OAuth token ciphertext, encrypted under DPAPI
+    confidence: medium
+  - location: '~/.config/Claude/'
+    os: [linux]
+    storage: encrypted
+    secret_type: oauth-token
+    description: OAuth token ciphertext in the application-data directory
     confidence: medium
 mcp:
   - mechanism: config-file
@@ -218,7 +284,9 @@ mcp:
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start (+ Run key)
     triage_priority: p1
-    notes: Standard EXE-installer path
+    notes: >-
+      Vendor-documented path, and the live config on a host where it predates a
+      later MSIX install. Not authoritative by itself - see the container row.
   - mechanism: config-file
     config_path: "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
     config_key: mcpServers
@@ -226,7 +294,14 @@ mcp:
     secrets_location: "mcpServers.<name>.env"
     persistence_trigger: Every app start
     triage_priority: p1
-    notes: "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
+    notes: >-
+      MSIX container copy. Precedence is decided per file by install history,
+      not by a global switch: the OS opens the container copy first and falls
+      back to real AppData, and a file that already existed in AppData before
+      the packaged install stays unvirtualized. So this is the live config on a
+      host where the packaged build created it fresh, and dormant on a host that
+      had it already. Collect both, and the manifest from WindowsApps, then
+      resolve precedence per host. Container copies survive uninstall.
   - mechanism: config-file
     config_path: ~/Library/Application Support/Claude/claude_desktop_config.json
     config_key: mcpServers
@@ -272,4 +347,17 @@ references:
   - title: "Connect to MCP servers"
     url: https://code.claude.com/docs/en/mcp-quickstart
     accessed: "2026-08-13"
-last_modified: "2026-08-11"
+  - title: "Deploy Claude Desktop for Windows - MSIX via Intune, SCCM, Group Policy or PowerShell"
+    url: https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows
+    accessed: "2026-08-14"
+  - title: "Claude Desktop for Linux - Debian package from Anthropic's apt repository"
+    url: https://code.claude.com/docs/en/desktop-linux
+    accessed: "2026-08-14"
+  - title: "Behind the scenes - MSIX AppData redirection and per-file precedence"
+    url: https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes
+    accessed: "2026-08-14"
+  - title: "Flexible virtualization - registry and filesystem write virtualization elements"
+    url: https://learn.microsoft.com/en-us/windows/msix/desktop/flexible-virtualization
+    accessed: "2026-08-14"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

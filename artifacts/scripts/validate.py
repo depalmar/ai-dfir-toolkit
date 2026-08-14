@@ -6,6 +6,7 @@ Exit code 1 on any failure, so it gates merges.
 """
 import glob
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -17,7 +18,7 @@ except ImportError:
     sys.exit("Install deps first:  pip install pyyaml jsonschema")
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA = json.loads((ROOT / "schema" / "artifact.schema.json").read_text())
+SCHEMA = json.loads((ROOT / "schema" / "artifact.schema.json").read_text(encoding="utf-8"))
 validator = Draft202012Validator(SCHEMA)
 
 def main() -> int:
@@ -32,7 +33,7 @@ def main() -> int:
     for path in files:
         name = Path(path).name
         try:
-            doc = yaml.safe_load(Path(path).read_text())
+            doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         except yaml.YAMLError as exc:
             print(f"[YAML]   {name}: {exc}")
             failures += 1
@@ -103,7 +104,7 @@ def main() -> int:
     for path in sigma_files:
         name = Path(path).name
         try:
-            rule = yaml.safe_load(Path(path).read_text())
+            rule = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         except yaml.YAMLError as exc:
             print(f"[SIGMA]  {name}: {exc}")
             failures += 1
@@ -122,6 +123,36 @@ def main() -> int:
         elif rule_id:
             seen_rule_ids[rule_id] = name
 
+    # Locators are machine-read. `path`, `location` and `config_path` are emitted
+    # verbatim into the KAPE, Velociraptor and forensicartifacts feeds, so a
+    # parenthetical or an arrow inside one does not degrade gracefully - it ships
+    # as a glob that matches nothing. AIRT-0011 was publishing
+    # "~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, ...)"
+    # as a literal Velociraptor glob, and six more entries were doing the same
+    # across 21 rows, all silently collecting zero. Two locations in one field is
+    # a legitimate case and already has a spelling: " | ", which expand() splits
+    # and the exporters understand. Anything else belongs in `description`.
+    prose_in_locator = re.compile(r"\([A-Za-z]|  ->  ")
+    for path in files:
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+        rows = [("disk", a.get("path"))
+                for a in (doc.get("artifacts") or {}).get("disk") or []]
+        rows += [("credential", c.get("location")) for c in doc.get("credentials") or []]
+        rows += [("mcp", m.get("config_path")) for m in doc.get("mcp") or []]
+        for kind, raw in rows:
+            loc = str(raw or "").strip()
+            if not loc or loc.startswith("<"):
+                continue
+            # Only judge fields that actually claim to be a filesystem path. A
+            # keyring or a registry-style locator legitimately reads as prose and
+            # the exporters already skip it.
+            looks_like_path = loc.startswith(("~", "/", "%")) or re.match(r"^[A-Za-z]:", loc)
+            if looks_like_path and prose_in_locator.search(loc):
+                print(f"[LOCATOR] {Path(path).name}: {kind} locator carries prose. "
+                      f"Move it to description, or use ' | ' for a second "
+                      f"location: {loc[:64]}")
+                failures += 1
+
     # Note style. Four styles had accumulated across 363 captions - sentence
     # case, ALL-CAPS, a shouted leading token, bare lowercase - with a terminal
     # period on about half. They render in one table column and one CSV field,
@@ -135,7 +166,7 @@ def main() -> int:
     if clean:
         drift = 0
         for path in files:
-            doc = yaml.safe_load(Path(path).read_text())
+            doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
             for holder, key in each_note(doc):
                 before = holder.get(key) or ""
                 if clean(before) != before:
@@ -172,7 +203,7 @@ def main() -> int:
     # all before going looking for its config.
     no_mcp = []
     for path in files:
-        doc = yaml.safe_load(Path(path).read_text())
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         if (doc.get("capabilities") or {}).get("mcp_capable") is True \
                 and not (doc.get("mcp") or []):
             no_mcp.append(f"{doc.get('id')} {doc.get('name')}")
@@ -196,7 +227,7 @@ def main() -> int:
     except ImportError:
         audit = None
     if audit:
-        entries = [yaml.safe_load(Path(p).read_text()) for p in files]
+        entries = [yaml.safe_load(Path(p).read_text(encoding="utf-8")) for p in files]
         for problem in audit(coverage(load_sources(), entries)):
             print(f"[SOURCE] {problem}")
             failures += 1
@@ -209,7 +240,7 @@ def main() -> int:
     stale, never = [], []
     today = date.today()
     for path in files:
-        doc = yaml.safe_load(Path(path).read_text())
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         label = f"{doc.get('id')} {doc.get('name')}"
         if not (doc.get("references") or []):
             unsourced.append(label)

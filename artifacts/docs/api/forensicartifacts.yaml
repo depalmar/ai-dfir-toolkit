@@ -299,7 +299,9 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/.config/Claude/logs/mcp*.log'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
     - '*.mcpb / *.dxt bundle files'
@@ -311,6 +313,7 @@ sources:
     paths:
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
+    - '%%users.homedir%%/Library/Application Support/Claude/'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Logs/Claude/mcp*.log'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
@@ -321,6 +324,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\Claude\'
     - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.appdata%%\Claude\logs\mcp*.log'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
@@ -337,6 +341,7 @@ supported_os:
 urls:
 - https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop
 - https://code.claude.com/docs/en/mcp-quickstart
+- https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows
 ---
 name: ClineArtifacts
 doc: Cline (AIRT-0039) - VS Code extension ID saoudrizwan.claude-dev (formerly Claude
@@ -625,6 +630,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -635,6 +641,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -644,6 +651,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.gemini/.env'
     - '%%users.homedir%%/.gemini/google_accounts.json'
     - '%%users.homedir%%/.gemini/oauth_creds.json'
     - '%%users.homedir%%/.gemini/settings.json'
@@ -666,6 +674,7 @@ sources:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: /
   supported_os:
@@ -675,6 +684,7 @@ sources:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: /
   supported_os:
@@ -685,6 +695,7 @@ sources:
     - '%%users.appdata%%\goose\config.yaml'
     - '%%users.homedir%%/.config/goose/config.yaml'
     - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/secrets.yaml'
     - Goose session logs
     separator: \
   supported_os:
@@ -857,6 +868,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.langflow/data/database.db'
     - LANGFLOW_DATABASE_URL
     - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
@@ -866,6 +878,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.appdata%%\com.LangflowDesktop\data\database.db'
     - LANGFLOW_DATABASE_URL
     - LANGFLOW_SECRET_KEY
     - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
@@ -947,6 +960,8 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.cache/lm-studio/mcp.json'
+    - '%%users.homedir%%/.lmstudio/.internal/'
+    - '%%users.homedir%%/.lmstudio/.internal/last-synced-mcp-state.json'
     - '%%users.homedir%%/.lmstudio/mcp.json'
     - '%%users.homedir%%/.lmstudio/settings.json'
     separator: \
@@ -1100,6 +1115,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - /app/backend/data/
     - /app/backend/data/.webui_secret_key
     - /app/backend/data/config.json
     - /app/backend/data/uploads/ and vector store directory
@@ -1110,8 +1126,21 @@ sources:
     separator: /
   supported_os:
   - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\open-webui\'
+    - '%%users.appdata%%\open-webui\config.json'
+    - '%%users.appdata%%\open-webui\data\'
+    - '%%users.appdata%%\open-webui\data\.key'
+    - '%%users.appdata%%\open-webui\data\uploads\  |  %%users.appdata%%\open-webui\data\vector_db\'
+    - '%%users.appdata%%\open-webui\data\webui.db'
+    separator: \
+  supported_os:
+  - Windows
 supported_os:
 - Linux
+- Windows
 urls:
 - https://docs.openwebui.com/getting-started/advanced-topics/hardening/
 - https://docs.openwebui.com/getting-started/quick-start/
@@ -1175,6 +1204,8 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
     - JWT_SECRET
     - LLM_API_KEY
     - docker-compose.yml / docker run invocation
@@ -1194,6 +1225,8 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
+    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
     - JWT_SECRET
     - LLM_API_KEY
     separator: \

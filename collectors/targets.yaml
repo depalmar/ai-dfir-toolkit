@@ -921,11 +921,33 @@ targets:
     paths:
       - "~/.supermaven/config.json"
     notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0011_appdata_claude
+    name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\Claude\\"
+    notes: "encrypted/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0011_config_claude
+    name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/Claude/"
+    notes: "encrypted/oauth-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0011_library_application_support_claude
     name: "Claude Desktop (MCP host) credential store (AIRT-0011)"
     repo_cat: "cred"
     cosai: []
-    os: [macos, windows, linux]
+    os: [macos]
     scope: user
     type: file
     sensitivity: secret
@@ -1077,7 +1099,7 @@ targets:
     sensitivity: secret
     paths:
       - "~/.ollama/id_ed25519"
-    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0025_n8n_database_sqlite
     name: "n8n (AI Agent / LangChain nodes) credential store (AIRT-0025)"
     repo_cat: "cred"
@@ -1475,6 +1497,28 @@ targets:
     paths:
       - "/app/backend/data/.webui_secret_key"
     notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0042_appdata_open_webui_data_key
+    name: "Open WebUI credential store (AIRT-0042)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\open-webui\\data\\.key"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0042_appdata_open_webui_data_webui_db
+    name: "Open WebUI credential store (AIRT-0042)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\open-webui\\data\\webui.db"
+    notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0043_openhands_agent_settings_json
     name: "OpenHands credential store (AIRT-0043)"
     repo_cat: "cred"
@@ -1496,6 +1540,7 @@ targets:
     sensitivity: secret
     paths:
       - "~/.openhands/secrets.json"
+      - "/.openhands/secrets.json"
     notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0043_openhands_settings_json
     name: "OpenHands credential store (AIRT-0043)"
@@ -1507,6 +1552,7 @@ targets:
     sensitivity: secret
     paths:
       - "~/.openhands/settings.json"
+      - "/.openhands/settings.json"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0043_project_config_toml
     name: "OpenHands credential store (AIRT-0043)"
@@ -1606,7 +1652,18 @@ targets:
     sensitivity: normal
     paths:
       - "~/.config/Claude/claude_desktop_config.json"
-    notes: "mcp-config, forensic_value high, catalog confidence high."
+    notes: "mcp-config, forensic_value high, catalog confidence medium."
+  - id: art_airt_0011_config_claude_logs_mcp_log
+    name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: glob
+    sensitivity: normal
+    paths:
+      - "~/.config/Claude/logs/mcp*.log"
+    notes: "log, forensic_value high, catalog confidence high."
   - id: art_airt_0011_library_application_support_claude_claud
     name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
     repo_cat: "art"
@@ -1628,7 +1685,29 @@ targets:
     sensitivity: normal
     paths:
       - "~/Library/Logs/Claude/mcp*.log"
-    notes: "log, forensic_value high, catalog confidence medium."
+    notes: "log, forensic_value high, catalog confidence high."
+  - id: art_airt_0018_lmstudio_internal
+    name: "LM Studio artifact (AIRT-0018)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.lmstudio/.internal/"
+    notes: "config-dir, forensic_value high, catalog confidence high."
+  - id: art_airt_0018_lmstudio_internal_last_synced_mcp_state
+    name: "LM Studio artifact (AIRT-0018)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.lmstudio/.internal/last-synced-mcp-state.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
   - id: art_airt_0018_lmstudio_settings_json
     name: "LM Studio artifact (AIRT-0018)"
     repo_cat: "art"
@@ -1639,7 +1718,7 @@ targets:
     sensitivity: normal
     paths:
       - "~/.lmstudio/settings.json"
-    notes: "config-file, forensic_value high, catalog confidence high."
+    notes: "config-file, forensic_value high, catalog confidence low."
   - id: art_airt_0036_codex_config_toml
     name: "OpenAI Codex CLI artifact (AIRT-0036)"
     repo_cat: "art"

@@ -52,13 +52,13 @@ artifacts:
       os:
         - windows
       artifact_type: database
-      description: Windows location of the command database. Same contents as the macOS path.
+      description: Windows location of the command database. Same contents as the macOS path. Confirmed on a live host.
       forensic_value: high
       evidence_type:
         - user-activity
         - execution
         - timeline
-      confidence: medium
+      confidence: high
     - path: "~/.local/state/warp-terminal/warp.sqlite"
       os:
         - linux
@@ -76,11 +76,11 @@ artifacts:
       os:
         - windows
       artifact_type: config-file
-      description: Settings, including any configured AI and MCP behaviour
+      description: Settings, including any configured AI and MCP behaviour. Confirmed on a live host.
       forensic_value: medium
       evidence_type:
         - configuration
-      confidence: medium
+      confidence: high
     - path: "~/.config/warp-terminal/settings.toml"
       os:
         - linux
@@ -108,7 +108,6 @@ artifacts:
       persistence: None (user-invoked)
       confidence: medium
 credentials: []
-mcp: []
 mcp:
   - mechanism: config-file
     config_path: ~/.warp_cli/.mcp.json
@@ -154,5 +153,5 @@ references:
   - title: "Warp docs - customizing the Warp Agent CLI"
     url: https://docs.warp.dev/agents/cli/configuration/
     accessed: "2026-08-13"
-last_verified: "2026-08-13"
-last_modified: "2026-08-13"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

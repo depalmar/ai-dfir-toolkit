@@ -233,3 +233,254 @@ is worth stating plainly: an entry that quietly kept listing the retired domain
 would have implied a discriminator that no longer exists.
 
 Provenance is now 49/49.
+
+## 2026-08-14 - AIRT-0011 and AIRT-0002 verified on a live Windows host
+
+The first pass run from a machine with both tools installed. Every row below was
+checked with `lstat`, `Test-Path` or `Get-ItemProperty` on key metadata. No file
+contents and no registry values were read, so the credential stores
+(`state.vscdb`, `%APPDATA%\Claude\`) were confirmed for existence and type only.
+
+Host: Windows 11 Pro 26200. Claude Desktop `1.30096.1.0` (MSIX,
+`Claude_pzs8sxrjxfjjc`). Cursor `3.8.22` (Inno Setup per-user install).
+
+### AIRT-0011 Claude Desktop
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | `%LOCALAPPDATA%\Packages\...\LocalCache\Roaming\Claude\claude_desktop_config.json` | `high`, "Virtualized PATH - the app reads this one" | **`low` + `unverified`, description corrected** | The strongest correction in this pass. On an MSIX install the container exists but holds no `Claude` directory: `LocalCache\Roaming` contains `Claude-3p`, `go`, `Microsoft` and `notesmd-cli` only. `AppxManifest.xml` for 1.30096.1.0 declares `unvirtualizedResources`, so writes go to real `%APPDATA%\Claude\` and are not redirected. The catalog told a responder the roaming file was the decoy and the container file was authoritative; on this build it is exactly backwards. |
+| `AIRT-0011` | `%APPDATA%\Claude\logs\mcp*.log` | `medium` | **`high`** | Present on a live host. Naming is one file per configured server, `mcp-server-<name>.log`, alongside `main.log` and the `claude.ai-web` logs. |
+| `AIRT-0011` | `HKCU\...\Uninstall\Claude` | `medium` | **`low` + `unverified`** | No Claude uninstall key exists in HKCU, HKLM or WOW6432Node on this host. A Store install creates none by design, so absence is not evidence of absence of the app - `Get-AppxPackage` is the check. |
+| `AIRT-0011` | `HKCU\...\Classes\claude\shell\open\command` | `medium` | **`high`** | Present. Its default value carries the full `WindowsApps` path, which yields the package full name and version without querying the package manager - a cheaper version pivot than the uninstall key it replaces on Store installs. |
+| `AIRT-0011` | `HKCU\...\ActivatableClasses\Package\Claude_pzs8sxrjxfjjc*` | `medium` | **`low` + `unverified`** | The parent `ActivatableClasses\Package` key does not exist under HKCU at all on this host, so the location is not a reliable indicator of a packaged install. |
+| `AIRT-0011` | `HKCU\...\Run` | `medium` | **`medium`, description corrected** | Deliberately not downgraded. The Run key held no Claude value, but that is equally consistent with launch-at-login being switched off, so absence is not evidence against the mechanism. Recorded rather than acted on. |
+| `AIRT-0011` | credential locator `~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)` | one row, three OSes, prose inside the locator | **three rows, one per OS** | The field packed three paths and two parentheticals into a single locator, so it could not resolve on any platform and reported MISS everywhere. Confidence stays `medium` on all three: the directories exist, but the OAuth-ciphertext claim is about contents that were not read. |
+
+### AIRT-0002 Cursor
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0002` | `%LOCALAPPDATA%\Programs\cursor\Cursor.exe` | `high` | **path corrected to `...\cursor\_\Cursor.exe`** | The Electron payload sits in a `_` subdirectory on 3.8.22; the parent holds only `_`, `resources`, `tools` and the uninstaller. The documented path finds nothing. Worth recording rather than flattening: the `cursor://` handler still names the parent path, so the registry references a `Cursor.exe` that is not on disk. |
+| `AIRT-0002` | `%LOCALAPPDATA%\Programs\cursor\resources\app\bin\cursor` | `high` | **path corrected to `...\cursor\_\resources\app\bin\cursor`** | Same `_` shift. A top-level `resources\app` exists but contains no `bin`, so the documented path resolves partway and then fails - the worst failure shape for a collection script. |
+| `AIRT-0002` | `%LOCALAPPDATA%\cursor-updater\` | `high` | **`low` + `unverified`** | Absent. 3.8.22 stages updates through `tools\inno_updater.exe` inside the install directory. The absence is meaningful rather than incidental: six other `*-updater` directories exist on this host, so that convention is present on the machine and Cursor simply does not use it. |
+| `AIRT-0002` | `HKCU\...\Classes\cursor\shell\open\command` | `medium` | **`high`** | Present, with `--open-url` in the launch command. |
+| `AIRT-0002` | `HKCU\...\Uninstall\<Cursor GUID>` | `high`, description unchanged | **`high`, description expanded** | Confirmed. A per-user install writes an Inno Setup product code suffixed `_is1`, `DisplayName` "Cursor (User)", `InstallLocation` pointing at the install root rather than the binary. |
+| `AIRT-0002` | `%APPDATA%\Cursor\User\globalStorage\state.vscdb` | `medium` | **`medium`, description expanded** | Deliberately not raised, against the sweep's own suggestion. File presence is confirmed on a live host, but the row's claim is that `cursorAuth/*` rows hold plaintext tokens, and confirming that means opening a credential store. Existence verified, content claim still third-party. |
+
+### Tooling corrections found while doing the above
+
+`scripts/verify_host.py` did not check registry rows at all. `rows_for()` walked
+`artifacts.disk`, `credentials` and `mcp` only, while its docstring claimed
+"every locator on an entry that is checkable on this OS". Twenty-four entries
+carry registry claims that the sweep silently skipped, which is why the rows in
+this pass were checked by hand first. Registry support is added here, by key
+existence only - a registry value can hold a token exactly as a file can, and the
+script's guarantee is that it reads neither. Full-sweep coverage on this host
+went from 26 found to 51.
+
+Two traps in that addition, both caught by running it:
+
+- A key like `...\CurrentVersion\Run` exists on every Windows host. Reporting key
+  existence as a HIT would have manufactured evidence for a tool that registered
+  nothing. Rows naming a specific value now report `KEY?` and are excluded from
+  the upgrade suggestions.
+- `<Cursor GUID>` reduces to a bare `*`, which matched the first unrelated
+  product code under `Uninstall` and reported it as Cursor's. A wildcard
+  component that reduces to nothing but stars is now `unresolvable`, because
+  telling those siblings apart requires `DisplayName` - a value.
+
+`scripts/normalize_notes.py` downcased `HKCU` to `hkcu` and `EXE` to `exe` in the
+new notes. These registry rows are the first in the corpus to name a hive or an
+installer kind in running prose, so neither token was on the derived allowlist -
+the same failure the module comment records for `CWD` and `PKCE`. Both added,
+per the process that comment prescribes.
+
+### Not done in this pass
+
+The macOS and Linux rows on both entries remain host-unverified; only the
+Windows subset was checked against reality. Nine entries are still on the
+never-verified list.
+
+## 2026-08-14 (second pass) - correcting the entry above
+
+A documentation pass run after the host pass overturned its central conclusion.
+Recording this as its own section rather than editing the one above, because the
+failure mode is the point: a single host produced a correct **observation** and a
+wrong **explanation**, and the wrong explanation was the part that got written
+into the catalog, into `CLAUDE.md`, and into a commit message.
+
+| Scope | Field | Was (first pass) | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | MSIX container config row | `low` + `unverified`, "absent on builds declaring unvirtualizedResources" | **`medium`, per-host precedence rule** | The first pass reasoned from the `unvirtualizedResources` capability to "writes are not redirected". That inference is invalid. The capability only *permits* the disabling elements. The manifest for 1.30096.1.0 disables **registry** write virtualization globally, but its `virtualization:FileSystemWriteVirtualization/ExcludedDirectories` names exactly two directories - `%LOCALAPPDATA%\Microsoft\Office\16.0\WEF` and `%LOCALAPPDATA%\Claude-3p` - and there is no `desktop6:FileSystemWriteVirtualization` element at all. Filesystem virtualization is **active** for `%APPDATA%\Claude`. |
+| `AIRT-0011` | container path existence | "the container path does not exist" | **the container exists and is populated** | Factually sloppy the first time. `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\` holds `Local\`, `LocalLow\` and `Roaming\`, with `Roaming\Claude-3p`, `Roaming\go`, `Roaming\Microsoft` and `Roaming\notesmd-cli`. Only the `Roaming\Claude` subtree is missing. |
+| `AIRT-0011` | which config the app reads | "the roaming path, on any Store install" | **decided per file, per host** | Microsoft documents the mechanism: new files under `Roaming` are redirected to the package-private location; on open the OS tries that location first and falls back to real AppData; and files that already existed in AppData are read and written unvirtualized. `%APPDATA%\Claude\` predated the packaged install on the host checked, which is why it wins **there**. On a clean packaged install the container copy would be the live one - which means the circulating IR guidance is not simply wrong, it describes the other case. Corroborating: `Roaming\Claude-3p` **is** redirected into the container while `%LOCALAPPDATA%\Claude-3p` sits unvirtualized, exactly as the manifest's LocalAppData-only exclusion predicts. |
+| `AIRT-0011` | provenance label | "MS Store" / "Store install" | **sideloaded enterprise MSIX** | Anthropic ships MSIX packages for Intune/SCCM/Group Policy/PowerShell deployment on Team and Enterprise plans. There is no Microsoft Store listing. This matters for acquisition: Store provenance implies delivery-optimization logs, sideloaded provenance implies Intune/DISM/PowerShell traces. |
+| `AIRT-0011` | `~/.config/Claude/claude_desktop_config.json` | `high` | **`low` + `unverified`** | The highest-risk row found in either pass, and structurally identical to the Windsurf burn this file already records. Neither `code.claude.com/docs/en/desktop-linux` nor the install article documents any Linux config path. An official Linux build does exist, but it is Debian-only from Anthropic's own apt repo, and the config location is convention plus one untriaged bug report - not documentation. |
+| `AIRT-0011` | `~/Library/Logs/Claude/mcp*.log` | `medium` | **`high`** | Vendor-documented alongside the Windows directory. |
+| `AIRT-0011` | MCP log description | "stdout/stderr" | **full JSON-RPC transcript** | The vendor docs understate it and so did we. `mcp.log` records bidirectional JSON-RPC including tool names, complete tool arguments and accessed file paths, per server. That makes it a p1 acquisition target closer to a command-history artifact than to a log, and it must be handled as potentially containing secrets, since arguments are logged verbatim. |
+| `AIRT-0002` | Cursor `_\` layout | "since 3.8.22" | **"on 3.8.22"** | No first-party source documents the Windows install layout at all, so the version boundary was an assertion the evidence did not support. The layout itself holds: `_\resources\app\product.json` reports 3.8.22, the Inno uninstall entry registered that install location on the install date, and no orphaned top-level `Cursor.exe` remains - so it is the real layout, not a staging state. |
+| `AIRT-0002` | `cursor-updater\` | "legacy or per-channel location" | **legacy-generation marker, kept deliberately** | Absence on one upgraded host does not establish retirement at any version. Keep the row: if it persists elsewhere it dates an older install generation, which is worth more to a responder than a deleted row. |
+
+Two Windows facts worth keeping from the manifest read, neither of which the
+first pass noticed: **registry** write virtualization *is* globally disabled on
+this build, so HKCU writes by the packaged app land in the real hive - which is
+why the `claude://` handler was readable under HKCU at all. And the manifest
+excludes `%LOCALAPPDATA%\Claude-3p` from virtualization deliberately, which
+suggests that tree matters; whether it is succeeding
+`claude_desktop_config.json` is an open question.
+
+The decisive experiment nobody has run: install the MSIX on a host with no
+pre-existing `%APPDATA%\Claude` and observe where the config is created.
+
+## 2026-08-14 (third pass) - 21 broken globs, and a gate so they stay fixed
+
+The malformed AIRT-0011 locator corrected above was not a one-off. It was one
+instance of a defect in **seven** entries, and the broken output was shipping.
+
+`path`, `location` and `config_path` are emitted verbatim into the KAPE,
+Velociraptor and forensicartifacts feeds. A parenthetical inside one does not
+degrade gracefully - it becomes a glob that matches nothing, silently. The
+published Velociraptor artifacts carried **21** of them, including
+`'/home/*/.openhands/secrets.json  (mounted to /.openhands/secrets.json)'` and
+`'C:\Users\*\.n8n\  (Docker: \home\node\.n8n)'`. Every one collected zero while
+looking like coverage.
+
+| Entry | Was | Now |
+|---|---|---|
+| `AIRT-0025` n8n | `~/.n8n/  (Docker: /home/node/.n8n)` | `~/.n8n/  \|  /home/node/.n8n` |
+| `AIRT-0043` OpenHands, 4 rows | `~/.openhands/…  (mounted to /.openhands/…)` | `~/.openhands/…  \|  /.openhands/…` |
+| `AIRT-0037` Gemini CLI | `~/.gemini/.env  (plus cwd-upward .env search)` | path cleaned, search behaviour moved to description |
+| `AIRT-0038` Goose | `~/.config/goose/secrets.yaml (mode 0600)` | path cleaned; the 0600 mode was already in `abuse_potential`, so nothing was lost |
+| `AIRT-0044` Langflow, 3 rows | `~/.langflow/  (LANGFLOW_CONFIG_DIR)` and two `(Langflow Desktop)` | paths cleaned, `LANGFLOW_CONFIG_DIR` moved to description |
+| `AIRT-0042` Open WebUI | `/app/backend/data/  (DATA_DIR; Docker volume open-webui)` | path cleaned, `DATA_DIR` already in description |
+| `AIRT-0010` Supermaven | `~/.config/zed/settings.json  ->  inline_completion_provider: supermaven` | path cleaned, key name moved to description |
+
+Where the parenthetical named a **real second location** - n8n's Docker path,
+OpenHands' container mounts - the fix is not to delete it. The corpus already has
+a spelling for two locations in one field, ` | `, which `expand()` splits and the
+exporters understand. Those rows now emit both globs instead of neither.
+
+`validate.py` gates it now: a `path`, `location` or `config_path` that looks like
+a filesystem path and contains `(` followed by a letter, or `  ->  `, fails.
+Fields that are legitimately prose - keyring service descriptions, registry-style
+locators - are not judged, because the exporters already skip them. Verified by
+reintroducing the n8n defect, confirming `[LOCATOR]` fired, and restoring it.
+Broken globs in the published feeds: **21 to 0**.
+
+## 2026-08-14 - Linux sweep from WSL
+
+Ubuntu 22.04.5 under WSL2. Confirms rather than corrects, which is worth
+recording as such rather than inflating.
+
+**It did not answer the Linux question that matters.** The host runs Claude
+*Code*, not Claude *Desktop*: `/usr/local/bin/claude` is present, `dpkg -l` shows
+no `claude-desktop`, there is no Anthropic apt source or keyring, and
+`~/.config/Claude/` does not exist. So `~/.config/Claude/claude_desktop_config.json`
+stays `low` + `unverified`. It needs a host with the `.deb` actually installed.
+
+Confirmed on Linux, all already `high`, all now carrying a fresher check:
+`AIRT-0001` Claude Code (`/usr/local/bin/claude`, `~/.claude/`, `~/.claude.json`
+mode 600, and `~/.claude/.credentials.json` mode **600** - existence and mode
+only, contents never read, tool version 2.1.63); `AIRT-0003` GitHub Copilot
+(`~/.copilot` mode 700); `AIRT-0017` Ollama (`/usr/local/bin/ollama`,
+`/etc/systemd/system/ollama.service`, `/usr/share/ollama/.ollama/models`);
+`AIRT-0031` Playwright MCP (`~/.cache/ms-playwright`).
+
+No `medium` or `low` row was hit, so the sweep produced **no upgrades**.
+
+One trap declined: `AIRT-0033` Claude Computer Use hit on `~/.aws`, and
+`AIRT-0033` is on the never-verified list. `~/.aws` is a generic AWS credential
+directory whose presence says nothing about whether the computer-use demo was
+ever installed, so the entry stays unverified. A HIT on a path the tool merely
+*shares* is not evidence the tool was there.
+
+## 2026-08-14 (fourth pass) - LM Studio, Open WebUI, and a latent YAML defect
+
+### AIRT-0018 LM Studio - an entry that looked verified and was wrong
+
+The worst state in the catalog: `confidence: high`, `last_verified: 2026-08-13`,
+and three `high` disk paths that miss on a host where the tool is installed.
+Nothing flagged it, because a stale-date gate cannot see a wrong path. Verified
+against LM Studio **0.3.22** on Windows 11.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0018` | install path | `%LOCALAPPDATA%\Programs\lm-studio\LM Studio.exe` | **`...\Programs\LM Studio\LM Studio.exe`** | The directory is `LM Studio`, with a space and title case - not the hyphenated slug. Not a case difference, so it fails on a case-insensitive filesystem too. |
+| `AIRT-0018` | CLI shim | `~/.lmstudio/bin/lms` | **`~/.lmstudio/bin/lms  \|  ~/.lmstudio/bin/lms.exe`** | The row claims windows, macos and linux, but the Windows binary carries `.exe`. Both spellings now emit. |
+| `AIRT-0018` | `~/.lmstudio/settings.json` | `high` | **`low` + `unverified`** | Absent on 0.3.22. Kept rather than deleted, because only Windows was checked and the row also claims macOS and Linux. The real config surface is `~/.lmstudio/.internal/`, roughly 20 JSON files, now catalogued alongside it. |
+| `AIRT-0018` | uninstall key | `...\Uninstall\*LM Studio*` | **`...\Uninstall\<LM Studio GUID>`** | The key name is a bare GUID; the tool name appears only in `DisplayName`. The old spelling asserted a key-name match that cannot succeed. Same shape as `AIRT-0002`'s `<Cursor GUID>`. |
+
+Added, all confirmed on the host: `~/.lmstudio/.internal/` (config surface),
+`~/.lmstudio/.internal/last-synced-mcp-state.json` (MCP state, not previously
+catalogued anywhere), `~/.lmstudio/credentials/` (present, empty here), and
+`HKCU\Software\Classes\lmstudio\shell\open\command`, whose default value names
+the install path. Sweep coverage for this entry: **3 found to 9**.
+
+### AIRT-0042 Open WebUI - an entire install shape was missing
+
+All seven disk rows were `/app/backend/data/*` tagged `linux, docker`. There was
+no Windows desktop coverage at all, and the desktop build is on this host at
+**0.0.20**. Nine rows added, every one confirmed, zero misses.
+
+The finding that matters is a credential name change, not just new paths: on the
+desktop build the session signing key is **`.key`**, not `.webui_secret_key`. A
+responder collecting the documented container name gets nothing. The database is
+at `%APPDATA%\open-webui\data\webui.db` with the same schema as the container
+copy, alongside `uploads\`, `vector_db\` and `config.json`, with the install
+under `%LOCALAPPDATA%\Programs\open-webui\` and update staging in
+`%LOCALAPPDATA%\open-webui-updater\`.
+
+`collection.kape_target` was unset, which was harmless while every path was
+Docker-only and became a gate failure the moment Windows rows existed. Set to
+`OpenWebUI`. The entry leaves the never-verified list.
+
+### Upgrades from the host sweep
+
+`AIRT-0046` Warp `warp.sqlite` and `settings.toml`, Windows rows only, `medium`
+to `high`. `AIRT-0017` Ollama `~/.ollama/id_ed25519`, `medium` to `high`, noting
+the platform actually checked rather than implying all three.
+
+## 2026-08-14 (fifth pass) - the Linux config path, settled on a live host
+
+The highest-risk row in the catalog, resolved. `claude-desktop 1.30096.1` from
+Anthropic's apt repository, Ubuntu 22.04 under WSL2 with WSLg.
+
+**The first attempt was a false negative, and the reason is worth recording.**
+The sweep was run from a `root@` shell, so `~` resolved to `/root` while the
+package was installed under `rdepal`. Four MISSes against a home directory the
+application had never touched. WSL reports the same hostname for every distro,
+so the prompt gives no clue which one you are in either. Check `id -un` and
+`echo $HOME` before trusting a MISS.
+
+The second attempt was also uninformative: the package was installed but had
+**never been launched**, and this application creates its data directory lazily
+on first run. `dpkg -L` proves installation, not execution. Launching it once -
+and only once, killed at the sign-in screen, never signed in - created the
+directory and settled the question.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0011` | `~/.config/Claude/` | not catalogued | **new row, `high`** | Created on first launch at mode 0700. This is the parent the whole Linux question turned on, and it was never a row of its own. |
+| `AIRT-0011` | `~/.config/Claude/logs/mcp*.log` | not catalogued | **new row, `high`** | `logs/` contains `main.log`, `mcp.log` and `ssh.log` after a single launch. This confirms the one lead the documentation pass could only reach at search-snippet level - a support article reportedly listing a Linux log directory - and the naming matches the documented macOS and Windows convention exactly. |
+| `AIRT-0011` | `~/.config/Claude/config.json` | not catalogued | **new row, `high`** | 42 bytes, mode 0600. Application settings, and a different file from the MCP config that shares the directory - collecting one is not collecting the other. |
+| `AIRT-0011` | `~/.config/Claude/ant-did` | not catalogued | **new row, `high`** | 48 bytes, mode 0600, written at first launch. A per-install device identifier, which correlates an install across telemetry. Filed as `config-file` because `artifact_type` has no identifier member; extending the enum for one row was not worth the schema, template and skill change it would require. |
+| `AIRT-0011` | `~/.config/Claude/claude_desktop_config.json` | `low` + `unverified` | **`medium`** | Still not seen. But its parent directory is now confirmed on a live host, and the file is absent for the same reason it is absent on a fresh macOS or Windows install: the application does not write it until MCP servers are configured. Absence after a bare first launch is not evidence against it. `medium` reflects a confirmed directory plus a convention matching two other platforms - not a sighting. |
+
+Deliberately **not** upgraded: the `~/.config/Claude/` credential row, which the
+sweep suggested. The directory is confirmed; the row's claim is that OAuth token
+ciphertext lives in it, and the application was killed at the sign-in screen and
+never authenticated. Existence verified, content claim not - the same line drawn
+for Cursor's `state.vscdb`.
+
+Note for whoever picks this up: launching the application left a real
+`~/.config/Claude/` on that host. It is the application's own data directory and
+contains no account state, since sign-in never happened.
+
+### A latent YAML defect in 21 files
+
+`warp.yml` carried `mcp: []` immediately followed by `mcp:` with real content -
+a duplicate top-level key. PyYAML keeps the last, so the corpus parses correctly
+today and the defect is invisible. It is still a defect: a stricter parser
+errors, and a consumer whose YAML library keeps the *first* silently loses every
+MCP row in the file. Twenty-one files had it. All fixed, and the parsed content
+of all 51 entries was compared before and after to prove nothing changed.

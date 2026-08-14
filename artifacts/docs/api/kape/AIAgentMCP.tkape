@@ -11,7 +11,7 @@ Targets:
         FileMask: 'mcp.json'
         Comment: 'AIRT-0008 | Amazon Q Developer (ex-CodeWhisperer): mcpServers'
     -
-        Name: 'Amazon Q Developer (ex-CodeWhisperer): Agent configuration, global scope in the '
+        Name: 'Amazon Q Developer (ex-CodeWhisperer): Agent configuration, global scope in...'
         Category: AIAgents
         Path: 'C:\Users\%user%\.aws\amazonq\'
         FileMask: 'default.json'

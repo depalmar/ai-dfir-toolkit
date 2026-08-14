@@ -23,7 +23,6 @@ confidence: high
 abuse_potential: Primary telemetry is M365/Purview audit, not endpoint. CrowdStrike ships AIDR for Copilot Studio Agents.
 artifacts: {}
 credentials: []
-mcp: []
 mcp:
   - mechanism: cloud
     indicator: Tenant-side configuration in the Copilot Studio maker portal and the Power Platform admin centre - not present on the endpoint

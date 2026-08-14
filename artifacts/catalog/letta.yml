@@ -99,7 +99,6 @@ credentials:
       environment variable. Recoverable from the process environment and from
       whatever set it - a compose file, a shell profile, or a systemd unit.
     confidence: medium
-mcp: []
 mcp:
   - mechanism: database
     indicator: MCP server registrations created through the Letta server API, persisted in the SQLite database under ~/.letta/ or the Docker PostgreSQL volume

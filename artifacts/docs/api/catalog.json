@@ -1682,7 +1682,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -1893,15 +1893,15 @@
             "windows"
           ],
           "artifact_type": "mcp-config",
-          "description": "Virtualized PATH - the app reads this one. Commonly missed by IR.",
+          "description": "Container-redirected config, live when no %APPDATA% copy predates the install",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
             "persistence",
             "configuration"
           ],
-          "install_method": "MS Store",
-          "confidence": "high"
+          "install_method": "MSIX (Intune/DISM)",
+          "confidence": "medium"
         },
         {
           "path": "~/.config/Claude/claude_desktop_config.json",
@@ -1909,14 +1909,72 @@
             "linux"
           ],
           "artifact_type": "mcp-config",
-          "description": "Primary execution primitive",
+          "description": "MCP config, in a confirmed directory but not itself seen yet",
           "forensic_value": "high",
           "evidence_type": [
             "execution",
             "persistence",
             "configuration"
           ],
-          "install_method": "deb/AppImage",
+          "install_method": "deb (Anthropic apt repo)",
+          "confidence": "medium"
+        },
+        {
+          "path": "~/.config/Claude/",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Application data root, mode 0700, created on first launch",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence",
+            "configuration"
+          ],
+          "install_method": "deb (Anthropic apt repo)",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Claude/logs/mcp*.log",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript",
+          "forensic_value": "high",
+          "evidence_type": [
+            "timeline",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Claude/config.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Application settings, distinct from the MCP config beside it",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.config/Claude/ant-did",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Per-install device identifier, written at first launch",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "n/a",
           "confidence": "high"
         },
         {
@@ -1941,14 +1999,14 @@
             "windows"
           ],
           "artifact_type": "log",
-          "description": "MCP server stdout/stderr - forensic goldmine",
+          "description": "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",
             "execution"
           ],
           "install_method": "n/a",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/Library/Logs/Claude/mcp*.log",
@@ -1956,14 +2014,14 @@
             "macos"
           ],
           "artifact_type": "log",
-          "description": "MCP server stdout/stderr",
+          "description": "Per-server stderr; mcp.log is a full JSON-RPC tool-call transcript",
           "forensic_value": "high",
           "evidence_type": [
             "timeline",
             "execution"
           ],
           "install_method": "n/a",
-          "confidence": "medium"
+          "confidence": "high"
         }
       ],
       "registry": [
@@ -1971,16 +2029,17 @@
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude",
           "value": "InstallLocation, DisplayVersion",
           "type": "REG_SZ",
-          "description": "Install metadata",
+          "description": "Install metadata for the EXE installer. A packaged MSIX install creates no uninstall key at all, so absence here does not mean the app is absent - query Get-AppxPackage before concluding.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "unverified": true,
+          "confidence": "low"
         },
         {
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
           "value": "Claude",
           "type": "REG_SZ",
-          "description": "Auto-start - launches all configured MCP servers on login",
+          "description": "Auto-start, which launches every configured MCP server on login. The MSIX build checked carried no Claude value under Run, which is equally consistent with the launch-at-login setting being off, so absence here is not evidence against the mechanism.",
           "persistence": true,
           "forensic_value": "high",
           "confidence": "medium"
@@ -1989,19 +2048,20 @@
           "key": "HKCU\\Software\\Classes\\claude\\shell\\open\\command",
           "value": "(Default)",
           "type": "REG_SZ",
-          "description": "claude:// protocol handler - deep-link vector",
+          "description": "The claude:// protocol handler, and a deep-link vector. On an MSIX install its default value is the full WindowsApps path, which yields the package full name and version without querying the package manager.",
           "persistence": true,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Software\\Classes\\ActivatableClasses\\Package\\Claude_pzs8sxrjxfjjc*",
           "value": "-",
           "type": "Key",
-          "description": "Store package registration",
+          "description": "Packaged app registration. The parent ActivatableClasses\\Package key did not exist under HKCU on the MSIX install checked, so this location is not a reliable indicator of a packaged Claude Desktop.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "unverified": true,
+          "confidence": "low"
         }
       ],
       "network": [
@@ -2029,7 +2089,7 @@
           "typical_parent": "explorer.exe",
           "typical_children": "node.exe, npx.cmd, python.exe, docker.exe, uvx",
           "service_or_daemon": "No",
-          "persistence": "Run key - LAUNCHES ALL MCP SERVERS ON LOGIN",
+          "persistence": "Run key on installs that register one, which launches every configured MCP server at login. The MSIX build checked registered none.",
           "confidence": "high"
         },
         {
@@ -2077,15 +2137,33 @@
         "confidence": "high"
       },
       {
-        "location": "~/Library/Application Support/Claude/ (Windows: %APPDATA%\\Claude\\, Linux: ~/.config/Claude/)",
+        "location": "~/Library/Application Support/Claude/",
         "os": [
-          "macos",
-          "windows",
+          "macos"
+        ],
+        "storage": "encrypted",
+        "secret_type": "oauth-token",
+        "description": "OAuth token ciphertext, encrypted under Keychain",
+        "confidence": "medium"
+      },
+      {
+        "location": "%APPDATA%\\Claude\\",
+        "os": [
+          "windows"
+        ],
+        "storage": "encrypted",
+        "secret_type": "oauth-token",
+        "description": "OAuth token ciphertext, encrypted under DPAPI",
+        "confidence": "medium"
+      },
+      {
+        "location": "~/.config/Claude/",
+        "os": [
           "linux"
         ],
         "storage": "encrypted",
         "secret_type": "oauth-token",
-        "description": "OAuth tokens (in-app sign-in, and MCP servers configured with oauth: true) are written into the application-data directory as ciphertext, encrypted using OS secure storage (Keychain on macOS, DPAPI on Windows). Ciphertext is on disk here, but is not usable without the key - see the keyring row. Vendor does not name the specific file.",
+        "description": "OAuth token ciphertext in the application-data directory",
         "confidence": "medium"
       }
     ],
@@ -2098,7 +2176,7 @@
         "secrets_location": "mcpServers.<name>.env",
         "persistence_trigger": "Every app start (+ Run key)",
         "triage_priority": "p1",
-        "notes": "Standard EXE-installer path"
+        "notes": "Vendor-documented path, and the live config on a host where it predates a later MSIX install. Not authoritative by itself - see the container row."
       },
       {
         "mechanism": "config-file",
@@ -2108,7 +2186,7 @@
         "secrets_location": "mcpServers.<name>.env",
         "persistence_trigger": "Every app start",
         "triage_priority": "p1",
-        "notes": "Virtualized - the app reads this. 'Edit Config' in the UI can open the wrong file. Commonly missed in IR."
+        "notes": "MSIX container copy. Precedence is decided per file by install history, not by a global switch: the OS opens the container copy first and falls back to real AppData, and a file that already existed in AppData before the packaged install stays unvirtualized. So this is the live config on a host where the packaged build created it fresh, and dormant on a host that had it already. Collect both, and the manifest from WindowsApps, then resolve precedence per host. Container copies survive uninstall."
       },
       {
         "mechanism": "config-file",
@@ -2168,9 +2246,30 @@
         "title": "Connect to MCP servers",
         "url": "https://code.claude.com/docs/en/mcp-quickstart",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Deploy Claude Desktop for Windows - MSIX via Intune, SCCM, Group Policy or PowerShell",
+        "url": "https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "Claude Desktop for Linux - Debian package from Anthropic's apt repository",
+        "url": "https://code.claude.com/docs/en/desktop-linux",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "Behind the scenes - MSIX AppData redirection and per-file precedence",
+        "url": "https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "Flexible virtualization - registry and filesystem write virtualization elements",
+        "url": "https://learn.microsoft.com/en-us/windows/msix/desktop/flexible-virtualization",
+        "accessed": "2026-08-14"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0039",
@@ -3158,12 +3257,12 @@
           "confidence": "high"
         },
         {
-          "path": "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe",
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\_\\Cursor.exe",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "Main process",
+          "description": "Main process, under the _ subdirectory on 3.8.22",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -3173,12 +3272,12 @@
           "confidence": "high"
         },
         {
-          "path": "%LOCALAPPDATA%\\Programs\\cursor\\resources\\app\\bin\\cursor",
+          "path": "%LOCALAPPDATA%\\Programs\\cursor\\_\\resources\\app\\bin\\cursor",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "CLI shim",
+          "description": "CLI shim, beside cursor.cmd and cursor-tunnel.exe",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -3193,13 +3292,14 @@
             "windows"
           ],
           "artifact_type": "install-dir",
-          "description": "Auto-update staging - watch for unsigned writes",
+          "description": "Auto-update staging, absent on 3.8.22; a legacy-generation marker",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
           ],
           "install_method": "MSI/EXE",
-          "confidence": "high"
+          "unverified": true,
+          "confidence": "low"
         },
         {
           "path": "%APPDATA%\\Cursor\\User\\",
@@ -3316,7 +3416,7 @@
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Cursor GUID>",
           "value": "InstallLocation, DisplayVersion",
           "type": "REG_SZ",
-          "description": "Install metadata + version",
+          "description": "Install metadata and version. A per-user install writes an Inno Setup product code suffixed _is1, with DisplayName \"Cursor (User)\" and InstallLocation pointing at the install root rather than the binary.",
           "persistence": false,
           "forensic_value": "medium",
           "confidence": "high"
@@ -3325,10 +3425,10 @@
           "key": "HKCU\\Software\\Classes\\cursor\\shell\\open\\command",
           "value": "(Default)",
           "type": "REG_SZ",
-          "description": "cursor:// protocol handler",
+          "description": "The cursor:// protocol handler. Its default value carries the launch command with --open-url, and on 3.8.22 names the parent install path rather than the _ subdirectory the binary actually occupies.",
           "persistence": true,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
@@ -3409,7 +3509,7 @@
         ],
         "storage": "sqlite",
         "secret_type": "oauth-token",
-        "description": "Windows path for the same Cursor IDE session store. ItemTable rows cursorAuth/accessToken and cursorAuth/refreshToken are plaintext values inside the SQLite DB.",
+        "description": "Windows Cursor IDE session store, cursorAuth/* rows in plaintext",
         "confidence": "medium"
       },
       {
@@ -3514,7 +3614,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0007",
@@ -4422,7 +4523,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -4573,7 +4674,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.gemini/.env  (plus cwd-upward .env search)",
+        "location": "~/.gemini/.env",
         "os": [
           "windows",
           "macos",
@@ -4581,7 +4682,7 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "GEMINI_API_KEY distinct from Vertex GOOGLE_API_KEY",
+        "description": "GEMINI_API_KEY, distinct from Vertex GOOGLE_API_KEY. Also loaded from .env files found searching upward from the working directory.",
         "confidence": "high"
       }
     ],
@@ -4778,7 +4879,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.config/goose/secrets.yaml (mode 0600)",
+        "location": "~/.config/goose/secrets.yaml",
         "os": [
           "windows",
           "macos",
@@ -6049,14 +6150,14 @@
     "artifacts": {
       "disk": [
         {
-          "path": "~/.langflow/  (LANGFLOW_CONFIG_DIR)",
+          "path": "~/.langflow/",
           "os": [
             "windows",
             "macos",
             "linux"
           ],
           "artifact_type": "data-dir",
-          "description": "Config and database root",
+          "description": "Config and database root, relocatable via LANGFLOW_CONFIG_DIR",
           "forensic_value": "medium",
           "evidence_type": [
             "program-presence"
@@ -6276,7 +6377,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.langflow/data/database.db  (Langflow Desktop)",
+        "location": "~/.langflow/data/database.db",
         "os": [
           "macos"
         ],
@@ -6286,7 +6387,7 @@
         "confidence": "high"
       },
       {
-        "location": "%APPDATA%\\com.LangflowDesktop\\data\\database.db  (Langflow Desktop)",
+        "location": "%APPDATA%\\com.LangflowDesktop\\data\\database.db",
         "os": [
           "windows"
         ],
@@ -6670,12 +6771,12 @@
     "artifacts": {
       "disk": [
         {
-          "path": "%LOCALAPPDATA%\\Programs\\lm-studio\\LM Studio.exe",
+          "path": "%LOCALAPPDATA%\\Programs\\LM Studio\\LM Studio.exe",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "Binary for LM Studio",
+          "description": "Binary for LM Studio, in a directory named with a space",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -6685,7 +6786,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.lmstudio/bin/lms",
+          "path": "~/.lmstudio/bin/lms  |  ~/.lmstudio/bin/lms.exe",
           "os": [
             "windows",
             "macos",
@@ -6741,10 +6842,54 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Server bind address + port live here",
+          "description": "Server bind address and port, absent on Windows 0.3.22",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
+          ],
+          "install_method": "n/a",
+          "unverified": true,
+          "confidence": "low"
+        },
+        {
+          "path": "~/.lmstudio/.internal/",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Real config surface, roughly 20 JSON files including MCP state",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/.internal/last-synced-mcp-state.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Last synced MCP server state",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/credentials/",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Credential store directory, empty on the host checked",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
           ],
           "install_method": "n/a",
           "confidence": "high"
@@ -6752,13 +6897,22 @@
       ],
       "registry": [
         {
-          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*LM Studio*",
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<LM Studio GUID>",
           "value": "InstallLocation",
           "type": "REG_SZ",
-          "description": "Install metadata",
+          "description": "Install metadata. The key name is a bare GUID, so it cannot be found by name - enumerate the subkeys and match DisplayName, which reads \"LM Studio <version>\" and carries the version for free.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Software\\Classes\\lmstudio\\shell\\open\\command",
+          "value": "(Default)",
+          "type": "REG_SZ",
+          "description": "The lmstudio:// protocol handler, naming the install path",
+          "persistence": true,
+          "forensic_value": "medium",
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Environment",
@@ -6886,8 +7040,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0024",
@@ -7066,7 +7220,7 @@
     "artifacts": {
       "disk": [
         {
-          "path": "~/.n8n/  (Docker: /home/node/.n8n)",
+          "path": "~/.n8n/  |  /home/node/.n8n",
           "os": [
             "windows",
             "macos",
@@ -7486,8 +7640,8 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Instance identity keypair",
-        "confidence": "medium"
+        "description": "Instance identity keypair. Confirmed on a live Windows host.",
+        "confidence": "high"
       }
     ],
     "mcp": [],
@@ -7520,7 +7674,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -7849,7 +8003,7 @@
     "artifacts": {
       "disk": [
         {
-          "path": "/app/backend/data/  (DATA_DIR; Docker volume open-webui)",
+          "path": "/app/backend/data/",
           "os": [
             "linux",
             "docker"
@@ -7952,6 +8106,118 @@
             "configuration"
           ],
           "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\open-webui\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Electron desktop app root",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\open-webui-updater\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Update staging, holds the downloaded installer",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Electron user data, with the backend state under data",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Desktop app configuration",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Desktop equivalent of the container DATA_DIR",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\webui.db",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "database",
+          "description": "Users, chats, API keys and tool source, same schema as the container",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\uploads\\  |  %APPDATA%\\open-webui\\data\\vector_db\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Uploaded documents and the vector store",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Open WebUI GUID>",
+          "value": "DisplayName, DisplayVersion",
+          "type": "REG_SZ",
+          "description": "Install metadata. The key name is a bare GUID, so enumerate subkeys and match DisplayName, which reads \"Open WebUI\" and carries the version.",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
         }
       ],
       "network": [
@@ -7982,6 +8248,26 @@
       ]
     },
     "credentials": [
+      {
+        "location": "%APPDATA%\\open-webui\\data\\.key",
+        "os": [
+          "windows"
+        ],
+        "storage": "plaintext",
+        "secret_type": "jwt-signing-key",
+        "description": "Session signing key on the desktop build. Named .key here, not .webui_secret_key as in the container layout - collecting only the documented container name misses it entirely.",
+        "confidence": "high"
+      },
+      {
+        "location": "%APPDATA%\\open-webui\\data\\webui.db",
+        "os": [
+          "windows"
+        ],
+        "storage": "sqlite",
+        "secret_type": "api-key",
+        "description": "Desktop copy of the user and API key tables, plus Tools and Functions Python source. Quit the app before acquisition so the WAL is checkpointed.",
+        "confidence": "high"
+      },
       {
         "location": "/app/backend/data/.webui_secret_key",
         "os": [
@@ -8054,7 +8340,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication.",
+      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication. On the Windows desktop build the same state sits under %APPDATA%\\open-webui\\data\\, and the session signing key is named .key rather than .webui_secret_key - collecting only the container name misses it.",
+      "kape_target": "OpenWebUI",
       "velociraptor_artifact": "Custom.AIAgents.OpenWebUI"
     },
     "atlas_techniques": [
@@ -8111,7 +8398,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0036",
@@ -8510,7 +8798,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.openhands-state/  (mounted to /.openhands-state)",
+          "path": "~/.openhands-state/  |  /.openhands-state",
           "os": [
             "linux",
             "docker"
@@ -8525,7 +8813,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.openhands/  (mounted to /.openhands)",
+          "path": "~/.openhands/  |  /.openhands",
           "os": [
             "linux",
             "docker"
@@ -8665,7 +8953,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.openhands/settings.json  (mounted to /.openhands/settings.json)",
+        "location": "~/.openhands/settings.json  |  /.openhands/settings.json",
         "os": [
           "linux",
           "windows",
@@ -8677,7 +8965,7 @@
         "confidence": "high"
       },
       {
-        "location": "~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)",
+        "location": "~/.openhands/secrets.json  |  /.openhands/secrets.json",
         "os": [
           "linux",
           "windows",
@@ -8970,7 +9258,7 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -9456,14 +9744,14 @@
           "unverified": true
         },
         {
-          "path": "~/.config/zed/settings.json  ->  inline_completion_provider: supermaven",
+          "path": "~/.config/zed/settings.json",
           "os": [
             "windows",
             "macos",
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Zed Config for Supermaven",
+          "description": "Zed config, with supermaven named under inline_completion_provider",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -10118,14 +10406,14 @@
             "windows"
           ],
           "artifact_type": "database",
-          "description": "Windows location of the command database. Same contents as the macOS path.",
+          "description": "Windows location of the command database. Same contents as the macOS path. Confirmed on a live host.",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
             "execution",
             "timeline"
           ],
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/.local/state/warp-terminal/warp.sqlite",
@@ -10148,12 +10436,12 @@
             "windows"
           ],
           "artifact_type": "config-file",
-          "description": "Settings, including any configured AI and MCP behaviour",
+          "description": "Settings, including any configured AI and MCP behaviour. Confirmed on a live host.",
           "forensic_value": "medium",
           "evidence_type": [
             "configuration"
           ],
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/.config/warp-terminal/settings.toml",
@@ -10247,8 +10535,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
-    "last_modified": "2026-08-13"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0050",

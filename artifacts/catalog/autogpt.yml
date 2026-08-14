@@ -45,7 +45,6 @@ credentials:
     secret_type: api-key
     description: OPENAI_API_KEY plaintext
     confidence: medium
-mcp: []
 mcp:
   - mechanism: "database"
     indicator: "MCP integrations connected in the AutoGPT Platform UI and persisted in the platform's own store, not in a file beside the agent"

@@ -5,16 +5,16 @@ Id: 350d662b-8223-5c85-90ca-e2aee42e5440
 RecreateDirectories: true
 Targets:
     -
-        Name: 'Binary for LM Studio'
+        Name: 'Binary for LM Studio, in a directory named with a space'
         Category: AIAgents
-        Path: 'C:\Users\%user%\AppData\Local\Programs\lm-studio\'
+        Path: 'C:\Users\%user%\AppData\Local\Programs\LM Studio\'
         FileMask: 'LM Studio.exe'
-        Comment: 'AIRT-0018 | Binary for LM Studio'
+        Comment: 'AIRT-0018 | Binary for LM Studio, in a directory named with a space'
     -
         Name: 'Headless control CLI'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.lmstudio\bin\'
-        FileMask: 'lms'
+        Path: 'C:\Users\%user%\.lmstudio\bin\lms  |  ~\.lmstudio\bin\'
+        FileMask: 'lms.exe'
         Comment: 'AIRT-0018 | Headless control CLI'
     -
         Name: 'Publisher/model/*.gguf layout'
@@ -24,8 +24,28 @@ Targets:
         Recursive: true
         Comment: 'AIRT-0018 | Publisher/model/*.gguf layout'
     -
-        Name: 'Server bind address + port live here'
+        Name: 'Server bind address and port, absent on Windows 0.3.22'
         Category: AIAgents
         Path: 'C:\Users\%user%\.lmstudio\'
         FileMask: 'settings.json'
-        Comment: 'AIRT-0018 | Server bind address + port live here'
+        Comment: 'AIRT-0018 | [confidence: low] Server bind address and port, absent on Windows 0.3.22'
+    -
+        Name: 'Real config surface, roughly 20 JSON files including MCP state'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\.internal\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0018 | Real config surface, roughly 20 JSON files including MCP state'
+    -
+        Name: 'Last synced MCP server state'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\.internal\'
+        FileMask: 'last-synced-mcp-state.json'
+        Comment: 'AIRT-0018 | Last synced MCP server state'
+    -
+        Name: 'Credential store directory, empty on the host checked'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\credentials\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0018 | Credential store directory, empty on the host checked'

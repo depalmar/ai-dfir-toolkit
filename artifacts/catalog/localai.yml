@@ -31,7 +31,6 @@ artifacts:
       authentication: Optional API key
       exposure_risk: high
 credentials: []
-mcp: []
 mcp:
   - mechanism: "config-file"
     config_path: "<models path>/<model>.yaml"

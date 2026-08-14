@@ -170,7 +170,6 @@ credentials:
       browser agent is often more immediately usable than the credential vault.
       Container path /data/browser_sessions, host bind ./browser_sessions.
     confidence: high
-mcp: []
 mcp:
   - mechanism: "server"
     indicator: "python -m skyvern run mcp in a process tree, and a skyvern entry inside another tool's MCP config"

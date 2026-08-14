@@ -92,7 +92,6 @@ credentials:
     secret_type: api-key
     description: Provider keys via LiteLLM
     confidence: medium
-mcp: []
 mcp:
   - mechanism: in-code
     indicator: Import of MCPServerAdapter from crewai_tools, usually alongside StdioServerParameters from mcp

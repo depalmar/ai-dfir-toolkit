@@ -125,6 +125,25 @@ def sq(value: str) -> str:
     return "'" + str(value).replace("'", "''") + "'"
 
 
+def label(text: str, limit: int = 80) -> str:
+    """A KAPE Name is a display label; the full caption already ships in Comment.
+
+    This used to be a bare text[:80], which cut 35 names mid-word across the
+    generated targets - one ended "Named .key here, not .webu", which reads as a
+    corrupted file rather than an abbreviated one. Trim to the last word boundary
+    and mark the elision, so a reader knows the rest is in Comment. Plain "..."
+    rather than an ellipsis character, because these are consumed by a Windows
+    tool and the Name field is not worth spending a non-ASCII byte on.
+    """
+    text = " ".join(str(text or "").split())
+    if len(text) <= limit:
+        return text
+    cut = text[:limit - 3].rstrip()
+    if " " in cut:
+        cut = cut[:cut.rfind(" ")]
+    return cut.rstrip(" ,;:-") + "..."
+
+
 def target_name(entry: dict) -> str:
     return re.sub(r"[^A-Za-z0-9]", "", entry["name"].split("(")[0].strip()) or entry["id"]
 
@@ -163,7 +182,7 @@ def render_target(entry: dict, arts: list[dict]) -> str:
             note = f"[confidence: {conf}] {note}"
         lines += [
             "    -",
-            "        Name: %s" % sq(esc(a.get("description") or a["_kape_path"])[:80]),
+            "        Name: %s" % sq(label(esc(a.get("description") or a["_kape_path"]))),
             "        Category: AIAgents",
             "        Path: %s" % sq(base + p),
             "        FileMask: %s" % sq(mask),
@@ -209,7 +228,7 @@ def render_themed(name: str, description: str, rows: list[tuple[str, str, str]])
         p, mask, rec = split_path(full)
         lines += [
             "    -",
-            "        Name: %s" % sq(esc(comment)[:80]),
+            "        Name: %s" % sq(label(esc(comment))),
             "        Category: AIAgents",
             "        Path: %s" % sq(p),
             "        FileMask: %s" % sq(mask),

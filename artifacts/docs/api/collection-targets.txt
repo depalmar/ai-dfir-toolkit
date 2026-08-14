@@ -1,4 +1,5 @@
 $CLAUDE_CONFIG_DIR/.credentials.json
+%APPDATA%\Claude\
 %APPDATA%\Claude\claude_desktop_config.json
 %APPDATA%\Claude\logs\mcp*.log
 %APPDATA%\Code\User\globalStorage\kilocode.kilo-code\settings\mcp_settings.json
@@ -7,8 +8,14 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\Cursor\User\globalStorage\state.vscdb
 %APPDATA%\Windsurf\User\globalStorage\state.vscdb
 %APPDATA%\Zed\settings.json
-%APPDATA%\com.LangflowDesktop\data\database.db  (Langflow Desktop)
+%APPDATA%\com.LangflowDesktop\data\database.db
 %APPDATA%\goose\config.yaml
+%APPDATA%\open-webui\
+%APPDATA%\open-webui\config.json
+%APPDATA%\open-webui\data\
+%APPDATA%\open-webui\data\.key
+%APPDATA%\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\
+%APPDATA%\open-webui\data\webui.db
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
 %LOCALAPPDATA%\github-copilot\apps.json
 %LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml
@@ -17,7 +24,7 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
 .env (deployment directory)
-/app/backend/data/  (DATA_DIR; Docker volume open-webui)
+/app/backend/data/
 /app/backend/data/.webui_secret_key
 /app/backend/data/config.json
 /app/backend/data/uploads/ and vector store directory
@@ -176,7 +183,9 @@ webui.db (user and API key tables)
 ~/.codex/history.jsonl
 ~/.codex/logs/codex-tui.log
 ~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl
+~/.config/Claude/
 ~/.config/Claude/claude_desktop_config.json
+~/.config/Claude/logs/mcp*.log
 ~/.config/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
 ~/.config/Cursor/User/globalStorage/state.vscdb
@@ -193,7 +202,7 @@ webui.db (user and API key tables)
 ~/.config/github-copilot/hosts.json
 ~/.config/goose/config.yaml
 ~/.config/goose/permission.yaml ; permissions/tool_permissions.json
-~/.config/goose/secrets.yaml (mode 0600)
+~/.config/goose/secrets.yaml
 ~/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application Support/open-interpreter/profiles/default.yaml
 ~/.config/vllm/usage_stats.json
 ~/.config/zed/settings.json
@@ -210,14 +219,16 @@ webui.db (user and API key tables)
 ~/.cursor/mcp.json
 ~/.flowise/database.sqlite
 ~/.flowise/encryption.key
-~/.gemini/.env  (plus cwd-upward .env search)
+~/.gemini/.env
 ~/.gemini/google_accounts.json
 ~/.gemini/oauth_creds.json
 ~/.gemini/settings.json
 ~/.kiro/settings/mcp.json
-~/.langflow/data/database.db  (Langflow Desktop)
+~/.langflow/data/database.db
 ~/.letta/
 ~/.letta/.persist/pgdata
+~/.lmstudio/.internal/
+~/.lmstudio/.internal/last-synced-mcp-state.json
 ~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
 ~/.local/state/warp-terminal/warp.sqlite
@@ -225,8 +236,8 @@ webui.db (user and API key tables)
 ~/.ollama/id_ed25519  |  id_ed25519.pub
 ~/.openhands/agent_settings.json
 ~/.openhands/config.toml
-~/.openhands/secrets.json  (mounted to /.openhands/secrets.json)
-~/.openhands/settings.json  (mounted to /.openhands/settings.json)
+~/.openhands/secrets.json  |  /.openhands/secrets.json
+~/.openhands/settings.json  |  /.openhands/settings.json
 ~/.openinterpreter/.credentials.json
 ~/.openinterpreter/auth.json
 ~/.openinterpreter/config.toml
@@ -239,7 +250,7 @@ webui.db (user and API key tables)
 ~/.tabnine/mcp_servers.json
 ~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/.warp_cli/.mcp.json
-~/Library/Application Support/Claude/ (Windows: %APPDATA%\Claude\, Linux: ~/.config/Claude/)
+~/Library/Application Support/Claude/
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json
 ~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json

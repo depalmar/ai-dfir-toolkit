@@ -5,8 +5,9 @@ Id: 4316e899-1474-5e75-acb0-84f480448caa
 RecreateDirectories: true
 Targets:
     -
-        Name: 'Config and database root'
+        Name: 'Config and database root, relocatable via LANGFLOW_CONFIG_DIR'
         Category: AIAgents
         Path: 'C:\Users\%user%\.langflow\'
-        FileMask: '  (LANGFLOW_CONFIG_DIR)'
-        Comment: 'AIRT-0044 | [confidence: medium] Config and database root'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0044 | [confidence: medium] Config and database root, relocatable via LANGFLOW_CONFIG_DIR'

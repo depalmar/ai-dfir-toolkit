@@ -97,7 +97,6 @@ credentials:
       privkeys/<tenant_id>/private.pem file above, which is why the two must be
       collected and handled together.
     confidence: high
-mcp: []
 mcp:
   - mechanism: "database"
     indicator: "MCP servers added under Tools - MCP in the workspace, persisted in the Dify application database rather than in a file on the host"

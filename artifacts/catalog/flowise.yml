@@ -141,7 +141,6 @@ credentials:
       wild, but no longer referenced anywhere in current main. Treat a hit here as an
       indicator the instance predates 3.0.1.
     confidence: medium
-mcp: []
 mcp:
   - mechanism: "database"
     indicator: "Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)"

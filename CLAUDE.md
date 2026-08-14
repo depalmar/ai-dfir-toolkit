@@ -205,7 +205,10 @@ When a documented path and reality disagree, that is the interesting result.
 Record it in `docs/VERIFICATION.md` with the basis for the change, then update
 the entry and raise its confidence, and set `last_verified` to the date you
 checked. `docs/HOST_VERIFICATION.md` is the runbook and `scripts/verify_host.py`
-does the sweep - it stats paths and never opens them, so it cannot leak a token.
+does the sweep - it stats paths and never opens them, and checks registry keys
+for existence without reading a value, so it cannot leak a token either way.
+Registry coverage was added on 2026-08-14; before that the sweep silently
+skipped every registry row while claiming to cover each locator.
 
 A MISS from that script is not evidence a path is wrong. It cannot tell a wrong
 path from an absent tool, and many of these paths are created lazily on first
@@ -213,11 +216,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-51 entries, 340 artifacts, 156 credential locations, 61 MCP config
+51 entries, 340 artifacts, 158 credential locations, 61 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 9 telemetry sources.
 Validation clean.
 
-Volatility across the 557 site rows: live 106 · rotating 45 · stable 406
+Volatility across the 559 site rows: live 106 · rotating 45 · stable 408
 
 Detection content maps to the OWASP LLM Top 10 **2026** list. Eight of the ten
 IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
@@ -231,17 +234,39 @@ Confidence: 28 high, 19 medium, 4 low.
 Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
 sourcing it turned up a correction rather than a citation - Operator is EOL and
 its only network indicator was a domain that had been sunset. 28/51 carry aliases.
-40/51 carry `last_verified`, and `validate.py` lists the other 11 as never
+42/51 carry `last_verified`, and `validate.py` lists the other 9 as never
 verified rather than letting them look fresh.
 
-That set was previously described here as "vendor-hosted entries that could not
-be checked through a repository API". That was wrong, and worth correcting
-because this file loads into every session. Only three of the eleven are
-vendor-hosted - Devin, Copilot Studio and the Claude computer-use demo. The rest
-are installable software: **Cursor** and **Claude Desktop**, the two most widely
-deployed entries in the catalog, plus Windsurf, Tabnine, Kiro, Amazon Q, Open
-WebUI and vLLM. They are unverified because nobody has checked them, not because
-they cannot be checked.
+That set was once described here as "vendor-hosted entries that could not be
+checked through a repository API". That was wrong. Only three of the remaining
+nine are vendor-hosted - Devin, Copilot Studio and the Claude computer-use demo.
+The rest are installable software: Windsurf, Tabnine, Kiro, Amazon Q, Open WebUI
+and vLLM. They are unverified because nobody has checked them, not because they
+cannot be checked.
+
+**Cursor** and **Claude Desktop** left that list on 2026-08-14, verified on a
+Windows host that had both installed. See `docs/VERIFICATION.md` for the full
+set. A live host beats a vendor page for anything installable, but it is one
+host, and the Claude Desktop pass is a standing warning about what that misses:
+the first conclusion drawn from it was wrong, and only a documentation pass
+caught it.
+
+**The MSIX config question has no single answer, and do not let anyone give it
+one.** Claude Desktop's packaged build is a sideloaded enterprise MSIX deployed
+by Intune/DISM - not a Microsoft Store listing, and no Anthropic page documents a
+config path for it. Its manifest declares the `unvirtualizedResources`
+capability, which only *permits* the disabling elements; it disables **registry**
+write virtualization globally, but for the filesystem it excludes exactly two
+LocalAppData directories, so **filesystem virtualization stays active for
+`%APPDATA%\Claude`**. Precedence is therefore decided by Windows per file and by
+install history: the OS reads the container copy first and falls back to real
+AppData, and a config that existed before the packaged install stays
+unvirtualized. So `%APPDATA%\Claude\` wins on an upgraded host and the container
+copy wins on a clean packaged install. Collect **both**, plus the manifest from
+`WindowsApps`, and resolve per host. Container copies are not removed on
+uninstall. Reasoning from `unvirtualizedResources` to "writes are not
+virtualized" is the specific trap here - it was refuted five times over in
+verification, and it is the error this catalog made first.
 Risk: 11 critical, 24 high, 12 medium, 2 low.
 
 ## Site generation

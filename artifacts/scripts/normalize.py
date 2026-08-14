@@ -88,7 +88,7 @@ def infer_secret(loc, desc):
 changed = 0
 unmapped = set()
 for path in sorted(glob.glob(str(ROOT / "catalog" / "*.yml"))):
-    text = Path(path).read_text()
+    text = Path(path).read_text(encoding="utf-8")
     orig = text
 
     for m in set(re.findall(r"artifact_type: ([\w-]+)", text)):
@@ -112,7 +112,7 @@ print(f"normalized artifact_type in {changed} files")
 import yaml
 filled = 0
 for path in sorted(glob.glob(str(ROOT / "catalog" / "*.yml"))):
-    text = Path(path).read_text()
+    text = Path(path).read_text(encoding="utf-8")
     doc = yaml.safe_load(text)
     creds = doc.get("credentials") or []
     if not creds:

@@ -85,6 +85,10 @@ Targets:
         Category: AIAgents
         Path: 'OpenInterpreter.tkape'
     -
+        Name: 'OpenWebUI'
+        Category: AIAgents
+        Path: 'OpenWebUI.tkape'
+    -
         Name: 'PlaywrightMCP'
         Category: AIAgents
         Path: 'PlaywrightMCP.tkape'

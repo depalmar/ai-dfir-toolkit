@@ -139,7 +139,6 @@ credentials:
       browser_use/config.py. Note the Azure variable is AZURE_OPENAI_KEY here (paired
       with AZURE_OPENAI_ENDPOINT), not the AZURE_OPENAI_API_KEY name other tools use.
     confidence: high
-mcp: []
 mcp:
   - mechanism: server
     indicator: uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config

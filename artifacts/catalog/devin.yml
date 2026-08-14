@@ -58,7 +58,6 @@ artifacts:
       persistence: None
       confidence: medium
 credentials: []
-mcp: []
 mcp:
   - mechanism: cloud
     indicator: Tenant-side configuration in the Devin web UI and API - not present on the endpoint

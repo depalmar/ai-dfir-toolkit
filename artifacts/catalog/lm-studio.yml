@@ -26,18 +26,18 @@ confidence: high
 abuse_potential: "'Serve on Local Network' / LMS_SERVER_HOST=0.0.0.0 exposes the API. Model download = unvetted binary blobs on disk."
 artifacts:
   disk:
-    - path: "%LOCALAPPDATA%\\Programs\\lm-studio\\LM Studio.exe"
+    - path: "%LOCALAPPDATA%\\Programs\\LM Studio\\LM Studio.exe"
       os:
         - windows
       artifact_type: binary
-      description: Binary for LM Studio
+      description: Binary for LM Studio, in a directory named with a space
       forensic_value: medium
       evidence_type:
         - execution
         - program-presence
       install_method: EXE installer
       confidence: high
-    - path: ~/.lmstudio/bin/lms
+    - path: ~/.lmstudio/bin/lms  |  ~/.lmstudio/bin/lms.exe
       os:
         - windows
         - macos
@@ -80,20 +80,62 @@ artifacts:
         - macos
         - linux
       artifact_type: config-file
-      description: Server bind address + port live here
+      description: Server bind address and port, absent on Windows 0.3.22
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      unverified: true
+      confidence: low
+    - path: ~/.lmstudio/.internal/
+      os:
+        - windows
+      artifact_type: config-dir
+      description: Real config surface, roughly 20 JSON files including MCP state
       forensic_value: high
       evidence_type:
         - configuration
       install_method: n/a
       confidence: high
+    - path: ~/.lmstudio/.internal/last-synced-mcp-state.json
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: Last synced MCP server state
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - execution
+      install_method: n/a
+      confidence: high
+    - path: ~/.lmstudio/credentials/
+      os:
+        - windows
+      artifact_type: config-dir
+      description: Credential store directory, empty on the host checked
+      forensic_value: medium
+      evidence_type:
+        - program-presence
+      install_method: n/a
+      confidence: high
   registry:
-    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*LM Studio*"
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<LM Studio GUID>"
       value: InstallLocation
       type: REG_SZ
-      description: Install metadata
+      description: >-
+        Install metadata. The key name is a bare GUID, so it cannot be found by
+        name - enumerate the subkeys and match DisplayName, which reads
+        "LM Studio <version>" and carries the version for free.
       persistence: false
       forensic_value: medium
-      confidence: medium
+      confidence: high
+    - key: "HKCU\\Software\\Classes\\lmstudio\\shell\\open\\command"
+      value: (Default)
+      type: REG_SZ
+      description: The lmstudio:// protocol handler, naming the install path
+      persistence: true
+      forensic_value: medium
+      confidence: high
     - key: "HKCU\\Environment"
       value: LMS_SERVER_HOST
       type: REG_SZ
@@ -146,7 +188,6 @@ artifacts:
       forensic_value: high
       confidence: medium
 credentials: []
-mcp: []
 mcp:
   - mechanism: config-file
     config_path: ~/.lmstudio/mcp.json
@@ -194,5 +235,5 @@ references:
   - title: "lmstudio-ai/lmstudio-bug-tracker#1371 - incorrect mcp.json location on macOS"
     url: https://github.com/lmstudio-ai/lmstudio-bug-tracker/issues/1371
     accessed: "2026-08-13"
-last_verified: "2026-08-13"
-last_modified: "2026-08-11"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

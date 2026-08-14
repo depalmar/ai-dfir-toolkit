@@ -119,7 +119,7 @@ credentials:
     secret_type: api-key
     description: Default - requires keychain acquisition, not file collection
     confidence: high
-  - location: ~/.config/goose/secrets.yaml (mode 0600)
+  - location: ~/.config/goose/secrets.yaml
     os:
       - windows
       - macos
