@@ -2478,7 +2478,7 @@
       "Windsurf",
       "codeium-windsurf"
     ],
-    "vendor": "Codeium (Exafunction)",
+    "vendor": "Cognition (formerly Codeium / Exafunction)",
     "category": "coding-agent-ide",
     "description": "Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.",
     "supported_os": [
@@ -2723,7 +2723,18 @@
         "secrets_location": "env block",
         "persistence_trigger": "Every IDE start",
         "triage_priority": "p1",
-        "notes": "Under the Codeium directory rather than a windsurf one, which is where the path is most often looked for and not found"
+        "notes": "Under the Codeium directory rather than a windsurf one, which is where the path is most often looked for and not found. This is the standalone editor path; the IDE plugin uses a different file, below."
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.codeium/mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at IDE start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every IDE start",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "notes": "The Windsurf plugin for VS Code and JetBrains, which is a different product from the standalone editor and a different file. One directory level up from the editor path, so collecting only the editor path misses every plugin install."
       }
     ],
     "collection": {
@@ -2748,9 +2759,20 @@
         "title": "Windsurf Plugin (formerly Codeium) on the VS Code Marketplace",
         "url": "https://marketplace.visualstudio.com/items?itemName=Codeium.codeium",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Cascade MCP Integration - Windsurf Editor",
+        "url": "https://docs.devin.ai/desktop/cascade/mcp",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "Cascade MCP Integration - Windsurf plugin for VS Code and JetBrains",
+        "url": "https://docs.devin.ai/windsurf/plugins/cascade/mcp",
+        "accessed": "2026-08-14"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0005",
@@ -5890,6 +5912,7 @@
         "accessed": "2026-08-11"
       }
     ],
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-11"
   },
   {
@@ -9986,7 +10009,7 @@
         "secrets_location": "env block (plaintext)",
         "persistence_trigger": "Every agent start - the vendor notes MCP changes need a CLI restart",
         "triage_priority": "p1",
-        "confidence": "medium",
+        "confidence": "high",
         "notes": "Project-scoped, so it travels with the repo. A project folder has to be open for the list to load, which means the file is only live for whoever opens that clone."
       },
       {
@@ -9997,7 +10020,7 @@
         "secrets_location": "env block (plaintext)",
         "persistence_trigger": "Every agent start",
         "triage_priority": "p1",
-        "confidence": "medium",
+        "confidence": "high",
         "notes": "Collect alongside the already-catalogued ~/.tabnine/agent/settings.json, which records whether the server is actually enabled. Tabnine also ships team-level MCP governance, so an enterprise policy may permit or deny entries this file names."
       }
     ],
@@ -10031,7 +10054,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0022",
@@ -10340,7 +10364,7 @@
     "references": [
       {
         "title": "vLLM OpenAI-compatible server (--api-key, --host, default port 8000)",
-        "url": "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html",
+        "url": "https://docs.vllm.ai/en/latest/serving/online_serving/",
         "accessed": "2026-08-13"
       },
       {
@@ -10354,6 +10378,7 @@
         "accessed": "2026-08-13"
       }
     ],
+    "last_verified": "2026-08-14",
     "last_modified": "2026-08-13"
   },
   {

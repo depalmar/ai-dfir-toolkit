@@ -47,6 +47,12 @@ Targets:
         FileMask: 'mcp_config.json'
         Comment: 'AIRT-0006 | Codeium / Windsurf: mcpServers'
     -
+        Name: 'Codeium / Windsurf: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0006 | Codeium / Windsurf: mcpServers'
+    -
         Name: 'Continue.dev: mcpServers (name, command, args, cwd, env)'
         Category: AIAgents
         Path: 'C:\Users\%user%\.continue\'
