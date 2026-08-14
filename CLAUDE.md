@@ -23,6 +23,7 @@ write LF endings on every platform so the generated feeds stay byte-identical.
 
 ```bash
 python scripts/validate.py                    # schema + sigma + confidence gate
+python scripts/validate_techniques.py         # ATLAS/ATT&CK ids exist (--refresh re-pins)
 python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
 python scripts/export_forensicartifacts.py    # Plaso / GRR / Timesketch format
@@ -50,6 +51,19 @@ the staleness check. "The feeds" is five scripts, not two: `export.py`,
 `collectors/gen_credential_targets.py`. The last one is easy to forget because it
 lives outside `artifacts/` — an entry that adds a credential location and skips it
 passes every local check and fails CI.
+
+`validate_techniques.py` resolves every `atlas_techniques` and
+`attack_techniques` id against pinned framework data in
+`schema/technique-ids.json`. The JSON schema checks those ids by shape, so
+`AML.T9999` and a technique MITRE deprecated three releases ago both pass it.
+The pin is deliberate: a gate that followed upstream live would break the build
+on a MITRE rename with no diff to explain it. `--refresh` re-pins and is the only
+thing that touches the network, so a version bump lands in review as a diff.
+Two upstream traps it already avoids, both of which return a plausible wrong
+answer rather than an error - ATLAS ships a `dist/ATLAS.yaml` that declares
+itself deprecated and carries fewer techniques than the current release, and the
+ATLAS YAML uses anchors, so grepping it undercounts by about sixteen techniques
+that never appear as literal text.
 
 ## Rules that are not negotiable
 

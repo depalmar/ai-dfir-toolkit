@@ -28,6 +28,14 @@ jobs:
         run: pip install -r requirements.txt
       - name: Validate catalog and detections
         run: python scripts/validate.py
+      # The schema checks technique ids by shape, so AML.T9999 and a technique
+      # MITRE deprecated three releases ago both pass it. This resolves them
+      # against pinned framework data. Offline on purpose: a gate that followed
+      # upstream live would break the build on a MITRE rename with no diff to
+      # explain it, and would fail CI for network reasons unrelated to the
+      # change under test. Bump the pin with --refresh, which shows up in review.
+      - name: Resolve ATLAS and ATT&CK technique ids
+        run: python scripts/validate_techniques.py
       # validate_mappings.py walks the repository root to find the 0N-* rule
       # directories, so it cannot run under this job's `artifacts` default.
       - name: Validate MAPPINGS.md against rules on disk
