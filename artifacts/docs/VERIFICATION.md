@@ -778,6 +778,47 @@ convention tool names and belong beside `node` and `docker`. That is now three
 instances of one defect, and the third was found by the gate rather than by
 reading, which is the gate working.
 
+## 2026-08-14 (eleventh pass) - AIRT-0011 macOS install paths, staged for a Mac
+
+Three macOS rows, none stamped. Ray verifies macOS; this pass gives him
+something specific to check rather than a gap.
+
+Two install locations, both vendor-documented on the same page:
+`/Applications/Claude.app` is the default - "Claude Desktop installs to
+/Applications and updates automatically" - and `~/Applications/Claude.app` is
+documented alongside it because a user-folder install updates without
+administrator privileges. **A sweep that checks only `/Applications` reports the
+tool absent on every host that took the user-folder route**, which is the reason
+both rows exist rather than one.
+
+`install_method` on these reads `pkg (recommended for enterprise) or dmg`. The
+entry's existing macOS rows say `DMG` alone, and the vendor documents `.pkg` as
+the enterprise path, so DMG was incomplete rather than wrong.
+
+### The preference domain, and what is not vendor-documented about it
+
+`~/Library/Preferences/com.anthropic.claudefordesktop.plist` carries
+`unverified: true` and `confidence: medium`, and the description says why in
+place. Three different provenance levels are stacked in that one row and
+flattening them would have overstated it:
+
+| Claim | Source |
+|---|---|
+| the domain string `com.anthropic.claudefordesktop` | **vendor**, verbatim: "Claude Desktop reads preferences from the domain..." |
+| domain is also the bundle identifier | third-party - the Homebrew cask uses it that way |
+| helper `com.anthropic.claudefordesktop.helper` | third-party - cask only |
+| the `~/Library/Preferences/<domain>.plist` path | macOS convention, not stated on the vendor page |
+
+The vendor documents a domain for writing MDM profiles. It does not document a
+file path, and an MDM-managed host carries the profile under
+`/Library/Managed Preferences` instead - noted in the row, because a responder
+who collects only the user-domain plist on a managed fleet gets nothing.
+
+`MDM` joins the acronym allowlist, the fourth addition in two passes. The
+allowlist is derived from the corpus it was built against, so every entry that
+describes a genuinely new surface tends to speak a word the corpus has not seen -
+that is the mechanism working as documented, not a defect.
+
 | Scope | Field | Was | Now | Basis |
 |---|---|---|---|---|
 | `AIRT-0008` | MCP config set | three files | **four** | The catalog carried `~/.aws/amazonq/mcp.json`, `.amazonq/mcp.json` and `~/.aws/amazonq/default.json`, and missed `<repo>/.amazonq/default.json`. That is the current-format workspace file, and the vendor states "Q Developer gives precedence to workspace level configurations" - so the missing file is also the winning file. |

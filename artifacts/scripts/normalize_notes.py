@@ -69,8 +69,10 @@ ACRONYMS = {
     "URL", "UUID", "VM", "VPN", "VS", "WAL", "XML", "YAML", "YOLO", "ZIP",
     # VNC arrived with the AIRT-0033 listener rows, which are the first notes in
     # the corpus to name a remote-desktop protocol. Without it the normalizer
-    # wrote "Unauthenticated vnc", which is the CWD failure again.
-    "VNC",
+    # wrote "Unauthenticated vnc", which is the CWD failure again. MDM arrived
+    # with the AIRT-0011 macOS preference-domain row, the first note to describe
+    # an enterprise management surface.
+    "VNC", "MDM",
 }
 
 # Shouted proper nouns take title case, not lowercase.
