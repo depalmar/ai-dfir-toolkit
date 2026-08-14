@@ -66,6 +66,7 @@ artifacts:
         - program-presence
       install_method: Copilot CLI
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.copilot/mcp-config.json
       os:
         - windows
@@ -172,6 +173,7 @@ credentials:
       CLI-managed internal application state including authentication data. Relocated
       wholesale if COPILOT_HOME is set.
     confidence: high
+    last_verified: "2026-08-14"
   - location: '~/.copilot/mcp-oauth-config/'
     os: [windows, macos, linux]
     storage: plaintext

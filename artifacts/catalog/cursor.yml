@@ -110,6 +110,7 @@ artifacts:
         - configuration
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: "<repo>/.cursor/mcp.json"
       os:
         - windows
@@ -239,6 +240,7 @@ credentials:
     description: >-
       Windows Cursor IDE session store, cursorAuth/* rows in plaintext
     confidence: medium
+    last_verified: "2026-08-14"
   - location: ~/.cursor/mcp.json
     os: [windows, macos, linux]
     storage: plaintext
@@ -249,6 +251,7 @@ credentials:
       call. Already declared as a secrets location by this catalog's own MCP block for
       this entry.
     confidence: high
+    last_verified: "2026-08-14"
   - location: '<repo>/.cursor/mcp.json'
     os: [windows, macos, linux]
     storage: plaintext

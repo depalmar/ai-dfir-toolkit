@@ -113,6 +113,7 @@ artifacts:
       evidence_type: [program-presence]
       install_method: EXE installer
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%LOCALAPPDATA%\open-webui-updater\'
       os: [windows]
       artifact_type: install-dir
@@ -121,6 +122,7 @@ artifacts:
       evidence_type: [program-presence]
       install_method: EXE installer
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%APPDATA%\open-webui\'
       os: [windows]
       artifact_type: config-dir
@@ -129,6 +131,7 @@ artifacts:
       evidence_type: [program-presence, configuration]
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%APPDATA%\open-webui\config.json'
       os: [windows]
       artifact_type: config-file
@@ -137,6 +140,7 @@ artifacts:
       evidence_type: [configuration]
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%APPDATA%\open-webui\data\'
       os: [windows]
       artifact_type: data-dir
@@ -145,6 +149,7 @@ artifacts:
       evidence_type: [program-presence, data-access]
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%APPDATA%\open-webui\data\webui.db'
       os: [windows]
       artifact_type: database
@@ -153,6 +158,7 @@ artifacts:
       evidence_type: [data-access, configuration]
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: '%APPDATA%\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\'
       os: [windows]
       artifact_type: data-dir
@@ -161,6 +167,7 @@ artifacts:
       evidence_type: [data-access]
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
   registry:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Open WebUI GUID>"
       value: DisplayName, DisplayVersion
@@ -207,6 +214,7 @@ credentials:
       .webui_secret_key as in the container layout - collecting only the
       documented container name misses it entirely.
     confidence: high
+    last_verified: "2026-08-14"
   - location: '%APPDATA%\open-webui\data\webui.db'
     os: [windows]
     storage: sqlite
@@ -215,6 +223,7 @@ credentials:
       Desktop copy of the user and API key tables, plus Tools and Functions
       Python source. Quit the app before acquisition so the WAL is checkpointed.
     confidence: high
+    last_verified: "2026-08-14"
   - location: /app/backend/data/.webui_secret_key
     os: [linux, docker]
     storage: plaintext

@@ -86,6 +86,7 @@ artifacts:
         - configuration
       install_method: deb (Anthropic apt repo)
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.config/Claude/logs/mcp*.log
       os:
         - linux
@@ -97,6 +98,7 @@ artifacts:
         - execution
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.config/Claude/config.json
       os:
         - linux
@@ -107,6 +109,7 @@ artifacts:
         - configuration
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.config/Claude/ant-did
       os:
         - linux
@@ -117,6 +120,7 @@ artifacts:
         - program-presence
       install_method: n/a
       confidence: high
+      last_verified: "2026-08-14"
     - path: "*.mcpb (Desktop Extension)"
       os:
         - windows
@@ -270,12 +274,14 @@ credentials:
     secret_type: oauth-token
     description: OAuth token ciphertext, encrypted under DPAPI
     confidence: medium
+    last_verified: "2026-08-14"
   - location: '~/.config/Claude/'
     os: [linux]
     storage: encrypted
     secret_type: oauth-token
     description: OAuth token ciphertext in the application-data directory
     confidence: medium
+    last_verified: "2026-08-14"
 mcp:
   - mechanism: config-file
     config_path: "%APPDATA%\\Claude\\claude_desktop_config.json"

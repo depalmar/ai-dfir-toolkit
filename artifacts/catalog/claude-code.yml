@@ -72,6 +72,7 @@ artifacts:
         - program-presence
       install_method: npm -g
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.claude/
       os:
         - windows
@@ -84,6 +85,7 @@ artifacts:
         - program-presence
       install_method: All
       confidence: high
+      last_verified: "2026-08-14"
     - path: ~/.claude.json
       os:
         - windows
@@ -96,6 +98,7 @@ artifacts:
         - configuration
       install_method: All
       confidence: high
+      last_verified: "2026-08-14"
     - path: "<repo>/.claude/settings.json"
       os:
         - windows
@@ -227,6 +230,7 @@ credentials:
       %USERPROFILE%\.claude\.credentials.json and it inherits user-profile ACLs.
       Vendor-documented for Linux and Windows only, not macOS.
     confidence: high
+    last_verified: "2026-08-14"
   - location: $CLAUDE_CONFIG_DIR/.credentials.json
     os: [linux, windows]
     storage: plaintext
@@ -273,6 +277,7 @@ credentials:
       example an Authorization: Bearer PAT). 'claude mcp add --env KEY=value' and header
       flags write the value straight into this file
     confidence: high
+    last_verified: "2026-08-14"
   - location: '<project>/.mcp.json'
     os: [windows, macos, linux]
     storage: plaintext
