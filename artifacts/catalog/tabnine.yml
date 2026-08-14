@@ -129,7 +129,6 @@ credentials:
       also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a
       Codespaces/Gitpod host has it in two places.
     confidence: high
-mcp: []
 mcp:
   - mechanism: "config-file"
     config_path: "<repo>/.tabnine/mcp_servers.json"

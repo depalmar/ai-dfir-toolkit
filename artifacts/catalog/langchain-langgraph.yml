@@ -78,7 +78,6 @@ credentials:
       file - the environment and .env are the credential store, so collect process
       environment blocks.
     confidence: high
-mcp: []
 mcp:
   - mechanism: in-code
     indicator: Import of langchain_mcp_adapters.client.MultiServerMCPClient, or the langchain-mcp-adapters dependency in requirements.txt / pyproject.toml / package.json

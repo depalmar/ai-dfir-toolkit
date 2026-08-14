@@ -135,7 +135,6 @@ credentials:
       directory are used to set environment variables for the app. Follows --appdir /
       AUTOGENSTUDIO_APPDIR if relocated.
     confidence: high
-mcp: []
 mcp:
   - mechanism: in-code
     indicator: Import of autogen_ext.tools.mcp - McpWorkbench, StdioServerParams, StdioMcpToolAdapter

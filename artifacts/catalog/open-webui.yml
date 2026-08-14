@@ -105,6 +105,72 @@ artifacts:
       forensic_value: high
       evidence_type: [configuration]
       confidence: high
+    - path: '%LOCALAPPDATA%\Programs\open-webui\'
+      os: [windows]
+      artifact_type: install-dir
+      description: Electron desktop app root
+      forensic_value: medium
+      evidence_type: [program-presence]
+      install_method: EXE installer
+      confidence: high
+    - path: '%LOCALAPPDATA%\open-webui-updater\'
+      os: [windows]
+      artifact_type: install-dir
+      description: Update staging, holds the downloaded installer
+      forensic_value: low
+      evidence_type: [program-presence]
+      install_method: EXE installer
+      confidence: high
+    - path: '%APPDATA%\open-webui\'
+      os: [windows]
+      artifact_type: config-dir
+      description: Electron user data, with the backend state under data
+      forensic_value: high
+      evidence_type: [program-presence, configuration]
+      install_method: n/a
+      confidence: high
+    - path: '%APPDATA%\open-webui\config.json'
+      os: [windows]
+      artifact_type: config-file
+      description: Desktop app configuration
+      forensic_value: high
+      evidence_type: [configuration]
+      install_method: n/a
+      confidence: high
+    - path: '%APPDATA%\open-webui\data\'
+      os: [windows]
+      artifact_type: data-dir
+      description: Desktop equivalent of the container DATA_DIR
+      forensic_value: high
+      evidence_type: [program-presence, data-access]
+      install_method: n/a
+      confidence: high
+    - path: '%APPDATA%\open-webui\data\webui.db'
+      os: [windows]
+      artifact_type: database
+      description: Users, chats, API keys and tool source, same schema as the container
+      forensic_value: high
+      evidence_type: [data-access, configuration]
+      install_method: n/a
+      confidence: high
+    - path: '%APPDATA%\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\'
+      os: [windows]
+      artifact_type: data-dir
+      description: Uploaded documents and the vector store
+      forensic_value: high
+      evidence_type: [data-access]
+      install_method: n/a
+      confidence: high
+  registry:
+    - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Open WebUI GUID>"
+      value: DisplayName, DisplayVersion
+      type: REG_SZ
+      description: >-
+        Install metadata. The key name is a bare GUID, so enumerate subkeys and
+        match DisplayName, which reads "Open WebUI" and carries the version.
+      persistence: false
+      forensic_value: medium
+      confidence: high
   network:
     - direction: listener
       indicator: Open WebUI HTTP server (uvicorn)
@@ -132,6 +198,23 @@ artifacts:
       confidence: high
 
 credentials:
+  - location: '%APPDATA%\open-webui\data\.key'
+    os: [windows]
+    storage: plaintext
+    secret_type: jwt-signing-key
+    description: >-
+      Session signing key on the desktop build. Named .key here, not
+      .webui_secret_key as in the container layout - collecting only the
+      documented container name misses it entirely.
+    confidence: high
+  - location: '%APPDATA%\open-webui\data\webui.db'
+    os: [windows]
+    storage: sqlite
+    secret_type: api-key
+    description: >-
+      Desktop copy of the user and API key tables, plus Tools and Functions
+      Python source. Quit the app before acquisition so the WAL is checkpointed.
+    confidence: high
   - location: /app/backend/data/.webui_secret_key
     os: [linux, docker]
     storage: plaintext
@@ -196,7 +279,10 @@ collection:
     Capture the compose file or docker run invocation to establish exposure and
     whether persistence was configured. Record the version, since which CVEs apply
     is version-dependent. If .webui_secret_key may have been read, rotate it and
-    force re-authentication.
+    force re-authentication. On the Windows desktop build the same state sits
+    under %APPDATA%\open-webui\data\, and the session signing key is named .key
+    rather than .webui_secret_key - collecting only the container name misses it.
+  kape_target: OpenWebUI
   velociraptor_artifact: Custom.AIAgents.OpenWebUI
 
 atlas_techniques: [AML.T0024, AML.T0029, AML.T0082]
@@ -228,4 +314,5 @@ references:
     url: https://github.com/open-webui/mcpo
     accessed: "2026-08-13"
 
-last_modified: '2026-08-11'
+last_verified: '2026-08-14'
+last_modified: '2026-08-14'

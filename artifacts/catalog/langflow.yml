@@ -238,7 +238,6 @@ credentials:
       contents as langflow.db: encrypted API keys and credential variables, plus flows
       and users.
     confidence: high
-mcp: []
 mcp:
   - mechanism: "database"
     indicator: "MCP server registrations added in Settings - MCP Servers, persisted in langflow.db under ~/.langflow/"

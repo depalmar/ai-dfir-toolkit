@@ -12,6 +12,16 @@ parameters:
     type: bool
     default: "N"
 sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Local\Programs\open-webui\**', 'C:\Users\*\AppData\Local\open-webui-updater\**', 'C:\Users\*\AppData\Roaming\open-webui\**', 'C:\Users\*\AppData\Roaming\open-webui\config.json', 'C:\Users\*\AppData\Roaming\open-webui\data\**', 'C:\Users\*\AppData\Roaming\open-webui\data\webui.db', 'C:\Users\*\AppData\Roaming\open-webui\data\uploads\**', 'C:\Users\*\AppData\Roaming\open-webui\data\vector_db\**', 'C:\Users\*\AppData\Roaming\open-webui\data\.key']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
   - name: Linux
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'

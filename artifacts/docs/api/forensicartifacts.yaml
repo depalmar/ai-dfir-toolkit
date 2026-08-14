@@ -959,6 +959,8 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.cache/lm-studio/mcp.json'
+    - '%%users.homedir%%/.lmstudio/.internal/'
+    - '%%users.homedir%%/.lmstudio/.internal/last-synced-mcp-state.json'
     - '%%users.homedir%%/.lmstudio/mcp.json'
     - '%%users.homedir%%/.lmstudio/settings.json'
     separator: \
@@ -1123,8 +1125,21 @@ sources:
     separator: /
   supported_os:
   - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\open-webui\'
+    - '%%users.appdata%%\open-webui\config.json'
+    - '%%users.appdata%%\open-webui\data\'
+    - '%%users.appdata%%\open-webui\data\.key'
+    - '%%users.appdata%%\open-webui\data\uploads\  |  %%users.appdata%%\open-webui\data\vector_db\'
+    - '%%users.appdata%%\open-webui\data\webui.db'
+    separator: \
+  supported_os:
+  - Windows
 supported_os:
 - Linux
+- Windows
 urls:
 - https://docs.openwebui.com/getting-started/advanced-topics/hardening/
 - https://docs.openwebui.com/getting-started/quick-start/

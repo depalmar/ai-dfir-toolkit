@@ -1,0 +1,53 @@
+Description: 'Open WebUI - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: 3308ca89-0293-587d-86f8-365b0c70df38
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Electron desktop app root'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\Programs\open-webui\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Electron desktop app root'
+    -
+        Name: 'Update staging, holds the downloaded installer'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Local\open-webui-updater\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Update staging, holds the downloaded installer'
+    -
+        Name: 'Electron user data, with the backend state under data'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Electron user data, with the backend state under data'
+    -
+        Name: 'Desktop app configuration'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\'
+        FileMask: 'config.json'
+        Comment: 'AIRT-0042 | Desktop app configuration'
+    -
+        Name: 'Desktop equivalent of the container DATA_DIR'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Desktop equivalent of the container DATA_DIR'
+    -
+        Name: 'Users, chats, API keys and tool source, same schema as the container'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\'
+        FileMask: 'webui.db'
+        Comment: 'AIRT-0042 | Users, chats, API keys and tool source, same schema as the container'
+    -
+        Name: 'Uploaded documents and the vector store'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Uploaded documents and the vector store'

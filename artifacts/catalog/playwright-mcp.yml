@@ -137,7 +137,6 @@ credentials:
     secret_type: session-state
     description: Serialized cookies + localStorage = session hijack artifact
     confidence: high
-mcp: []
 mcp:
   - mechanism: server
     indicator: npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config

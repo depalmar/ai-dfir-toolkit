@@ -136,7 +136,6 @@ credentials:
       is shared across every framework in this class, which is why one entry
       covers them all.
     confidence: medium
-mcp: []
 mcp:
   - mechanism: in-code
     indicator: Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself

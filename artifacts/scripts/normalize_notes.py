@@ -50,7 +50,7 @@ ACRONYMS = {
     # rows were the first notes to name a hive or an installer kind in prose,
     # and without these the normalizer wrote "hkcu", corrupting a hive name the
     # same way the first pass corrupted CWD.
-    "EXE", "HKCU",
+    "EXE", "HKCU", "GUID",
     "GCP", "GGUF", "GPU", "GUI", "HTTP", "HTTPS", "IAM", "ID", "IDE", "IOC",
     "IP", "IR", "JS", "KEV",
     "ITW", "JSON", "JWT", "LLM", "LM", "LOCALAPPDATA", "LOLBIN", "MCP", "MFA",

@@ -393,3 +393,58 @@ One trap declined: `AIRT-0033` Claude Computer Use hit on `~/.aws`, and
 directory whose presence says nothing about whether the computer-use demo was
 ever installed, so the entry stays unverified. A HIT on a path the tool merely
 *shares* is not evidence the tool was there.
+
+## 2026-08-14 (fourth pass) - LM Studio, Open WebUI, and a latent YAML defect
+
+### AIRT-0018 LM Studio - an entry that looked verified and was wrong
+
+The worst state in the catalog: `confidence: high`, `last_verified: 2026-08-13`,
+and three `high` disk paths that miss on a host where the tool is installed.
+Nothing flagged it, because a stale-date gate cannot see a wrong path. Verified
+against LM Studio **0.3.22** on Windows 11.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0018` | install path | `%LOCALAPPDATA%\Programs\lm-studio\LM Studio.exe` | **`...\Programs\LM Studio\LM Studio.exe`** | The directory is `LM Studio`, with a space and title case - not the hyphenated slug. Not a case difference, so it fails on a case-insensitive filesystem too. |
+| `AIRT-0018` | CLI shim | `~/.lmstudio/bin/lms` | **`~/.lmstudio/bin/lms  \|  ~/.lmstudio/bin/lms.exe`** | The row claims windows, macos and linux, but the Windows binary carries `.exe`. Both spellings now emit. |
+| `AIRT-0018` | `~/.lmstudio/settings.json` | `high` | **`low` + `unverified`** | Absent on 0.3.22. Kept rather than deleted, because only Windows was checked and the row also claims macOS and Linux. The real config surface is `~/.lmstudio/.internal/`, roughly 20 JSON files, now catalogued alongside it. |
+| `AIRT-0018` | uninstall key | `...\Uninstall\*LM Studio*` | **`...\Uninstall\<LM Studio GUID>`** | The key name is a bare GUID; the tool name appears only in `DisplayName`. The old spelling asserted a key-name match that cannot succeed. Same shape as `AIRT-0002`'s `<Cursor GUID>`. |
+
+Added, all confirmed on the host: `~/.lmstudio/.internal/` (config surface),
+`~/.lmstudio/.internal/last-synced-mcp-state.json` (MCP state, not previously
+catalogued anywhere), `~/.lmstudio/credentials/` (present, empty here), and
+`HKCU\Software\Classes\lmstudio\shell\open\command`, whose default value names
+the install path. Sweep coverage for this entry: **3 found to 9**.
+
+### AIRT-0042 Open WebUI - an entire install shape was missing
+
+All seven disk rows were `/app/backend/data/*` tagged `linux, docker`. There was
+no Windows desktop coverage at all, and the desktop build is on this host at
+**0.0.20**. Nine rows added, every one confirmed, zero misses.
+
+The finding that matters is a credential name change, not just new paths: on the
+desktop build the session signing key is **`.key`**, not `.webui_secret_key`. A
+responder collecting the documented container name gets nothing. The database is
+at `%APPDATA%\open-webui\data\webui.db` with the same schema as the container
+copy, alongside `uploads\`, `vector_db\` and `config.json`, with the install
+under `%LOCALAPPDATA%\Programs\open-webui\` and update staging in
+`%LOCALAPPDATA%\open-webui-updater\`.
+
+`collection.kape_target` was unset, which was harmless while every path was
+Docker-only and became a gate failure the moment Windows rows existed. Set to
+`OpenWebUI`. The entry leaves the never-verified list.
+
+### Upgrades from the host sweep
+
+`AIRT-0046` Warp `warp.sqlite` and `settings.toml`, Windows rows only, `medium`
+to `high`. `AIRT-0017` Ollama `~/.ollama/id_ed25519`, `medium` to `high`, noting
+the platform actually checked rather than implying all three.
+
+### A latent YAML defect in 21 files
+
+`warp.yml` carried `mcp: []` immediately followed by `mcp:` with real content -
+a duplicate top-level key. PyYAML keeps the last, so the corpus parses correctly
+today and the defect is invisible. It is still a defect: a stricter parser
+errors, and a consumer whose YAML library keeps the *first* silently loses every
+MCP row in the file. Twenty-one files had it. All fixed, and the parsed content
+of all 51 entries was compared before and after to prove nothing changed.

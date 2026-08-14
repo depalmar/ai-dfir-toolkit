@@ -12,7 +12,7 @@ documentation, correct what is wrong, then set `last_verified` and raise
 correction in `docs/VERIFICATION.md` with its basis.
 
 
-## Never verified — 9
+## Never verified — 8
 
 No `last_verified` at all. These are listed on every `validate.py` run.
 
@@ -130,36 +130,6 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `mcpServers.<name>.env inside ~/.kiro/settings/mcp.json`
     - `?` <- mcp: `~/.kiro/settings/mcp.json`
     - `?` <- mcp: `<repo>/.kiro/settings/mcp.json`
-
-### AIRT-0042 — Open WebUI
-
-- entry confidence: `high`
-- status: `active`
-- check against:
-    - [Open WebUI hardening guide (WEBUI_SECRET_KEY, first-user admin, Tools/Functions)](https://docs.openwebui.com/getting-started/advanced-topics/hardening/)
-    - [Open WebUI quick start (ports, volume, secret key)](https://docs.openwebui.com/getting-started/quick-start/)
-    - [Open WebUI roles and headless admin creation](https://docs.openwebui.com/features/authentication-access/rbac/roles/)
-    - [CVE-2026-45672 - unauthenticated-path RCE via /api/v1/utils/code/execute](https://www.sentinelone.com/vulnerability-database/cve-2026-45672/)
-    - [CVE-2026-70491 - tool source disclosure to non-admin users](https://www.sentinelone.com/vulnerability-database/cve-2026-70491/)
-    - [CVE-2025-64496 - Direct Connections account takeover to RCE (Cato CTRL)](https://www.catonetworks.com/blog/cato-ctrl-vulnerability-discovered-open-webui-cve-2025-64496/)
-    - [Open WebUI docs - MCP support](https://docs.openwebui.com/features/extensibility/mcp/)
-    - [open-webui/mcpo - MCP-to-OpenAPI proxy](https://github.com/open-webui/mcpo)
-- 15 claim(s) to confirm:
-    - `high`   disk: `/app/backend/data/`
-    - `high`   disk: `/app/backend/data/webui.db`
-    - `high`   disk: `/app/backend/data/.webui_secret_key`
-    - `high`   disk: `/app/backend/data/config.json`
-    - `medium` <- disk: `/app/backend/data/uploads/ and vector store directory`
-    - `high`   disk: `.env (deployment directory)`
-    - `high`   disk: `docker-compose.yml / docker run invocation`
-    - `high`   network: `Open WebUI HTTP server (uvicorn)`
-    - `high`   network: `Configured inference backends via OLLAMA_BASE_URL / OPENAI_API_BASE_URL`
-    - `high`   network: `Direct Connections to user-supplied OpenAI-compatible servers`
-    - `high`   credential: `/app/backend/data/.webui_secret_key`
-    - `high`   credential: `webui.db (user and API key tables)`
-    - `high`   credential: `WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME`
-    - `high`   credential: `Tools and Functions Python source stored in webui.db`
-    - `medium` <- mcp: `<mcpo config> (Claude Desktop format, path set at mcpo launch)`
 
 ### AIRT-0045 — vLLM
 
@@ -382,9 +352,9 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - [Warp docs - customizing the Warp Agent CLI](https://docs.warp.dev/agents/cli/configuration/)
 - 8 claim(s) to confirm:
     - `medium` <- disk: `~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite`
-    - `medium` <- disk: `%LOCALAPPDATA%\warp\Warp\data\warp.sqlite`
+    - `high`   disk: `%LOCALAPPDATA%\warp\Warp\data\warp.sqlite`
     - `medium` <- disk: `~/.local/state/warp-terminal/warp.sqlite`
-    - `medium` <- disk: `%LOCALAPPDATA%\warp\Warp\config\settings.toml`
+    - `high`   disk: `%LOCALAPPDATA%\warp\Warp\config\settings.toml`
     - `medium` <- disk: `~/.config/warp-terminal/settings.toml`
     - `low` <- network: `app.warp.dev`
     - `medium` <- mcp: `~/.warp_cli/.mcp.json`

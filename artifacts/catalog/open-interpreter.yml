@@ -224,7 +224,6 @@ credentials:
       True when the variable is unset: an exposed server-mode instance with no
       INTERPRETER_API_KEY set accepts any caller.
     confidence: high
-mcp: []
 mcp:
   - mechanism: config-file
     config_path: ~/.openinterpreter/config.toml

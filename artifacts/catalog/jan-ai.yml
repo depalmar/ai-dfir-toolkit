@@ -77,7 +77,6 @@ artifacts:
       persistence: systemd unit + /etc/jan/jan.env
       confidence: medium
 credentials: []
-mcp: []
 mcp:
   - mechanism: config-file
     config_path: <Jan data dir>/mcp_config.json

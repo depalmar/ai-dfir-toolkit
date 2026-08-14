@@ -10,6 +10,12 @@ $CLAUDE_CONFIG_DIR/.credentials.json
 %APPDATA%\Zed\settings.json
 %APPDATA%\com.LangflowDesktop\data\database.db
 %APPDATA%\goose\config.yaml
+%APPDATA%\open-webui\
+%APPDATA%\open-webui\config.json
+%APPDATA%\open-webui\data\
+%APPDATA%\open-webui\data\.key
+%APPDATA%\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\
+%APPDATA%\open-webui\data\webui.db
 %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
 %LOCALAPPDATA%\github-copilot\apps.json
 %LOCALAPPDATA%\open-interpreter\open-interpreter\profiles\default.yaml
@@ -220,6 +226,8 @@ webui.db (user and API key tables)
 ~/.langflow/data/database.db
 ~/.letta/
 ~/.letta/.persist/pgdata
+~/.lmstudio/.internal/
+~/.lmstudio/.internal/last-synced-mcp-state.json
 ~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
 ~/.local/state/warp-terminal/warp.sqlite

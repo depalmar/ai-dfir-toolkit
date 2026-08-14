@@ -6714,12 +6714,12 @@
     "artifacts": {
       "disk": [
         {
-          "path": "%LOCALAPPDATA%\\Programs\\lm-studio\\LM Studio.exe",
+          "path": "%LOCALAPPDATA%\\Programs\\LM Studio\\LM Studio.exe",
           "os": [
             "windows"
           ],
           "artifact_type": "binary",
-          "description": "Binary for LM Studio",
+          "description": "Binary for LM Studio, in a directory named with a space",
           "forensic_value": "medium",
           "evidence_type": [
             "execution",
@@ -6729,7 +6729,7 @@
           "confidence": "high"
         },
         {
-          "path": "~/.lmstudio/bin/lms",
+          "path": "~/.lmstudio/bin/lms  |  ~/.lmstudio/bin/lms.exe",
           "os": [
             "windows",
             "macos",
@@ -6785,10 +6785,54 @@
             "linux"
           ],
           "artifact_type": "config-file",
-          "description": "Server bind address + port live here",
+          "description": "Server bind address and port, absent on Windows 0.3.22",
           "forensic_value": "high",
           "evidence_type": [
             "configuration"
+          ],
+          "install_method": "n/a",
+          "unverified": true,
+          "confidence": "low"
+        },
+        {
+          "path": "~/.lmstudio/.internal/",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Real config surface, roughly 20 JSON files including MCP state",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/.internal/last-synced-mcp-state.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "mcp-config",
+          "description": "Last synced MCP server state",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "execution"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "~/.lmstudio/credentials/",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Credential store directory, empty on the host checked",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
           ],
           "install_method": "n/a",
           "confidence": "high"
@@ -6796,13 +6840,22 @@
       ],
       "registry": [
         {
-          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*LM Studio*",
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<LM Studio GUID>",
           "value": "InstallLocation",
           "type": "REG_SZ",
-          "description": "Install metadata",
+          "description": "Install metadata. The key name is a bare GUID, so it cannot be found by name - enumerate the subkeys and match DisplayName, which reads \"LM Studio <version>\" and carries the version for free.",
           "persistence": false,
           "forensic_value": "medium",
-          "confidence": "medium"
+          "confidence": "high"
+        },
+        {
+          "key": "HKCU\\Software\\Classes\\lmstudio\\shell\\open\\command",
+          "value": "(Default)",
+          "type": "REG_SZ",
+          "description": "The lmstudio:// protocol handler, naming the install path",
+          "persistence": true,
+          "forensic_value": "medium",
+          "confidence": "high"
         },
         {
           "key": "HKCU\\Environment",
@@ -6930,8 +6983,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0024",
@@ -7530,8 +7583,8 @@
         ],
         "storage": "plaintext",
         "secret_type": "api-key",
-        "description": "Instance identity keypair",
-        "confidence": "medium"
+        "description": "Instance identity keypair. Confirmed on a live Windows host.",
+        "confidence": "high"
       }
     ],
     "mcp": [],
@@ -7996,6 +8049,118 @@
             "configuration"
           ],
           "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\Programs\\open-webui\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Electron desktop app root",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%LOCALAPPDATA%\\open-webui-updater\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Update staging, holds the downloaded installer",
+          "forensic_value": "low",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "EXE installer",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Electron user data, with the backend state under data",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Desktop app configuration",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Desktop equivalent of the container DATA_DIR",
+          "forensic_value": "high",
+          "evidence_type": [
+            "program-presence",
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\webui.db",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "database",
+          "description": "Users, chats, API keys and tool source, same schema as the container",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        },
+        {
+          "path": "%APPDATA%\\open-webui\\data\\uploads\\  |  %APPDATA%\\open-webui\\data\\vector_db\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "data-dir",
+          "description": "Uploaded documents and the vector store",
+          "forensic_value": "high",
+          "evidence_type": [
+            "data-access"
+          ],
+          "install_method": "n/a",
+          "confidence": "high"
+        }
+      ],
+      "registry": [
+        {
+          "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\<Open WebUI GUID>",
+          "value": "DisplayName, DisplayVersion",
+          "type": "REG_SZ",
+          "description": "Install metadata. The key name is a bare GUID, so enumerate subkeys and match DisplayName, which reads \"Open WebUI\" and carries the version.",
+          "persistence": false,
+          "forensic_value": "medium",
+          "confidence": "high"
         }
       ],
       "network": [
@@ -8026,6 +8191,26 @@
       ]
     },
     "credentials": [
+      {
+        "location": "%APPDATA%\\open-webui\\data\\.key",
+        "os": [
+          "windows"
+        ],
+        "storage": "plaintext",
+        "secret_type": "jwt-signing-key",
+        "description": "Session signing key on the desktop build. Named .key here, not .webui_secret_key as in the container layout - collecting only the documented container name misses it entirely.",
+        "confidence": "high"
+      },
+      {
+        "location": "%APPDATA%\\open-webui\\data\\webui.db",
+        "os": [
+          "windows"
+        ],
+        "storage": "sqlite",
+        "secret_type": "api-key",
+        "description": "Desktop copy of the user and API key tables, plus Tools and Functions Python source. Quit the app before acquisition so the WAL is checkpointed.",
+        "confidence": "high"
+      },
       {
         "location": "/app/backend/data/.webui_secret_key",
         "os": [
@@ -8098,7 +8283,8 @@
     ],
     "collection": {
       "triage_priority": "p1",
-      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication.",
+      "guidance": "Snapshot the whole DATA_DIR volume before touching the container - recreating a container without the volume destroys everything. webui.db is the priority artifact; it carries chats, users, API keys, and stored Python in one file. Capture the compose file or docker run invocation to establish exposure and whether persistence was configured. Record the version, since which CVEs apply is version-dependent. If .webui_secret_key may have been read, rotate it and force re-authentication. On the Windows desktop build the same state sits under %APPDATA%\\open-webui\\data\\, and the session signing key is named .key rather than .webui_secret_key - collecting only the container name misses it.",
+      "kape_target": "OpenWebUI",
       "velociraptor_artifact": "Custom.AIAgents.OpenWebUI"
     },
     "atlas_techniques": [
@@ -8155,7 +8341,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0036",
@@ -10162,14 +10349,14 @@
             "windows"
           ],
           "artifact_type": "database",
-          "description": "Windows location of the command database. Same contents as the macOS path.",
+          "description": "Windows location of the command database. Same contents as the macOS path. Confirmed on a live host.",
           "forensic_value": "high",
           "evidence_type": [
             "user-activity",
             "execution",
             "timeline"
           ],
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/.local/state/warp-terminal/warp.sqlite",
@@ -10192,12 +10379,12 @@
             "windows"
           ],
           "artifact_type": "config-file",
-          "description": "Settings, including any configured AI and MCP behaviour",
+          "description": "Settings, including any configured AI and MCP behaviour. Confirmed on a live host.",
           "forensic_value": "medium",
           "evidence_type": [
             "configuration"
           ],
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "path": "~/.config/warp-terminal/settings.toml",
@@ -10291,8 +10478,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_verified": "2026-08-13",
-    "last_modified": "2026-08-13"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0050",

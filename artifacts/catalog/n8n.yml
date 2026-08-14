@@ -86,7 +86,6 @@ credentials:
     secret_type: encryption-key
     description: Credentials encrypted with N8N_ENCRYPTION_KEY - key theft = full cred compromise
     confidence: high
-mcp: []
 mcp:
   - mechanism: database
     indicator: Workflow JSON in database.sqlite containing node type n8n-nodes-langchain.toolmcp or n8n-nodes-langchain.mcptrigger

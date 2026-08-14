@@ -221,8 +221,8 @@ credentials:
       - linux
     storage: plaintext
     secret_type: api-key
-    description: Instance identity keypair
-    confidence: medium
+    description: Instance identity keypair. Confirmed on a live Windows host.
+    confidence: high
 mcp: []
 collection:
   triage_priority: p1
