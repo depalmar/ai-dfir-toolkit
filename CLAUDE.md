@@ -95,6 +95,20 @@ merely shares with other software: `~/.aws` hits for AIRT-0033 on machines that
 never ran the computer-use demo, so that row is deliberately left unstamped and
 carries a note saying why.
 
+**Take the ATLAS subtechnique only when the tool pins the layer.**
+`validate_techniques.py --advise` reports every mapping whose parent has
+subtechniques - 41 of them at the time of writing - and most of those should
+stay parents. The corpus already draws the line in the right place. `letta.yml`
+carries `AML.T0080.000` Memory because a memory-centric agent framework pins the
+layer. `mcp_tool_poisoning.yar` maps to the parent `AML.T0110` even though the
+Invariant Labs attack it detects is definition poisoning, because an MCP host's
+config surface reaches all three of definition, implementation and runtime
+response, and the host does not constrain which. The same reasoning keeps
+AIRT-0011, AIRT-0038 and AIRT-0041 on the parent. Do not sweep the advisories
+into subtechniques: a mapping that asserts a layer the entry does not constrain
+is less true than the parent, not more precise. `--advise` exists to raise the
+question per entry, not to produce a work queue.
+
 **Omit rather than guess.** A missing field is honest. A guessed one becomes
 somebody's broken detection during an actual incident.
 
