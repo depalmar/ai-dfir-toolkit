@@ -484,3 +484,48 @@ today and the defect is invisible. It is still a defect: a stricter parser
 errors, and a consumer whose YAML library keeps the *first* silently loses every
 MCP row in the file. Twenty-one files had it. All fixed, and the parsed content
 of all 51 entries was compared before and after to prove nothing changed.
+
+## 2026-08-14 (sixth pass) - four never-verified entries, from the vendors' own pages
+
+Every page below was fetched and returned HTTP 200. None of this rests on a
+search-engine summary.
+
+### AIRT-0006 Windsurf - the vendor moved, and a whole product's config was missing
+
+| Field | Was | Now | Basis |
+|---|---|---|---|
+| `vendor` | Codeium (Exafunction) | **Cognition (formerly Codeium / Exafunction)** | `docs.windsurf.com` now redirects to `docs.devin.ai`, served as "Devin Docs" under the cognitionai account. Windsurf and Devin are one documentation set. |
+| MCP paths | one row: `~/.codeium/windsurf/mcp_config.json` | **two rows** | The catalogued path is correct - and it is only the *standalone editor*. The Windsurf plugin for VS Code and JetBrains uses `~/.codeium/mcp_config.json`, one directory level up, documented on its own page. Collecting only the editor path misses every plugin install. |
+
+This is the entry the catalog was already burned on once, when an aggregator gave
+`~/.windsurf/mcp.json` against the vendor's `~/.codeium/windsurf/mcp_config.json`.
+The correction then was a wrong path; the correction now is a missing one. Two
+products, two files, one directory apart.
+
+### AIRT-0009 Tabnine
+
+`~/.tabnine/mcp_servers.json` and the repo-scoped equivalent are documented
+verbatim by the vendor. Both MCP rows raised `medium` to `high`.
+
+### AIRT-0041 Kiro
+
+`~/.kiro/settings/mcp.json` (user) and `.kiro/settings/mcp.json` (workspace)
+confirmed verbatim, and `.kiro/steering/` confirmed on the first-project page.
+Scope-limited: the hooks, specs, agents and Powers rows were not on either page
+and remain documentation-derived. The MCP configuration page also states Kiro now
+spans IDE, CLI and Web, which the entry does not reflect.
+
+### AIRT-0045 vLLM
+
+Default port 8000 and `VLLM_API_KEY` confirmed. **The catalogued reference URL is
+stale**: `serving/openai_compatible_server.html` now redirects to
+`serving/online_serving/`. Corrected, because a reference that 302s is a
+citation nobody can check without guessing where it went.
+
+### Still never verified
+
+Four remain: `AIRT-0008` Amazon Q Developer, `AIRT-0007` Devin, `AIRT-0014`
+Microsoft Copilot Studio and `AIRT-0033` Claude Computer Use. The last three are
+cloud-hosted with no endpoint paths, so verification there means confirming the
+network indicators are still live - the AIRT-0034 lesson, where a cloud entry's
+only indicator turned out to be a sunset domain.

@@ -177,6 +177,7 @@ webui.db (user and API key tables)
 ~/.claude.json
 ~/.claude/.credentials.json
 ~/.codeium/config.json
+~/.codeium/mcp_config.json
 ~/.codeium/windsurf/mcp_config.json
 ~/.codex/auth.json
 ~/.codex/config.toml

@@ -386,6 +386,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.codeium/config.json'
+    - '%%users.homedir%%/.codeium/mcp_config.json'
     - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
     - '%%users.homedir%%/.config/Windsurf/User/globalStorage/state.vscdb'
     separator: /
@@ -395,6 +396,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.codeium/config.json'
+    - '%%users.homedir%%/.codeium/mcp_config.json'
     - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
     - '%%users.homedir%%/Library/Application Support/Windsurf/User/globalStorage/state.vscdb'
     separator: /
@@ -405,6 +407,7 @@ sources:
     paths:
     - '%%users.appdata%%\Windsurf\User\globalStorage\state.vscdb'
     - '%%users.homedir%%/.codeium/config.json'
+    - '%%users.homedir%%/.codeium/mcp_config.json'
     - '%%users.homedir%%/.codeium/windsurf/mcp_config.json'
     - '%%users.homedir%%\.codeium\windsurf\mcp_config.json'
     separator: \
@@ -416,6 +419,8 @@ supported_os:
 - Windows
 urls:
 - https://marketplace.visualstudio.com/items?itemName=Codeium.codeium
+- https://docs.devin.ai/desktop/cascade/mcp
+- https://docs.devin.ai/windsurf/plugins/cascade/mcp
 ---
 name: ContinueDevArtifacts
 doc: Continue.dev (AIRT-0005) - VS Code / JetBrains extension with agent mode, custom
@@ -1412,7 +1417,7 @@ sources:
 supported_os:
 - Linux
 urls:
-- https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html
+- https://docs.vllm.ai/en/latest/serving/online_serving/
 - https://nvd.nist.gov/vuln/detail/CVE-2025-32444
 - https://pypi.org/project/vllm/0.27.1/
 ---

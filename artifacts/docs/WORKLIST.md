@@ -12,31 +12,9 @@ documentation, correct what is wrong, then set `last_verified` and raise
 correction in `docs/VERIFICATION.md` with its basis.
 
 
-## Never verified — 8
+## Never verified — 4
 
 No `last_verified` at all. These are listed on every `validate.py` run.
-
-### AIRT-0006 — Codeium / Windsurf
-
-- entry confidence: `high`
-- check against:
-    - [Windsurf Plugin (formerly Codeium) on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Codeium.codeium)
-- 15 claim(s) to confirm:
-    - `high`   disk: `~/.codeium/`
-    - `high`   disk: `%USERPROFILE%\.codeium\windsurf\mcp_config.json`
-    - `high`   disk: `~/.codeium/windsurf/mcp_config.json`
-    - `medium` <- disk: `~/.codeium/<version>/language_server_*`
-    - `medium` <- disk: `<repo>/.windsurf/settings.json`
-    - `medium` <- disk: `<repo>/.windsurfrules`
-    - `high`   network: `server.codeium.com, *.codeium.com, *.windsurf.com`
-    - `high`   credential: `~/.codeium/config.json`
-    - `medium` <- credential: `~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb`
-    - `medium` <- credential: `~/.config/Windsurf/User/globalStorage/state.vscdb`
-    - `medium` <- credential: `%APPDATA%\Windsurf\User\globalStorage\state.vscdb`
-    - `high`   credential: `~/.codeium/windsurf/mcp_config.json`
-    - `high`   credential: `%USERPROFILE%\.codeium\windsurf\mcp_config.json`
-    - `high`   credential: `<nvim stdpath('cache')>/codeium/config.json`
-    - `?` <- mcp: `~/.codeium/windsurf/mcp_config.json`
 
 ### AIRT-0007 — Devin
 
@@ -64,24 +42,6 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `?` <- mcp: `<repo>/.amazonq/mcp.json`
     - `?` <- mcp: `~/.aws/amazonq/default.json`
 
-### AIRT-0009 — Tabnine
-
-- entry confidence: `medium`
-- check against:
-    - [Tabnine documentation](https://docs.tabnine.com/main)
-    - [Tabnine docs - understanding MCP servers](https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup)
-    - [Tabnine docs - MCP governance](https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance)
-- 9 claim(s) to confirm:
-    - `high`   disk: `~/.tabnine/agent/settings.json`
-    - `high`   disk: `<repo>/.tabnine/agent/settings.json`
-    - `high`   disk: `Downloaded per-platform Tabnine binary (binary_path configurable)`
-    - `high`   disk: `TABNINE_CLI_SYSTEM_SETTINGS_PATH / TABNINE_CLI_SYSTEM_DEFAULTS_PATH`
-    - `medium` <- registry: `HKCU\Environment`
-    - `medium` <- network: `api.tabnine.com, update.tabnine.com`
-    - `high`   credential: `~/.config/TabNine/.refresh_token_v2`
-    - `medium` <- mcp: `<repo>/.tabnine/mcp_servers.json`
-    - `medium` <- mcp: `~/.tabnine/mcp_servers.json`
-
 ### AIRT-0014 — Microsoft Copilot Studio Agents
 
 - entry confidence: `high` · **cloud-hosted, no endpoint paths to check**
@@ -104,54 +64,28 @@ No `last_verified` at all. These are listed on every `validate.py` run.
     - `high`   credential: `AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN`
     - `high`   credential: `~/.config/gcloud/application_default_credentials.json`
 
-### AIRT-0041 — Kiro
 
-- entry confidence: `high`
-- status: `active`
-- check against:
-    - [Kiro MCP configuration](https://kiro.dev/docs/mcp/configuration/)
-    - [Kiro MCP overview and config scopes](https://kiro.dev/docs/mcp/)
-    - [Kiro first project - steering, specs, hooks](https://kiro.dev/docs/getting-started/first-project/)
-    - [Kiro Powers and installation](https://kiro.dev/docs/powers/installation/)
-    - [Unlock your development productivity with Kiro and MCP](https://kiro.dev/blog/unlock-your-development-productivity-with-kiro-and-mcp/)
-- 15 claim(s) to confirm:
-    - `high`   disk: `~/.kiro/settings/mcp.json`
-    - `high`   disk: `<repo>/.kiro/settings/mcp.json`
-    - `high`   disk: `<repo>/.kiro/hooks/*.kiro.hook`
-    - `high`   disk: `<repo>/.kiro/steering/*.md`
-    - `high`   disk: `<repo>/.kiro/agents/`
-    - `medium` <- disk: `<repo>/.kiro/specs/`
-    - `high`   disk: `POWER.md / plugin.json / dev.kiro/`
-    - `high`   disk: `Kiro - MCP Logs (View > Output channel)`
-    - `low` <- disk: `VS Code-style globalStorage, extensions, and state.vscdb paths`
-    - `high`   network: `kiro.dev, AWS Kiro service endpoints`
-    - `high`   network: `kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install links`
-    - `low` <- credential: `AWS Builder ID / IAM Identity Center token cache`
-    - `high`   credential: `mcpServers.<name>.env inside ~/.kiro/settings/mcp.json`
-    - `?` <- mcp: `~/.kiro/settings/mcp.json`
-    - `?` <- mcp: `<repo>/.kiro/settings/mcp.json`
-
-### AIRT-0045 — vLLM
-
-- entry confidence: `high`
-- check against:
-    - [vLLM OpenAI-compatible server (--api-key, --host, default port 8000)](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html)
-    - [CVE-2025-32444 - unauthenticated RCE via the Mooncake integration](https://nvd.nist.gov/vuln/detail/CVE-2025-32444)
-    - [vllm 0.27.1 package source - envs.py (VLLM_API_KEY, VLLM_CACHE_ROOT, VLLM_CONFIG_ROOT, VLLM_USAGE_STATS_SERVER) and usage_lib.py (usage_stats.json, do_not_track)](https://pypi.org/project/vllm/0.27.1/)
-- 8 claim(s) to confirm:
-    - `high`   disk: `~/.cache/vllm`
-    - `high`   disk: `~/.config/vllm`
-    - `high`   disk: `~/.config/vllm/usage_stats.json`
-    - `high`   disk: `~/.cache/huggingface/hub`
-    - `high`   network: `vLLM OpenAI-compatible API`
-    - `high`   network: `stats.vllm.ai`
-    - `high`   credential: `VLLM_API_KEY`
-    - `high`   credential: `HF_TOKEN`
-
-
-## Medium or low confidence — 20
+## Medium or low confidence — 21
 
 Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks these.
+
+### AIRT-0009 — Tabnine
+
+- entry confidence: `medium`
+- check against:
+    - [Tabnine documentation](https://docs.tabnine.com/main)
+    - [Tabnine docs - understanding MCP servers](https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup)
+    - [Tabnine docs - MCP governance](https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance)
+- 9 claim(s) to confirm:
+    - `high`   disk: `~/.tabnine/agent/settings.json`
+    - `high`   disk: `<repo>/.tabnine/agent/settings.json`
+    - `high`   disk: `Downloaded per-platform Tabnine binary (binary_path configurable)`
+    - `high`   disk: `TABNINE_CLI_SYSTEM_SETTINGS_PATH / TABNINE_CLI_SYSTEM_DEFAULTS_PATH`
+    - `medium` <- registry: `HKCU\Environment`
+    - `medium` <- network: `api.tabnine.com, update.tabnine.com`
+    - `high`   credential: `~/.config/TabNine/.refresh_token_v2`
+    - `high`   mcp: `<repo>/.tabnine/mcp_servers.json`
+    - `high`   mcp: `~/.tabnine/mcp_servers.json`
 
 ### AIRT-0010 — Supermaven
 

@@ -147,7 +147,7 @@ atlas_techniques:
 attack_techniques: []
 references:
   - title: vLLM OpenAI-compatible server (--api-key, --host, default port 8000)
-    url: https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html
+    url: https://docs.vllm.ai/en/latest/serving/online_serving/
     accessed: '2026-08-13'
   - title: CVE-2025-32444 - unauthenticated RCE via the Mooncake integration
     url: https://nvd.nist.gov/vuln/detail/CVE-2025-32444
@@ -155,4 +155,5 @@ references:
   - title: vllm 0.27.1 package source - envs.py (VLLM_API_KEY, VLLM_CACHE_ROOT, VLLM_CONFIG_ROOT, VLLM_USAGE_STATS_SERVER) and usage_lib.py (usage_stats.json, do_not_track)
     url: https://pypi.org/project/vllm/0.27.1/
     accessed: '2026-08-13' 
+last_verified: "2026-08-14"
 last_modified: "2026-08-13"
