@@ -35,7 +35,7 @@ every field carries a `confidence` rating tied to how it was sourced.
 | | Count |
 |---|---|
 | Catalogued tools | **51** |
-| Documented artifacts | **612** |
+| Documented artifacts | **615** |
 | Credential locations | **164** |
 | MCP config locations | **64** |
 | Sigma detection rules | **12** |

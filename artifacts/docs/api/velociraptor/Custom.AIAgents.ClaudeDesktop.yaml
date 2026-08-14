@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/Users/*/Library/Logs/Claude/mcp*.log', '/Users/*/Library/Application Support/Claude/**', '/Users/*/.config/Claude/claude_desktop_config.json']
+      LET Globs = ['/Users/*/Library/Application Support/Claude/claude_desktop_config.json', '/Users/*/Library/Logs/Claude/mcp*.log', '/Applications/Claude.app', '/Users/*/Applications/Claude.app', '/Users/*/Library/Preferences/com.anthropic.claudefordesktop.plist', '/Users/*/Library/Application Support/Claude/**', '/Users/*/.config/Claude/claude_desktop_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

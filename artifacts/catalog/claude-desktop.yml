@@ -155,6 +155,56 @@ artifacts:
         - execution
       install_method: n/a
       confidence: high
+    - path: "/Applications/Claude.app"
+      os:
+        - macos
+      artifact_type: install-dir
+      description: >-
+        System-folder install, and the documented default - "Claude Desktop
+        installs to /Applications and updates automatically". Updating from here
+        needs administrator access and write permission to /Applications and
+        Claude.app, which is the difference that decides where an estate puts it.
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: pkg (recommended for enterprise) or dmg
+      confidence: high
+    - path: "~/Applications/Claude.app"
+      os:
+        - macos
+      artifact_type: install-dir
+      description: >-
+        User-folder install, documented alongside the system one because users
+        can update it without administrator privileges. A sweep that only checks
+        /Applications reports the tool absent on every host that took this route.
+      forensic_value: low
+      evidence_type:
+        - program-presence
+      install_method: pkg (recommended for enterprise) or dmg
+      confidence: high
+    - path: "~/Library/Preferences/com.anthropic.claudefordesktop.plist"
+      os:
+        - macos
+      artifact_type: config-file
+      description: >-
+        Preference domain, and the MDM configuration surface. The vendor
+        documents the domain itself verbatim - "Claude Desktop reads preferences
+        from the domain com.anthropic.claudefordesktop" - for writing enterprise
+        profiles. What the vendor does not state is that the domain is also the
+        bundle identifier; the Homebrew cask uses it that way and names a helper
+        com.anthropic.claudefordesktop.helper, but that equivalence and the
+        helper string are third-party. The plist path follows macOS convention
+        from the documented domain rather than from the vendor page, so confirm
+        it on a Mac before keying collection on it, and expect an
+        MDM-managed host to carry the profile under /Library/Managed Preferences
+        instead.
+      forensic_value: medium
+      evidence_type:
+        - configuration
+        - program-presence
+      install_method: pkg (recommended for enterprise) or dmg
+      unverified: true
+      confidence: medium
   registry:
     - key: "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Claude"
       value: InstallLocation, DisplayVersion
