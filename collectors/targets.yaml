@@ -1665,6 +1665,28 @@ targets:
     paths:
       - "~/.continue/config.ts"
     notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0008_local_share_amazon_q_data_sqlite3
+    name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.local/share/amazon-q/data.sqlite3"
+    notes: "database, forensic_value high, catalog confidence high."
+  - id: art_airt_0008_xdg_runtime_dir_qlog_cli_log
+    name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "$XDG_RUNTIME_DIR/qlog/cli.log"
+    notes: "log, forensic_value high, catalog confidence high."
   - id: art_airt_0011_config_claude_claude_desktop_config_json
     name: "Claude Desktop (MCP host) artifact (AIRT-0011)"
     repo_cat: "art"

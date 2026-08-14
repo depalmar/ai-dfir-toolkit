@@ -1,4 +1,5 @@
 $CLAUDE_CONFIG_DIR/.credentials.json
+$XDG_RUNTIME_DIR/qlog/cli.log
 %APPDATA%\Claude\
 %APPDATA%\Claude\claude_desktop_config.json
 %APPDATA%\Claude\logs\mcp*.log
@@ -239,6 +240,7 @@ webui.db (user and API key tables)
 ~/.lmstudio/.internal/last-synced-mcp-state.json
 ~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
+~/.local/share/amazon-q/data.sqlite3
 ~/.local/state/warp-terminal/warp.sqlite
 ~/.mcp_auth/
 ~/.n8n/database.sqlite

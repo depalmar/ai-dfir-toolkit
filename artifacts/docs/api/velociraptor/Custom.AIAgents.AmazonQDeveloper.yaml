@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.aws/sso/cache/*.json', '/home/*/.aws/amazonq/mcp.json', '/home/*/.aws/amazonq/default.json']
+      LET Globs = ['/home/*/.local/share/amazon-q/data.sqlite3', '/home/*/.local/share/amazon-q/settings.json', '/home/*/.aws/sso/cache/*.json', '/home/*/.aws/amazonq/mcp.json', '/home/*/.aws/amazonq/default.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
