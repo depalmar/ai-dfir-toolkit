@@ -529,3 +529,67 @@ Microsoft Copilot Studio and `AIRT-0033` Claude Computer Use. The last three are
 cloud-hosted with no endpoint paths, so verification there means confirming the
 network indicators are still live - the AIRT-0034 lesson, where a cloud entry's
 only indicator turned out to be a sunset domain.
+
+## 2026-08-14 (seventh pass) - the last never-verified entries, researched not applied
+
+A 15-agent research fan-out over the four never-verified entries and the macOS
+rows, each target researched by one agent then re-checked by a second whose only
+job was to refute it. Full evidence, including every HTTP status, is in
+`docs/RESEARCH-2026-08-14.md`.
+
+**Deliberately partial.** The research produced far more than was applied: six
+targets, dozens of corrections, roughly forty candidate rows. Applying that
+volume in one pass, at the end of a long session, is how wrong things get
+committed - this file already records one conclusion that had to be reversed.
+What went in below is the subset with unambiguous vendor evidence and no
+judgement call. The rest is captured with its sourcing so the next pass starts
+from evidence rather than from scratch.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `AIRT-0008` | MCP config set | three files | **four** | The catalog carried `~/.aws/amazonq/mcp.json`, `.amazonq/mcp.json` and `~/.aws/amazonq/default.json`, and missed `<repo>/.amazonq/default.json`. That is the current-format workspace file, and the vendor states "Q Developer gives precedence to workspace level configurations" - so the missing file is also the winning file. |
+| `AIRT-0008` | `plaintext_credentials` | `false` | **`true`** | Contradicted by the entry's own credential rows. |
+| `AIRT-0008` | Sigma selector | CommandLine contains `amazon-q-developer` | **`aws-lsp-codewhisperer`** | The string the process actually carries. As written the rule would not fire. |
+| `AIRT-0008` | source repo | `github.com/aws/language-servers` | **`github.com/Amazon-Q-Developer/language-servers`** | The old URL 301s. |
+| `AIRT-0033` | quickstarts repo | `anthropics/anthropic-quickstarts` | **`anthropics/claude-quickstarts`** | Renamed; the catalogued URL no longer resolves to the demo. |
+| `AIRT-0018` | `~/.lmstudio/mcp.json` | `high` | **`medium`** | Documented in exactly one place - the 0.3.17 release post - and only for the default-home case. Current docs state no path, and the home is relocatable via `~/.lmstudio-home-pointer`. `high` overstated a single-source blog citation. |
+
+`last_verified` is set on AIRT-0008 and AIRT-0033 because both were genuinely
+checked against the vendor's own pages - 14 and 19 fetches at 200 respectively.
+It does **not** mean every finding was applied. It means somebody looked.
+
+### The three findings worth acting on next, and why they are not in this commit
+
+**AIRT-0008 has a vendor-doc-versus-vendor-source contradiction.** The
+troubleshooting page gives the Windows CLI log directory as `%TEMP%\qlog\`. The
+vendor's own CLI source (`crates/chat-cli/src/util/paths.rs`, `logs_dir()`)
+builds `%TEMP%\amazon-q\logs` on Windows and uses `qlog` only in the unix branch.
+Both are vendor sources and they disagree on the platform this catalog most
+targets. Collect both roots and settle it on a live host - committing to either
+on documentation alone is how a responder collects nothing.
+
+**AIRT-0014 Copilot Studio is not the empty entry it appears to be.** It carries
+zero artifact rows, `high` confidence and a "cloud-hosted, no endpoint paths"
+note. The research found a substantial Windows footprint via Power Automate
+Desktop - `%LOCALAPPDATA%\Microsoft\Power Automate Desktop\` subtrees,
+`C:\Windows\ServiceProfiles\UIFlowService\`, and three registry keys including
+one that both suppresses and generates evidence. An entry with no rows and
+`high` confidence is either correct or vacuous; this one is vacuous. Filling it
+is a whole entry's work, not a line item.
+
+**AIRT-0007 Devin now overlaps AIRT-0006 Windsurf.** Cognition rebranded
+Windsurf's desktop app as Devin Desktop, so the two entries describe partly the
+same binary. The catalog needs a deduplication decision before either gets more
+rows, and entry IDs are permanent - so this is a scoping call, not an edit.
+
+### Process note
+
+Two of the fifteen agents failed on connection errors: the Cursor macOS verify
+stage and the synthesis stage. Cursor macOS therefore has research with **no
+adversarial pass** and is recorded as single-source in the research file. It is
+not applied here for that reason.
+
+The adversarial stage earned its place. It caught a citation-hygiene failure on
+AIRT-0008 - three source files quoted verbatim but absent from the fetch list -
+and one of those omitted files was `paths.rs`, the one containing the `qlog`
+contradiction. The omission hid a refutation.

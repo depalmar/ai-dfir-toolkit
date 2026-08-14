@@ -105,7 +105,8 @@ references:
   - title: "Computer use tool - Claude Platform Docs"
     url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool
     accessed: "2026-08-13"
-  - title: "anthropics/anthropic-quickstarts - computer-use-demo"
-    url: https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo
+  - title: "anthropics/claude-quickstarts - computer-use-demo"
+    url: https://github.com/anthropics/claude-quickstarts/tree/main/computer-use-demo
     accessed: "2026-08-13"
-last_modified: "2026-08-11"
+last_verified: "2026-08-14"
+last_modified: "2026-08-14"

@@ -565,7 +565,7 @@
     "capabilities": {
       "local_code_execution": true,
       "local_listener": false,
-      "plaintext_credentials": false,
+      "plaintext_credentials": true,
       "mcp_capable": true
     },
     "risk": "medium",
@@ -650,7 +650,7 @@
         {
           "channel": "Microsoft-Windows-Sysmon/Operational",
           "event_id": "1",
-          "selector": "Image is a shared interpreter (node (aws-lsp-codewhisperer-token-binary.js)) and CommandLine contains amazon-q-developer",
+          "selector": "Image is a shared interpreter (node (aws-lsp-codewhisperer-token-binary.js)) and CommandLine contains aws-lsp-codewhisperer",
           "description": "Proves the agent ran, which disk presence does not. The image name is not the discriminator here, because the process is a shared interpreter that hosts much of this catalog - key on the command line instead. The child processes of this event are what the agent actually did.",
           "requires": "Sysmon deployed with process creation logging. Security 4688 is the fallback where it is not, but it carries CommandLine only when Include command line in process creation events is enabled - so on a host without that setting one interpreter process is indistinguishable from another.",
           "evidence_type": [
@@ -702,6 +702,17 @@
       },
       {
         "mechanism": "config-file",
+        "config_path": "<repo>/.amazonq/default.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process at agent start",
+        "secrets_location": "env block",
+        "persistence_trigger": "Every agent start",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "notes": "Current-format workspace scope, and the file the vendor says wins - \"Q Developer gives precedence to workspace level configurations\". The catalog carried the other three and missed this one, so the highest-precedence config was the one not collected."
+      },
+      {
+        "mechanism": "config-file",
         "config_path": "~/.aws/amazonq/default.json",
         "config_key": "Agent configuration, global scope in the IDE",
         "spawn_mechanism": "Child process at IDE start",
@@ -740,7 +751,8 @@
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0027",
@@ -1820,12 +1832,13 @@
         "accessed": "2026-08-13"
       },
       {
-        "title": "anthropics/anthropic-quickstarts - computer-use-demo",
-        "url": "https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo",
+        "title": "anthropics/claude-quickstarts - computer-use-demo",
+        "url": "https://github.com/anthropics/claude-quickstarts/tree/main/computer-use-demo",
         "accessed": "2026-08-13"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-08-14",
+    "last_modified": "2026-08-14"
   },
   {
     "id": "AIRT-0011",
@@ -7008,8 +7021,8 @@
         "secrets_location": "env block (plaintext)",
         "persistence_trigger": "Every app start",
         "triage_priority": "p1",
-        "confidence": "high",
-        "notes": "Cursor's mcp.json notation. This is the documented path; see the row below before concluding it is absent."
+        "confidence": "medium",
+        "notes": "Documented in exactly one place, the 0.3.17 release post, and only for the default-home case. The current docs state no path at all, and the home itself is relocatable - see the home-pointer row. Downgraded from high on that basis; see the row below before concluding it is absent."
       },
       {
         "mechanism": "config-file",
