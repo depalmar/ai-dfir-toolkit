@@ -1397,6 +1397,7 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/TabNine/.refresh_token_v2'
+    - '%%users.homedir%%/.mcp_auth/'
     - '%%users.homedir%%/.tabnine/mcp_servers.json'
     separator: /
   supported_os:
@@ -1404,6 +1405,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.mcp_auth/'
     - '%%users.homedir%%/.tabnine/mcp_servers.json'
     separator: /
   supported_os:
@@ -1411,6 +1413,7 @@ sources:
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.mcp_auth/'
     - '%%users.homedir%%/.tabnine/mcp_servers.json'
     separator: \
   supported_os:

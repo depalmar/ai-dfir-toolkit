@@ -55,7 +55,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - [Tabnine documentation](https://docs.tabnine.com/main)
     - [Tabnine docs - understanding MCP servers](https://docs.tabnine.com/main/getting-started/tabnine-agent/mcp-intro-and-setup)
     - [Tabnine docs - MCP governance](https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance)
-- 9 claim(s) to confirm:
+- 10 claim(s) to confirm:
     - `high`   disk: `~/.tabnine/agent/settings.json`
     - `high`   disk: `<repo>/.tabnine/agent/settings.json`
     - `high`   disk: `Downloaded per-platform Tabnine binary (binary_path configurable)`
@@ -63,6 +63,7 @@ Verified once, but the sourcing has not supported an upgrade. Issue #8 tracks th
     - `medium` <- registry: `HKCU\Environment`
     - `medium` <- network: `api.tabnine.com, update.tabnine.com`
     - `high`   credential: `~/.config/TabNine/.refresh_token_v2`
+    - `high`   credential: `~/.mcp_auth/`
     - `high`   mcp: `<repo>/.tabnine/mcp_servers.json`
     - `high`   mcp: `~/.tabnine/mcp_servers.json`
 

@@ -129,6 +129,18 @@ credentials:
       also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a
       Codespaces/Gitpod host has it in two places.
     confidence: high
+  - location: ~/.mcp_auth/
+    os: [windows, macos, linux]
+    storage: plaintext
+    secret_type: oauth-token
+    description: >-
+      Cached OAuth credentials for MCP servers the agent has authenticated to,
+      in the user home directory. The vendor's own remediation for a compromised
+      or revoked server is to delete this folder, which means a token revoked at
+      the server survives here until someone does - so its contents can outlive
+      the access they represent. Collect existence and timestamps; the folder
+      dates when each server was first authorised.
+    confidence: high
 mcp:
   - mechanism: "config-file"
     config_path: "<repo>/.tabnine/mcp_servers.json"

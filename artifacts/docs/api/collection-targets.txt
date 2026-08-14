@@ -168,6 +168,7 @@ mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
 npx @playwright/mcp@latest in a process tree, and a playwright entry inside another tool's MCP config
 python -m skyvern run mcp in a process tree, and a skyvern entry inside another tool's MCP config
 uvx browser-use[cli] running as a stdio MCP server, and a browser-use entry inside another tool's MCP config
+vllm.entrypoints.mcp
 vscode.SecretStorage key 'dev.continue.continue' (OS-keyring backed on desktop VS Code)
 webui.db (user and API key tables)
 ~/.aider.conf.yml
@@ -239,6 +240,7 @@ webui.db (user and API key tables)
 ~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
 ~/.local/state/warp-terminal/warp.sqlite
+~/.mcp_auth/
 ~/.n8n/database.sqlite
 ~/.ollama/id_ed25519  |  id_ed25519.pub
 ~/.openhands/agent_settings.json
