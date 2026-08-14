@@ -645,3 +645,50 @@ Not catalogued, on purpose: desktop flows are documented as **not** supported as
 a tool in Copilot Studio, so no desktop-flow-as-tool rows were added. The
 endpoint is reached through computer use on a registered machine, not through
 flows exposed as agent tools.
+
+## 2026-08-14 (ninth pass) - cross-checking a second model's findings
+
+A second model was asked the same questions and returned findings. Two matched
+work already committed here - Windsurf's migration to `docs.devin.ai` and Amazon
+Q's `default.json` pair, both of which had already been fetched at 200 and
+applied. Independent agreement on those is worth recording.
+
+Two were **new claims**, and both were fetched from the vendor before anything
+was written. Both held.
+
+| Scope | Change | Basis |
+|---|---|---|
+| `AIRT-0009` | **new row** `~/.mcp_auth/` | Vendor page, verbatim: "These cached OAuth credentials are stored in the `.mcp_auth` folder in your home folder", and the remediation "Delete the `.mcp_auth` folder from the user's home directory. This clears all cached OAuth credentials." |
+| `AIRT-0045` | `mcp_capable` `false` -> **`true`**, plus an `in-code` MCP block | `docs.vllm.ai/en/latest/api/vllm/entrypoints/mcp/` returns 200 and documents the module `vllm.entrypoints.mcp` exposing `tool` and `tool_server`. |
+
+The Tabnine row is the more valuable of the two, and it is a **miss of this
+project's own, not a gap the second model uniquely filled**. The same vendor page
+was scraped earlier in this pass, with a JSON extraction asking for "filesystem
+paths, config file locations and environment variables". That extraction returned
+`~/.tabnine/mcp_servers.json` and nothing else. `.mcp_auth` was on the page the
+whole time; the schema-guided extraction narrowed the read and dropped it.
+
+The lesson is specific: a structured extraction is a query, and a query returns
+what it asks for. Against a page you have not read, that is a way to miss things
+confidently. Where a page is short enough, read it before extracting from it.
+
+Forensically the row matters because the vendor's own remediation for a
+compromised MCP server is to delete the folder - which means a token revoked at
+the server survives locally until someone does. The cache can outlive the access
+it represents.
+
+The vLLM block is deliberately `in-code` with `confidence: medium`. There is no
+config file to collect; the module reference confirms the capability exists in
+the package, not that any deployment uses it. This is the inverse of the trap
+`CLAUDE.md` records for Ollama and Aider - a `mcp_capable` flag that outran the
+evidence - so the flag is set from a vendor module reference and the block says
+plainly that no running deployment was observed.
+
+### One claim not accepted
+
+The second model described the MSIX experiment's methodology as established,
+writing that the `Test-Path "$env:APPDATA\Claude"` baseline had been used to
+eliminate a variable. That experiment has **not been run**. It was designed and
+written down as the decisive next test, and it still needs a Windows host with no
+pre-existing `%APPDATA%\Claude`. A plan described back as an accomplished result
+is exactly the kind of drift this file exists to catch.

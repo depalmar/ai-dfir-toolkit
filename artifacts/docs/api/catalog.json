@@ -10210,6 +10210,18 @@
         "secret_type": "oauth-token",
         "description": "Plaintext refresh token. Written and read by Tabnine's own VS Code extension (TABNINE_TOKEN_FILE_PATH = TABNINE_CONFIG_DIR + '.refresh_token_v2', where TABNINE_CONFIG_DIR = homedir/.config/TabNine). The cloud-environment code path also syncs this token into VS Code globalState under key TABNINE_TOKEN_V2, so a Codespaces/Gitpod host has it in two places.",
         "confidence": "high"
+      },
+      {
+        "location": "~/.mcp_auth/",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "oauth-token",
+        "description": "Cached OAuth credentials for MCP servers the agent has authenticated to, in the user home directory. The vendor's own remediation for a compromised or revoked server is to delete this folder, which means a token revoked at the server survives here until someone does - so its contents can outlive the access they represent. Collect existence and timestamps; the folder dates when each server was first authorised.",
+        "confidence": "high"
       }
     ],
     "mcp": [
@@ -10437,7 +10449,7 @@
       "local_code_execution": false,
       "local_listener": true,
       "plaintext_credentials": true,
-      "mcp_capable": false
+      "mcp_capable": true
     },
     "risk": "high",
     "confidence": "high",
@@ -10561,7 +10573,19 @@
         "confidence": "high"
       }
     ],
-    "mcp": [],
+    "mcp": [
+      {
+        "mechanism": "in-code",
+        "indicator": "vllm.entrypoints.mcp",
+        "config_key": "tool_server",
+        "spawn_mechanism": "Imported and configured in the serving code, not from a config file",
+        "secrets_location": "Wherever the deploying code passes them - no vendor-defined store",
+        "persistence_trigger": "Every server start",
+        "triage_priority": "p2",
+        "confidence": "medium",
+        "notes": "An MCP entrypoint module exists in the package and exposes tool and tool_server. There is no config file to collect - read the launch code and the serving arguments instead. Confirmed from the module reference only, not from a running deployment."
+      }
+    ],
     "collection": {
       "triage_priority": "p1",
       "guidance": "Establish the authentication posture first, because it decides whether this is an exposure: capture the full `vllm serve` command line and the process environment, and check for --api-key and VLLM_API_KEY together. Then confirm the bind address with `ss -lntp` rather than trusting the config - the default is 0.0.0.0. Collect ~/.config/vllm/usage_stats.json before any restart; it is often the only timeline of what was served. Note the model cache is shared with other Hugging Face consumers, so presence alone does not attribute activity to vLLM.",

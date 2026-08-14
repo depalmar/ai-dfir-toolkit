@@ -16,7 +16,7 @@ capabilities:
   local_code_execution: false
   local_listener: true
   plaintext_credentials: true
-  mcp_capable: false
+  mcp_capable: true
 risk: high
 confidence: high
 abuse_potential: >-
@@ -128,7 +128,20 @@ credentials:
       Plaintext Hugging Face token used to pull gated model weights, read from the
       environment. Grants access to whatever private repositories the account can reach.
     confidence: high
-mcp: []
+mcp:
+  - mechanism: in-code
+    indicator: "vllm.entrypoints.mcp"
+    config_key: tool_server
+    spawn_mechanism: Imported and configured in the serving code, not from a config file
+    secrets_location: Wherever the deploying code passes them - no vendor-defined store
+    persistence_trigger: Every server start
+    triage_priority: p2
+    confidence: medium
+    notes: >-
+      An MCP entrypoint module exists in the package and exposes tool and
+      tool_server. There is no config file to collect - read the launch code and
+      the serving arguments instead. Confirmed from the module reference only,
+      not from a running deployment.
 collection:
   triage_priority: p1
   guidance: >-

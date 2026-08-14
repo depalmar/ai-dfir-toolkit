@@ -899,6 +899,17 @@ targets:
     paths:
       - "~/.config/TabNine/.refresh_token_v2"
     notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0009_mcp_auth
+    name: "Tabnine credential store (AIRT-0009)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.mcp_auth/"
+    notes: "plaintext/oauth-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0010_project_supermaven_config_json
     name: "Supermaven credential store (AIRT-0010)"
     repo_cat: "cred"
