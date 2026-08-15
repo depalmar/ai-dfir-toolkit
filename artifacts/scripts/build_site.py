@@ -508,24 +508,24 @@ details.csfull>summary:focus-visible,details.src>summary:focus-visible{
   outline-offset:-2px}
 tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
-/* ---- entry strip ---- */
-.entrystrip{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);
-  padding:14px 16px;margin-bottom:14px}
-.estitle{margin:0 0 12px;font-size:14.5px;color:var(--ink)}
-.estarts{display:flex;flex-wrap:wrap;gap:18px}
-.esblock{display:flex;flex-direction:column;gap:7px;min-width:0}
-.eslabel{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
-  font-weight:600;color:var(--muted)}
-.esrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* ---- entry strip ----
+   One row. The first version was 221px tall at 1440x900 and cost three rows of
+   table, against a cap tuned to win back a third of one - the panel undid the
+   density work it sat on top of. It is a signpost, not a dashboard: say what the
+   page is for, offer a way in, then get out of the way. */
+.entrystrip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  margin-bottom:10px;font-size:12.5px}
+.estitle{color:var(--muted);margin-right:2px}
 .startbtn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
   border:1px solid var(--field-line);background:var(--panel);color:var(--ink);
-  border-radius:999px;padding:5px 11px;font-size:12.5px;font-family:inherit}
+  border-radius:999px;padding:4px 11px;font-size:12.5px;font-family:inherit;
+  white-space:nowrap}
 .startbtn:hover{background:var(--hover);border-color:var(--accent-border)}
 .startbtn .c{color:var(--faint);font-size:11px}
 #startTool{border:1px solid var(--field-line);background:var(--panel);
-  color:var(--muted);border-radius:999px;padding:5px 9px;font-size:12.5px;
-  font-family:inherit;cursor:pointer}
-@media(max-width:620px){.estarts{gap:12px}}
+  color:var(--ink);border-radius:999px;padding:4px 9px;font-size:12.5px;
+  font-family:inherit;cursor:pointer;max-width:230px}
+@media(max-width:620px){.entrystrip{gap:6px}.estitle{flex-basis:100%}}
 
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
@@ -1466,36 +1466,26 @@ function buildEntryStrip(){
   };
   const byTool={};
   for(const r of ROWS)byTool[r.tool]=(byTool[r.tool]||0)+1;
-  // Top tools by artifact count, because "this host runs X" is the realistic
-  // way in and a 51-option select is not a starting point.
-  const top=Object.entries(byTool).sort((a,b)=>b[1]-a[1]).slice(0,6);
 
   const strip=el('div','entrystrip');
-  strip.appendChild(el('p','estitle',
+  strip.appendChild(el('span','estitle',
     'What an AI agent left on this host, and in what order to collect it.'));
-  const starts=el('div','estarts');
 
-  const b1=el('div','esblock');
-  b1.appendChild(el('span','eslabel','This host runs…'));
-  const r1=el('div','esrow');
-  top.forEach(([t,n])=>r1.appendChild(startBtn(t,n,'tool',t)));
+  // One select rather than the six most-populated tools plus a select. The
+  // buttons were the Tool facet restated in the content column, they ran 77px
+  // to 232px wide because tool names are unbounded, and they wrapped to a
+  // second line. The select reaches all 51 and costs one control.
   const sel=el('select'); sel.id='startTool';
-  sel.setAttribute('aria-label','Pick another tool');
-  const opt0=el('option',null,'another tool…'); opt0.value=''; sel.appendChild(opt0);
-  Object.keys(byTool).sort((a,b)=>a.localeCompare(b)).forEach(t=>{
-    const o=el('option',null,t); o.value=t; sel.appendChild(o)});
-  r1.appendChild(sel); b1.appendChild(r1); starts.appendChild(b1);
+  sel.setAttribute('aria-label','Filter to one tool');
+  const opt0=el('option',null,'This host runs…'); opt0.value=''; sel.appendChild(opt0);
+  Object.entries(byTool).sort((a,b)=>b[1]-a[1]).forEach(([t,n])=>{
+    const o=el('option',null,`${t} (${n})`); o.value=t; sel.appendChild(o)});
+  strip.appendChild(sel);
 
-  const b2=el('div','esblock');
-  b2.appendChild(el('span','eslabel','Or start from the evidence'));
-  const r2=el('div','esrow');
-  r2.appendChild(startBtn('Credential locations only',
+  strip.appendChild(startBtn('Credential locations',
     ROWS.filter(r=>r.cls==='credential').length,'cls','credential'));
-  r2.appendChild(startBtn('Everything that dies at reboot',
+  strip.appendChild(startBtn('Dies at reboot',
     ROWS.filter(r=>r.vol==='live').length,'vol','live'));
-  b2.appendChild(r2); starts.appendChild(b2);
-
-  strip.appendChild(starts);
   return strip;
 }
 function tableHTML(rows){
