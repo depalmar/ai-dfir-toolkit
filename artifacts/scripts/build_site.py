@@ -1821,6 +1821,11 @@ function toolDrawerHTML(t){
   for(const r of rows)byCls[r.cls]=(byCls[r.cls]||0)+1;
   const vol={};
   for(const r of rows)vol[r.vol]=(vol[r.vol]||0)+1;
+  // Volatile, not "p1". triage_priority lives on the tool, not on the row, so
+  // there is no p1 subset of these rows to offer - and volatility is the field
+  // that actually answers "what do I lose if I reboot first", which is what the
+  // Order of collection section above already ranks them by.
+  const volatile=rows.filter(r=>r.vol&&r.vol!=='stable').length;
   const mech=[...new Set(rows.filter(r=>r.mechanism).map(r=>r.mechanism))];
   const unv=rows.filter(r=>r.unverified).length;
   const cs=CASES_BY_TOOL[t.entry_id]||[];
@@ -1863,6 +1868,10 @@ function toolDrawerHTML(t){
         rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
   </div>
   <div class="dfoot">
+    ${volatile?`<button class="btn" id="dPickVol"
+      title="Add the ${volatile} row${volatile===1?'':'s'} that do not survive a reboot or an agent restart"
+      >Add volatile (${volatile})</button>`:''}
+    <button class="btn" id="dPickAll">Add all ${rows.length}</button>
     <button class="btn primary" id="dAllRows">Show all ${rows.length} artifacts &#8594;</button>
   </div>`;
 }
@@ -1879,6 +1888,22 @@ function openToolDrawer(id,fromEl){
     filters.tool=[t.tool];if(cls)filters.cls=[cls];
     view='catalog';update()};
   $('#dAllRows').onclick=()=>drill(null);
+  // Tools -> a populated plan without going through the table. Reuses picks and
+  // savePicks rather than introducing a second path into the plan, so anything
+  // added here behaves exactly like a row ticked by hand. Add-only on purpose:
+  // a button that silently un-picked on a second press would lose work, and the
+  // plan already has per-row removal.
+  const addRows=(pred,btn)=>{
+    const target=ROWS.filter(r=>r.entry_id===t.entry_id).filter(pred);
+    const added=target.filter(r=>!picks.has(r.anchor)).length;
+    target.forEach(r=>picks.add(r.anchor));
+    savePicks();update();
+    btn.disabled=true;
+    btn.textContent=added?`Added ${added}`:'Already in plan';
+  };
+  const bVol=$('#dPickVol');
+  if(bVol)bVol.onclick=()=>addRows(r=>r.vol&&r.vol!=='stable',bVol);
+  $('#dPickAll').onclick=()=>addRows(()=>true,$('#dPickAll'));
   $$('#drawer .clsrow').forEach(b=>b.onclick=()=>drill(b.dataset.cls));
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     pushNav();closeDrawer();view='cases';update();
