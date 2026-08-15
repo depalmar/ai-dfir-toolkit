@@ -508,6 +508,25 @@ details.csfull>summary:focus-visible,details.src>summary:focus-visible{
   outline-offset:-2px}
 tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
+/* ---- entry strip ---- */
+.entrystrip{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);
+  padding:14px 16px;margin-bottom:14px}
+.estitle{margin:0 0 12px;font-size:14.5px;color:var(--ink)}
+.estarts{display:flex;flex-wrap:wrap;gap:18px}
+.esblock{display:flex;flex-direction:column;gap:7px;min-width:0}
+.eslabel{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  font-weight:600;color:var(--muted)}
+.esrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.startbtn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  border:1px solid var(--field-line);background:var(--panel);color:var(--ink);
+  border-radius:999px;padding:5px 11px;font-size:12.5px;font-family:inherit}
+.startbtn:hover{background:var(--hover);border-color:var(--accent-border)}
+.startbtn .c{color:var(--faint);font-size:11px}
+#startTool{border:1px solid var(--field-line);background:var(--panel);
+  color:var(--muted);border-radius:999px;padding:5px 9px;font-size:12.5px;
+  font-family:inherit;cursor:pointer}
+@media(max-width:620px){.estarts{gap:12px}}
+
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
 /* The height cap is what makes the sticky th below actually stick. overflow-x
@@ -1284,7 +1303,10 @@ window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 
 let codeWrap=false, codeGrow=false, planMode='tool';
 let view='catalog', query='', unvOnly=false, dense=false,
-    sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
+    // Was entry_id, which sorted first paint by the one field a responder never
+    // needs. triage_priority is on every row since F09, so the table can open in
+    // collection order instead.
+    sortKey='triage', sortDir=1, sel=null, selRule=null, lastFocus=null;
 const filters={triage:[],cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
 const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
 // 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
@@ -1340,13 +1362,23 @@ function rowMatches(r,skip){
     r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):'')).toLowerCase();
   return hay.includes(query);
 }
+// Collection order, not ID order. Ties on the sort key fall through to
+// volatility and then to entry id, so the default view reads triage first and
+// then what stops existing soonest - which is the order the catalog is for.
+// Without the tiebreak, sorting by triage left 513 p1 rows in whatever order
+// they happened to be flattened in.
+const volRank=r=>{const i=VOL_TIERS.indexOf(r.vol);return i<0?VOL_TIERS.length:i};
+function cmpKey(k,a,b){
+  const x=a[k],y=b[k];
+  if(RANK[x]!==undefined&&RANK[y]!==undefined&&RANK[x]!==RANK[y])return RANK[x]-RANK[y];
+  return String(x??'').localeCompare(String(y??''),undefined,{numeric:true});
+}
 function filteredRows(){
   const out=ROWS.filter(r=>rowMatches(r,null));
   out.sort((a,b)=>{
-    const x=a[sortKey],y=b[sortKey];
-    if(RANK[x]!==undefined&&RANK[y]!==undefined&&RANK[x]!==RANK[y])
-      return (RANK[x]-RANK[y])*sortDir;
-    return String(x??'').localeCompare(String(y??''),undefined,{numeric:true})*sortDir;
+    const primary=cmpKey(sortKey,a,b)*sortDir;
+    if(primary)return primary;
+    return (volRank(a)-volRank(b))||cmpKey('entry_id',a,b);
   });
   return out;
 }
@@ -1411,6 +1443,61 @@ function chipsHTML(){
 /* ---------- table & cards ---------- */
 const COLS=[['','pick'],['ID','entry_id'],['Tool','tool'],['Class','cls'],['Artifact','artifact'],
   ['OS','os'],['Value','forensic_value'],['Conf','confidence'],['Notes','description']];
+// First paint used to be 615 rows sorted by catalog ID, with nothing on screen
+// saying what the page is for or offering somewhere to start. This is that
+// missing first step: the thesis in one line, and three real starts with live
+// counts rather than a tour. It hides itself the moment any facet is on, so it
+// costs a returning reader nothing.
+//
+// Built with createElement and textContent rather than an HTML string. Every
+// other view here renders through innerHTML and escapes with esc(), which is
+// sound for catalog data - but tool names are the one value on this strip that
+// comes from a YAML field a contributor edits, and a node that cannot parse
+// markup needs no escaping to be correct.
+function buildEntryStrip(){
+  if(Object.keys(filters).some(g=>filters[g].length)||query||unvOnly)return null;
+  const el=(tag,cls,text)=>{const n=document.createElement(tag);
+    if(cls)n.className=cls; if(text!=null)n.textContent=text; return n};
+  const startBtn=(label,n,g,v)=>{
+    const b=el('button','startbtn',label);
+    b.dataset.g=g; b.dataset.v=v;
+    b.appendChild(el('span','c',String(n)));
+    return b;
+  };
+  const byTool={};
+  for(const r of ROWS)byTool[r.tool]=(byTool[r.tool]||0)+1;
+  // Top tools by artifact count, because "this host runs X" is the realistic
+  // way in and a 51-option select is not a starting point.
+  const top=Object.entries(byTool).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  const strip=el('div','entrystrip');
+  strip.appendChild(el('p','estitle',
+    'What an AI agent left on this host, and in what order to collect it.'));
+  const starts=el('div','estarts');
+
+  const b1=el('div','esblock');
+  b1.appendChild(el('span','eslabel','This host runs…'));
+  const r1=el('div','esrow');
+  top.forEach(([t,n])=>r1.appendChild(startBtn(t,n,'tool',t)));
+  const sel=el('select'); sel.id='startTool';
+  sel.setAttribute('aria-label','Pick another tool');
+  const opt0=el('option',null,'another tool…'); opt0.value=''; sel.appendChild(opt0);
+  Object.keys(byTool).sort((a,b)=>a.localeCompare(b)).forEach(t=>{
+    const o=el('option',null,t); o.value=t; sel.appendChild(o)});
+  r1.appendChild(sel); b1.appendChild(r1); starts.appendChild(b1);
+
+  const b2=el('div','esblock');
+  b2.appendChild(el('span','eslabel','Or start from the evidence'));
+  const r2=el('div','esrow');
+  r2.appendChild(startBtn('Credential locations only',
+    ROWS.filter(r=>r.cls==='credential').length,'cls','credential'));
+  r2.appendChild(startBtn('Everything that dies at reboot',
+    ROWS.filter(r=>r.vol==='live').length,'vol','live'));
+  b2.appendChild(r2); starts.appendChild(b2);
+
+  strip.appendChild(starts);
+  return strip;
+}
 function tableHTML(rows){
   if(!rows.length)return `<div class="empty">Nothing matches those filters.
     <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
@@ -2381,6 +2468,17 @@ function renderMain(){
     });
     main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${tableHTML(rows)}</div>
       <div class="cards">${cardsHTML(rows)}</div>`;
+    // Prepended as a node after the table is written, so the strip never passes
+    // through an HTML string on its way onto the page.
+    const strip=buildEntryStrip();
+    if(strip){
+      main.insertBefore(strip,main.firstChild);
+      strip.querySelectorAll('.startbtn').forEach(b=>b.onclick=()=>{
+        pushNav(); filters[b.dataset.g]=[b.dataset.v]; update();
+      });
+      const tp=strip.querySelector('#startTool');
+      tp.onchange=()=>{if(!tp.value)return; pushNav(); filters.tool=[tp.value]; update()};
+    }
     const sortBy=k=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1}renderMain()};
     $$('#main th[data-k]').forEach(th=>{
       th.onclick=()=>sortBy(th.dataset.k);
