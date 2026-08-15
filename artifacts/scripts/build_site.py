@@ -535,7 +535,18 @@ col.k-art{width:34%}
 td.artcell{min-width:300px}
 td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
 td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap}
-td .note{font-size:12.5px;color:var(--muted);display:block}
+/* Clamped to two lines. Measured over all 615 rows this takes the total table
+   from 55353px to 46212px, the p90 row from 133px to 99px and the tallest row
+   from 227px to 142px - so it cuts the scroll distance and the long tail.
+   It does NOT raise rows-per-screen at the median, which stays at 79px: the
+   median row is driven by the OS cell, where "windows, macos, linux" wraps to
+   three lines and 57px in a narrow column. That is the next lever, not this one.
+   Safe only because the full text stays one click away - drawerHTML renders
+   r.description unclamped. The Notes column carries the operational caveats,
+   and a responder who never opens the row must still be able to reach the
+   sentence that changes what they collect. */
+td .note{font-size:12.5px;color:var(--muted);display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pick{width:24px;height:24px;border-radius:6px;border:1px solid var(--field-line);
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
   font-size:12px;color:transparent;padding:0}
