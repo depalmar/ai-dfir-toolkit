@@ -503,7 +503,7 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
    11px, which is also why the bare-badge decision further down is safe again
    once this is capped: that comment's premise is "the column header already
    names the scale there", and the header has to be on screen for it to hold. */
-.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 210px);min-height:320px}
+.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 190px);min-height:320px}
 table{border-collapse:collapse;width:100%;min-width:940px}
 th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
 th{position:sticky;top:0;z-index:2;background:var(--panel-2);cursor:pointer;
