@@ -141,6 +141,14 @@ def build_rows(entries):
         # supported_os rather than making blank rows match everything: a cloud-only
         # tool must not appear under `windows` just because its row is unlabelled.
         entry_os = aslist(e.get("supported_os"))
+        # Triage priority is authored on the entry's collection block, so no row
+        # carried it and "show me the p1 paths on this host" was unaskable -
+        # while the collection plan groups by exactly that. Inherited the same
+        # way supported_os is, and for the same reason: the property is true of
+        # the artifact, it is simply recorded once at the level where it applies
+        # to all of them. MCP rows override it below because the schema lets an
+        # individual MCP config carry its own.
+        entry_triage = (e.get("collection") or {}).get("triage_priority", "")
         for kind, items in (e.get("artifacts") or {}).items():
             for a in items:
                 if kind == "registry":
@@ -178,6 +186,7 @@ def build_rows(entries):
                     # hand-set copies of one rule drift, one function does not.
                     "vol": data_sources.volatility_of(kind, a),
                     "retention": a.get("retention", ""),
+                    "triage": entry_triage,
                 })
         for c in (e.get("credentials") or []):
             rows.append({
@@ -199,6 +208,7 @@ def build_rows(entries):
                 # description rather than to volatility.
                 "vol": data_sources.volatility_of("credential", c),
                 "retention": "",
+                "triage": entry_triage,
             })
         for m in (e.get("mcp") or []):
             # Only a config-file row has a path. A database, in-code, server or
@@ -220,6 +230,11 @@ def build_rows(entries):
                 "description": m.get("notes", ""),
                 "vol": data_sources.volatility_of("mcp-config", m),
                 "retention": "",
+                # The schema declares triage_priority on an MCP row as well as on
+                # the entry, and where both exist the row's own is the specific
+                # claim. Falls back to the entry's, so a row never ends up with
+                # no priority at all.
+                "triage": m.get("triage_priority") or entry_triage,
             })
     seen = {}
     for r in rows:
@@ -1192,9 +1207,15 @@ const MECH_MEANING={
 const SOURCES_FOR=(()=>{const m={};
   for(const s of SOURCES)for(const c of s.covers.classes||[])(m[c]=m[c]||[]).push(s.id);
   return m})();
-const GROUPS={cls:'Artifact class',mech:'MCP mechanism',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
-const FIELD={cls:r=>[r.cls],mech:r=>[r.mechanism],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
+// Triage first, because it is the one facet that answers "what do I collect
+// before this host reboots" - the question the whole catalog is ordered around.
+// It sat only in the collection plan, which a reader reaches after picking rows
+// rather than before.
+const GROUPS={triage:'Triage priority',cls:'Artifact class',mech:'MCP mechanism',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
+const FIELD={triage:r=>[r.triage],cls:r=>[r.cls],mech:r=>[r.mechanism],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
 const OPTIONS={
+  // Priority order, not alphabetical - p1 first is the point of the facet.
+  triage:['p1','p2','p3'],
   cls:[...new Set(ROWS.map(r=>r.cls))].sort(),
   // How the servers are defined, which decides what collection even means:
   // copy a file, query a database, read source, or ask the tenant.
@@ -1264,7 +1285,7 @@ window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 let codeWrap=false, codeGrow=false, planMode='tool';
 let view='catalog', query='', unvOnly=false, dense=false,
     sortKey='entry_id', sortDir=1, sel=null, selRule=null, lastFocus=null;
-const filters={cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
+const filters={triage:[],cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
 const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
 // 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
 // into this repo. Read the old key once so anyone who saved picks under it
