@@ -517,25 +517,6 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .planid select{max-width:260px;cursor:pointer}
 .pmeta{color:var(--faint);font-size:11.5px}
 
-/* ---- entry strip ----
-   One row. The first version was 221px tall at 1440x900 and cost three rows of
-   table, against a cap tuned to win back a third of one - the panel undid the
-   density work it sat on top of. It is a signpost, not a dashboard: say what the
-   page is for, offer a way in, then get out of the way. */
-.entrystrip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
-  margin-bottom:10px;font-size:12.5px}
-.estitle{color:var(--muted);margin-right:2px}
-.startbtn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
-  border:1px solid var(--field-line);background:var(--panel);color:var(--ink);
-  border-radius:999px;padding:4px 11px;font-size:12.5px;font-family:inherit;
-  white-space:nowrap}
-.startbtn:hover{background:var(--hover);border-color:var(--accent-border)}
-.startbtn .c{color:var(--faint);font-size:11px}
-#startTool{border:1px solid var(--field-line);background:var(--panel);
-  color:var(--ink);border-radius:999px;padding:4px 9px;font-size:12.5px;
-  font-family:inherit;cursor:pointer;max-width:230px}
-@media(max-width:620px){.entrystrip{gap:6px}.estitle{flex-basis:100%}}
-
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
 /* The height cap is what makes the sticky th below actually stick. overflow-x
@@ -1526,51 +1507,6 @@ function chipsHTML(){
 /* ---------- table & cards ---------- */
 const COLS=[['','pick'],['ID','entry_id'],['Tool','tool'],['Class','cls'],['Artifact','artifact'],
   ['OS','os'],['Value','forensic_value'],['Conf','confidence'],['Notes','description']];
-// First paint used to be 615 rows sorted by catalog ID, with nothing on screen
-// saying what the page is for or offering somewhere to start. This is that
-// missing first step: the thesis in one line, and three real starts with live
-// counts rather than a tour. It hides itself the moment any facet is on, so it
-// costs a returning reader nothing.
-//
-// Built with createElement and textContent rather than an HTML string. Every
-// other view here renders through innerHTML and escapes with esc(), which is
-// sound for catalog data - but tool names are the one value on this strip that
-// comes from a YAML field a contributor edits, and a node that cannot parse
-// markup needs no escaping to be correct.
-function buildEntryStrip(){
-  if(Object.keys(filters).some(g=>filters[g].length)||query||unvOnly)return null;
-  const el=(tag,cls,text)=>{const n=document.createElement(tag);
-    if(cls)n.className=cls; if(text!=null)n.textContent=text; return n};
-  const startBtn=(label,n,g,v)=>{
-    const b=el('button','startbtn',label);
-    b.dataset.g=g; b.dataset.v=v;
-    b.appendChild(el('span','c',String(n)));
-    return b;
-  };
-  const byTool={};
-  for(const r of ROWS)byTool[r.tool]=(byTool[r.tool]||0)+1;
-
-  const strip=el('div','entrystrip');
-  strip.appendChild(el('span','estitle',
-    'What an AI agent left on this host, and in what order to collect it.'));
-
-  // One select rather than the six most-populated tools plus a select. The
-  // buttons were the Tool facet restated in the content column, they ran 77px
-  // to 232px wide because tool names are unbounded, and they wrapped to a
-  // second line. The select reaches all 51 and costs one control.
-  const sel=el('select'); sel.id='startTool';
-  sel.setAttribute('aria-label','Filter to one tool');
-  const opt0=el('option',null,'This host runs…'); opt0.value=''; sel.appendChild(opt0);
-  Object.entries(byTool).sort((a,b)=>b[1]-a[1]).forEach(([t,n])=>{
-    const o=el('option',null,`${t} (${n})`); o.value=t; sel.appendChild(o)});
-  strip.appendChild(sel);
-
-  strip.appendChild(startBtn('Credential locations',
-    ROWS.filter(r=>r.cls==='credential').length,'cls','credential'));
-  strip.appendChild(startBtn('Dies at reboot',
-    ROWS.filter(r=>r.vol==='live').length,'vol','live'));
-  return strip;
-}
 function tableHTML(rows){
   if(!rows.length)return `<div class="empty">Nothing matches those filters.
     <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
@@ -2557,17 +2493,6 @@ function renderMain(){
     });
     main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${tableHTML(rows)}</div>
       <div class="cards">${cardsHTML(rows)}</div>`;
-    // Prepended as a node after the table is written, so the strip never passes
-    // through an HTML string on its way onto the page.
-    const strip=buildEntryStrip();
-    if(strip){
-      main.insertBefore(strip,main.firstChild);
-      strip.querySelectorAll('.startbtn').forEach(b=>b.onclick=()=>{
-        pushNav(); filters[b.dataset.g]=[b.dataset.v]; update();
-      });
-      const tp=strip.querySelector('#startTool');
-      tp.onchange=()=>{if(!tp.value)return; pushNav(); filters.tool=[tp.value]; update()};
-    }
     const sortBy=k=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1}renderMain()};
     $$('#main th[data-k]').forEach(th=>{
       th.onclick=()=>sortBy(th.dataset.k);
