@@ -508,6 +508,15 @@ details.csfull>summary:focus-visible,details.src>summary:focus-visible{
   outline-offset:-2px}
 tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
+/* ---- plan identity ---- */
+.planid{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-bottom:10px}
+.planid input,.planid select{border:1px solid var(--field-line);background:var(--panel);
+  color:var(--ink);border-radius:7px;padding:5px 9px;font-size:12.5px;font-family:inherit}
+.planid #pName{min-width:190px;font-weight:600}
+.planid #pHost{min-width:150px}
+.planid select{max-width:260px;cursor:pointer}
+.pmeta{color:var(--faint);font-size:11.5px}
+
 /* ---- entry strip ----
    One row. The first version was 221px tall at 1440x900 and cost three rows of
    table, against a cap tuned to win back a third of one - the panel undid the
@@ -1313,16 +1322,90 @@ const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
 // into this repo. Read the old key once so anyone who saved picks under it
 // keeps them, then write only the current key from here on.
 const PICKS_KEY='aidfir-picks', PICKS_KEY_OLD='aiart-picks';
-const picks=new Set((()=>{
+// A plan is now a named thing rather than one anonymous array. An incident runs
+// across several hosts and the plan for each is a different list; with a single
+// slot the second host silently overwrote the first, and nothing on screen said
+// which host a list belonged to once it was more than a day old.
+//
+// Plan = {id, name, host, created, updated, anchors:[]}
+// PLANS_KEY holds {[id]: Plan}. picks stays exactly what it was - the active
+// plan's anchors as a Set - so every call site that reads or mutates it is
+// untouched, and only what happens underneath savePicks changed.
+const PLANS_KEY='aidfir-plans', ACTIVE_KEY='aidfir-plan-active';
+const nowISO=()=>new Date().toISOString();
+const newPlanId=()=>'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+// Anchors are stable across builds, row indexes are not - but an artifact can
+// still be removed from the catalog, so drop anchors that no longer resolve.
+const liveAnchors=v=>Array.isArray(v)?v.filter(a=>ROWMAP[a]):[];
+
+let plans=(()=>{
   try{
-    const raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD);
-    const v=JSON.parse(raw||'[]');
-    // Anchors are stable across builds, row indexes are not - but an artifact
-    // can still be removed from the catalog, so drop anchors that no longer resolve.
-    return Array.isArray(v)?v.filter(a=>ROWMAP[a]):[];
-  }catch(e){return[]}
-})());
-function savePicks(){try{localStorage.setItem(PICKS_KEY,JSON.stringify([...picks]))}catch(e){}}
+    const v=JSON.parse(localStorage.getItem(PLANS_KEY)||'null');
+    if(v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length)return v;
+  }catch(e){}
+  // One-time migration. The old key is read and kept, not deleted: if this
+  // build is ever rolled back, the picks a responder made are still where the
+  // previous build looks for them.
+  const raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD);
+  let anchors=[];
+  try{anchors=liveAnchors(JSON.parse(raw||'[]'))}catch(e){}
+  const id=newPlanId(), t=nowISO();
+  return {[id]:{id,name:anchors.length?'Imported picks':'Untitled plan',
+                host:'',created:t,updated:t,anchors}};
+})();
+let activeId=(()=>{
+  const saved=localStorage.getItem(ACTIVE_KEY);
+  if(saved&&plans[saved])return saved;
+  return Object.keys(plans)[0];
+})();
+const activePlan=()=>plans[activeId];
+function savePlans(){
+  try{
+    localStorage.setItem(PLANS_KEY,JSON.stringify(plans));
+    localStorage.setItem(ACTIVE_KEY,activeId);
+  }catch(e){}
+}
+const picks=new Set(liveAnchors((activePlan()||{}).anchors));
+// Persist immediately. Everything else that writes is triggered by the reader
+// doing something, so a freshly migrated plan existed only in memory until the
+// first pick - and a reader who migrated, read, and closed the tab got a new
+// plan id on every visit, with the name they had set on the previous one.
+savePlans();
+function savePicks(){
+  const p=activePlan(); if(!p)return;
+  p.anchors=[...picks]; p.updated=nowISO();
+  savePlans();
+  // Keep the legacy key in step so a rollback does not lose today's work.
+  try{localStorage.setItem(PICKS_KEY,JSON.stringify([...picks]))}catch(e){}
+}
+function switchPlan(id){
+  if(!plans[id]||id===activeId)return;
+  activeId=id;
+  picks.clear();
+  liveAnchors(activePlan().anchors).forEach(a=>picks.add(a));
+  savePlans(); update();
+}
+function createPlan(name){
+  const id=newPlanId(), t=nowISO();
+  plans[id]={id,name:name||'Untitled plan',host:'',created:t,updated:t,anchors:[]};
+  activeId=id; picks.clear(); savePlans(); update();
+}
+// Clearing used to be unrecoverable from the toast - one click, no arming, no
+// undo, and the plan was gone. The anchors are held here instead so the same
+// click can be taken back.
+let lastCleared=null;
+function clearPicks(){
+  if(!picks.size)return;
+  lastCleared={id:activeId,anchors:[...picks]};
+  picks.clear(); savePicks(); update();
+}
+function undoClear(){
+  if(!lastCleared)return;
+  if(plans[lastCleared.id])activeId=lastCleared.id;
+  picks.clear();
+  liveAnchors(lastCleared.anchors).forEach(a=>picks.add(a));
+  lastCleared=null; savePicks(); update();
+}
 
 function badge(v,filled,prefix){
   if(!v)return'';
@@ -1634,7 +1717,23 @@ function planHTML(){
   for(const r of rows)vol[r.vol]=(vol[r.vol]||0)+1;
   const tools=new Set(rows.map(r=>r.entry_id)).size;
   const creds=rows.filter(r=>r.cls==='credential').length;
-  const head=`<div class="planhead"><div><h2>Collection plan</h2>
+  const p=activePlan()||{name:'Untitled plan',host:'',updated:''};
+  const others=Object.values(plans).sort((a,b)=>(b.updated||'').localeCompare(a.updated||''));
+  // Name and host are inputs rather than a dialog: the plan is identified while
+  // it is being built, not in a step someone skips. Both save on input, so there
+  // is no state where a typed name is not yet the plan's name.
+  const idbar=`<div class="planid">
+    <input id="pName" value="${esc(p.name||'')}" placeholder="Plan name"
+      aria-label="Plan name" maxlength="80">
+    <input id="pHost" value="${esc(p.host||'')}" placeholder="Host"
+      aria-label="Host this plan is for" maxlength="80">
+    ${others.length>1?`<select id="pSwitch" aria-label="Switch plan">${others.map(o=>
+      `<option value="${esc(o.id)}"${o.id===activeId?' selected':''}>${esc(o.name||'Untitled plan')}${
+        o.host?' - '+esc(o.host):''} (${(o.anchors||[]).length})</option>`).join('')}</select>`:''}
+    <button class="btn" id="pNew">New plan</button>
+    ${p.updated?`<span class="pmeta">saved ${esc(p.updated.slice(0,16).replace('T',' '))}</span>`:''}
+  </div>`;
+  const head=`<div class="planhead"><div>${idbar}<h2>Collection plan</h2>
     <p>${planMode==='vol'
       ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
       :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p></div>
@@ -2515,6 +2614,13 @@ function renderMain(){
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
+    // Field edits persist without re-rendering: renderMain would rebuild the
+    // input and take the caret with it on every keystroke.
+    const nm=$('#pName'), hs=$('#pHost');
+    if(nm)nm.oninput=()=>{const a=activePlan();if(a){a.name=nm.value;a.updated=nowISO();savePlans()}};
+    if(hs)hs.oninput=()=>{const a=activePlan();if(a){a.host=hs.value;a.updated=nowISO();savePlans()}};
+    const sw=$('#pSwitch'); if(sw)sw.onchange=()=>switchPlan(sw.value);
+    const nw=$('#pNew'); if(nw)nw.onclick=()=>createPlan('');
     $$('#main .segbtn').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
     const cl=$('#cpClear');
     // Two-step, because a plan is assembled one tick at a time across the whole
@@ -2523,7 +2629,7 @@ function renderMain(){
       if(cl.dataset.armed!=='1'){cl.dataset.armed='1';cl.textContent='Clear all - sure?';
         setTimeout(()=>{if(cl.isConnected){cl.dataset.armed='0';cl.textContent='Clear all'}},4000);
         return}
-      picks.clear();savePicks();update();
+      clearPicks();
     };
     $$('#main .rm').forEach(b=>b.onclick=()=>{picks.delete(b.dataset.a);savePicks();update()});
   }
@@ -2558,8 +2664,19 @@ function renderTabs(){
 }
 function renderToast(){
   const t=$('#toast');
-  t.hidden=!picks.size||view==='plan';
-  if(!t.hidden)$('#toastN').textContent=`${picks.size} artifact${picks.size>1?'s':''} picked`;
+  // Stays up on an empty plan while an undo is available. Hiding it the instant
+  // picks hit zero is what made clearing unrecoverable: the only affordance that
+  // could take it back went away with the thing it would have restored.
+  const undoable=!!lastCleared;
+  t.hidden=(!picks.size&&!undoable)||view==='plan';
+  if(t.hidden)return;
+  const showUndo=!picks.size&&undoable;
+  $('#toastN').textContent=showUndo
+    ?`${lastCleared.anchors.length} cleared`
+    :`${picks.size} artifact${picks.size>1?'s':''} picked`;
+  $('#toastOpen').hidden=showUndo;
+  $('#toastClear').hidden=showUndo;
+  $('#toastUndo').hidden=!showUndo;
 }
 function update(){renderRail();renderMain()}
 
@@ -2676,7 +2793,8 @@ $('.tabs').addEventListener('keydown',e=>{
 });
 $('#railReset').onclick=e=>{e.preventDefault();resetAll()};
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
-$('#toastClear').onclick=()=>{picks.clear();savePicks();update()};
+$('#toastClear').onclick=()=>{clearPicks();};
+$('#toastUndo').onclick=()=>{undoClear()};
 $('#themeBtn').onclick=()=>{
   const cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=cur;
@@ -2967,7 +3085,8 @@ def main():
 <div class="drawer" id="drawer" hidden role="dialog" aria-modal="false"></div>
 <div class="toast" id="toast" hidden><span id="toastN"></span>
   <button id="toastOpen" type="button">Open collection plan</button>
-  <a id="toastClear">clear</a></div>
+  <a id="toastClear">clear</a>
+  <a id="toastUndo" hidden>undo</a></div>
 
 <footer>
   <p><strong>Confidence reflects provenance, not conviction.</strong>
