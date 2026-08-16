@@ -2656,7 +2656,16 @@ function renderTabs(){
     b.id='tab-'+b.dataset.v;
     b.setAttribute('aria-controls','main');
     const n=b.querySelector('.n');
-    if(b.dataset.v==='plan'&&n)n.textContent=picks.size;
+    // A count of 0 is not a count, it is a label saying this tab is empty and
+    // can be skipped - on the one tab whose whole job is to be filled. Every
+    // other tab's badge counts a corpus that exists before the reader arrives;
+    // this one counts their own work, so it appears once there is some. The tab
+    // itself stays, and the empty state inside it carries the instruction.
+    if(b.dataset.v==='plan'&&n){
+      n.textContent=picks.size;
+      n.hidden=!picks.size;
+      b.title=picks.size?'':'Tick artifacts in the catalog to build a collection plan';
+    }
   });
   // All six views render into the one container, so the panel is labelled by
   // whichever tab is currently selected rather than there being six panels.
@@ -3045,7 +3054,7 @@ def main():
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
     <button role="tab" data-v="sources">Data sources <span class="n">{len(sources)}</span></button>
     <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
-    <button role="tab" data-v="plan">Collection plan <span class="n">0</span></button>
+    <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
     <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
   </nav>
 </div></div>
