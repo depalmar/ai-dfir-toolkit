@@ -5,12 +5,12 @@ Id: 270e9b12-aaa4-5b47-b9de-72b52bcb6397
 RecreateDirectories: true
 Targets:
     -
-        Name: 'mcp-config.json, lsp-config.json, agents/'
+        Name: 'mcp-config.json, lsp-config.json, agents/. The IDE integration creates this...'
         Category: AIAgents
         Path: 'C:\Users\%user%\.copilot\'
         FileMask: '*'
         Recursive: true
-        Comment: 'AIRT-0003 | mcp-config.json, lsp-config.json, agents/'
+        Comment: 'AIRT-0003 | mcp-config.json, lsp-config.json, agents/. The IDE integration creates this directory too, and an npm CLI install writes nothing into it until first run, so presence is not evidenc'
     -
         Name: 'Execution primitive'
         Category: AIAgents

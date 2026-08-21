@@ -23,6 +23,7 @@ capabilities:
   local_listener: false
   plaintext_credentials: true
   mcp_capable: true
+  screen_capture: true
 risk: high
 confidence: high
 abuse_potential: Custom .agent.md files define autonomous behavior. Token exchange via api.github.com/copilot_internal/v2/token.
@@ -60,13 +61,17 @@ artifacts:
         - macos
         - linux
       artifact_type: config-dir
-      description: mcp-config.json, lsp-config.json, agents/
+      description: >-
+        mcp-config.json, lsp-config.json, agents/. The IDE integration creates
+        this directory too, and an npm CLI install writes nothing into it until
+        first run, so presence is not evidence the CLI is installed and an empty
+        ide/ subdirectory is the common IDE-only shape.
       forensic_value: low
       evidence_type:
         - program-presence
       install_method: Copilot CLI
       confidence: high
-      last_verified: "2026-08-14"
+      last_verified: "2026-08-21"
     - path: ~/.copilot/mcp-config.json
       os:
         - windows
@@ -103,6 +108,77 @@ artifacts:
         - program-presence
       install_method: VS Code
       confidence: high
+    - path: "<repo>/.mcp.json  |  <repo>/.github/mcp.json"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: mcp-config
+      description: >-
+        Workspace MCP servers, loaded in addition to the user config. Arrives
+        with the repository, so a clone can introduce a server the user never
+        configured - review before first agent run.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - persistence
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+      last_verified: "2026-08-21"
+    - path: "<npm-global>\\@github\\copilot-win32-x64\\copilot.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: Native CLI binary behind the npm shim; the platform package is per-arch
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm
+      confidence: high
+      last_verified: "2026-08-21"
+    - path: "<npm-global>\\@github\\copilot-win32-x64\\plugins\\computer-use\\computer-use-mcp.exe  |  CopilotComputerUse.exe"
+      os:
+        - windows
+      artifact_type: binary
+      description: >-
+        Bundled computer-use engine shipped with the CLI. Takes screenshots and
+        drives the desktop through SendInput and UIAutomation, so its presence
+        means the coding agent can observe and act outside the editor.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm
+      confidence: high
+      last_verified: "2026-08-21"
+    - path: "<npm-global>\\@github\\copilot-win32-x64\\plugins\\computer-use\\.mcp.json"
+      os:
+        - windows
+      artifact_type: mcp-config
+      description: >-
+        Plugin manifest registering computer-use as a stdio MCP server; command
+        resolves through ${PLUGIN_ROOT}
+      forensic_value: medium
+      evidence_type:
+        - configuration
+        - execution
+      install_method: npm
+      confidence: high
+      last_verified: "2026-08-21"
+    - path: "<npm-global>\\@github\\copilot-win32-x64\\voice-server.js  |  voice-engine.worker.js  |  pvrecorder"
+      os:
+        - windows
+      artifact_type: binary
+      description: Bundled voice engine and audio capture library; indicates microphone reach
+      forensic_value: medium
+      evidence_type:
+        - execution
+        - program-presence
+      install_method: npm
+      confidence: high
+      last_verified: "2026-08-21"
   network:
     - direction: egress
       indicator: api.github.com, copilot-proxy.githubusercontent.com, api.githubcopilot.com
@@ -253,6 +329,29 @@ mcp:
       Copilot CLI, read natively by the agent host. COPILOT_HOME relocates the
       whole directory, so a responder checking only the default path misses a
       moved config - read the environment before concluding there is none.
+      Created lazily on first server add, so an absence on a host that has the
+      CLI is expected rather than suspicious.
+  - mechanism: config-file
+    config_path: "<repo>/.mcp.json  |  <repo>/.github/mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process at CLI start
+    persistence_trigger: Every CLI invocation inside that workspace
+    triage_priority: p1
+    notes: >-
+      Workspace scope, loaded in addition to the user config and documented by
+      copilot mcp --help. It travels in the repository, so collect it from the
+      working tree and check whether it is committed - a server the user never
+      configured can arrive by clone.
+  - mechanism: config-file
+    config_path: "<npm-global>\\@github\\copilot-win32-x64\\plugins\\computer-use\\.mcp.json"
+    config_key: mcpServers
+    spawn_mechanism: stdio child process
+    persistence_trigger: Plugin load
+    triage_priority: p2
+    notes: >-
+      Ships with the CLI rather than being user-authored, and registers the
+      bundled computer-use engine. Compare against a known-good install: this
+      file is a supply-chain surface, not a user configuration surface.
   - mechanism: config-file
     config_path: "<repo>/.mcp.json"
     config_key: mcpServers
@@ -274,5 +373,8 @@ references:
   - title: "GitHub Copilot documentation"
     url: https://docs.github.com/en/copilot
     accessed: "2026-08-13"
-last_verified: "2026-08-14"
-last_modified: "2026-08-11"
+  - title: "GitHub Copilot CLI 1.0.80 - copilot mcp --help and shipped package contents"
+    url: https://www.npmjs.com/package/@github/copilot
+    accessed: "2026-08-21"
+last_verified: "2026-08-21"
+last_modified: "2026-08-21"
