@@ -64,6 +64,8 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <install>/skyvern-frontend/.env
 <mcpo config> (Claude Desktop format, path set at mcpo launch)
 <models path>/<model>.yaml
+<npm-global>\@github\copilot-win32-x64\plugins\computer-use\.mcp.json
+<npm-global>\@github\copilot-win32-x64\plugins\computer-use\computer-use-mcp.exe  |  CopilotComputerUse.exe
 <nvim stdpath('cache')>/codeium/config.json
 <project>/.env
 <project>/.env  (path passed to `langflow run --env-file`)
@@ -86,6 +88,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <repo>/.kiro/settings/mcp.json
 <repo>/.kiro/steering/*.md
 <repo>/.mcp.json
+<repo>/.mcp.json  |  <repo>/.github/mcp.json
 <repo>/.roo/mcp.json
 <repo>/.tabnine/mcp_servers.json
 <repo>/.warp/.mcp.json
