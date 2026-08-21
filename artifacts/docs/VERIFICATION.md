@@ -966,3 +966,100 @@ eliminate a variable. That experiment has **not been run**. It was designed and
 written down as the decisive next test, and it still needs a Windows host with no
 pre-existing `%APPDATA%\Claude`. A plan described back as an accomplished result
 is exactly the kind of drift this file exists to catch.
+
+---
+
+## 2026-08-21 - AIRT-0003 GitHub Copilot, installed and read on a live Windows host
+
+The host sweep flagged this entry as the most promising correction candidate in
+the catalog: `~/.copilot/` and `config.json` both HIT while **three
+`high`-confidence paths MISSED** on the same machine. That is the exact pattern
+`CLAUDE.md` names as the query that finds real errors, so it was worked first.
+
+**No correction was needed. The entry was right and the reading of it was
+wrong.** Recording that outcome matters as much as recording a fix, because the
+next person to run the sweep will see the same three MISSes.
+
+### What was actually done
+
+`npm install -g @github/copilot` on a Windows 11 host, giving **Copilot CLI
+1.0.80**. Authentication was deliberately **not** performed, so nothing below
+depends on a signed-in session, and the two credential directories were never
+created and never inspected.
+
+### The three MISSes are lazy creation, not wrong paths
+
+| Path | Basis for confirming |
+|---|---|
+| `~/.copilot/mcp-config.json` | `copilot mcp --help` prints its config sources verbatim: `User  ~/.copilot/mcp-config.json`. Four occurrences in the shipped package. |
+| `~/.copilot/mcp-secrets/` | Three occurrences in the shipped package |
+| `~/.copilot/mcp-oauth-config/` | Three occurrences in the shipped package |
+
+The vendor's own binary is the source here, not a search summary and not an
+aggregator, so this clears the bar `CLAUDE.md` sets for `last_verified`.
+
+The entry had already anticipated the absence question through the
+`COPILOT_HOME` registry row. The mechanism turns out to be simpler than that:
+these files are created on first MCP server add, so an absence on a host that
+demonstrably has the CLI is the *expected* state, not a suspicious one. That is
+now written into the `mcp` block rather than left for the next reader to
+rediscover.
+
+### A caveat that changes what the directory proves
+
+The install wrote **nothing** into `~/.copilot`. The directory already existed,
+containing an empty `ide/` and one log file - created by the IDE integration,
+not the CLI, on a host where the CLI had never been installed.
+
+So `~/.copilot/` presence is **not** evidence the Copilot CLI is present. An
+empty `ide/` subdirectory is the common IDE-only shape. A responder reading that
+directory as a CLI indicator would be wrong, and would have been wrong using
+this catalog as written.
+
+### Rows added
+
+Reading the shipped package turned up more than the verification did. Five disk
+rows and two MCP mechanisms:
+
+| Row | Why it matters |
+|---|---|
+| `<repo>/.mcp.json` and `<repo>/.github/mcp.json` | **Workspace** MCP scope, documented by `copilot mcp --help` and absent from the catalog. It travels in the repository, so a clone can introduce a server the user never configured. |
+| `plugins/computer-use/computer-use-mcp.exe`, `CopilotComputerUse.exe` | The CLI **ships a computer-use engine**. See below. |
+| `plugins/computer-use/.mcp.json` | Registers that engine as a stdio server. Vendor-shipped, so it is a supply-chain surface rather than a user-configuration surface - compare against a known-good install. |
+| `copilot.exe` | The native binary behind the npm shim |
+| `voice-server.js`, `voice-engine.worker.js`, `pvrecorder` | Bundled voice engine and audio capture; indicates microphone reach |
+
+### The capability flag, and why only one changed
+
+`screen_capture` was set `true`. The basis is the binary itself: 52 occurrences
+of `screenshot`, plus `SendInput` and `UIAutomation` for desktop control, and
+strings describing a "computer-use engine for direct app UI observation" that
+"cannot perceive or act" without accessibility permission.
+
+That is a material change to what this entry claims. A tool catalogued as
+`coding-agent-ide` ships, by default and with no separate install, the ability
+to screenshot the desktop and synthesise input into any application.
+
+Two changes were considered and **declined**:
+
+- **`browser_control`** was not set. The engine can drive a browser the way it
+  drives any window, but the flag denotes programmatic browser automation
+  (CDP/Playwright-style) and setting it would assert a mechanism the tool does
+  not have. Same reasoning as the ATLAS subtechnique rule - a claim that outruns
+  the evidence is less true, not more precise.
+- **`category`** stays `coding-agent-ide` rather than moving to
+  `computer-use-agent`. Computer use is a bundled plugin, not the tool's
+  identity, and recategorising would misdescribe it and skew the category counts.
+  The capability flag is the right lever.
+
+### Scope limit
+
+Every new row is stamped `windows` only and `last_verified: 2026-08-21`. The
+plugin path embeds the platform package name (`copilot-win32-x64`) and the
+executables are `.exe`, so the macOS and Linux equivalents are **not** claimed.
+The binary does contain macOS strings, which suggests the plugin ships there
+too - that is a lead, not a verified row, and it is left unstamped accordingly.
+
+The two credential directories remain unverified for mode and permissions. That
+needs an authenticated session, which needs the operator's own GitHub
+credentials, and is the obvious next step for whoever has them.

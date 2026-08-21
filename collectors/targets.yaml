@@ -1643,6 +1643,17 @@ targets:
     paths:
       - "~/.copilot/mcp-config.json"
     notes: "mcp-config, forensic_value high, catalog confidence high."
+  - id: art_airt_0003_repo_github_mcp_json
+    name: "GitHub Copilot (Agent Mode / CLI) artifact (AIRT-0003)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - "<repo>/.github/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high."
   - id: art_airt_0004_aider_conf_yml
     name: "Aider artifact (AIRT-0004)"
     repo_cat: "art"
