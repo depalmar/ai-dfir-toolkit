@@ -231,9 +231,10 @@ you cannot open.
 
 ## When verifying paths on a real machine
 
-This is the highest-value work available, because 13 entries are `medium` and 4
+This is the highest-value work available, because 20 entries are `medium` and 4
 are `low` purely because they were sourced from documentation rather than from a
-live host.
+live host. `verification_worklist.py --summary` is the live count; the figures
+in this sentence are a convenience copy and will drift.
 
 **Check existence, permissions, and structure. Never read credential file
 contents.** `~/.claude/.credentials.json`, `~/.codex/auth.json`, and
@@ -259,11 +260,15 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-51 entries, 340 artifacts, 158 credential locations, 61 MCP config
+51 entries, 615 artifacts, 164 credential locations, 64 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 9 telemetry sources.
 Validation clean.
 
-Volatility across the 559 site rows: live 106 · rotating 45 · stable 408
+Volatility across the 615 site rows: live 114 · rotating 53 · stable 448
+
+Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
+same figures into `artifacts/README.md` and CI gates that block, so it is the
+authority; this paragraph is a convenience copy and has drifted before.
 
 Detection content maps to the OWASP LLM Top 10 **2026** list. Eight of the ten
 IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
@@ -273,19 +278,26 @@ names a different category here than it did there -
 Detection content totals 68 rule files / 159 signatures across the nine attack-class
 directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
 
-Confidence: 28 high, 19 medium, 4 low.
+Confidence: 27 high, 20 medium, 4 low.
 Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
 sourcing it turned up a correction rather than a citation - Operator is EOL and
-its only network indicator was a domain that had been sunset. 28/51 carry aliases.
-42/51 carry `last_verified`, and `validate.py` lists the other 9 as never
-verified rather than letting them look fresh.
+its only network indicator was a domain that had been sunset. 30/51 carry aliases.
+50/51 carry `last_verified`, and `validate.py` lists the remaining one as never
+verified rather than letting it look fresh.
 
-That set was once described here as "vendor-hosted entries that could not be
-checked through a repository API". That was wrong. Only three of the remaining
-nine are vendor-hosted - Devin, Copilot Studio and the Claude computer-use demo.
-The rest are installable software: Windsurf, Tabnine, Kiro, Amazon Q, Open WebUI
-and vLLM. They are unverified because nobody has checked them, not because they
-cannot be checked.
+That holdout is **AIRT-0007 Devin**, and `verification_worklist.py` annotates it
+"cloud-hosted, no endpoint paths to check" - its three claims are a browser
+session and two network indicators. So the never-verified count is structural
+rather than a backlog, and driving it to zero is blocked on the Devin/Windsurf
+scoping call below, not on effort.
+
+Do not restore the framing this section used to carry, which described the
+unverified set as entries that "could not be checked through a repository API".
+That was wrong, and it was wrong in the direction that matters: it dressed up an
+unworked backlog as a technical limit. Most of that set - Windsurf, Tabnine,
+Kiro, Amazon Q, Open WebUI, vLLM - was ordinary installable software, and all of
+it has since been verified. When an entry is unchecked, say nobody has checked
+it.
 
 **Cursor** and **Claude Desktop** left that list on 2026-08-14, verified on a
 Windows host that had both installed. See `docs/VERIFICATION.md` for the full
@@ -310,7 +322,7 @@ copy wins on a clean packaged install. Collect **both**, plus the manifest from
 uninstall. Reasoning from `unvirtualizedResources` to "writes are not
 virtualized" is the specific trap here - it was refuted five times over in
 verification, and it is the error this catalog made first.
-Risk: 11 critical, 24 high, 12 medium, 2 low.
+Risk: 11 critical, 27 high, 12 medium, 1 low.
 
 ## Site generation
 
