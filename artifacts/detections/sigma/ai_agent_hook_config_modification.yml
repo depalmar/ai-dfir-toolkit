@@ -1,0 +1,41 @@
+title: Claude Code Settings or Hooks File Created or Modified
+id: cd43df78-2afd-585d-b6e5-74548a881311
+status: experimental
+description: |
+  Detects a write to a Claude Code settings file. The file carries hooks: shell
+  commands the agent runs automatically on lifecycle events such as a session
+  start or a tool call. A hook fires with the developer's privileges every time
+  the agent is used, which makes it both a persistence mechanism and an
+  execution primitive. The repository-scoped copy travels with a clone. GTIG
+  reported in September 2026 that MIDNIGHT NEPTUNE (formerly UNC1069) poisoned
+  internal repository configurations and altered Claude CLI hooks, then deployed
+  the SOMBERMEME backdoor on developer interaction. It reported in the same
+  publication that UNC6780's DUSTMAKER drops files into .claude/ workspace
+  directories. Treat this as change tracking. Review a hooks block that appeared
+  or changed without a matching commit by the developer.
+references:
+    - https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/claude-code.yml
+author: AI DFIR Toolkit contributors
+date: 2026-09-30
+tags:
+    - attack.persistence
+    - attack.t1546
+    - attack.execution
+    - attack.atlas.t0081
+    - owasp.asi04
+    - owasp.asi05
+logsource:
+    category: file_event
+detection:
+    selection:
+        TargetFilename|endswith:
+            - '\.claude\settings.json'
+            - '\.claude\settings.local.json'
+            - '/.claude/settings.json'
+            - '/.claude/settings.local.json'
+    condition: selection
+falsepositives:
+    - Developers editing their own agent settings
+    - Claude Code rewriting its own settings on upgrade or when the user approves a permission
+level: low

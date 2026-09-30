@@ -676,42 +676,58 @@ Three frameworks matter for AI incident response. None alone is sufficient, so s
 
 ### 5.1 MITRE ATLAS
 
-ATLAS (Adversarial Threat Landscape for Artificial Intelligence Systems) reached v5.4.0 in February 2026. It is organized into 16 tactics, with the technique set growing across the 5.x releases (the v5.1.0 baseline listed 84 techniques, 56 sub-techniques, 32 mitigations, and 42 case studies, and each subsequent release has added more). It inherits most of its tactics from ATT&CK and adds AI-unique tactics including **AI Model Access** (gaining access to target models) and **ML Attack Staging** (preparing adversarial inputs, creating backdoored datasets, engineering bypass prompts).
+ATLAS (Adversarial Threat Landscape for Artificial Intelligence Systems) now ships monthly. This repository pins release 2026.09 (15 Sep 2026): 16 tactics, 120 techniques, 88 sub-techniques, 40 mitigations and 73 case studies, in `artifacts/schema/technique-ids.json`, and CI rejects any ATLAS id written anywhere in the repository that the pin does not contain. It inherits most of its tactics from ATT&CK and adds AI-unique ones, including **AI Model Access** (gaining access to target models) and **AI Attack Adaptation** (AML.TA0001; called AI Attack Staging, and before that ML Attack Staging, in earlier releases).
 
-Recent high-relevance additions to track:
+Recent high-relevance changes to track:
 
-- `AML.T0086`: Exfiltration via AI Agent Tool Invocation (added in v5.0.0, October 2025)
-- `AML.T0104`: Publish Poisoned AI Agent Tool (added in v5.4.0, February 2026; this is the MITRE-confirmed identifier for malicious MCP-style tools, sometimes referred to loosely as "AI Agent Tool Poisoning")
-- LLM Jailbreak technique (`AML.T0054`), with expanded case-study coverage of agentic attacks
+- `AML.T0086`: Exfiltration via AI Agent Tool Invocation.
+- `AML.T0115.002`: Publish Poisoned AI Artifacts: AI Agent Tools. ATLAS 2026.07 folded the earlier stand-alone "Publish Poisoned AI Agent Tool" technique into T0115 as a sub-technique, alongside Datasets (.000) and Models (.001). Mapping a malicious MCP server published to a registry belongs here. A tool mutated after approval is `AML.T0110` AI Agent Tool Poisoning.
+- `AML.T0116`-`AML.T0128` (2026.08): the autonomous-operations techniques. They include Autonomous Reconnaissance, Autonomous Attack-Path Adaptation, agent-to-agent communication (`AML.T0118`) and Autonomous Attack Orchestration (`AML.T0124`). ATLAS case study `AML.CS0069` maps GTG-1002 onto them.
+- `AML.T0132` Misconfigured or Publicly Exposed AI Services (2026.09): the exposed-listener class this catalog's local-listener rows exist for.
+- LLM Jailbreak (`AML.T0054`), with expanded case-study coverage of agentic attacks.
 
-| Attack | ATLAS | OWASP |
-|--------|-------|-------|
-| Direct prompt injection | T0051.000 | LLM01 |
-| Indirect prompt injection | T0051.001 | LLM01 |
-| Training data poisoning | T0020 | LLM04 |
-| Model supply chain compromise | T0010 | LLM03 |
-| Backdoored models | T0018 | LLM04 |
-| RAG poisoning | T0020 + RAG-specific | LLM08 |
-| Model extraction | T0024, T0005 | LLM10 |
-| Tool poisoning (MCP-style) | T0104 | LLM06 |
-| System prompt extraction | T0056 | LLM07 |
-| DoS / cost-based consumption | T0029 | LLM10 |
-| Exfiltration via agent tools | T0086 | LLM02 |
+| Attack | ATLAS | OWASP LLM 2026 | OWASP Agentic |
+|--------|-------|----------------|---------------|
+| Direct prompt injection | T0051.000 | LLM01 | ASI01 |
+| Indirect prompt injection | T0051.001 | LLM01 | ASI01 |
+| Training data poisoning | T0020 | LLM05 | - |
+| Model supply chain compromise | T0010 | LLM04 | ASI04 |
+| Backdoored models | T0018 | LLM05 | ASI04 |
+| RAG poisoning | T0020 + RAG-specific | LLM09 | ASI06 |
+| Model extraction | T0024, T0005 | LLM06 | - |
+| Tool poisoning (MCP-style) | T0115.002, T0110 | LLM04 | ASI04 |
+| Hidden context / system prompt extraction | T0056 | LLM08 | - |
+| Agent memory poisoning | T0080.000 | LLM01 | ASI06 |
+| DoS / cost-based consumption | T0029, T0034 | LLM06 | - |
+| Exfiltration via agent tools | T0086 | LLM02 | ASI02 |
+| Agent-generated command execution | T0053 | LLM03 | ASI05 |
 
-### 5.2 OWASP Top 10 for LLM Applications (2025)
+### 5.2 OWASP Top 10 for LLM Applications (2026) and for Agentic Applications (2026)
 
-The 2025 edition introduced two new categories reflecting attack surface maturation: **LLM07 (System Prompt Leakage)** and **LLM08 (Vector and Embedding Weaknesses)**. Each category maps directly to forensic investigation procedures: what evidence to collect and where.
+The 2026 LLM list (4 Aug 2026) kept the ten categories but renumbered eight of them. Read a 2025 ID from an older report through the table in `artifacts/schema/owasp.json` before comparing it with anything here: `LLM03` was Supply Chain in 2025 and is Excessive Agency in 2026. Each category maps to a forensic question, meaning what evidence to collect and where:
 
-- **LLM01 Prompt Injection:** collect prompt logs, input/output pairs, conversation histories, RAG retrieval logs. Reconstruct whether direct or indirect.
-- **LLM02 Sensitive Information Disclosure:** API response logs, DLP scans on outputs, distinguish leak-from-memorization vs leak-from-retrieval.
-- **LLM03 Supply Chain:** verify AIBOM, compare model checksums against known-good, audit dependency versions and provenance.
-- **LLM04 Data and Model Poisoning:** compare model behavior against pre-poisoning baseline, analyze training data lineage.
-- **LLM05 Improper Output Handling:** trace LLM output through downstream processing to identify where sanitization failed. Check WAF and DB query logs.
-- **LLM06 Excessive Agency:** audit every tool call the agent made in the incident window, verify authorization scope.
-- **LLM07 System Prompt Leakage:** search output logs for prompt content patterns, assess impact of revealed credentials.
-- **LLM08 Vector and Embedding Weaknesses:** audit vector DB for unauthorized modifications, verify embedding integrity.
-- **LLM09 Misinformation:** document instances, trace to training data or retrieval failures.
-- **LLM10 Unbounded Consumption:** analyze API usage patterns, calculate financial impact.
+- **LLM01 Prompt Injection:** collect prompt logs, input/output pairs, conversation histories and RAG retrieval logs. Reconstruct whether the injection was direct or indirect.
+- **LLM02 Sensitive Information Disclosure:** collect API response logs and run DLP scans on outputs. Distinguish a leak from memorisation from a leak from retrieval.
+- **LLM03 Excessive Agency:** audit every tool call the agent made in the incident window, and verify each against its authorisation scope.
+- **LLM04 Supply Chain:** verify the AIBOM, compare model checksums against known-good, and audit dependency versions and provenance, including MCP servers.
+- **LLM05 Data and Model Poisoning:** compare model behaviour against a pre-poisoning baseline, and analyse training data lineage.
+- **LLM06 Unbounded Consumption:** analyse API usage patterns and calculate the financial impact.
+- **LLM07 Misinformation:** document each instance and trace it to training data or a retrieval failure.
+- **LLM08 Hidden Context Exposure:** search output logs for system prompt, tool schema and developer-instruction content, and assess the impact of anything revealed. It was LLM07 System Prompt Leakage in 2025, and its scope is now wider.
+- **LLM09 Vector and Embedding Weaknesses:** audit the vector DB for unauthorised modifications, and verify embedding integrity.
+- **LLM10 Improper Output Handling:** trace LLM output through downstream processing to find where sanitisation failed. Check WAF and DB query logs.
+
+The **OWASP Top 10 for Agentic Applications** (December 2025, ASI01-ASI10) covers risks that exist because the application acts. For each one, the evidence you need is on the endpoint and in the agent's own stores:
+
+- **ASI01 Agent Goal Hijack:** collect the content the agent ingested before it changed course: the transcript, retrieved documents, tool results.
+- **ASI02 Tool Misuse and Exploitation:** reconstruct the tool-call sequence from session logs and the MCP config that authorised it.
+- **ASI03 Identity and Privilege Abuse:** inventory every credential the agent held (see the catalog's credential rows), then scope provider-side activity per token.
+- **ASI04 Agentic Supply Chain Vulnerabilities:** preserve MCP configs, extension directories and package caches before remediation removes them.
+- **ASI05 Unexpected Code Execution:** process lineage from the agent binary is the evidence. Collect Sysmon EID 1 or its platform equivalent.
+- **ASI06 Memory and Context Poisoning:** image memory stores and rules files before a restart. The poisoned entry is the persistence mechanism.
+- **ASI07-ASI10:** Insecure Inter-Agent Communication, Cascading Failures, Human-Agent Trust Exploitation and Rogue Agents. These need multi-agent message logs and approval records that few tools persist today. Record the gap rather than assuming the evidence exists.
+
+OWASP's Appendix A cross-maps each ASI entry to LLM IDs using the **2025** numbering. `owasp.json` carries both the published values and their 2026 translation.
 
 ### 5.3 NIST AI RMF
 
@@ -753,7 +769,7 @@ There is no single scanner that catches all AI/ML attacks. Defense requires laye
 
 ### 6.3 XDR/SIEM detection coverage
 
-This repository provides deployable rules for everything in this guide. It contains **68 rule files / 159 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage, and a cross-tool endpoint set scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends.
+This repository provides deployable rules for everything in this guide. It contains **70 rule files / 161 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage, and a cross-tool endpoint set scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends.
 
 Recommended ingestion priorities for any SIEM/XDR program, ordered by signal-to-noise:
 
@@ -951,7 +967,9 @@ IR teams are increasingly high-value targets because they touch compromised syst
 ### Primary references
 
 - MITRE ATLAS: [atlas.mitre.org](https://atlas.mitre.org/)
-- OWASP Top 10 for LLM Applications (2025): [genai.owasp.org/llm-top-10/](https://genai.owasp.org/llm-top-10/)
+- OWASP Top 10 for LLM Applications (2026): [genai.owasp.org/llm-top-10/](https://genai.owasp.org/llm-top-10/)
+- OWASP Top 10 for Agentic Applications (2026): [genai.owasp.org](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+- AI Incident Database (AIID): [incidentdatabase.ai](https://incidentdatabase.ai/), data CC BY-SA 4.0
 - NIST AI RMF 1.0: [nist.gov/itl/ai-risk-management-framework](https://www.nist.gov/itl/ai-risk-management-framework)
 - NIST AI 100-2 (Adversarial ML Taxonomy): [doi.org/10.6028/NIST.AI.100-2e2025](https://doi.org/10.6028/NIST.AI.100-2e2025)
 - CISA / Five Eyes guidance on secure AI integration in operational technology (December 2025)

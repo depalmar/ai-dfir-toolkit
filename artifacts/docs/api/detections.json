@@ -20,7 +20,9 @@
     "level": "high",
     "tags": [
       "attack.credential_access",
-      "attack.t1552.001"
+      "attack.t1552.001",
+      "attack.atlas.t0083",
+      "attack.atlas.t0055"
     ],
     "logsource": {
       "category": "file_access"
@@ -37,6 +39,23 @@
     ],
     "logsource": {
       "category": "process_creation"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_agent_hook_config_modification.yml",
+    "id": "cd43df78-2afd-585d-b6e5-74548a881311",
+    "title": "Claude Code Settings or Hooks File Created or Modified",
+    "level": "low",
+    "tags": [
+      "attack.persistence",
+      "attack.t1546",
+      "attack.execution",
+      "attack.atlas.t0081",
+      "owasp.asi04",
+      "owasp.asi05"
+    ],
+    "logsource": {
+      "category": "file_event"
     }
   },
   {
@@ -77,6 +96,25 @@
     "tags": [
       "attack.execution",
       "attack.t1059"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
+  },
+  {
+    "file": "detections/sigma/ai_cli_permission_bypass_invocation.yml",
+    "id": "bb0847db-e7dc-5690-ab79-68764f5a1f8c",
+    "title": "AI Coding CLI Invoked With Permission Bypass by a Script or Package Manager",
+    "level": "high",
+    "tags": [
+      "attack.execution",
+      "attack.t1059",
+      "attack.credential_access",
+      "attack.t1552.001",
+      "attack.atlas.t0053",
+      "attack.atlas.t0098",
+      "owasp.asi05",
+      "owasp.asi02"
     ],
     "logsource": {
       "category": "process_creation"

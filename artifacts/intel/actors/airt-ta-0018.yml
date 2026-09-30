@@ -1,0 +1,22 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0018 - GTG-50029
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0018
+name: GTG-50029
+kind: unattributed-cluster
+motivation:
+- hacktivism
+summary: Anthropic's cluster for a single French-speaking hacktivist who used Claude to build
+  exploits, a key-validating scanner and a doxxing platform against European political parties,
+  media and think tanks.
+confidence: medium
+basis: A single reporting party, with a published indicator set.
+external_ids:
+  vendor_cluster:
+  - GTG-50029
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50029 Hacktivists targeted
+    European political and affiliated entities'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50029-hacktivists-targeted-european-political-and-affiliated-entities

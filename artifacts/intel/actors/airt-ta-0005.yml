@@ -1,0 +1,51 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0005 - UNC6780
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0005
+name: UNC6780
+aliases:
+- name: TeamPCP
+  source: GTIG; self-claimed
+kind: criminal
+motivation:
+- financial
+summary: 'GTIG''s cluster for a financially motivated supply-chain operator. In 2026 it compromised
+  developer tooling and AI plumbing: Trivy, Checkmarx, the LiteLLM gateway, and trojanised
+  forks of MCP servers. Its DUSTMAKER stealer writes into the workspace directories AI coding
+  assistants read.'
+confidence: medium
+basis: One reporting party across two reports. The actor claimed responsibility for some compromises,
+  which corroborates the link but not the details.
+external_ids:
+  vendor_cluster:
+  - UNC6780
+malware:
+- DUSTMAKER
+- SANDCLOCK
+abuses:
+- AIRT-0001
+- AIRT-0002
+sightings:
+- date: '2026-05-11'
+  reporter: GTIG
+  summary: Claimed supply-chain compromises of Trivy, Checkmarx and LiteLLM through compromised
+    PyPI packages and malicious pull requests, embedding the SANDCLOCK credential stealer
+    to lift AWS keys and GitHub tokens from build environments.
+  atlas:
+  - AML.T0010
+  - AML.T0055
+  owasp_agentic:
+  - ASI04
+  victims:
+    sectors:
+    - software-supply-chain
+    basis: GTIG.
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access
+references:
+- title: GTIG - Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations,
+    and Initial Access (11 May 2026)
+  url: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai

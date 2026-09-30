@@ -3,7 +3,7 @@
   "spec_version": "cacao-2.0",
   "id": "playbook--2c300330-018d-434b-9e94-cb0418380266",
   "name": "AI-DFIR: MCP Server Compromise Containment",
-  "description": "Contain a compromised, poisoned, or rug-pulled Model Context Protocol server. Preserves MCP configuration and tool-invocation evidence first, then removes the malicious server from every agent client, revokes credentials the server could reach, and blocks its egress. Covers the tool-poisoning and silent-redefinition (MCPoison, CVE-2025-54136) class as well as MCP server RCE (mcp-remote CVE-2025-6514, MCP Inspector CVE-2025-49596). Maps to MITRE ATLAS AML.T0104 Publish Poisoned AI Agent Tool and AML.T0086 Exfiltration via AI Agent Tool Invocation.",
+  "description": "Contain a compromised, poisoned, or rug-pulled Model Context Protocol server. Preserves MCP configuration and tool-invocation evidence first, then removes the malicious server from every agent client, revokes credentials the server could reach, and blocks its egress. Covers the tool-poisoning and silent-redefinition (MCPoison, CVE-2025-54136) class as well as MCP server RCE (mcp-remote CVE-2025-6514, MCP Inspector CVE-2025-49596). Maps to MITRE ATLAS AML.T0115.002 Publish Poisoned AI Artifacts: AI Agent Tools and AML.T0086 Exfiltration via AI Agent Tool Invocation.",
   "playbook_types": [
     "mitigation"
   ],
@@ -33,9 +33,9 @@
   ],
   "external_references": [
     {
-      "name": "MITRE ATLAS AML.T0104 - Publish Poisoned AI Agent Tool",
+      "name": "MITRE ATLAS AML.T0115.002 - Publish Poisoned AI Artifacts: AI Agent Tools",
       "source": "MITRE ATLAS v5.4.0, February 2026",
-      "url": "https://atlas.mitre.org/techniques/AML.T0104"
+      "url": "https://atlas.mitre.org/techniques/AML.T0115.002"
     },
     {
       "name": "A Timeline of MCP Security Breaches",

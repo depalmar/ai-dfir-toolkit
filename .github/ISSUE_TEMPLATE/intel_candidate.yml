@@ -1,0 +1,57 @@
+name: Threat-intel candidate
+description: A report, incident or advisory that may belong in the actor profiles or case studies
+title: "[intel] "
+labels: ["intel-candidate"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Facts and links only. AIID and OWASP material is CC BY-SA 4.0 and this repository's data is CC BY 4.0, so record ids, dates, names and URLs - not copied prose.
+  - type: input
+    id: source
+    attributes:
+      label: Primary source URL
+      description: The reporting party's own page, not a news summary of it
+    validations:
+      required: true
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporting party
+      placeholder: GTIG / CERT-UA / vendor research team
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: What the source claims, in your words
+    validations:
+      required: true
+  - type: textarea
+    id: attribution
+    attributes:
+      label: Attribution as stated
+      description: Quote the attributing party's wording and stated confidence verbatim. Leave blank if unattributed.
+  - type: input
+    id: tools
+    attributes:
+      label: Catalogued tools involved
+      placeholder: AIRT-0001
+  - type: textarea
+    id: indicators
+    attributes:
+      label: Published indicators
+      description: A case study needs at least one. Without any, this becomes an actor sighting.
+  - type: textarea
+    id: corroboration
+    attributes:
+      label: Independent corroboration
+      description: A second source that does not just repeat the first. Single-source is medium confidence at most.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before it reaches the catalog
+      options:
+        - label: Primary source read, not a summary
+        - label: Adversarial pass done (what would make this wrong?)
+        - label: Facts-only from CC BY-SA sources

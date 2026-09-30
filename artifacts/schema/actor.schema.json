@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "actor.schema.json",
+  "title": "AI DFIR threat actor profile",
+  "description": "An actor named by a government or vendor report - an attributed group or a reporter-designated cluster. Unnamed operators stay in their case study. Techniques, victims, IOCs, detections and first/last seen are NOT authored here: intel_graph.py derives them from the linked case studies and sightings, so a profile cannot contradict its own evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "summary",
+    "confidence",
+    "basis",
+    "references"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^AIRT-TA-[0-9]{4}$",
+      "description": "Permanent, like AIRT ids."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "source"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "state-nexus",
+        "criminal",
+        "commercial",
+        "unattributed-cluster"
+      ]
+    },
+    "nexus": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "Only when an attributing party states one."
+    },
+    "motivation": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "espionage",
+          "financial",
+          "destruction",
+          "influence",
+          "hacktivism",
+          "commercial-promotion"
+        ]
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "basis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contested": {
+      "type": "string"
+    },
+    "external_ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attack_campaign": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^C[0-9]{4}$"
+          }
+        },
+        "attack_group": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^G[0-9]{4}$"
+          }
+        },
+        "atlas_case_study": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^AML\\.CS[0-9]{4}$"
+          }
+        },
+        "aiid": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "cve": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CVE-[0-9]{4}-[0-9]{4,7}$"
+          }
+        },
+        "ghsa": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^GHSA(-[23456789cfghjmpqrvwx]{4}){3}$"
+          }
+        },
+        "mit_risk_domain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-7]\\.[0-9]$"
+          }
+        },
+        "vendor_cluster": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "malware": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "abuses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^AIRT-[0-9]{4}$"
+      },
+      "description": "Catalogued tools the actor is reported to have used or targeted."
+    },
+    "sightings": {
+      "type": "array",
+      "description": "Reported AI use that does not meet the case-study bar (no indicators published). Each is one report's claim.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "reporter",
+          "summary",
+          "reference"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"
+          },
+          "reporter": {
+            "type": "string",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "atlas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^AML\\.T[0-9]{4}(\\.[0-9]{3})?$"
+            }
+          },
+          "attack": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
+            }
+          },
+          "owasp_agentic": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ASI(0[1-9]|10)$"
+            }
+          },
+          "abuses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^AIRT-[0-9]{4}$"
+            }
+          },
+          "ai_services": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "victims": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "sectors": {
+                "type": "array",
+                "items": {
+                  "$ref": "intel-vocab.json#/$defs/sector"
+                }
+              },
+              "countries": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                }
+              },
+              "org_count": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "qualifier"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "enum": [
+                      "exact",
+                      "approx",
+                      "at-least"
+                    ]
+                  }
+                }
+              },
+              "basis": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "description": "Omit any field the source does not state. A guessed sector becomes somebody's wrong victimology chart."
+          },
+          "reference": {
+            "type": "string",
+            "pattern": "^https://"
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "url"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "accessed": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

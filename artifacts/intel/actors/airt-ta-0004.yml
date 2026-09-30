@@ -1,0 +1,65 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0004 - MIDNIGHT NEPTUNE
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0004
+name: MIDNIGHT NEPTUNE
+aliases:
+- name: UNC1069
+  source: GTIG (former designation)
+- name: MASAN
+  source: GTIG
+kind: state-nexus
+nexus: KP
+motivation:
+- financial
+summary: GTIG's name for financially motivated North Korea-nexus clusters focused on cryptocurrency
+  theft. Reported AI use has moved from researching wallet locations with Gemini in 2025 to
+  poisoning repository configuration and Claude Code hooks to deliver the SOMBERMEME backdoor
+  in 2026.
+confidence: medium
+basis: One reporting party across two reports.
+external_ids:
+  vendor_cluster:
+  - UNC1069
+malware:
+- SOMBERMEME
+abuses:
+- AIRT-0001
+sightings:
+- date: '2025-11-05'
+  reporter: GTIG
+  summary: Used Gemini to research cryptocurrency concepts and where wallet application data
+    is stored, to generate lures including Spanish-language ones, and to develop theft code.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - Gemini
+  victims:
+    sectors:
+    - cryptocurrency
+    basis: GTIG.
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- date: '2026-09-08'
+  reporter: GTIG
+  summary: Used commercial and open-weight models, including DeepSeek-Coder, to build Python
+    RATs and lateral-movement scripts. Poisoned repository configurations and altered Claude
+    CLI hooks to deploy SOMBERMEME on developer interaction.
+  atlas:
+  - AML.T0016.002
+  - AML.T0081
+  owasp_agentic:
+  - ASI04
+  - ASI05
+  abuses:
+  - AIRT-0001
+  ai_services:
+  - DeepSeek-Coder
+  - Claude Code
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+references:
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai

@@ -1,0 +1,33 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0002 - GTG-1002
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0002
+name: GTG-1002
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+summary: Anthropic's designation for a cluster it assessed with high confidence to be a Chinese
+  state-sponsored group. The cluster built a framework around Claude Code and MCP tools that
+  ran most of an intrusion campaign against about thirty organisations. MITRE catalogues the
+  activity as ATT&CK campaign C0062 and ATLAS case study AML.CS0069.
+confidence: medium
+basis: One reporting party, the provider whose product was abused. MITRE's adoption corroborates
+  that the campaign happened, not the attribution or the autonomy figures.
+contested: The degree of autonomy was publicly questioned by independent researchers. See
+  AIRT-CS-0004.
+external_ids:
+  attack_campaign:
+  - C0062
+  atlas_case_study:
+  - AML.CS0069
+abuses:
+- AIRT-0001
+references:
+- title: Anthropic - Disrupting the first reported AI-orchestrated cyber espionage campaign
+    (13 Nov 2025)
+  url: https://www.anthropic.com/news/disrupting-AI-espionage
+- title: MITRE ATLAS - AML.CS0069
+  url: https://atlas.mitre.org/studies/AML.CS0069

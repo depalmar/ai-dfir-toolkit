@@ -1,0 +1,48 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0008 - APT41
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0008
+name: APT41
+aliases:
+- name: Brass Typhoon
+  source: MITRE ATT&CK G0096
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+- financial
+summary: PRC-backed group that GTIG observed using Gemini throughout August 2025 for C++ and
+  Go development, including an OSSTUN command-and-control framework, and later for tooling
+  development and code translation.
+confidence: medium
+basis: One reporting party across two reports.
+external_ids:
+  attack_group:
+  - G0096
+sightings:
+- date: 2025-08
+  reporter: GTIG
+  summary: Used Gemini for C++ and Go development of the OSSTUN C2 framework and for obfuscation
+    help.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- date: '2026-02-12'
+  reporter: GTIG
+  summary: Used Gemini to accelerate tooling development, troubleshoot in real time and translate
+    code.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use
+references:
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- title: 'GTIG - AI Threat Tracker: Distillation, Experimentation, and (Continued) Integration
+    of AI for Adversarial Use (12 Feb 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use

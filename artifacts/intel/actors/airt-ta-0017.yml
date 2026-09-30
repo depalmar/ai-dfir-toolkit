@@ -1,0 +1,22 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0017 - GTG-50020
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0017
+name: GTG-50020
+kind: criminal
+motivation:
+- financial
+summary: Anthropic's cluster for a Russian-speaking, financially motivated actor that moved
+  from hotel-booking and fintech intrusions to running an autonomous exploitation pipeline
+  against around 30 AI companies in about four days.
+confidence: medium
+basis: A single reporting party, with a published indicator set.
+external_ids:
+  vendor_cluster:
+  - GTG-50020
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50020 From hotel bookings
+    to the AI supply chain'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50020-from-hotel-bookings-to-the-ai-supply-chain

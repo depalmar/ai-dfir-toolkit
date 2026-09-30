@@ -58,3 +58,6 @@ references:
     url: https://www.usenix.org/conference/usenixsecurity25/presentation/zou-poisonedrag
   - title: "USENIX - PoisonedRAG paper (PDF)"
     url: https://www.usenix.org/system/files/usenixsecurity25-zou-poisonedrag.pdf
+
+owasp_agentic:
+  - ASI06

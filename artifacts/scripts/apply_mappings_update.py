@@ -28,6 +28,11 @@ SECTION_HEADING = "## Endpoint (cross-tool)"
 
 # Mapped from each rule's own scope. ATLAS ids use the short form already used
 # throughout this file (T0053 rather than AML.T0053).
+# The OWASP values below are 2025 IDs - this script predates the 2026 remap
+# (remap_owasp_2026.py). Every row is internally consistent with the 2025 list,
+# so Langflow's LLM03 here is 2025 Supply Chain, which MAPPINGS now correctly
+# shows as 2026 LLM04. It is kept as a record of the one-off update it made; do
+# not re-run it, or it will write 2025 IDs back into a 2026 table.
 RULES = [
     ("ai_agent_mcp_config_modification.yml", "T0081", "LLM06", "—"),
     ("ai_agent_spawning_shell.yml", "T0053", "LLM06", "—"),

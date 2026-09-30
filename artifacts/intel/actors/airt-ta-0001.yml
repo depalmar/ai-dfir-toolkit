@@ -1,0 +1,67 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0001 - APT28
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0001
+name: APT28
+aliases:
+- name: Fancy Bear
+  source: MITRE ATT&CK G0007
+- name: Forest Blizzard
+  source: Microsoft
+- name: FROZENLAKE
+  source: GTIG
+- name: UAC-0001
+  source: CERT-UA
+kind: state-nexus
+nexus: RU
+motivation:
+- espionage
+summary: 'Russian military intelligence (GRU unit 26165) group. It is the first state actor
+  publicly reported running LLM-querying malware in live operations: PROMPTSTEAL, which CERT-UA
+  tracks as LAMEHUG, asked a hosted model for collection commands against Ukrainian targets.
+  Earlier AI use reported by Microsoft was research and scripting assistance.'
+confidence: high
+basis: 'Attribution of the group itself is long-standing and multi-source (ATT&CK G0007).
+  Its LLM use is reported by three independent parties: CERT-UA, GTIG and Microsoft.'
+contested: CERT-UA attributes LAMEHUG to UAC-0001 (APT28) with moderate confidence. The malware
+  behaviour is better established than the attribution.
+external_ids:
+  attack_group:
+  - G0007
+malware:
+- PROMPTSTEAL
+- LAMEHUG
+sightings:
+- date: '2024-02-14'
+  reporter: Microsoft Threat Intelligence
+  summary: Used LLMs to research satellite communication and radar technologies, and for basic
+    scripting assistance.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - OpenAI models
+  reference: https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/
+- date: 2025-06
+  reporter: GTIG
+  summary: Deployed PROMPTSTEAL against Ukraine. It queries Qwen2.5-Coder through the Hugging
+    Face API for reconnaissance and document-collection commands, then runs them.
+  atlas:
+  - AML.T0096
+  - AML.T0102
+  ai_services:
+  - Hugging Face inference API
+  victims:
+    countries:
+    - UA
+    basis: 'GTIG: new malware against Ukraine.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+references:
+- title: 'CERT-UA #16039 - LAMEHUG (17 Jul 2025)'
+  url: https://cert.gov.ua/article/6284730
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- title: Microsoft Threat Intelligence - Staying ahead of threat actors in the age of AI (14
+    Feb 2024)
+  url: https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/

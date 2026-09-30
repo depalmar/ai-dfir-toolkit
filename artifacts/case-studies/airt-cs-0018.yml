@@ -1,0 +1,243 @@
+# AI agent artifact case study
+# AIRT-CS-0018 - GTG-20006 - Russian State-Nexus Espionage Run Through AI Workflows
+# Indicators: Anthropic September 2026 IOC release, cyber-operations rows only, values as published (defanged).
+
+id: AIRT-CS-0018
+title: GTG-20006 - Russian State-Nexus Espionage Run Through AI Workflows
+date_range: Dec 2025 to Aug 2026
+disclosed: '2026-09-10'
+affects: Claude models and Claude Code skills on the actor's side - no catalogued tool on
+  victim hosts
+confidence: medium
+basis: A single reporting party, the provider whose models were used, with a published indicator
+  set of 55 domains, addresses, file names and hashes. The link to Midnight Blizzard is Anthropic's
+  statement that its attribution is consistent with public reporting. It is not an independent
+  attribution and is recorded as such.
+contested: Anthropic ties the cluster to Midnight Blizzard only by consistency with public
+  reporting. Treat the Midnight Blizzard link as an assessment, not an identity.
+atlas:
+- AML.T0016.002
+- AML.T0103
+- AML.T0116
+- AML.T0117
+attack:
+- T1566
+- T1528
+actors:
+- ref: AIRT-TA-0016
+  role: operator
+  link_confidence: medium
+  attributed_by: Anthropic
+  stated_confidence: '"Our attribution is consistent with public reporting linking the actor
+    to Midnight Blizzard."'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-20006-russian-espionage
+victims:
+  sectors:
+  - government
+  - defense-industrial-base
+  - ngo-think-tank
+  countries:
+  - UA
+  org_count:
+    value: 20
+    qualifier: at-least
+  basis: 'Anthropic: more than 20 organisations, including government ministries, defence
+    and intelligence bodies, embassies and diplomatic missions, think tanks and defence-industrial
+    companies, with Ukrainian government bodies prominent.'
+summary: 'Anthropic reports a Russian-speaking operator whose tradecraft and targeting it
+  assesses as consistent with Russian state-nexus espionage. Between December 2025 and August
+  2026 the operator used Claude models across reconnaissance, device-code phishing infrastructure,
+  bulk collection and keeping access. The human operator mostly edited the Claude Code skills
+  that drove the workflows and let the workflows run. Victim-side artefacts are conventional:
+  Windows implants, phishing domains and device-code phishing infrastructure.'
+iocs:
+- type: domain
+  value: ad-g[.]org
+  description: C2 domain (role c2, handling detect-or-block)
+- type: domain
+  value: cdncounter[.]net
+  description: Actor infrastructure domain (role infrastructure, handling detect-or-block)
+- type: domain
+  value: chamber-ua[.]org
+  description: Lookalike of a Ukrainian chamber organization (role phishing, handling detect-or-block)
+- type: domain
+  value: chathamhouse[.]eu
+  description: Lookalike of Chatham House (role phishing, handling detect-or-block)
+- type: domain
+  value: docs-viewer[.]org
+  description: C2 nginx reverse proxy (role c2, handling detect-or-block)
+- type: domain
+  value: itechx[.]tel
+  description: Actor identity domain (role infrastructure, handling detect-or-block)
+- type: domain
+  value: m365-owa[.]com
+  description: Microsoft 365 Phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: meridian-protocol[.]org
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: meridiangroup-corp[.]com
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: metricwave[.]org
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: mgsend[.]org
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: ms365-device[.]com
+  description: Microsoft 365 Phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: ms365-live[.]com
+  description: Microsoft 365 Phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: my-invite[.]org
+  description: Actor phishing domain (role phishing, handling detect-or-block)
+- type: domain
+  value: mygreatmarket[.]com
+  description: ClickFix cookie-exfil C2 (role c2, handling detect-or-block)
+- type: domain
+  value: mygreatmarket[.]org
+  description: ClickFix cookie-exfil C2 (role c2, handling detect-or-block)
+- type: domain
+  value: owa-ms365[.]com
+  description: Microsoft 365 Phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: projectnightcrawler[.]dev
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: russianearabroad[.]com
+  description: ClickFix lure (role phishing, handling detect-or-block)
+- type: domain
+  value: russianearabroad[.]org
+  description: Actor persona domain (role infrastructure, handling detect-or-block)
+- type: domain
+  value: static-ms[.]live
+  description: Operator/lure infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: statistic-ms[.]live
+  description: Primary RAT C2 domain (role c2, handling detect-or-block)
+- type: domain
+  value: stuseamandesilt[.]org
+  description: Campaign base domain (role infrastructure, handling detect-or-block)
+- type: domain
+  value: ukrinform-share[.]net
+  description: Lookalike of Ukrinform (role phishing, handling detect-or-block)
+- type: domain
+  value: wa-connect[.]eu
+  description: ClickFix cookie exfil C2 (role c2, handling detect-or-block)
+- type: domain
+  value: wa-meeting[.]com
+  description: WhatsApp Web pairing code phishing domain (role phishing, handling detect-or-block)
+- type: email
+  value: anna.manager@russianearabroad[.]net
+  description: Phishing persona address (role phishing, handling detect-or-block)
+- type: email
+  value: events@embassy-protocol[.]int
+  description: Phishing persona address (role phishing, handling detect-or-block)
+- type: file
+  value: WUEngine.exe
+  description: Malware file name. Windows malware (role malware, handling detect-or-block)
+- type: file
+  value: client_20260507093021_4286d211_x64.exe
+  description: Malware build artifact (role malware, handling detect-or-block)
+- type: file
+  value: fix_network.apk
+  description: Android malware payload (role malware, handling detect-or-block)
+- type: file
+  value: msedgeupdate_v3.exe
+  description: Malware implant build (role malware, handling detect-or-block)
+- type: domain
+  value: api.stuseamandesilt[.]org
+  description: Campaign C2 (role c2, handling detect-or-block)
+- type: domain
+  value: cdn.stuseamandesilt[.]org
+  description: Campaign malware delivery (role malware_delivery, handling detect-or-block)
+- type: domain
+  value: mslivetest.duckdns[.]org
+  description: Dynamic-DNS C2 (role c2, handling detect-or-block)
+- type: domain
+  value: pdfviewer2024.b-cdn[.]net
+  description: Malware payload domain (role malware_delivery, handling detect-or-block)
+- type: domain
+  value: static.cdncounter[.]net
+  description: Exploit/payload delivery hostname (role malware_delivery, handling detect-or-block)
+- type: domain
+  value: teams.ms365-live[.]com
+  description: Microsoft 365 Phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: update.stuseamandesilt[.]org
+  description: Campaign subdomain (role malware_delivery, handling detect-or-block)
+- type: ip
+  value: 104.145.210[.]184
+  description: Embassy Kit device-code phishing VPS (role phishing, handling detect-or-block)
+- type: ip
+  value: 104.194.149[.]228
+  description: Phishing VPS (role phishing, handling detect-or-block)
+- type: ip
+  value: 104.194.151[.]133
+  description: Primary C2 VPS (role c2, handling detect-or-block)
+- type: ip
+  value: 104.194.159[.]55
+  description: C2 holding exfiltrated browser-data zips (role c2, handling detect-or-block)
+- type: ip
+  value: 144.172.114[.]192
+  description: C2 proxy IP / operator VPS (role c2, handling detect-or-block)
+- type: ip
+  value: 148.135.195[.]111
+  description: C2 Endpoint (role c2, handling detect-or-block)
+- type: ip
+  value: 149.54.42[.]106
+  description: Operator/operational infrastructure (role infrastructure, handling detect-or-block)
+- type: ip
+  value: 185.198.234[.]101
+  description: C2 server (role c2, handling detect-or-block)
+- type: ip
+  value: 185.198.234[.]26
+  description: Operator/operational infrastructure (role infrastructure, handling detect-or-block)
+- type: ip
+  value: 2.26.53[.]194
+  description: Operator/operational infrastructure (role infrastructure, handling detect-or-block)
+- type: ip
+  value: 213.145.86[.]112
+  description: Operator/operational infrastructure (role infrastructure, handling detect-or-block)
+- type: ip
+  value: 31.57.243[.]154
+  description: Phishing host (role phishing, handling detect-or-block)
+- type: ip
+  value: 38.146.28[.]132
+  description: Actor rogue DNS resolver (role infrastructure, handling detect-or-block)
+- type: ip
+  value: 38.146.28[.]75
+  description: Notifier C2 for the phishing console (role infrastructure, handling detect-or-block)
+- type: hash
+  value: 918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593
+  description: Windows Backdoor (role malware, handling detect-or-block)
+- type: hash
+  value: be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c
+  description: Malware hash (role malware, handling detect-or-block)
+response_actions:
+- phase: contain
+  action: Block and hunt the published domains and addresses, and search mail logs for the
+    two phishing persona senders.
+- phase: contain
+  action: Hunt for the published implant file names and SHA-256 hashes, including msedgeupdate_v3.exe
+    and WUEngine.exe.
+- phase: eradicate
+  action: Review identity-provider sign-in logs for device-code authentication from unfamiliar
+    clients during the window, and revoke refresh tokens for affected accounts.
+- phase: harden
+  action: Restrict the device-code authentication flow by Conditional Access where it has
+    no business use.
+lesson: The AI sits on the operator's side here; the victim sees ordinary espionage artefacts,
+  just more of them, faster. The case belongs in this catalog because the operator's skill
+  files are what drove it. If an operator's workstation is ever seized, the agent's skills
+  directory and session store are its playbook, which is the reverse of the usual collection
+  problem.
+detections: []
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-20006 Russian espionage'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-20006-russian-espionage
+external_ids:
+  vendor_cluster:
+  - GTG-20006

@@ -1,0 +1,40 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0014 - UNC5673
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0014
+name: UNC5673
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+summary: PRC-nexus cluster, overlapping TEMP.Hex, that GTIG reports pooled Gemini, Claude
+  and OpenAI accounts through relay tooling (Claude-Relay-Service, CLI-Proxy-API) while targeting
+  governments in South and Southeast Asia. On a host, the relay tooling is the artifact.
+confidence: medium
+basis: One reporting party.
+external_ids:
+  vendor_cluster:
+  - UNC5673
+sightings:
+- date: '2026-05-11'
+  reporter: GTIG
+  summary: Used Claude-Relay-Service and CLI-Proxy-API to aggregate multiple Gemini, Claude
+    and OpenAI accounts behind proxies for account pooling.
+  atlas:
+  - AML.T0016.002
+  - AML.T0008
+  ai_services:
+  - Gemini
+  - Claude
+  - OpenAI
+  victims:
+    sectors:
+    - government
+    basis: 'GTIG: government sectors primarily in South and Southeast Asia.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access
+references:
+- title: GTIG - Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations,
+    and Initial Access (11 May 2026)
+  url: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access

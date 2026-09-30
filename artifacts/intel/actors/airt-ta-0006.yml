@@ -1,0 +1,54 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0006 - ShinyHunters
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0006
+name: ShinyHunters
+aliases:
+- name: UNC6240
+  source: GTIG
+kind: criminal
+motivation:
+- financial
+summary: A high-volume SaaS data-theft and extortion group. GTIG reports it integrated Claude
+  Code, configured with custom MCP tools, to parse and analyse exfiltrated directories for
+  extortion, and used AI to write obfuscated code and get past perimeter defences.
+confidence: medium
+basis: The group itself is well established (ATT&CK G1057). Its AI use is reported by GTIG
+  and, for suspected affiliates, by Anthropic, so there are two reporting parties with different
+  confidence.
+external_ids:
+  attack_group:
+  - G1057
+  vendor_cluster:
+  - UNC6240
+  - GTG-50014
+abuses:
+- AIRT-0001
+sightings:
+- date: '2026-09-08'
+  reporter: GTIG
+  summary: Claude Code configured with custom MCP tools to parse and analyse exfiltrated data
+    for extortion; AI-written obfuscated code to bypass perimeter defences.
+  atlas:
+  - AML.T0103
+  - AML.T0126
+  owasp_agentic:
+  - ASI02
+  abuses:
+  - AIRT-0001
+  ai_services:
+  - Claude Code
+  - MCP
+  victims:
+    sectors:
+    - information-technology
+    basis: 'GTIG: SaaS data exfiltration and extortion.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+references:
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50014 ShinyHunters smash-and-grab
+    opportunists'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50014-shinyhunters-smash-and-grab-opportunists

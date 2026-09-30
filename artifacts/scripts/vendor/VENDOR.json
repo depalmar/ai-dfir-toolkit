@@ -1,0 +1,13 @@
+{
+  "_comment": "Third-party code inlined into docs/site/index.html. build_site.py --check fails if a file's sha256 no longer matches, so an upgrade is a reviewed change to this file and never a silent swap.",
+  "cytoscape.min.js": {
+    "package": "cytoscape",
+    "version": "3.34.3",
+    "license": "MIT",
+    "license_file": "cytoscape.LICENSE",
+    "source": "https://registry.npmjs.org/cytoscape/-/cytoscape-3.34.3.tgz",
+    "npm_integrity": "sha512-yfYGhRcGAntq6YBD583j4n0Eg3jIxvWmZtz/5uz9UYkeIStSlMxuUja+ec5j3iBD8nv1rwaOAYMW09tBdkSeaQ==",
+    "file": "package/dist/cytoscape.min.js",
+    "sha256": "5f3b5b529546d5af1fc5628590af033b74511a5b6f789f5f4682845863228b91"
+  }
+}

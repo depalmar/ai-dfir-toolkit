@@ -1,0 +1,78 @@
+# AI agent artifact case study
+# AIRT-CS-0017 - MIDNIGHT NEPTUNE: Poisoned Repository Config and Claude Code Hooks
+
+id: AIRT-CS-0017
+title: "MIDNIGHT NEPTUNE - Poisoned Repository Config and Claude Code Hooks"
+date_range: reported 8 Sep 2026; activity window not stated
+disclosed: "2026-09-08"
+affects: AIRT-0001
+confidence: medium
+basis: >-
+  A single reporting party, and a short account. GTIG reports that the cluster
+  poisoned internal repository configurations, altered Claude CLI hooks and
+  deployed the SOMBERMEME backdoor on developer interaction. No hashes, paths or
+  hook contents were published, and nothing retrieved for this entry
+  corroborates it. It is recorded because the mechanism lands squarely on a
+  catalogued artifact, not because the detail is rich.
+atlas:
+  - AML.T0081
+  - AML.T0011
+attack:
+  - T1546
+  - T1195.002
+owasp_agentic:
+  - ASI04
+  - ASI05
+actors:
+  - ref: AIRT-TA-0004
+    role: operator
+    link_confidence: medium
+    attributed_by: GTIG
+    stated_confidence: '"financially motivated North Korea-nexus threat clusters formerly tracked as UNC1069"'
+    reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+victims:
+  sectors:
+    - cryptocurrency
+  basis: GTIG describes the cluster's AI use as supporting cryptocurrency theft.
+summary: >-
+  GTIG reports that MIDNIGHT NEPTUNE, the DPRK-nexus financially motivated
+  cluster formerly tracked as UNC1069, poisoned internal repository
+  configurations and altered Claude CLI hooks. It then deployed the SOMBERMEME
+  backdoor once a developer interacted with the repository. A Claude Code hook is
+  a shell command the agent runs on its own lifecycle events, from settings that
+  can live inside the repository. A developer who opened the project with the
+  agent ran the attacker's command without ever executing the attacker's code
+  directly.
+iocs:
+  - type: malware
+    value: SOMBERMEME
+    description: Backdoor delivered on developer interaction
+  - type: config
+    value: Hooks added to or altered in .claude/settings.json or .claude/settings.local.json
+    description: The persistence and trigger; compare against repository history
+  - type: behavior
+    value: Shell or interpreter child of the Claude Code process at session start, before any user prompt
+    description: A hook firing looks like this; an agent acting on a prompt does not
+response_actions:
+  - phase: contain
+    action: Collect .claude/settings.json and settings.local.json from every clone of the affected repositories and from ~/.claude/, before anyone opens the project again.
+  - phase: eradicate
+    action: Remove hooks that no commit by a known developer explains, and hunt for SOMBERMEME on every host where the agent opened the repository.
+  - phase: recover
+    action: Rotate credentials that were in reach of a developer shell on those hosts, prioritising wallet keys and exchange API keys given the cluster's motivation.
+  - phase: harden
+    action: Review .claude/ in pull requests as executable code, not editor configuration.
+lesson: >-
+  An agent's hook configuration is an autostart entry that travels with a git
+  clone. The catalog records where it lives. This case is why that row is
+  collected first and diffed against history, not just copied.
+detections:
+  - ai_agent_hook_config_modification.yml
+  - ai_agent_spawning_shell.yml
+references:
+  - title: "GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)"
+    url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+external_ids:
+  vendor_cluster:
+    - MIDNIGHT NEPTUNE
+    - UNC1069

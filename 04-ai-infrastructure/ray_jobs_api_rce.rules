@@ -8,7 +8,8 @@
 #   - ShadowRay 2.0 (Nov 2025, self-propagating botnet, ~200K exposed servers)
 #
 # Anyscale disputes this CVE as a "design feature" — it remains exploitable
-# in production. KEV-listed by CISA.
+# in production. It is not in the CISA KEV catalog (CISA requires an
+# available fix and Anyscale ships none); VulnCheck lists it in its own KEV.
 #
 # SID range: 9000200-9000299 reserved for Ray rules
 #
@@ -48,7 +49,7 @@ alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission downloading 
     http.request_body; pcre:"/(curl|wget)\s+(-[^\s]*\s+)*https?:\/\/(\d{1,3}\.){3}\d{1,3}/i"; \
     classtype:web-application-attack; \
     reference:cve,2023-48022; \
-    metadata:atlas AML.T0011, atlas AML.T0019; \
+    metadata:atlas AML.T0011, atlas AML.T0049; \
     sid:9000202; rev:1;)
 
 # ==========================================================================
@@ -74,7 +75,7 @@ alert http any any -> any 8265 (msg:"AI-DFIR Ray Job submission referencing Node
     classtype:trojan-activity; \
     reference:cve,2023-48022; \
     reference:url,oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet; \
-    metadata:atlas AML.T0011, atlas AML.T0019; \
+    metadata:atlas AML.T0011, atlas AML.T0049; \
     sid:9000204; rev:1;)
 
 alert http any any -> any any (msg:"AI-DFIR Ray Job entrypoint contains XMRig cryptominer indicator"; \

@@ -31,6 +31,37 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import data_sources
 import site_data  # noqa: E402  (same-directory build helper)
+import intel_graph  # noqa: E402
+import site_intel  # noqa: E402
+import site_scripts  # noqa: E402
+import triage_spec  # noqa: E402
+
+VENDOR = Path(__file__).resolve().parent / "vendor"
+
+
+def js_data(obj) -> str:
+    """JSON for a <script> block. json.dumps does not escape "</", so a string
+    containing "</script>" anywhere in the corpus - a rule body, a case summary,
+    an indicator - would end the script element early and the page would render
+    as broken text. Escaping the slash is valid JSON and valid JS."""
+    return json.dumps(obj, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
+
+
+def vendored(name: str) -> tuple[str, list[str]]:
+    """A vendored file's text, and any problem with its recorded provenance."""
+    meta = json.loads((VENDOR / "VENDOR.json").read_text(encoding="utf-8")).get(name, {})
+    path = VENDOR / name
+    if not path.exists():
+        return "", [f"[VENDOR]  {name} is missing"]
+    data = path.read_bytes()
+    import hashlib
+    problems = []
+    if hashlib.sha256(data).hexdigest() != meta.get("sha256"):
+        problems.append(f"[VENDOR]  {name} does not match the sha256 in vendor/VENDOR.json")
+    text = data.decode("utf-8")
+    if "</script" in text.lower():
+        problems.append(f"[VENDOR]  {name} contains a closing script tag and cannot be inlined")
+    return text, problems
 
 ROOT = Path(__file__).resolve().parent.parent
 API = ROOT / "docs" / "api"
@@ -337,7 +368,7 @@ CSS = """
     --bg:#121110; --panel:#1a1917; --panel-2:#211f1c; --hover:#262320;
     --ink:#f1eee9; --muted:#a9a39a; --faint:#7c766e;
     --line:#302d29; --line-soft:#262320; --field-line:#3b3733;
-    --accent:#e9a97d; --accent-hover:#f6bd93; --accent-soft:#2d2118;
+    --accent:#ddc4b0; --accent-hover:#ecd6c4; --accent-soft:#2d2118;
     --accent-soft-2:#3a2b20; --accent-border:#553a29;
     --on-accent:#1a1310; --on-tone:#151210;
     --crit:#f28c85; --high:#eaa965; --med:#d9c364; --low:#a6d18c;
@@ -387,9 +418,11 @@ main.content{min-width:0}
 #themeBtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;
   padding:7px 11px;font-size:12.5px;color:var(--muted)}
 #themeBtn:hover{color:var(--ink);border-color:var(--accent)}
-.tabs{display:flex;gap:2px;margin-top:8px}
-.tabs button{background:none;border:0;border-bottom:2px solid transparent;
-  padding:9px 14px;font-size:13.5px;color:var(--muted);display:flex;gap:7px;align-items:center}
+/* Scrolls rather than wraps. Ten tabs no longer fit one line at laptop width,
+   and a wrapped tab label ("Data / sources") reads as two tabs. */
+.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:thin}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;flex:none;white-space:nowrap;
+  padding:9px 12px;font-size:13.5px;color:var(--muted);display:flex;gap:7px;align-items:center}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 .tabs .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--line-soft);
   border-radius:20px;padding:1px 7px;color:var(--muted)}
@@ -609,10 +642,20 @@ th .pick.all{vertical-align:middle}
   padding-top:9px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 
 /* ---- drawer ---- */
-.drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:92vw;z-index:40;
+/* Width is a variable so it can be dragged and remembered. 420px was set when a
+   drawer held one artifact; an actor profile carries a hunt table, rule names
+   and indicators, which were being cut off at that width. */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:var(--drawer-w,560px);max-width:92vw;z-index:40;
   background:var(--panel);border-left:1px solid var(--line);
   box-shadow:-14px 0 34px var(--shadow);overflow:auto;display:flex;flex-direction:column}
 .drawer[hidden]{display:none}
+#dgrip{position:fixed;top:0;bottom:0;width:8px;margin-right:-4px;cursor:ew-resize;z-index:41;
+  background:transparent}
+#dgrip:hover,#dgrip.drag{background:var(--accent-border)}
+#dgrip[hidden]{display:none}
+.dhead .dwide{height:28px;border-radius:7px;border:1px solid var(--line);background:var(--panel);
+  color:var(--muted);font-size:12px;padding:0 9px;margin-left:auto}
+.dhead .dwide:hover{color:var(--ink);border-color:var(--accent)}
 .dhead{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);
   padding:13px 18px;display:flex;justify-content:space-between;gap:10px;align-items:center;z-index:2}
 .dhead b{font-size:14px}
@@ -1174,6 +1217,7 @@ footer p{margin:0}
   .tablewrap{display:none}
   .cards{display:flex}
   .drawer{width:100vw;max-width:100vw}
+  #dgrip,.dhead .dwide{display:none}
   .idxwrap{grid-template-columns:minmax(0,1fr)}
 }
 """
@@ -1261,17 +1305,19 @@ const ROPTIONS={
    Back goes so the affordance is not just a browser gesture people may not try. */
 const VIEW_LABEL={catalog:'Catalog',tools:'Tools',rules:'Detections',
   mappings:'Mappings',sources:'Data sources',cases:'Case studies',
-  plan:'Collection plan',guide:'Investigation guide'};
+  plan:'Collection plan',guide:'Investigation guide',intel:'Threat intel',graph:'Graph'};
 let navStack=[];
+// Set by a pivot from the Threat intel view: the cases view shows only these.
+let caseOnly=null;
 function snapshot(){
-  return {view,query,unvOnly,
+  return {view,query,unvOnly,caseOnly:caseOnly?[...caseOnly]:null,
     filters:JSON.parse(JSON.stringify(filters)),
     rfilters:JSON.parse(JSON.stringify(rfilters)),
     ruleSet:ruleSet?[...ruleSet]:null,
     scroll:window.scrollY};
 }
 function restore(s){
-  view=s.view;query=s.query;unvOnly=s.unvOnly;
+  view=s.view;query=s.query;unvOnly=s.unvOnly;caseOnly=s.caseOnly?new Set(s.caseOnly):null;
   for(const k of Object.keys(filters))filters[k]=s.filters[k]||[];
   for(const k of Object.keys(rfilters))rfilters[k]=s.rfilters[k]||[];
   ruleSet=s.ruleSet?new Set(s.ruleSet):null;
@@ -1839,6 +1885,49 @@ function closeDrawer(){
   else if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
 }
 
+/* ---------- drawer width ----------
+   Draggable from its left edge, with a one-click wide mode, and remembered per
+   browser. Wired once through an observer, so every drawer - artifact, tool,
+   rule, actor - gets it without each template having to know. */
+const DW_KEY='aidfir-drawer-w';
+const DW_DEFAULT=560, DW_WIDE=()=>Math.min(1000,Math.round(window.innerWidth*.92));
+function setDrawerW(px,save){
+  const w=Math.max(360,Math.min(Math.round(px),Math.round(window.innerWidth*.92)));
+  document.documentElement.style.setProperty('--drawer-w',w+'px');
+  if(save)try{localStorage.setItem(DW_KEY,String(w))}catch(e){}
+  syncGrip();
+}
+function drawerW(){return $('#drawer').getBoundingClientRect().width}
+function syncGrip(){
+  const d=$('#drawer'),g=$('#dgrip');if(!g)return;
+  g.hidden=d.hidden;
+  if(!d.hidden)g.style.right=drawerW()+'px';
+  const b=d.querySelector('.dwide');
+  if(b)b.textContent=drawerW()>=DW_WIDE()-4?'narrow':'wider';
+}
+(()=>{
+  try{const w=parseInt(localStorage.getItem(DW_KEY)||'',10);if(w)setDrawerW(w,false)}catch(e){}
+  const g=document.createElement('div');g.id='dgrip';g.hidden=true;
+  g.setAttribute('role','separator');g.setAttribute('aria-orientation','vertical');
+  g.setAttribute('aria-label','Resize panel');g.tabIndex=0;
+  document.body.appendChild(g);
+  g.onpointerdown=e=>{e.preventDefault();g.classList.add('drag');g.setPointerCapture(e.pointerId);
+    g.onpointermove=ev=>setDrawerW(window.innerWidth-ev.clientX,false);
+    g.onpointerup=()=>{g.classList.remove('drag');g.onpointermove=null;setDrawerW(drawerW(),true)}};
+  g.onkeydown=e=>{if(e.key==='ArrowLeft'){setDrawerW(drawerW()+40,true)}
+    else if(e.key==='ArrowRight'){setDrawerW(drawerW()-40,true)}};
+  new MutationObserver(()=>{
+    const d=$('#drawer'),h=d.querySelector('.dhead');
+    if(h&&!h.querySelector('.dwide')){
+      const b=document.createElement('button');b.className='dwide';b.type='button';
+      b.onclick=()=>setDrawerW(drawerW()>=DW_WIDE()-4?DW_DEFAULT:DW_WIDE(),true);
+      h.insertBefore(b,h.querySelector('.x'));
+    }
+    syncGrip();
+  }).observe($('#drawer'),{childList:true,attributes:true,attributeFilter:['hidden']});
+  window.addEventListener('resize',syncGrip);
+})();
+
 /* ---------- clipboard ---------- */
 function copy(text,btn){
   const done=()=>{if(!btn)return;const old=btn.textContent;btn.textContent='copied';
@@ -1928,6 +2017,12 @@ function ruleDrawerHTML(r){
     ${(r.atlas.length||r.owasp.length)?`<div class="dsec"><h4>Mapped techniques</h4>
       <div class="tech">${r.atlas.map(a=>`<span class="tchip" data-tech="${esc(a)}">${esc(a)}</span>`).join('')}
       ${r.owasp.map(o=>`<span class="tchip" data-owasp="${esc(o)}">${esc(o)}</span>`).join('')}</div></div>`:''}
+    ${(()=>{const cs=CASES.filter(c=>(c.detections||[]).includes(r.file));
+      const ac=INTEL.actors.filter(a=>a.derived.detections_by_technique.includes(r.file)||a.derived.detections_cited.includes(r.file));
+      return (cs.length||ac.length)?`<div class="dsec"><h4>Cited by</h4>
+        ${cs.length?`<div class="linkrow2">${cs.map(c=>`<button class="lchip" data-case="${esc(c.id)}">${esc(c.id)}</button>`).join('')}</div>`:''}
+        ${ac.length?`<div class="linkrow2">${ac.map(a=>`<button class="lchip" data-actor="${esc(a.id)}">${esc(a.name)}</button>`).join('')}</div>`:''}
+        <p class="muted" style="font-size:12px;margin:4px 0 0">Actors listed use a technique this rule detects, or a case about them cites it.</p></div>`:''})()}
     ${r.falsepositives.length?`<div class="dsec"><h4>False positives</h4>
       <ul class="fplist">${r.falsepositives.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
     <div class="dsec"><h4>Detection logic
@@ -1992,6 +2087,9 @@ function toolDrawerHTML(t){
       ${t.guidance?`<p style="margin-top:9px">${esc(t.guidance)}</p>`:''}</div>
     ${t.abuse?`<div class="dsec"><h4>Abuse potential</h4>
       <div class="alert">${esc(t.abuse)}</div></div>`:''}
+    ${(()=>{const ac=INTEL.actors.filter(a=>a.derived.tools.includes(t.entry_id));
+      return ac.length?`<div class="dsec"><h4>Reported used or targeted by <span class="n">${ac.length}</span></h4>
+        <div class="linkrow2">${ac.map(a=>`<button class="lchip" data-actor="${esc(a.id)}">${esc(a.name)}</button>`).join('')}</div></div>`:''})()}
     ${cs.length?`<div class="dsec"><h4>Documented incidents <span class="n">${cs.length}</span></h4>
       ${cs.map(c=>`<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${(t.techniques||[]).length?`<div class="dsec"><h4>Mapped techniques</h4>
@@ -2038,6 +2136,7 @@ function openToolDrawer(id,fromEl){
   if(bVol)bVol.onclick=()=>addRows(r=>r.vol&&r.vol!=='stable',bVol);
   $('#dPickAll').onclick=()=>addRows(()=>true,$('#dPickAll'));
   $$('#drawer .clsrow').forEach(b=>b.onclick=()=>drill(b.dataset.cls));
+  wireIntelLinks('#drawer');
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     pushNav();closeDrawer();view='cases';update();
     const el=document.getElementById('cs-'+b.dataset.cs);
@@ -2072,6 +2171,7 @@ function openRuleDrawer(key,fromEl){
   $('#growBtn').onclick=()=>{codeGrow=!codeGrow;sync()};
   sync();
   wireTechChips();
+  wireIntelLinks('#drawer');
 }
 function wireTechChips(){
   $$('#drawer .tchip[data-tech],#drawer .tchip[data-owasp]').forEach(c=>c.onclick=()=>{
@@ -2242,9 +2342,10 @@ function iocGroups(iocs){
     .map(k=>({kind:k,items:by[k]}));
 }
 function caseStudiesHTML(){
-  if(!CASES.length)return`<div class="empty">No case studies.</div>`;
+  const LIST=caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES;
+  if(!LIST.length)return`<div class="empty">No case studies.</div>`;
   const byConf={};
-  for(const c of CASES){const k=c.confidence||'unrated'; byConf[k]=(byConf[k]||0)+1}
+  for(const c of LIST){const k=c.confidence||'unrated'; byConf[k]=(byConf[k]||0)+1}
   const tally=['high','medium','low','unrated'].filter(k=>byConf[k])
     .map(k=>`${byConf[k]} ${k}`).join(' · ');
   return `<div class="gtop"><div><h2>Case studies</h2>
@@ -2252,10 +2353,11 @@ function caseStudiesHTML(){
     catalog, with the indicators each left behind and what responders did about it.
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
-    <p class="csconf">Provenance: ${esc(tally)}</p></div>
+    <p class="csconf">Provenance: ${esc(tally)}</p>
+    ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <s>&#10005;</s></button>`:''}</div>
     <button class="btn" id="csAll" data-open="0">Expand all</button></div>
     <div class="csgrid">`+
-  CASES.map(c=>{
+  LIST.map(c=>{
     const groups=iocGroups(c.iocs||[]);
     const n=(c.iocs||[]).length;
     // The affected tool is a link when the catalog knows it, because the useful
@@ -2296,6 +2398,13 @@ function caseStudiesHTML(){
         ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
       </div>`:''}
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
+      ${(c.actors||[]).length?`<div class="csprov"><b>Attributed to</b> ${c.actors.map(l=>
+        `<button class="lchip csactor" data-actor="${esc(l.ref)}">${esc((ACTORMAP[l.ref]||{}).name||l.ref)}</button>
+         ${confBadge(l.link_confidence)} <span class="csbasis">${esc(l.attributed_by)}${
+         l.stated_confidence?': '+esc(l.stated_confidence):''}</span>`).join(' ')}</div>`:''}
+      ${(c.victims&&((c.victims.sectors||[]).length||(c.victims.countries||[]).length))?`<div class="csprov"><b>Victims</b>
+        <span class="csbasis">${esc([...(c.victims.sectors||[]),...(c.victims.countries||[])].join(' · '))}${
+        c.victims.org_count?` · ${esc(c.victims.org_count.qualifier)} ${c.victims.org_count.value} organisations`:''}</span></div>`:''}
       <div class="csbody">
         <div class="cscol">
           <h4>Indicators <span class="n">${n}</span></h4>
@@ -2309,7 +2418,8 @@ function caseStudiesHTML(){
         <div class="cscol">
           <h4>Response</h4>
           ${(c.response_actions||[]).length?`<ol class="csact">${c.response_actions.map(a=>
-            `<li>${esc(a)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
+            `<li>${a.phase?`<span class="phase ph-${esc(a.phase)}">${esc(a.phase)}</span> `:''}${
+              esc(a.action)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
         </div>
       </div>
       ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
@@ -2473,6 +2583,8 @@ function renderMain(){
     };
     renderTabs();renderToast();renderBack();return;
   }
+  if(view==='intel'){renderIntel();renderTabs();renderToast();renderBack();return}
+  if(view==='graph'){renderGraph();renderTabs();renderToast();renderBack();return}
   if(view==='guide'){
     main.innerHTML=guideHTML();
     // Prefix rendered heading ids so guide anchors never collide with row anchors.
@@ -2508,6 +2620,8 @@ function renderMain(){
     if(pa)pa.onclick=e=>{e.stopPropagation();togglePickAll(e.currentTarget)};
   }else if(view==='cases'){
     main.innerHTML=caseStudiesHTML();
+    $$('#main .csactor').forEach(b=>b.onclick=e=>{e.preventDefault();openActorDrawer(b.dataset.actor,b)});
+    const co=$('#csOnly');if(co)co.onclick=()=>{caseOnly=null;renderMain()};
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.tool=[b.dataset.t];view='catalog';
       history.replaceState(null,'','#'+b.dataset.id);
@@ -2535,7 +2649,8 @@ function renderMain(){
     // deliberate move rather than the only thing a click can do.
     $$('#main .tool').forEach(c=>c.onclick=()=>openToolDrawer(c.dataset.id,c));
   }else{
-    main.innerHTML=planHTML();
+    main.innerHTML=planHTML()+triageHTML();
+    wireTriage();
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
@@ -2626,6 +2741,13 @@ window.resetAll=resetAll;
 function applyHash(){
   const h=decodeURIComponent(location.hash.slice(1));
   if(!h)return;
+  if(h.startsWith('actor/')){
+    const id=h.slice(6);
+    if(ACTORMAP[id]){view='intel';update();openActorDrawer(id,null)}
+    return;
+  }
+  if(h==='intel'){view='intel';update();return}
+  if(h==='graph'||h.startsWith('graph/')){view='graph';update();return}
   if(h.startsWith('rule/')){
     const f=h.slice(5);
     if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
@@ -2907,12 +3029,47 @@ def main():
     entries = json.loads((API / "catalog.json").read_text(encoding="utf-8"))
     rows = build_rows(entries)
     tools = build_tools(entries, rows)
+    # How the script builder collects each row, decided once in Python next to
+    # the KAPE and Velociraptor exporters rather than re-derived in the browser.
+    for r in rows:
+        r["spec"] = triage_spec.spec(r)
+    # Which framework definitions exist for a tool, by file rather than by
+    # naming convention, so the page never offers a target the feed lacks.
+    import export_velociraptor
+    for t, e in zip(tools, entries):
+        name = export_velociraptor.artifact_name(e)
+        if (API / "velociraptor" / f"{name}.yaml").exists():
+            t["velo"] = name
+        kape = name.replace("Custom.AIAgents.", "")
+        if (API / "kape" / f"{kape}.tkape").exists():
+            t["kape"] = kape
 
     # Everything outside the catalog proper: rules, indexes, case studies, guide.
     mapping_rows, atlas_index, owasp_index = site_data.load_mappings()
     rules = site_data.load_rules(mapping_rows)
     cases = site_data.load_case_studies()
     guide = site_data.load_guide()
+
+    # The threat-intel layer, built from the same rows and rules the page shows.
+    isrc = intel_graph.load_sources(entries=entries, rows=rows, rules=rules)
+    intel_problems = intel_graph.check(isrc)
+    intel = intel_graph.build(isrc)
+    pin = isrc["pin"]
+    site_intel_data = {
+        "stats": intel["stats"],
+        "analytics": intel["analytics"],
+        "actors": [{**a, "derived": {**a["derived"],
+                                     "collect": [c["anchor"] for c in a["derived"]["collect"]]}}
+                   for a in intel["actors"]],
+        "atlas": {"release": pin["atlas"]["release"], "tactic_order": pin["atlas"]["tactic_order"],
+                  "tactics": pin["atlas"]["tactics"], "techniques": pin["atlas"]["techniques"],
+                  "technique_tactics": pin["atlas"]["technique_tactics"]},
+        "asi": {k: v["title"] for k, v in isrc["owasp"]["agentic_2026"]["items"].items()},
+        "region_of": {c: r for r, cs in isrc["vocab"]["regions"].items() for c in cs},
+        "atomic_types": sorted(intel_graph.ATOMIC_IOC),
+        "off_host_tactics": sorted(intel_graph.OFF_HOST_TACTICS),
+    }
+    cyto_js, vendor_problems = vendored("cytoscape.min.js")
 
     # Coverage is computed, never authored. audit() is also a hard gate in
     # validate.py; running it here too means a stale source table cannot reach
@@ -2923,7 +3080,7 @@ def main():
 
     if "--check" in sys.argv:
         return 1 if check(rows, tools, rules, guide, cases,
-                          data_sources.audit(cov)) else 0
+                          data_sources.audit(cov) + intel_problems + vendor_problems) else 0
 
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
@@ -2955,7 +3112,7 @@ def main():
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <script>{THEME_BOOT}</script>
-<style>{CSS}</style>
+<style>{CSS}{site_intel.CSS}</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to results</a>
@@ -2979,6 +3136,8 @@ def main():
     <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
     <button role="tab" data-v="sources">Data sources <span class="n">{len(sources)}</span></button>
     <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
+    <button role="tab" data-v="intel">Threat intel <span class="n">{len(intel["actors"])}</span></button>
+    <button role="tab" data-v="graph">Graph <span class="n">{len(intel["graph"]["nodes"])}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
     <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
   </nav>
@@ -3038,19 +3197,25 @@ def main():
 </footer>
 <script>
 const REPO_URL={json.dumps(REPO)};
-const ROWS={json.dumps(rows, separators=(",", ":"))};
-const TOOLS={json.dumps(tools, separators=(",", ":"))};
-const RULES={json.dumps(rules, separators=(",", ":"))};
-const ATLAS_INDEX={json.dumps(atlas_index, separators=(",", ":"))};
-const OWASP_INDEX={json.dumps(owasp_index, separators=(",", ":"))};
-const CASES={json.dumps(cases, separators=(",", ":"))};
-const SOURCES={json.dumps(sources, separators=(",", ":"))};
-const VOL_MEANING={json.dumps(data_sources.VOLATILITY_MEANING, separators=(",", ":"))};
-const VOL_TIERS={json.dumps(data_sources.VOLATILITY_ORDER, separators=(",", ":"))};
-const CLS_COUNT={json.dumps(cls_count, separators=(",", ":"))};
-const GUIDE={json.dumps(guide, separators=(",", ":"))};
+const ROWS={js_data(rows)};
+const TOOLS={js_data(tools)};
+const RULES={js_data(rules)};
+const ATLAS_INDEX={js_data(atlas_index)};
+const OWASP_INDEX={js_data(owasp_index)};
+const CASES={js_data(cases)};
+const SOURCES={js_data(sources)};
+const VOL_MEANING={js_data(data_sources.VOLATILITY_MEANING)};
+const VOL_TIERS={js_data(data_sources.VOLATILITY_ORDER)};
+const CLS_COUNT={js_data(cls_count)};
+const GUIDE={js_data(guide)};
+const INTEL={js_data(site_intel_data)};
+const GRAPH={js_data(intel["graph"])};
+const TRIAGE_PS1={js_data(site_scripts.PS1)};
+const TRIAGE_SH={js_data(site_scripts.SH)};
+{site_intel.JS}
 {JS}
 </script>
+<script type="text/plain" id="cyto-src">{cyto_js}</script>
 </body>
 </html>
 """

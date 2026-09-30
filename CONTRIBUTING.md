@@ -114,6 +114,36 @@ Only for documented, dated, publicly reported incidents. Include concrete IOCs
 (paths, package names and versions, commit hashes, network destinations),
 response actions, and the transferable lesson. No IOCs, no case study.
 
+Case studies validate against `artifacts/schema/case-study.schema.json`.
+Structured fields are optional, but when you use them, stick to what the source
+states:
+- `actors`: links to profiles, each with our `link_confidence` and the
+  attributor's `stated_confidence`, verbatim
+- `victims`: sector enum and ISO country codes
+- `external_ids`: ATT&CK campaign, ATLAS case study, CVE, GHSA, AIID
+- `owasp_agentic`
+- phased `response_actions` (`contain`, `eradicate`, `recover`, `harden`)
+
+### Threat actor profiles
+
+`artifacts/intel/actors/airt-ta-NNNN.yml`, validated against
+`artifacts/schema/actor.schema.json`. In scope are actors named by a government
+or vendor report, and clusters a reporter designated. Unnamed operators stay in
+their case study. Private individuals are not profiled.
+
+- Author only the identity: name, aliases with their source, kind, stated
+  nexus and motivation, summary, confidence, basis and references.
+- Techniques, victims, indicators, detections and dates are derived by
+  `scripts/intel_graph.py` from the cases and `sightings` that cite the actor.
+- A sighting is reported AI use that published no indicators. It carries the
+  reporter, the date, a summary in your words and the link.
+- Sources licensed CC BY-SA 4.0 (the AI Incident Database, the OWASP documents)
+  contribute facts only: ids, dates, names and links. Do not paste their text.
+- Run `python scripts/intel_graph.py --check` and `--export` before opening the PR.
+
+The weekly `intel-watch` workflow raises `intel-candidate` issues from public
+sources. Picking one up and researching it is the easiest way in.
+
 ### Reporting a catalog error
 
 Open an issue with the entry ID, the field, what it says, what it should say, and

@@ -4,11 +4,13 @@
    Date: 2026-04-15
    Reference: https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks
               https://www.cve.org/CVERecord?id=CVE-2025-59536
-   ATLAS: AML.T0104 (Publish Poisoned AI Agent Tool, Resource Development)
+   ATLAS: AML.T0115.002 (Publish Poisoned AI Artifacts: AI Agent Tools,
+                 Resource Development - its own technique id until
+                 ATLAS 2026.07 folded it in here)
           AML.T0110 (AI Agent Tool Poisoning, post-install mutation)
           Both, deliberately: this rule matches a poisoned tool description
           wherever it lands, and cannot tell a tool published poisoned from
-          one mutated after approval. T0104 and T0110 are distinct current
+          one mutated after approval. T0115.002 and T0110 are distinct current
           techniques, not alternative names - see docs/VERIFICATION.md.
 
    Detects malicious instructions embedded in MCP tool descriptions
@@ -33,7 +35,7 @@ rule MCP_Tool_Poisoning_Hidden_Instructions
         description = "MCP tool description containing hidden LLM instructions"
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
-        atlas       = "AML.T0104, AML.T0110"
+        atlas       = "AML.T0115.002, AML.T0110"
         owasp       = "LLM03:2026"
         reference   = "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks"
         severity    = "critical"

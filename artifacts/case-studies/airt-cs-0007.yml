@@ -79,3 +79,18 @@ references:
     url: https://www.catonetworks.com/blog/cato-ctrl-threat-research-analyzing-lamehug/
   - title: "GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)"
     url: https://services.google.com/fh/files/misc/advances-in-threat-actor-usage-of-ai-tools-en.pdf
+
+actors:
+  - ref: AIRT-TA-0001
+    role: operator
+    link_confidence: medium
+    attributed_by: CERT-UA (UAC-0001); GTIG
+    stated_confidence: CERT-UA - moderate confidence; GTIG - "the Russian government-backed actor APT28 (aka FROZENLAKE)"
+    reference: https://cert.gov.ua/article/6284730
+victims:
+  sectors:
+    - government
+    - defense-industrial-base
+  countries:
+    - UA
+  basis: CERT-UA and GTIG both describe targeting of Ukraine's security and defence sector.

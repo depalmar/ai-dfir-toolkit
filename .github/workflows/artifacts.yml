@@ -28,6 +28,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: Validate catalog and detections
         run: python scripts/validate.py
+      # Names the project deliberately does not publish, held in a secret so the
+      # list itself is never committed. Passes with a notice when unset.
+      - name: Check for forbidden terms
+        env:
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+        run: python scripts/forbidden_terms.py
       # The schema checks technique ids by shape, so AML.T9999 and a technique
       # MITRE deprecated three releases ago both pass it. This resolves them
       # against pinned framework data. Offline on purpose: a gate that followed
@@ -36,6 +42,17 @@ jobs:
       # change under test. Bump the pin with --refresh, which shows up in review.
       - name: Resolve ATLAS and ATT&CK technique ids
         run: python scripts/validate_techniques.py
+      # Same pattern for CISA KEV: "on KEV" is a claim a responder triages by,
+      # and two files once disagreed about it for the same CVE.
+      - name: Check KEV claims against the pinned CISA catalog
+        run: python scripts/cve_status.py
+      # MAPPINGS index tables are derived from the rows and the pinned titles.
+      - name: Check MAPPINGS indexes and rule tags
+        run: python scripts/sync_mappings.py --check
+      # Actor profiles and case studies against their closed schemas, and every
+      # cross-reference between them, the catalog and the rule corpus.
+      - name: Check threat-intel layer
+        run: python scripts/intel_graph.py --check
       # The Contents block is the first thing a reader sees and every number in
       # it was hand-typed and had drifted - 44 tools against 51, 258 artifacts
       # against 601. Derived and gated now, like the feeds.
@@ -85,6 +102,7 @@ jobs:
           python scripts/export_forensicartifacts.py
           python scripts/export_kape.py
           python scripts/export_velociraptor.py
+          python scripts/intel_graph.py --export
       - name: Fail if feeds are stale
         run: |
           if ! git diff --quiet docs/api; then

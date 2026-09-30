@@ -1,0 +1,76 @@
+# AI agent artifact case study
+# AIRT-CS-0020 - GTG-50020 - From Hotel Booking Fraud to Probing AI Companies
+# Indicators: Anthropic September 2026 IOC release, cyber-operations rows only, values as published (defanged).
+
+id: AIRT-CS-0020
+title: GTG-50020 - From Hotel Booking Fraud to Probing AI Companies
+date_range: May to Jun 2026 (AI supply-chain phase)
+disclosed: '2026-09-10'
+affects: AI provider and AI company web estates - no catalogued endpoint tool
+confidence: medium
+basis: A single reporting party with eight published egress addresses.
+atlas:
+- AML.T0124
+- AML.T0017.001
+- AML.T0049
+attack:
+- T1190
+actors:
+- ref: AIRT-TA-0017
+  role: operator
+  link_confidence: medium
+  attributed_by: Anthropic
+  stated_confidence: '"Russian-speaking, financially-motivated actor"'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50020-from-hotel-bookings-to-the-ai-supply-chain
+victims:
+  sectors:
+  - commercial-facilities
+  - information-technology
+  basis: 'Anthropic: hotel booking platforms, then around 30 AI companies in about four days.'
+summary: Anthropic reports a Russian-speaking, financially motivated actor with a history
+  of intrusions against hotel booking and fintech platforms. It built a containerised pentest
+  platform with a local model gateway and worker agents that tested injection, XSS, authentication
+  bypass and SSRF. It then turned the pipeline on around 30 AI companies in about four days,
+  with the stated goal of reaching a pre-release model.
+iocs:
+- type: ip
+  value: 141.133.125[.]208
+  description: Attacker egress IP (seen 2026-05-21 to 2026-05-23; role egress, handling hunt)
+- type: ip
+  value: 146.103.101[.]253
+  description: Attacker egress IP (seen 2026-05-21 to 2026-06-13; role egress, handling hunt)
+- type: ip
+  value: 146.103.97[.]169
+  description: Attacker egress IP (seen 2026-05-21 to 2026-05-25; role egress, handling hunt)
+- type: ip
+  value: 167.250.111[.]136
+  description: Attacker egress IP (seen 2026-05-23 to 2026-06-03; role egress, handling hunt)
+- type: ip
+  value: 178.16.54[.]141
+  description: Attacker egress IP (seen 2026-05-21 to 2026-06-16; role egress, handling hunt)
+- type: ip
+  value: 194.163.183[.]216
+  description: Attacker egress IP (seen 2026-05-23 to 2026-05-24; role egress, handling hunt)
+- type: ip
+  value: 202.66.167[.]230
+  description: Attacker egress IP (seen 2026-05-21 to 2026-06-04; role egress, handling hunt)
+- type: ip
+  value: 37.27.103[.]22
+  description: Attacker egress IP (seen 2026-05-26 to 2026-06-13; role egress, handling hunt)
+response_actions:
+- phase: contain
+  action: Hunt the published egress addresses in web and WAF logs for the May to June 2026
+    window.
+- phase: harden
+  action: Treat model-gateway and evaluation endpoints as internet-exposed attack surface,
+    with the same testing and rate limits as the product itself.
+lesson: AI companies are now a target class in their own right. What is being stolen is model
+  access and pre-release weights, which a victimology built only on data theft would miss.
+detections: []
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50020 From hotel bookings
+    to the AI supply chain'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50020-from-hotel-bookings-to-the-ai-supply-chain
+external_ids:
+  vendor_cluster:
+  - GTG-50020

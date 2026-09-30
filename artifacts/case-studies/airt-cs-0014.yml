@@ -71,3 +71,11 @@ references:
     url: https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
   - title: "NVD - CVE-2023-48022"
     url: https://nvd.nist.gov/vuln/detail/CVE-2023-48022
+
+external_ids:
+  attack_campaign:
+    - C0045
+  atlas_case_study:
+    - AML.CS0023
+  cve:
+    - CVE-2023-48022

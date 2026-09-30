@@ -1,0 +1,43 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0015 - UNC6508
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0015
+name: UNC6508
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+summary: PRC-nexus espionage actor that GTIG reports targeted academic, medical and military
+  research institutions in North America over several years. It deployed local open-weight
+  LLM infrastructure inside compromised cloud environments.
+confidence: medium
+basis: One reporting party.
+external_ids:
+  vendor_cluster:
+  - UNC6508
+sightings:
+- date: '2026-09-08'
+  reporter: GTIG
+  summary: Deployed local open-weight LLM infrastructure in compromised cloud environments
+    and researched AI tool setup and model vulnerabilities; targeted proprietary AI research.
+  atlas:
+  - AML.T0008.000
+  - AML.T0034
+  ai_services:
+  - open-weight models (self-hosted)
+  victims:
+    sectors:
+    - research
+    - healthcare
+    - education
+    - defense-industrial-base
+    countries:
+    - US
+    - CA
+    basis: 'GTIG: academic, medical and military research institutions in North America.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+references:
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai

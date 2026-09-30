@@ -1,0 +1,153 @@
+# AI agent artifact case study
+# AIRT-CS-0021 - GTG-50029 - A Single Hacktivist Against European Political Targets
+# Indicators: Anthropic September 2026 IOC release, cyber-operations rows only, values as published (defanged).
+
+id: AIRT-CS-0021
+title: GTG-50029 - A Single Hacktivist Against European Political Targets
+date_range: Spring 2026
+disclosed: '2026-09-10'
+affects: WordPress and SaaS estates of the targets - no catalogued endpoint tool
+confidence: medium
+basis: A single reporting party with a published indicator set of 22 addresses, domains and
+  onion services.
+atlas:
+- AML.T0016.002
+- AML.T0049
+- AML.T0055
+attack:
+- T1190
+- T1505.003
+actors:
+- ref: AIRT-TA-0018
+  role: operator
+  link_confidence: medium
+  attributed_by: Anthropic
+  stated_confidence: '"single French-speaking actor"'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50029-hacktivists-targeted-european-political-and-affiliated-entities
+victims:
+  sectors:
+  - government
+  - media-entertainment
+  - ngo-think-tank
+  - information-technology
+  org_count:
+    value: 42
+    qualifier: exact
+  basis: 'Anthropic: 42 tracked targets among European political parties, media, think tanks
+    and SaaS providers, with internal access to at least 14.'
+summary: Anthropic reports a single French-speaking actor who used Claude to develop and debug
+  a WordPress re-installation race exploit, build a Rust scanner that validated exposed API
+  keys, and manage agents for reconnaissance and post-authentication work. Anthropic counts
+  42 targets, internal access to at least 14, and 12 to 26 GB exfiltrated. The haul included
+  political membership and donor records. Reported persistence included web shells hidden
+  in font assets and credential-harvesting WordPress must-use plugins.
+iocs:
+- type: domain
+  value: fafwatch[.]xyz
+  description: Actor-registered doxing adjacent domain (seen 2026-04 to ?; role infrastructure,
+    handling detect-or-block)
+- type: domain
+  value: prod-artfkt[.]com
+  description: Actor-registered operational domain (seen 2026-04 to ?; role infrastructure,
+    handling detect-or-block)
+- type: domain
+  value: frntrs-analytics-863060591218.europe-west1.run[.]app
+  description: Cloud Run origin behind C2 domain (seen 2026-05-13 to 2026-06; role c2, handling
+    detect-or-block)
+- type: domain
+  value: frntrs-analytics.dedyn[.]io
+  description: BeEF browser-C2 hostname (deSEC dynamic DNS, actor-held API token) (seen 2026-05-13
+    to 2026-06; role c2, handling detect-or-block)
+- type: ip
+  value: 103.124.165[.]199
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 103.141.60[.]144
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 103.216.220[.]19
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 136.144.242[.]56
+  description: Staging & scan box used on EU political organizations (seen 2026-05-17 to 2026-05-21;
+    role staging, handling detect-or-block)
+- type: ip
+  value: 138.199.6[.]208
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 138.199.60[.]29
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 139.59.2[.]243
+  description: Key-validation box (DigitalOcean) (seen 2026-02-06 to 2026-06-12; role key_validation,
+    handling detect-or-block)
+- type: ip
+  value: 146.70.116[.]131
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 149.22.83[.]6
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 158.173.46[.]118
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 163.172.157[.]53
+  description: Persistent dedicated server, Scaleway FR used in late-phase operations (seen
+    2026-06-26 to 2026-07-04; role dedicated_server, handling detect-or-block)
+- type: ip
+  value: 34.156.199[.]132
+  description: Exfiltration endpoints in hijacked GCP projects (seen 2026-04 to 2026-05; role
+    exfiltration, handling hunt)
+- type: ip
+  value: 34.156.95[.]176
+  description: Exfiltration endpoints in hijacked GCP projects (seen 2026-04 to 2026-05; role
+    exfiltration, handling hunt)
+- type: ip
+  value: 2001:ac8:27[:]89::a02d
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 2001:ac8:29[:]84::a01d
+  description: Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE)
+    - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)
+- type: ip
+  value: 2001:bc8:711:5854:dc00:1ff:fe18[:]ba53
+  description: Persistent dedicated server, Scaleway FR used in late-phase operations (seen
+    2026-06-26 to 2026-07-04; role dedicated_server, handling detect-or-block)
+- type: domain
+  value: 3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd[.]onion
+  description: CRS credential-vault API (Tor onion service; seen 2026-05 to 2026-07; role
+    infrastructure, handling detect-or-block)
+- type: domain
+  value: 6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad[.]onion
+  description: Actor's Tor LLM-gateway (third-party model routing) (Tor onion service; seen
+    2026-06 to 2026-06; role infrastructure, handling detect-or-block)
+response_actions:
+- phase: contain
+  action: Hunt the published addresses and onion services, and inspect wp-content/mu-plugins
+    and font asset directories on WordPress estates for unexpected PHP.
+- phase: eradicate
+  action: Restore from backups verified clean. The actor poisoned backups, so check backup
+    integrity before relying on one.
+- phase: recover
+  action: Rotate every API key found in public repositories or containers the actor's scanner
+    could have validated.
+lesson: One operator with a model ran a campaign that used to need a team. The persistence
+  was ordinary, but its placement (fonts, must-use plugins, backups) was chosen to survive
+  a routine clean-up.
+detections: []
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50029 Hacktivists targeted
+    European political and affiliated entities'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50029-hacktivists-targeted-european-political-and-affiliated-entities
+external_ids:
+  vendor_cluster:
+  - GTG-50029

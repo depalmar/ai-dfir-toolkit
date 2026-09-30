@@ -1,0 +1,94 @@
+# AI agent artifact case study
+# AIRT-CS-0016 - UNC6780 (TeamPCP): DUSTMAKER and Trojanised MCP Servers
+
+id: AIRT-CS-0016
+title: "UNC6780 (TeamPCP) - DUSTMAKER and Trojanised MCP Servers"
+date_range: Mar 2026 (supply-chain activity begins) to 8 Sep 2026 (GTIG report)
+disclosed: "2026-09-08"
+affects:
+  - AIRT-0001
+  - AIRT-0002
+confidence: medium
+basis: >-
+  A single reporting party. GTIG attributes the operations to UNC6780, and in
+  May 2026 it also reported that TeamPCP claimed responsibility for supply-chain
+  compromises that included LiteLLM. The package and repository names and the
+  workspace-directory behaviour are GTIG's statements. They have not been
+  corroborated by a second analysis retrieved for this entry.
+atlas:
+  - AML.T0010
+  - AML.T0115.002
+  - AML.T0081
+  - AML.T0055
+attack:
+  - T1195.002
+  - T1552.001
+  - T1070
+owasp_agentic:
+  - ASI04
+  - ASI03
+actors:
+  - ref: AIRT-TA-0005
+    role: operator
+    link_confidence: medium
+    attributed_by: GTIG
+    stated_confidence: '"Operations attributed to the financially motivated threat actor UNC6780 (TeamPCP)"'
+    reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+victims:
+  sectors:
+    - software-supply-chain
+  basis: GTIG describes compromises of PyPI, npm and Docker Hub packages and of organisational GitHub repositories. Downstream victims are whoever installed them.
+summary: >-
+  GTIG reports that UNC6780 compromised developer accounts and published
+  trojanised forks of legitimate MCP servers to PyPI, including tiktoken_mcp. It
+  also injected code into official organisational repositories such as
+  azure-functions-mcp-extension. Its DUSTMAKER credential stealer detects CI/CD
+  environments, extracts OIDC tokens from GitHub Actions and deletes workflow
+  logs. On developer hosts it drops or modifies files in the hidden workspace
+  directories AI coding assistants read, .claude/, .cursor/ and .vscode/. That
+  turns the assistant's own configuration into the persistence and execution
+  point. Earlier in 2026 GTIG tied the same actor to compromises of Trivy,
+  Checkmarx and LiteLLM, the last of which exposed AI provider secrets.
+iocs:
+  - type: package
+    value: tiktoken_mcp (PyPI)
+    description: Trojanised fork of a legitimate MCP server
+  - type: pattern
+    value: Injected code in azure-functions-mcp-extension
+    description: Official organisational repository compromised through a developer account
+  - type: malware
+    value: DUSTMAKER
+    description: Credential stealer with CI/CD and AI-workspace targeting
+  - type: directory
+    value: "<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/"
+    description: Files dropped or modified in hidden AI assistant workspace directories
+  - type: behavior
+    value: GitHub Actions workflow run logs deleted after execution
+    description: Anti-forensics; the absence of runs is the signal
+response_actions:
+  - phase: contain
+    action: Inventory MCP servers installed from PyPI and npm across developer hosts and remove any trojanised fork. The catalog's MCP config rows give the files to read.
+  - phase: contain
+    action: Diff .claude/, .cursor/ and .vscode/ in every affected repository against the last known-good commit. A file there that no commit explains is the finding.
+  - phase: eradicate
+    action: Pin MCP servers and AI gateway libraries to verified versions and rebuild CI images.
+  - phase: recover
+    action: Rotate GitHub Actions OIDC trust, cloud credentials reachable from CI, and every AI provider key a compromised gateway library could have read.
+  - phase: harden
+    action: Retain workflow run logs outside GitHub so deletion from the API does not remove the record.
+lesson: >-
+  The AI assistant's workspace directory is now a place attackers write. It is
+  read automatically, trusted implicitly and rarely reviewed in pull requests.
+  Collection has to include it as evidence, not skip it as editor noise.
+detections:
+  - ai_agent_hook_config_modification.yml
+  - ai_agent_mcp_config_modification.yml
+  - mcp_tool_poisoning.yar
+references:
+  - title: "GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)"
+    url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+  - title: "GTIG - Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations, and Initial Access (11 May 2026)"
+    url: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access
+external_ids:
+  vendor_cluster:
+    - UNC6780

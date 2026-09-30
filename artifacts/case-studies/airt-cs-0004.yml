@@ -23,6 +23,8 @@ atlas:
   - AML.T0053
   - AML.T0054
   - AML.T0096
+  - AML.T0116
+  - AML.T0117
 summary: >-
   Anthropic assessed with high confidence that a Chinese state-sponsored actor
   built an autonomous attack framework around Claude Code driving MCP servers and
@@ -72,3 +74,29 @@ references:
     url: https://attack.mitre.org/campaigns/C0062/
   - title: "BleepingComputer - Anthropic claims of Claude AI-automated cyberattacks met with doubt"
     url: https://www.bleepingcomputer.com/news/security/anthropic-claims-of-claude-ai-automated-cyberattacks-met-with-doubt/
+
+owasp_agentic:
+  - ASI01
+  - ASI02
+actors:
+  - ref: AIRT-TA-0002
+    role: operator
+    link_confidence: medium
+    attributed_by: Anthropic
+    stated_confidence: '"We assess with high confidence" - a Chinese state-sponsored group'
+    reference: https://www.anthropic.com/news/disrupting-AI-espionage
+victims:
+  sectors:
+    - information-technology
+    - financial-services
+    - chemical
+    - government
+  org_count:
+    value: 30
+    qualifier: approx
+  basis: Anthropic names large tech companies, financial institutions, chemical manufacturers and government agencies; ATLAS AML.CS0069 records the same four sectors. No countries were named.
+external_ids:
+  attack_campaign:
+    - C0062
+  atlas_case_study:
+    - AML.CS0069

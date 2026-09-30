@@ -55,3 +55,6 @@ references:
     url: https://www.stepsecurity.io/blog/pythagora-io-gpt-pilot-compromised-on-github-shai-hulud-credential-stealer-blocked-by-python-linter
   - title: "SafeDep Threat Intelligence - Pythagora-io/gpt-pilot IOC record"
     url: https://safedep.io/ti/ioc/github_repo/github_repo-5278c0f8c305/
+
+owasp_agentic:
+  - ASI04

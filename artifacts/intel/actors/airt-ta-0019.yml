@@ -1,0 +1,22 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0019 - GTG-50021
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0019
+name: GTG-50021
+kind: criminal
+motivation:
+- financial
+summary: Anthropic's cluster for a Russian- and Ukrainian-speaking group running a fraudulent
+  cut-price Claude reseller that proxied traffic and harvested customer credentials.
+confidence: medium
+basis: A single reporting party, with a published indicator set.
+external_ids:
+  vendor_cluster:
+  - GTG-50021
+abuses:
+- AIRT-0001
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50021'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50021-indicators-of-compromise
