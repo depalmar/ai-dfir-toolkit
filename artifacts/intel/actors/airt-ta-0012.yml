@@ -1,0 +1,33 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0012 - UNC4899
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0012
+name: UNC4899
+aliases:
+- name: PUKCHONG
+  source: GTIG
+kind: state-nexus
+nexus: KP
+motivation:
+- financial
+summary: North Korean supply-chain-focused actor that GTIG reports used Gemini to develop
+  code, research exploits and improve its tooling.
+confidence: medium
+basis: One reporting party.
+external_ids:
+  vendor_cluster:
+  - UNC4899
+sightings:
+- date: '2025-11-05'
+  reporter: GTIG
+  summary: Used Gemini for code development, exploit research and tooling improvement.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+references:
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools

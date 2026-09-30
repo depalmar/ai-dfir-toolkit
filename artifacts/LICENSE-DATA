@@ -2,7 +2,7 @@ Creative Commons Attribution 4.0 International (CC BY 4.0)
 
 Copyright (c) 2026 Raymond DePalma
 
-Applies to: catalog/, case-studies/, docs/api/
+Applies to: catalog/, case-studies/, intel/, docs/api/
 
 You are free to:
   Share  - copy and redistribute the material in any medium or format
@@ -27,7 +27,17 @@ Attribution format:
 DISCLAIMER
 This catalog is provided for defensive security research and incident response.
 Entries document publicly observable software artifacts. Presence of a
-catalogued tool on a host is not evidence of compromise. The "risk" field
+catalogued tool on a host is not evidence of compromise.
+
+THIRD-PARTY FACTS
+Case studies and actor profiles cite third-party reporting. Where a source is
+licensed CC BY-SA 4.0 (the AI Incident Database, OWASP GenAI Security Project
+documents), only facts are taken from it - identifiers, dates, names, category
+mappings and links - and every summary is original wording, so this data remains
+CC BY 4.0. Indicators are republished from the cited reports. MITRE ATLAS data
+is Apache-2.0; MITRE ATT&CK is used under its terms of use. An attribution
+recorded here is the cited party's assessment, reported with its stated
+confidence, not a finding of this project. The "risk" field
 describes exposure if a tool is misused or misconfigured, not a claim that any
 tool or vendor is malicious. No warranty is made as to accuracy or
 completeness; verify artifact locations in your own environment before relying

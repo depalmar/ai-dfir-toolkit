@@ -1,0 +1,60 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0007 - APT42
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0007
+name: APT42
+aliases:
+- name: CALANQUE ION
+  source: GTIG (2026 designation)
+kind: state-nexus
+nexus: IR
+motivation:
+- espionage
+summary: Iranian government-backed group whose reported AI use centres on phishing and reconnaissance.
+  GTIG also reports an attempt to build a Data Processing Agent that turned natural-language
+  requests into SQL over sensitive personal data, and later work on EDR bypass.
+confidence: medium
+basis: One reporting party across three reports.
+external_ids:
+  attack_group:
+  - G1044
+sightings:
+- date: '2025-11-05'
+  reporter: GTIG
+  summary: Used Gemini for phishing content, translation and research, and attempted to build
+    a natural-language-to-SQL Data Processing Agent over sensitive personal data.
+  atlas:
+  - AML.T0016.002
+  - AML.T0017.002
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- date: '2026-02-12'
+  reporter: GTIG
+  summary: Used Gemini for target reconnaissance, persona creation, translation and malware
+    development support.
+  atlas:
+  - AML.T0016.002
+  - AML.T0087
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use
+- date: '2026-09-08'
+  reporter: GTIG
+  summary: Used Gemini to identify target email addresses, localise lures, summarise exfiltrated
+    data, reverse-engineer licensing algorithms and research EDR bypass.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+references:
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+- title: 'GTIG - AI Threat Tracker: Distillation, Experimentation, and (Continued) Integration
+    of AI for Adversarial Use (12 Feb 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai

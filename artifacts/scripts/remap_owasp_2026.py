@@ -19,25 +19,19 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path("/home/user/ai-dfir-toolkit")
+import json
 
-# 2025 id -> (2026 id, 2026 title). Sourced from the OWASP GenAI Security
-# Project publication of 2026-08-04.
-MAP = {
-    "LLM01": ("LLM01", "Prompt Injection"),
-    "LLM02": ("LLM02", "Sensitive Information Disclosure"),
-    "LLM03": ("LLM04", "Supply Chain"),
-    "LLM04": ("LLM05", "Data and Model Poisoning"),
-    "LLM05": ("LLM10", "Improper Output Handling"),
-    "LLM06": ("LLM03", "Excessive Agency"),
-    # Renamed and widened, not dropped: the 2026 entry covers any non-user-facing
-    # content assembled into the context window - tool schemas, retrieved policy
-    # text, developer instructions - of which the system prompt is one case.
-    "LLM07": ("LLM08", "Hidden Context Exposure"),
-    "LLM08": ("LLM09", "Vector and Embedding Weaknesses"),
-    "LLM09": ("LLM07", "Misinformation"),
-    "LLM10": ("LLM06", "Unbounded Consumption"),
-}
+REPO = Path(__file__).resolve().parent.parent.parent
+
+# 2025 id -> (2026 id, 2026 title), from the pinned OWASP reference data rather
+# than a copy in this script, so the remap table and the MAPPINGS index cannot
+# disagree. LLM07 -> LLM08 is renamed and widened, not dropped: the 2026 entry
+# covers any non-user-facing content assembled into the context window - tool
+# schemas, retrieved policy text, developer instructions - of which the system
+# prompt is one case.
+_OWASP = json.loads((REPO / "artifacts" / "schema" / "owasp.json").read_text(encoding="utf-8"))
+MAP = {old: (new, _OWASP["llm_2026"]["items"][new]["title"])
+       for old, new in _OWASP["llm_2025_to_2026"].items()}
 
 # LLM07 -> LLM08 also renames the category, so any prose naming the old title has
 # to move with it or the file will describe one thing and tag another.

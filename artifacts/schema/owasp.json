@@ -1,0 +1,243 @@
+{
+  "_comment": "OWASP GenAI Security Project reference ids. Titles and ids are facts; every summary is this project's own wording, because the OWASP documents are CC BY-SA 4.0 and this repository's data is CC BY 4.0. Regenerate MAPPINGS indexes with scripts/sync_mappings.py after editing.",
+  "llm_2026": {
+    "source": "https://genai.owasp.org/llm-top-10/",
+    "published": "2026-08-04",
+    "items": {
+      "LLM01": {
+        "title": "Prompt Injection",
+        "was_2025": "LLM01"
+      },
+      "LLM02": {
+        "title": "Sensitive Information Disclosure",
+        "was_2025": "LLM02"
+      },
+      "LLM03": {
+        "title": "Excessive Agency",
+        "was_2025": "LLM06"
+      },
+      "LLM04": {
+        "title": "Supply Chain",
+        "was_2025": "LLM03"
+      },
+      "LLM05": {
+        "title": "Data and Model Poisoning",
+        "was_2025": "LLM04"
+      },
+      "LLM06": {
+        "title": "Unbounded Consumption",
+        "was_2025": "LLM10"
+      },
+      "LLM07": {
+        "title": "Misinformation",
+        "was_2025": "LLM09"
+      },
+      "LLM08": {
+        "title": "Hidden Context Exposure",
+        "was_2025": "LLM07",
+        "note": "renamed and widened"
+      },
+      "LLM09": {
+        "title": "Vector and Embedding Weaknesses",
+        "was_2025": "LLM08"
+      },
+      "LLM10": {
+        "title": "Improper Output Handling",
+        "was_2025": "LLM05"
+      }
+    }
+  },
+  "llm_2025_to_2026": {
+    "LLM01": "LLM01",
+    "LLM02": "LLM02",
+    "LLM03": "LLM04",
+    "LLM04": "LLM05",
+    "LLM05": "LLM10",
+    "LLM06": "LLM03",
+    "LLM07": "LLM08",
+    "LLM08": "LLM09",
+    "LLM09": "LLM07",
+    "LLM10": "LLM06"
+  },
+  "agentic_2026": {
+    "source": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+    "published": "2025-12",
+    "cross_map_note": "related_llm_2025 is Appendix A as published; related_llm_2026 is the same list translated through llm_2025_to_2026. threat_ids are the Agentic AI Threats and Mitigations T-codes.",
+    "incident_tracker": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/blob/main/initiatives/agent_security_initiative/ASI%20Agentic%20Exploits%20%26%20Incidents/ASI_Agentic_Exploits_Incidents.md",
+    "items": {
+      "ASI01": {
+        "title": "Agent Goal Hijack",
+        "summary": "Content the agent reads - a document, a web page, a tool result, a message - redirects what the agent is trying to accomplish, so it pursues an attacker's objective with the user's authority.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM06"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM03"
+        ],
+        "threat_ids": [
+          "T6",
+          "T7"
+        ]
+      },
+      "ASI02": {
+        "title": "Tool Misuse and Exploitation",
+        "summary": "The agent uses tools it was legitimately given in an unsafe or unintended way - chaining them, over-calling them or passing them attacker-shaped arguments - without any tool being vulnerable itself.",
+        "related_llm_2025": [
+          "LLM06"
+        ],
+        "related_llm_2026": [
+          "LLM03"
+        ],
+        "threat_ids": [
+          "T2",
+          "T4",
+          "T16"
+        ]
+      },
+      "ASI03": {
+        "title": "Identity and Privilege Abuse",
+        "summary": "Credentials, tokens and delegated permissions held by or passed through an agent are reused, inherited or escalated beyond what the task needed.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM06",
+          "LLM02"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM02",
+          "LLM03"
+        ],
+        "threat_ids": [
+          "T3"
+        ]
+      },
+      "ASI04": {
+        "title": "Agentic Supply Chain Vulnerabilities",
+        "summary": "A third-party component the agent loads at runtime - an MCP server, plugin, tool definition, model, prompt template or agent card - is malicious or compromised.",
+        "related_llm_2025": [
+          "LLM03"
+        ],
+        "related_llm_2026": [
+          "LLM04"
+        ],
+        "threat_ids": [
+          "T17",
+          "T2",
+          "T11",
+          "T12",
+          "T13",
+          "T16"
+        ]
+      },
+      "ASI05": {
+        "title": "Unexpected Code Execution",
+        "summary": "Agent-generated or agent-fetched code, commands or deserialised content execute on a host where nobody intended arbitrary execution.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM05"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM10"
+        ],
+        "threat_ids": [
+          "T11"
+        ]
+      },
+      "ASI06": {
+        "title": "Memory and Context Poisoning",
+        "summary": "Persistent memory, retrieved context or shared state is seeded with content that changes the agent's later behaviour, surviving the session that planted it.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM04",
+          "LLM08"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM05",
+          "LLM09"
+        ],
+        "threat_ids": [
+          "T1",
+          "T4",
+          "T6",
+          "T12"
+        ]
+      },
+      "ASI07": {
+        "title": "Insecure Inter-Agent Communication",
+        "summary": "Messages between agents are spoofed, intercepted, replayed or trusted without authentication, so one agent can be steered through another.",
+        "related_llm_2025": [
+          "LLM02",
+          "LLM06"
+        ],
+        "related_llm_2026": [
+          "LLM02",
+          "LLM03"
+        ],
+        "threat_ids": [
+          "T12",
+          "T16"
+        ]
+      },
+      "ASI08": {
+        "title": "Cascading Failures",
+        "summary": "One faulty or compromised step propagates through automated agent chains and amplifies into a wider failure before a human can intervene.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM04",
+          "LLM06"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM03",
+          "LLM05"
+        ],
+        "threat_ids": [
+          "T5",
+          "T8"
+        ]
+      },
+      "ASI09": {
+        "title": "Human-Agent Trust Exploitation",
+        "summary": "The agent's apparent authority or fluency is used to get a human to approve, run or believe something they would otherwise reject.",
+        "related_llm_2025": [
+          "LLM01",
+          "LLM05",
+          "LLM06",
+          "LLM09"
+        ],
+        "related_llm_2026": [
+          "LLM01",
+          "LLM03",
+          "LLM07",
+          "LLM10"
+        ],
+        "threat_ids": [
+          "T7",
+          "T8",
+          "T10"
+        ]
+      },
+      "ASI10": {
+        "title": "Rogue Agents",
+        "summary": "An agent drifts from, conceals or acts against its intended behaviour - through compromise or misalignment - while still appearing to operate normally.",
+        "related_llm_2025": [
+          "LLM02",
+          "LLM09"
+        ],
+        "related_llm_2026": [
+          "LLM02",
+          "LLM07"
+        ],
+        "threat_ids": [
+          "T13",
+          "T14",
+          "T15"
+        ]
+      }
+    }
+  }
+}

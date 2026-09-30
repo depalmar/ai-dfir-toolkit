@@ -1063,3 +1063,47 @@ too - that is a lead, not a verified row, and it is left unstamped accordingly.
 The two credential directories remain unverified for mode and permissions. That
 needs an authenticated session, which needs the operator's own GitHub
 credentials, and is the obvious next step for whoever has them.
+
+## Framework refresh - 2026-09-30
+
+ATLAS 2026.07 -> 2026.09, read from a clone of `mitre-atlas/atlas-data` rather
+than a summary. The changelog summary this session started from was internally
+inconsistent about how many techniques 2026.08 added, which is the reason the
+pin is built by parsing the release file and never from release notes. ATT&CK is
+unchanged at 19.2 (the newest Enterprise release in `attack-stix-data/index.json`
+on this date). CISA KEV was read from `cisagov/kev-data`, catalog 2026.09.29.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `technique-ids.json` | atlas.techniques | 194 ids, tactics mixed in | **208 techniques; 16 tactics, 40 mitigations, 73 case studies in their own keys** | CORRECTED. `--refresh` kept every id starting `AML.T`, which is also the prefix of every tactic (`AML.TA0000`-`AML.TA0015`). 194 was 178 techniques plus 16 tactics. It now buckets by object type. |
+| `AML.TA0001` | name | AI Attack Staging | **AI Attack Adaptation** | ATLAS 2026.08 renamed the tactic. The id is unchanged. |
+| `VERIFICATION.md` row 21 | C2 tactic id | AML.TA0015 | **AML.TA0014** | CORRECTED. In the pinned release, Command and Control is `AML.TA0014`, and `AML.TA0015` is Lateral Movement. The earlier row is left as written because this file is an audit trail. |
+| `AIRT-CS-0002`, `mcp_tool_poisoning.yar`, MAPPINGS, playbook, guide | ATLAS | AML.T0104 | **AML.T0115.002** | CORRECTED. ATLAS 2026.07 folded "Publish Poisoned AI Agent Tool" (T0104) into Publish Poisoned AI Artifacts as sub-technique .002 (atlas-data CHANGELOG, 2026.07). The gate only read `catalog/*.yml`, so five surfaces carried a retired id for a month with CI green. |
+| `ray_jobs_api_rce.rules`, MAPPINGS | ATLAS | AML.T0019 | **AML.T0049** | CORRECTED, not renamed. T0019 (Publish Poisoned Datasets) became T0115.000 in 2026.07. A mechanical remap would have kept a mapping that was already wrong: submitting a job that downloads a remote script poisons no dataset. ATLAS's own ShadowRay case study (`AML.CS0023`) maps that step to T0049 Exploit Public-Facing Application. |
+| `ray_jobs_api_rce.rules` header | KEV status | "KEV-listed by CISA" | **Not in CISA KEV; VulnCheck KEV lists it** | CORRECTED. CVE-2023-48022 is absent from the CISA catalog (2026.09.29). The investigation guide already said so. `scripts/cve_status.py` now pins KEV status for all 33 cited CVEs, and gates any line that calls a CVE KEV-listed when the pin disagrees. |
+| `site_data._norm_atlas` | tag parsing | `atlas.aml-tNNNN` -> "" | **-> AML.TNNNN** | CORRECTED. 18 tags in 07/08/09 were silently discarded, so those rules showed only what MAPPINGS said about them. |
+| `site_data.parse_yara/parse_suricata` | ATLAS extraction | any `T\d{4}` | **`AML.T\d{4}` or `T0\d{3}`** | CORRECTED. ATT&CK T1190 in a Suricata metadata block was read as ATLAS `AML.T1190`, which does not exist. |
+| `site_data.parse_sigma` | tags | first YAML document only | **all documents** | CORRECTED. Multi-rule files lost every tag after the first rule. |
+| `site_data.load_mappings` | section 04 | 9 rows dropped | **read by header name** | CORRECTED. The parser required five cells, and section 04 had four (no OWASP column). Section 04 now has OWASP and ASI columns like every other section. |
+| MAPPINGS rows | ATLAS | disagreed with rule tags on 8 rules | **superset of each rule's own tags** | RECONCILED. Missing ids were added to MAPPINGS (e.g. T0053 and T0096 on `agentic_orchestration_behavior.yml`, T0086 on `memory_poisoning.yml`, T0010 on the Triton rule). Nothing was removed. `sync_mappings.py --check` now fails if a rule tags an id its row omits. |
+| MAPPINGS indexes | titles | hand-typed | **generated from the pins** | CORRECTED. Examples: T0010.002 "Software Supply Chain" -> "AI Supply Chain Compromise: Data"; T0018 "Poison AI Model" -> "Manipulate AI Model"; T0029 "Denial of ML Service / Resource Hijacking" -> "Denial of AI Service". |
+| `nvidia_container_escape.yml` row | ATLAS | "T1611 (ATT&CK)" | **- (ATT&CK T1611 in the reference column)** | An ATT&CK id in the ATLAS column parsed as nothing at best and as a fake ATLAS id at worst. |
+| MAPPINGS | ASI column | absent | **added to every row** | NEW. OWASP Top 10 for Agentic Applications (Dec 2025). These values are this project's assessment, because OWASP maps no detection content. Appendix A's LLM cross-map cites 2025 ids and is stored translated through the 2026 remap in `schema/owasp.json`. |
+| `apply_mappings_update.py` | Langflow OWASP | LLM03 | **unchanged, annotated** | Not a defect. The whole table uses 2025 ids, and 2025 LLM03 Supply Chain is 2026 LLM04, which is what MAPPINGS shows. The script now says so, and warns against re-running it. |
+
+## Threat-intel layer - 2026-09-30
+
+Sources were read directly where the runner could reach them: GTIG's four AI
+Threat Tracker posts (Nov 2025; Feb, May, Sep 2026), Anthropic's August 2025,
+November 2025 and September 2026 reports plus the September 2026 IOC release,
+Microsoft's February 2024 post, the Nx GitHub advisory, and the ATLAS release
+data. Claims that rest on a secondary summary, not on a fetched page, say so in
+the case study's `basis`, never in `last_verified`.
+
+| Scope | Field | Was | Now | Basis |
+|---|---|---|---|---|
+| `ai_agent_credential_file_access.yml` | ATLAS | T0082 RAG Credential Harvesting | **T0083 Credentials from AI Agent Configuration, T0055 Unsecured Credentials** | CORRECTED. The rule watches reads of files like `~/.codex/auth.json`. That is credential theft from agent configuration, not harvesting from a RAG store. The mapping error surfaced when the new actor-coverage report found no rule for T0055. |
+| `airt-cs-0002.yml` | ioc type | npm-user | **account** | IOC `type` is now a closed enum. `npm-user` was the one value used by a single case. |
+| `airt-cs-0002.yml` | disclosed | 2025-09 (unquoted) | **"2025-09"** | YAML read the unquoted value as a string by accident. It is quoted like every other `disclosed` value. |
+| `airt-cs-0004.yml` | ATLAS | T0053, T0054, T0096 | **+ T0116, T0117** | ATLAS's own case study for this campaign (`AML.CS0069`) maps it to Autonomous Reconnaissance and Autonomous Attack-Path Adaptation, both added in 2026.08. |
+| Actor profiles | scope | - | **20 actors** | Attributed groups and reporter-named clusters only. One cluster was left out because its only public source is research published by the maintainer's employer, and the project's neutrality rule covers citing it as well as naming it. Anthropic's September 2026 influence-operation, surveillance and scam clusters are also left out. They leave no host artefacts, and several name private companies and individuals. |

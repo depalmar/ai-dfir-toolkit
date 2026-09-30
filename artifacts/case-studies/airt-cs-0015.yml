@@ -1,0 +1,94 @@
+# AI agent artifact case study
+# AIRT-CS-0015 - s1ngularity: A Supply-Chain Payload That Used the Victim's Own AI CLIs
+
+id: AIRT-CS-0015
+title: "s1ngularity - A Supply-Chain Payload That Used the Victim's Own AI CLIs"
+date_range: 2025-08-21 (workflow compromised) to 2025-08-26 (malicious versions live about four hours)
+disclosed: "2025-08-26"
+affects:
+  - AIRT-0001
+  - AIRT-0037
+  - AIRT-0008
+confidence: high
+basis: >-
+  The Nx maintainers' own GitHub security advisory documents the affected
+  versions, the timeline, /tmp/inventory.txt, the s1ngularity-repository
+  exfiltration naming and the shell-profile change. The specific AI CLIs and the
+  flags used to invoke them are not stated in the advisory text retrieved for
+  this entry. They come from independent analyses by Wiz, Snyk and StepSecurity,
+  which agree with one another, so that part of the record is third-party
+  corroborated rather than vendor-documented.
+atlas:
+  - AML.T0010
+  - AML.T0053
+  - AML.T0055
+attack:
+  - T1195.002
+  - T1552.001
+  - T1059
+owasp_agentic:
+  - ASI04
+  - ASI05
+  - ASI02
+summary: >-
+  A command-injection flaw in the Nx repository's pull-request workflow let an
+  attacker obtain the npm publish token and push trojanised versions of the nx
+  build system and several @nx plugins. Their postinstall script checked which AI
+  coding CLIs were installed. It then ran Claude Code, Gemini CLI and Amazon Q with
+  the flag that disables tool approval, and prompted them to search the
+  filesystem for configuration, key and wallet files. The results went to
+  /tmp/inventory.txt and were published, base64-encoded, to a public repository
+  under the victim's own GitHub account. It also appended a shutdown command to
+  the victim's shell profiles. The Nx Console VS Code extension installed the
+  latest nx during version checks, so some victims were infected without ever
+  running an npm install.
+iocs:
+  - type: package
+    value: "nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0"
+    description: Affected versions per the Nx advisory
+  - type: file
+    value: /tmp/inventory.txt
+    description: Secret inventory written by the AI CLI run; its presence proves the payload executed
+  - type: pattern
+    value: GitHub repository name containing s1ngularity-repository
+    description: Exfiltration destination created under the victim's own account - check the GitHub audit log
+  - type: config
+    value: "sudo shutdown -h 0 appended to ~/.bashrc and ~/.zshrc"
+    description: Shell profile modification
+  - type: behavior
+    value: "claude --dangerously-skip-permissions, gemini --yolo, q --trust-all-tools started by node from an npm lifecycle script"
+    description: The AI CLIs did the reconnaissance; the parent process is the evidence
+response_actions:
+  - phase: contain
+    action: Search every developer host and CI runner for /tmp/inventory.txt and for AI CLI processes whose parent was node, npm or the Nx Console extension host during the window.
+  - phase: contain
+    action: Search the organisation's GitHub audit log and every member account for repositories named s1ngularity-repository.
+  - phase: eradicate
+    action: Remove the added lines from .bashrc and .zshrc, uninstall the affected nx versions and clear the npm, yarn and pnpm caches.
+  - phase: recover
+    action: "Rotate everything the inventory could have reached: GitHub tokens and the GitHub CLI OAuth grant, npm tokens, SSH keys, cloud keys and every AI provider API key found by the catalog's credential rows."
+  - phase: harden
+    action: Treat an installed AI CLI as a capability any local process can borrow. Remove bypass flags from shell aliases and wrappers, and alert when a package manager starts one.
+lesson: >-
+  The malware shipped no scanner. It borrowed the developer's agent, which
+  already had filesystem access, and passed it the one flag that removes the
+  human from the loop. That makes the agent's own session store part of the
+  crime scene. The prompt and every file the agent opened may sit in its
+  transcript, which is why the catalog's session-log rows for these three tools
+  belong in the collection order here.
+detections:
+  - ai_cli_permission_bypass_invocation.yml
+  - ai_agent_spawning_shell.yml
+  - ai_agent_credential_file_access.yml
+references:
+  - title: "Nx - Security advisory GHSA-cxm3-wv7p-598c: malicious versions of Nx and some supporting plugins were published"
+    url: https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+  - title: "Wiz - s1ngularity: supply chain attack leaks secrets on GitHub"
+    url: https://www.wiz.io/blog/s1ngularity-supply-chain-attack
+  - title: "Snyk - Weaponizing AI Coding Agents for Malware in the Nx Malicious Package Security Incident"
+    url: https://snyk.io/blog/weaponizing-ai-coding-agents-for-malware-in-the-nx-malicious-package/
+  - title: "StepSecurity - s1ngularity: Popular Nx Build System Package Compromised with Data-Stealing Malware"
+    url: https://www.stepsecurity.io/blog/supply-chain-security-alert-popular-nx-build-system-package-compromised-with-data-stealing-malware
+external_ids:
+  ghsa:
+    - GHSA-cxm3-wv7p-598c

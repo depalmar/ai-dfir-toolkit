@@ -4,7 +4,7 @@
 id: AIRT-CS-0002
 title: postmark-mcp npm Backdoor - First In-the-Wild Malicious MCP Server
 date_range: 2025-09-17 (published) to ~2025-09-25 (removed)
-disclosed: 2025-09
+disclosed: "2025-09"
 affects: MCP ecosystem
 confidence: high
 basis: >-
@@ -13,13 +13,13 @@ basis: >-
   registry record, and corroborated independently by Snyk and Qualys.
 atlas:
   - AML.T0010
-  - AML.T0104
+  - AML.T0115.002
 summary: "npm package postmark-mcp v1.0.16, published by user 'phanpak', silently BCC'd every email processed through it to an attacker-controlled address. 1,643 downloads before removal. Koi Security called it the first real-world sighting of a malicious MCP server."
 iocs:
   - type: package
     value: "postmark-mcp@1.0.16"
     description: Backdoored version
-  - type: npm-user
+  - type: account
     value: phanpak
     description: Publishing account
   - type: email
@@ -42,3 +42,6 @@ references:
     url: https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/
   - title: "Dark Reading - Sneaky, Malicious MCP Server Exfiltrates Secrets via BCC"
     url: https://www.darkreading.com/application-security/malicious-mcp-server-exfiltrates-secrets-bcc
+
+owasp_agentic:
+  - ASI04

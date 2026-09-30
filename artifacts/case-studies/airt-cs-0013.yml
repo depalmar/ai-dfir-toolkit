@@ -66,3 +66,13 @@ references:
     url: https://cdn.prod.website-files.com/69944dd945f20ca4a27a7c47/69d8bb5aea59e31efb3b8a7f_Tech_Report_ai_breach_mex_gov.pdf
   - title: "Live Science - Hackers used AI to steal hundreds of millions of Mexican government and private citizen records"
     url: https://www.livescience.com/technology/artificial-intelligence/hackers-used-ai-to-steal-hundreds-of-millions-of-mexican-government-and-private-citizen-records-in-one-of-the-largest-cybersecurity-breaches-ever
+
+victims:
+  sectors:
+    - government
+  countries:
+    - MX
+  org_count:
+    value: 9
+    qualifier: exact
+  basis: Nine Mexican federal and state government agencies, per the cited reporting.

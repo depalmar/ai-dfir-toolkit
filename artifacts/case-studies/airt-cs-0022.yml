@@ -1,0 +1,75 @@
+# AI agent artifact case study
+# AIRT-CS-0022 - GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
+# Indicators: Anthropic September 2026 IOC release, cyber-operations rows only, values as published (defanged).
+
+id: AIRT-CS-0022
+title: GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
+date_range: 2026 (activity window not stated)
+disclosed: '2026-09-10'
+affects:
+- AIRT-0001
+- AIRT-0041
+confidence: medium
+basis: A single reporting party with six published domains.
+atlas:
+- AML.T0034
+- AML.T0055
+attack:
+- T1557
+owasp_agentic:
+- ASI03
+actors:
+- ref: AIRT-TA-0019
+  role: operator
+  link_confidence: medium
+  attributed_by: Anthropic
+  stated_confidence: '"Russian and Ukrainian speaking group"'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50021-indicators-of-compromise
+victims:
+  sectors:
+  - consumers
+  - information-technology
+  basis: 'Anthropic: customers seeking discounted Claude access, and downstream AI proxy resellers.'
+summary: Anthropic reports a Russian- and Ukrainian-speaking group selling cheap Claude access
+  that silently proxied some traffic to a different model and harvested the credentials customers
+  supplied. The published domains include kiro[.]cheap and an AWS lookalike, aws-us-east-3[.]com.
+  On a victim host, the evidence is an agent whose API base URL points at a reseller rather
+  than the provider, which is the misconfiguration the catalog's endpoint-redirection rule
+  looks for.
+iocs:
+- type: domain
+  value: aws-us-east-3[.]com
+  description: AWS lookalike domain (role infrastructure, handling detect-or-block)
+- type: domain
+  value: awstore[.]cloud
+  description: Fake Claude API reseller storefront (role monetization, handling detect-or-block)
+- type: domain
+  value: holdboost[.]store
+  description: Malware platform domain (role c2, handling detect-or-block)
+- type: domain
+  value: kiro[.]cheap
+  description: Fake Kiro API reseller storefront (role monetization, handling detect-or-block)
+- type: domain
+  value: sys-tools[.]cfd
+  description: Malware C2 (role c2, handling detect-or-block)
+- type: domain
+  value: iymkjuzymkapovrntoxy.supabase[.]co
+  description: Malware Supabase backend (role c2, handling detect-or-block)
+response_actions:
+- phase: contain
+  action: Search agent configurations and environment variables for API base URLs pointing
+    at the published domains, and block them.
+- phase: recover
+  action: Rotate any provider API key or OAuth credential that was ever entered into a reseller.
+- phase: harden
+  action: Alert when a coding agent's inference endpoint is changed away from the vendor default.
+lesson: A cheap-access reseller is a man in the middle by construction. It sees every prompt,
+  every file the agent sends, and the credential itself.
+detections:
+- ai_inference_endpoint_redirection.yml
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50021'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50021-indicators-of-compromise
+external_ids:
+  vendor_cluster:
+  - GTG-50021

@@ -58,6 +58,7 @@ def index_drift(mappings: Path, on_disk: set[str]) -> list[str]:
     lines = mappings.read_text(encoding="utf-8").splitlines()
     atlas: dict[str, int] = {}
     owasp: dict[str, int] = {}
+    asi: dict[str, int] = {}
     columns: list[str] = []
     rows = 0
 
@@ -78,6 +79,9 @@ def index_drift(mappings: Path, on_disk: set[str]) -> list[str]:
             elif name == "owasp":
                 for tag in re.findall(r"\bLLM\d{2}\b", cells[i]):
                     owasp[tag] = owasp.get(tag, 0) + 1
+            elif name == "asi":
+                for tag in re.findall(r"\bASI\d{2}\b", cells[i]):
+                    asi[tag] = asi.get(tag, 0) + 1
 
     def published(heading: str) -> dict[str, int]:
         out: dict[str, int] = {}
@@ -85,21 +89,30 @@ def index_drift(mappings: Path, on_disk: set[str]) -> list[str]:
             start = next(i for i, l in enumerate(lines) if l.startswith(heading))
         except StopIteration:
             return out
+        # The count column is found by its header, not its position. The OWASP
+        # index gained a "was in 2025" column when the list was remapped and the
+        # ATLAS index gained a "tactic" column in 2026.09; an exact width made
+        # the whole table invisible to this check rather than failing loudly.
+        count_at = None
         for line in lines[start + 1:]:
             if line.startswith("##"):
                 break
-            cells = [c.strip() for c in line.strip("|").split("|")]
-            # >= 3, not == 3: the OWASP index gained a "was in 2025" column
-            # when the list was remapped, and an exact width made the whole
-            # table invisible to this check rather than failing loudly.
-            if len(cells) >= 3 and cells[2].isdigit():
-                out[cells[0]] = int(cells[2])
+            if not line.startswith("|") or set(line.strip()) <= set("|-: "):
+                continue
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if count_at is None:
+                heads = [c.lower() for c in cells]
+                count_at = next((i for i, h in enumerate(heads) if "count" in h), 2)
+                continue
+            if len(cells) > count_at and cells[count_at].isdigit():
+                out[cells[0]] = int(cells[count_at])
         return out
 
     problems = []
     for label, heading, counted in (
         ("ATLAS", "## ATLAS Technique Index", atlas),
         ("OWASP", "## OWASP Top 10 for LLM Applications 2026 Index", owasp),
+        ("ASI", "## OWASP Top 10 for Agentic Applications 2026 Index", asi),
     ):
         pub = published(heading)
         for tag in sorted(set(pub) | set(counted)):

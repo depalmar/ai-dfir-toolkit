@@ -1,0 +1,37 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0011 - MuddyWater
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0011
+name: MuddyWater
+aliases:
+- name: TEMP.Zagros
+  source: GTIG
+- name: MUDDYCOAST
+  source: GTIG
+kind: state-nexus
+nexus: IR
+motivation:
+- espionage
+summary: Iranian state-sponsored group that GTIG reports used Gemini, under student and research
+  pretexts, to develop custom malware including web shells and a Python C2 server.
+confidence: medium
+basis: One reporting party.
+external_ids:
+  attack_group:
+  - G0069
+sightings:
+- date: '2025-11-05'
+  reporter: GTIG
+  summary: Used Gemini, with student and paper-writing pretexts to get past safety guardrails,
+    to develop web shells and a Python-based C2 server.
+  atlas:
+  - AML.T0016.002
+  - AML.T0054
+  ai_services:
+  - Gemini
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools
+references:
+- title: 'GTIG - AI Threat Tracker: Advances in Threat Actor Usage of AI Tools (5 Nov 2025)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools

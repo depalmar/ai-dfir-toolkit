@@ -1,0 +1,95 @@
+# Sources scripts/intel_watch.py polls for intel candidates.
+#
+# Nothing here writes to the catalog. Each new item becomes a GitHub issue
+# labelled intel-candidate, holding facts and a link only, for a person to
+# research with the method in artifacts/docs/RESEARCH-2026-08-14.md. Licences
+# matter: AIID and the OWASP documents are CC BY-SA 4.0 and this repository's
+# data is CC BY 4.0, so candidates carry ids, dates, titles and URLs - never copied
+# prose.
+#
+# `match` terms are case-insensitive. An item is a candidate when its text hits
+# at least one term. The catalog's tool names, vendors and aliases are added
+# automatically, so a new tool is watched the day it is catalogued.
+
+lookback_days: 21
+
+match:
+  - agent
+  - agentic
+  - MCP
+  - model context protocol
+  - coding assistant
+  - AI CLI
+  - LLM
+  - prompt injection
+  - Claude Code
+  - Copilot
+  - Gemini CLI
+  - Codex
+
+sources:
+  - id: cisa-kev
+    kind: kev
+    url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+    note: A new KEV entry for a catalogued vendor or product.
+
+  - id: atlas
+    kind: atlas
+    url: https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/
+    note: ATLAS case studies newer than the pin.
+
+  - id: avid
+    kind: avid
+    url: https://github.com/avidml/avid-db
+    note: AVID reports in the Security risk domain.
+
+  - id: aiid
+    kind: aiid
+    url: https://incidentdatabase.ai/api/graphql
+    # The AI Incident Database classifies incidents against the MIT AI Risk
+    # Repository domains. 2.2 is AI system security vulnerabilities and attacks,
+    # 4.2 is cyberattacks, weapon development or use, and mass harm. Incidents in
+    # those domains are candidates even without a keyword hit.
+    mit_domains: ["2.2", "4.2"]
+    note: Security-relevant AI incidents.
+
+  - id: owasp-asi-tracker
+    kind: markdown-table
+    url: https://raw.githubusercontent.com/OWASP/www-project-top-10-for-large-language-model-applications/main/initiatives/agent_security_initiative/ASI%20Agentic%20Exploits%20%26%20Incidents/ASI_Agentic_Exploits_Incidents.md
+    note: New rows in the OWASP Agentic exploits and incidents tracker.
+
+  - id: gtig
+    kind: feed
+    url: https://cloud.google.com/blog/topics/threat-intelligence/rss/
+    note: Google Threat Intelligence Group posts.
+
+  - id: microsoft-security
+    kind: feed
+    url: https://www.microsoft.com/en-us/security/blog/feed/
+    note: Microsoft Threat Intelligence posts.
+
+  - id: openai-global-affairs
+    kind: feed
+    url: https://openai.com/news/rss.xml
+    note: OpenAI threat reports ("Disrupting malicious uses of AI").
+
+  - id: anthropic-news
+    kind: feed
+    url: https://www.anthropic.com/rss.xml
+    note: Anthropic threat intelligence reports. The feed URL is a best guess - if it 404s the run logs a warning and continues.
+
+  - id: cert-ua
+    kind: feed
+    url: https://cert.gov.ua/api/articles/rss
+    note: CERT-UA advisories. Best-guess feed URL, as above.
+
+  - id: github-advisories
+    kind: ghsa
+    # Reviewed advisories for packages this catalog documents or whose MCP
+    # servers it records. Extend as entries are added.
+    ecosystems:
+      npm: ["@modelcontextprotocol/sdk", "@anthropic-ai/claude-code", "@google/gemini-cli",
+            "@openai/codex", "mcp-remote", "@playwright/mcp", "n8n", "flowise"]
+      pip: ["langflow", "litellm", "open-webui", "vllm", "mcp", "crewai", "autogen-agentchat",
+            "langchain", "aider-chat", "open-interpreter", "letta"]
+    note: Reviewed GitHub advisories for catalogued packages.

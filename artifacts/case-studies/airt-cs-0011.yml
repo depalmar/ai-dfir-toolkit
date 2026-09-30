@@ -59,3 +59,13 @@ references:
     url: https://www.helpnetsecurity.com/2026/02/11/ai-recommendation-memory-poisoning-attacks/
   - title: "The Hacker News - Microsoft Finds Summarize with AI Prompts Manipulating Chatbot Recommendations"
     url: https://thehackernews.com/2026/02/microsoft-finds-summarize-with-ai.html
+
+owasp_agentic:
+  - ASI06
+victims:
+  sectors:
+    - consumers
+  basis: Users of assistants with persistent memory; ATLAS AML.CS0072 names Microsoft 365 Copilot, ChatGPT, Claude, Perplexity and Grok users.
+external_ids:
+  atlas_case_study:
+    - AML.CS0072

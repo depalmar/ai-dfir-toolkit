@@ -1,0 +1,562 @@
+EntityType,Value,Category,Label
+maltego.Phrase,actor:AIRT-TA-0001,actor,APT28
+maltego.Phrase,actor:AIRT-TA-0002,actor,GTG-1002
+maltego.Phrase,actor:AIRT-TA-0003,actor,GTG-2002
+maltego.Phrase,actor:AIRT-TA-0004,actor,MIDNIGHT NEPTUNE
+maltego.Phrase,actor:AIRT-TA-0005,actor,UNC6780
+maltego.Phrase,actor:AIRT-TA-0006,actor,ShinyHunters
+maltego.Phrase,actor:AIRT-TA-0007,actor,APT42
+maltego.Phrase,actor:AIRT-TA-0008,actor,APT41
+maltego.Phrase,actor:AIRT-TA-0009,actor,Sandworm
+maltego.Phrase,actor:AIRT-TA-0010,actor,APT31
+maltego.Phrase,actor:AIRT-TA-0011,actor,MuddyWater
+maltego.Phrase,actor:AIRT-TA-0012,actor,UNC4899
+maltego.Phrase,actor:AIRT-TA-0013,actor,Kimsuky
+maltego.Phrase,actor:AIRT-TA-0014,actor,UNC5673
+maltego.Phrase,actor:AIRT-TA-0015,actor,UNC6508
+maltego.Phrase,actor:AIRT-TA-0016,actor,GTG-20006
+maltego.Phrase,actor:AIRT-TA-0017,actor,GTG-50020
+maltego.Phrase,actor:AIRT-TA-0018,actor,GTG-50029
+maltego.Phrase,actor:AIRT-TA-0019,actor,GTG-50021
+maltego.Phrase,actor:AIRT-TA-0020,actor,GTG-10007
+maltego.File,artifact:AIRT-0001/credential/anthropic-api-key,artifact,ANTHROPIC_API_KEY
+maltego.File,artifact:AIRT-0001/credential/anthropic-auth-token,artifact,ANTHROPIC_AUTH_TOKEN
+maltego.File,artifact:AIRT-0001/credential/claude-code-oauth-token,artifact,CLAUDE_CODE_OAUTH_TOKEN
+maltego.File,artifact:AIRT-0001/credential/claude-config-dir-credentials-json,artifact,$CLAUDE_CONFIG_DIR/.credentials.json
+maltego.File,artifact:AIRT-0001/credential/claude-credentials-json,artifact,~/.claude/.credentials.json
+maltego.File,artifact:AIRT-0001/credential/claude-json,artifact,~/.claude.json
+maltego.File,artifact:AIRT-0001/credential/config-anthropic-configs,artifact,~/.config/anthropic/configs/
+maltego.File,artifact:AIRT-0001/credential/macos-login-keychain-library-keychains-login-keychain-db,artifact,macOS login Keychain (~/Library/Keychains/login.keychain-db)
+maltego.File,artifact:AIRT-0001/credential/macos-login-keychain-mcp-remote-server-oauth-credentials,artifact,macOS login Keychain (MCP remote-server OAuth credentials)
+maltego.File,artifact:AIRT-0001/credential/project-mcp-json,artifact,<project>/.mcp.json
+maltego.File,artifact:AIRT-0001/disk/appdata-npm-claude-cmd,artifact,%APPDATA%\npm\claude.cmd
+maltego.File,artifact:AIRT-0001/disk/appdata-npm-node-modules-anthropic-ai-claude-code,artifact,%APPDATA%\npm\node_modules\@anthropic-ai\claude-code\
+maltego.File,artifact:AIRT-0001/disk/claude,artifact,~/.claude/
+maltego.File,artifact:AIRT-0001/disk/claude-json,artifact,~/.claude.json
+maltego.File,artifact:AIRT-0001/disk/local-bin-claude,artifact,~/.local/bin/claude
+maltego.File,artifact:AIRT-0001/disk/repo-claude-md,artifact,<repo>/CLAUDE.md
+maltego.File,artifact:AIRT-0001/disk/repo-claude-settings-json,artifact,<repo>/.claude/settings.json
+maltego.File,artifact:AIRT-0001/disk/repo-mcp-json,artifact,<repo>/.mcp.json
+maltego.File,artifact:AIRT-0001/disk/usr-local-bin-claude,artifact,/usr/local/bin/claude
+maltego.File,artifact:AIRT-0001/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0001/mcp-config/claude-json-mcpservers-user-scope,artifact,~/.claude.json → mcpServers (user scope)
+maltego.File,artifact:AIRT-0001/mcp-config/repo-claude-settings-local-json-enabledmcpjsonservers,artifact,<repo>/.claude/settings.local.json → enabledMcpjsonServers
+maltego.File,artifact:AIRT-0001/mcp-config/repo-mcp-json-mcpservers-project-scope,artifact,<repo>/.mcp.json → mcpServers (project scope)
+maltego.File,artifact:AIRT-0001/network/api-anthropic-com-443-tcp,artifact,api.anthropic.com :443/TCP
+maltego.File,artifact:AIRT-0001/network/claude-ai-installer-statsig-anthropic-com-telemetry-443-,artifact,"claude.ai (installer), statsig.anthropic.com (telemetry) :443/TCP"
+maltego.File,artifact:AIRT-0001/process/claude-node,artifact,claude / node
+maltego.File,artifact:AIRT-0001/process/node-exe-claude,artifact,node.exe (claude)
+maltego.File,artifact:AIRT-0001/registry/hkcu-environment-openai-api-key-anthropic-api-key-anthro,artifact,"HKCU\Environment → OPENAI_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, OPENAI"
+maltego.File,artifact:AIRT-0001/registry/hkcu-software-microsoft-windows-currentversion-uninstall,artifact,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\* → DisplayName contain
+maltego.File,artifact:AIRT-0001/registry/hklm-software-microsoft-cryptography-machineguid,artifact,HKLM\SOFTWARE\Microsoft\Cryptography → MachineGuid
+maltego.File,artifact:AIRT-0002/credential/appdata-cursor-user-globalstorage-state-vscdb,artifact,%APPDATA%\Cursor\User\globalStorage\state.vscdb
+maltego.File,artifact:AIRT-0002/credential/config-cursor-auth-json,artifact,~/.config/cursor/auth.json
+maltego.File,artifact:AIRT-0002/credential/config-cursor-user-globalstorage-state-vscdb,artifact,~/.config/Cursor/User/globalStorage/state.vscdb
+maltego.File,artifact:AIRT-0002/credential/cursor-mcp-json,artifact,~/.cursor/mcp.json
+maltego.File,artifact:AIRT-0002/credential/library-application-support-cursor-user-globalstorage-st,artifact,~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
+maltego.File,artifact:AIRT-0002/credential/macos-login-keychain-generic-password-service-cursor-saf,artifact,"macOS login Keychain: generic-password service 'Cursor Safe Storage', account 'C"
+maltego.File,artifact:AIRT-0002/credential/macos-login-keychain-generic-password-services-cursor-ac,artifact,macOS login Keychain: generic-password services cursor-access-token / cursor-ref
+maltego.File,artifact:AIRT-0002/credential/repo-cursor-mcp-json,artifact,<repo>/.cursor/mcp.json
+maltego.File,artifact:AIRT-0002/disk/appdata-cursor-user,artifact,%APPDATA%\Cursor\User\
+maltego.File,artifact:AIRT-0002/disk/appdata-cursor-user-skills,artifact,%APPDATA%\Cursor\User\skills\
+maltego.File,artifact:AIRT-0002/disk/config-cursor-user,artifact,~/.config/Cursor/User/
+maltego.File,artifact:AIRT-0002/disk/cursor-mcp-json,artifact,~/.cursor/mcp.json
+maltego.File,artifact:AIRT-0002/disk/library-application-support-cursor-user,artifact,~/Library/Application Support/Cursor/User/
+maltego.File,artifact:AIRT-0002/disk/localappdata-cursor-updater,artifact,%LOCALAPPDATA%\cursor-updater\
+maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor,artifact,%LOCALAPPDATA%\Programs\cursor\
+maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor-cursor-exe,artifact,%LOCALAPPDATA%\Programs\cursor\_\Cursor.exe
+maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor-resources-app-bin-cursor,artifact,%LOCALAPPDATA%\Programs\cursor\_\resources\app\bin\cursor
+maltego.File,artifact:AIRT-0002/disk/repo-cursor-mcp-json,artifact,<repo>/.cursor/mcp.json
+maltego.File,artifact:AIRT-0002/disk/repo-cursorrules-repo-cursor-rules-mdc,artifact,<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc
+maltego.File,artifact:AIRT-0002/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0002/mcp-config/cursor-mcp-json-mcpservers,artifact,~/.cursor/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0002/mcp-config/repo-cursor-mcp-json-mcpservers,artifact,<repo>/.cursor/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0002/network/cursor-sh-api2-cursor-sh-anysphere-co-443-tcp,artifact,"*.cursor.sh, api2.cursor.sh, *.anysphere.co :443/TCP"
+maltego.File,artifact:AIRT-0002/process/cursor-exe,artifact,Cursor.exe
+maltego.File,artifact:AIRT-0002/registry/hkcu-software-classes-cursor-shell-open-command-default,artifact,HKCU\Software\Classes\cursor\shell\open\command → (Default)
+maltego.File,artifact:AIRT-0002/registry/hkcu-software-microsoft-windows-currentversion-run-curso,artifact,HKCU\Software\Microsoft\Windows\CurrentVersion\Run → Cursor
+maltego.File,artifact:AIRT-0002/registry/hkcu-software-microsoft-windows-currentversion-uninstall,artifact,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\<Cursor GUID> → Install
+maltego.File,artifact:AIRT-0006/credential/appdata-windsurf-user-globalstorage-state-vscdb,artifact,%APPDATA%\Windsurf\User\globalStorage\state.vscdb
+maltego.File,artifact:AIRT-0006/credential/codeium-config-json,artifact,~/.codeium/config.json
+maltego.File,artifact:AIRT-0006/credential/codeium-windsurf-mcp-config-json,artifact,~/.codeium/windsurf/mcp_config.json
+maltego.File,artifact:AIRT-0006/credential/config-windsurf-user-globalstorage-state-vscdb,artifact,~/.config/Windsurf/User/globalStorage/state.vscdb
+maltego.File,artifact:AIRT-0006/credential/library-application-support-windsurf-user-globalstorage-,artifact,~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
+maltego.File,artifact:AIRT-0006/credential/nvim-stdpath-cache-codeium-config-json,artifact,<nvim stdpath('cache')>/codeium/config.json
+maltego.File,artifact:AIRT-0006/credential/userprofile-codeium-windsurf-mcp-config-json,artifact,%USERPROFILE%\.codeium\windsurf\mcp_config.json
+maltego.File,artifact:AIRT-0006/disk/codeium,artifact,~/.codeium/
+maltego.File,artifact:AIRT-0006/disk/codeium-version-language-server,artifact,~/.codeium/<version>/language_server_*
+maltego.File,artifact:AIRT-0006/disk/codeium-windsurf-mcp-config-json,artifact,~/.codeium/windsurf/mcp_config.json
+maltego.File,artifact:AIRT-0006/disk/repo-windsurf-settings-json,artifact,<repo>/.windsurf/settings.json
+maltego.File,artifact:AIRT-0006/disk/repo-windsurfrules,artifact,<repo>/.windsurfrules
+maltego.File,artifact:AIRT-0006/disk/userprofile-codeium-windsurf-mcp-config-json,artifact,%USERPROFILE%\.codeium\windsurf\mcp_config.json
+maltego.File,artifact:AIRT-0006/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0006/mcp-config/codeium-mcp-config-json-mcpservers,artifact,~/.codeium/mcp_config.json → mcpServers
+maltego.File,artifact:AIRT-0006/mcp-config/codeium-windsurf-mcp-config-json-mcpservers,artifact,~/.codeium/windsurf/mcp_config.json → mcpServers
+maltego.File,artifact:AIRT-0006/network/server-codeium-com-codeium-com-windsurf-com-443-tcp,artifact,"server.codeium.com, *.codeium.com, *.windsurf.com :443/TCP"
+maltego.File,artifact:AIRT-0006/process/windsurf-exe-language-server-windows-x64-exe,artifact,"Windsurf.exe, language_server_windows_x64.exe"
+maltego.File,artifact:AIRT-0008/credential/aws-sso-cache-json,artifact,~/.aws/sso/cache/*.json
+maltego.File,artifact:AIRT-0008/disk/aws-amazonq-cli-agents-json,artifact,~/.aws/amazonq/cli-agents/*.json
+maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-data-sqlite3,artifact,~/.local/share/amazon-q/data.sqlite3
+maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-settings-json,artifact,~/.local/share/amazon-q/settings.json
+maltego.File,artifact:AIRT-0008/disk/node-language-server-build-aws-lsp-codewhisperer-iam-bin,artifact,node .../language-server/build/aws-lsp-codewhisperer-iam-binary.js --stdio
+maltego.File,artifact:AIRT-0008/disk/node-language-server-build-aws-lsp-codewhisperer-token-b,artifact,node .../language-server/build/aws-lsp-codewhisperer-token-binary.js --stdio
+maltego.File,artifact:AIRT-0008/disk/repo-amazonq-cli-agents-json,artifact,<repo>/.amazonq/cli-agents/*.json
+maltego.File,artifact:AIRT-0008/disk/repo-amazonq-rules-md,artifact,<repo>/.amazonq/rules/*.md
+maltego.File,artifact:AIRT-0008/disk/userprofile-vscode-extensions-amazonwebservices-amazon-q,artifact,%USERPROFILE%\.vscode\extensions\amazonwebservices.amazon-q-vscode-*
+maltego.File,artifact:AIRT-0008/disk/xdg-runtime-dir-qlog-cli-log,artifact,$XDG_RUNTIME_DIR/qlog/cli.log
+maltego.File,artifact:AIRT-0008/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0008/mcp-config/aws-amazonq-default-json-agent-configuration-global-scop,artifact,"~/.aws/amazonq/default.json → Agent configuration, global scope in the IDE"
+maltego.File,artifact:AIRT-0008/mcp-config/aws-amazonq-mcp-json-mcpservers,artifact,~/.aws/amazonq/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0008/mcp-config/repo-amazonq-default-json-mcpservers,artifact,<repo>/.amazonq/default.json → mcpServers
+maltego.File,artifact:AIRT-0008/mcp-config/repo-amazonq-mcp-json-mcpservers,artifact,<repo>/.amazonq/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0008/network/q-us-east-1-amazonaws-com-codewhisperer-amazonaws-com-aw,artifact,"q.us-east-1.amazonaws.com, codewhisperer.*.amazonaws.com, *.awsapps.com/start :4"
+maltego.File,artifact:AIRT-0008/process/node-aws-lsp-codewhisperer-token-binary-js,artifact,node (aws-lsp-codewhisperer-token-binary.js)
+maltego.File,artifact:AIRT-0011/credential/appdata-claude,artifact,%APPDATA%\Claude\
+maltego.File,artifact:AIRT-0011/credential/claude-desktop-config-json-mcpservers-name-env,artifact,claude_desktop_config.json -> mcpServers.<name>.env
+maltego.File,artifact:AIRT-0011/credential/config-claude,artifact,~/.config/Claude/
+maltego.File,artifact:AIRT-0011/credential/library-application-support-claude,artifact,~/Library/Application Support/Claude/
+maltego.File,artifact:AIRT-0011/disk/appdata-claude-claude-desktop-config-json,artifact,%APPDATA%\Claude\claude_desktop_config.json
+maltego.File,artifact:AIRT-0011/disk/appdata-claude-logs-mcp-log,artifact,%APPDATA%\Claude\logs\mcp*.log
+maltego.File,artifact:AIRT-0011/disk/applications-claude-app,artifact,/Applications/Claude.app
+maltego.File,artifact:AIRT-0011/disk/applications-claude-app-2,artifact,~/Applications/Claude.app
+maltego.File,artifact:AIRT-0011/disk/config-claude,artifact,~/.config/Claude/
+maltego.File,artifact:AIRT-0011/disk/config-claude-ant-did,artifact,~/.config/Claude/ant-did
+maltego.File,artifact:AIRT-0011/disk/config-claude-claude-desktop-config-json,artifact,~/.config/Claude/claude_desktop_config.json
+maltego.File,artifact:AIRT-0011/disk/config-claude-config-json,artifact,~/.config/Claude/config.json
+maltego.File,artifact:AIRT-0011/disk/config-claude-logs-mcp-log,artifact,~/.config/Claude/logs/mcp*.log
+maltego.File,artifact:AIRT-0011/disk/library-application-support-claude-claude-desktop-config,artifact,~/Library/Application Support/Claude/claude_desktop_config.json
+maltego.File,artifact:AIRT-0011/disk/library-logs-claude-mcp-log,artifact,~/Library/Logs/Claude/mcp*.log
+maltego.File,artifact:AIRT-0011/disk/library-preferences-com-anthropic-claudefordesktop-plist,artifact,~/Library/Preferences/com.anthropic.claudefordesktop.plist
+maltego.File,artifact:AIRT-0011/disk/localappdata-packages-claude-pzs8sxrjxfjjc-localcache-ro,artifact,%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_de
+maltego.File,artifact:AIRT-0011/disk/mcpb-desktop-extension,artifact,*.mcpb (Desktop Extension)
+maltego.File,artifact:AIRT-0011/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0011/mcp-config/appdata-claude-claude-desktop-config-json-mcpservers-nam,artifact,%APPDATA%\Claude\claude_desktop_config.json → mcpServers.<name>.command + .args
+maltego.File,artifact:AIRT-0011/mcp-config/config-claude-claude-desktop-config-json-mcpservers,artifact,~/.config/Claude/claude_desktop_config.json → mcpServers
+maltego.File,artifact:AIRT-0011/mcp-config/library-application-support-claude-claude-desktop-config,artifact,~/Library/Application Support/Claude/claude_desktop_config.json → mcpServers
+maltego.File,artifact:AIRT-0011/mcp-config/localappdata-packages-claude-pzs8sxrjxfjjc-localcache-ro,artifact,%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_de
+maltego.File,artifact:AIRT-0011/mcp-config/mcpb-dxt-bundle-files-manifest-json-inside-archive,artifact,*.mcpb / *.dxt bundle files → manifest.json inside archive
+maltego.File,artifact:AIRT-0011/network/api-anthropic-com-claude-ai-443-tcp,artifact,"api.anthropic.com, claude.ai :443/TCP"
+maltego.File,artifact:AIRT-0011/network/registry-npmjs-org-npx-mcp-server-fetch-443-tcp,artifact,registry.npmjs.org (npx MCP server fetch) :443/TCP
+maltego.File,artifact:AIRT-0011/process/claude,artifact,Claude
+maltego.File,artifact:AIRT-0011/process/claude-exe,artifact,Claude.exe
+maltego.File,artifact:AIRT-0011/registry/hkcu-software-classes-activatableclasses-package-claude-,artifact,HKCU\Software\Classes\ActivatableClasses\Package\Claude_pzs8sxrjxfjjc* → -
+maltego.File,artifact:AIRT-0011/registry/hkcu-software-classes-claude-shell-open-command-default,artifact,HKCU\Software\Classes\claude\shell\open\command → (Default)
+maltego.File,artifact:AIRT-0011/registry/hkcu-software-microsoft-windows-currentversion-run-claud,artifact,HKCU\Software\Microsoft\Windows\CurrentVersion\Run → Claude
+maltego.File,artifact:AIRT-0011/registry/hkcu-software-microsoft-windows-currentversion-uninstall,artifact,HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Claude → InstallLocatio
+maltego.File,artifact:AIRT-0016/credential/install-config-json,artifact,<install>/config.json
+maltego.File,artifact:AIRT-0016/credential/install-data-database-pythagora-db,artifact,<install>/data/database/pythagora.db
+maltego.File,artifact:AIRT-0016/credential/install-pilot-env,artifact,<install>/pilot/.env
+maltego.File,artifact:AIRT-0016/credential/openai-api-key-anthropic-api-key-groq-api-key,artifact,OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
+maltego.File,artifact:AIRT-0016/registry/hkcu-environment-openai-api-key-anthropic-api-key-groq-a,artifact,"HKCU\Environment → OPENAI_API_KEY, ANTHROPIC_API_KEY, GROQ_API_KEY"
+maltego.File,artifact:AIRT-0037/credential/gemini-env,artifact,~/.gemini/.env
+maltego.File,artifact:AIRT-0037/credential/gemini-google-accounts-json,artifact,~/.gemini/google_accounts.json
+maltego.File,artifact:AIRT-0037/credential/gemini-oauth-creds-json,artifact,~/.gemini/oauth_creds.json
+maltego.File,artifact:AIRT-0037/disk/etc-gemini-cli-settings-json,artifact,/etc/gemini-cli/settings.json
+maltego.File,artifact:AIRT-0037/disk/gemini-npm-g-google-gemini-cli,artifact,gemini  (npm -g @google/gemini-cli)
+maltego.File,artifact:AIRT-0037/disk/gemini-settings-json,artifact,~/.gemini/settings.json
+maltego.File,artifact:AIRT-0037/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0037/mcp-config/gemini-settings-json-mcpservers,artifact,~/.gemini/settings.json → mcpServers
+maltego.File,artifact:AIRT-0037/mcp-config/repo-gemini-settings-json-mcpservers,artifact,<repo>/.gemini/settings.json → mcpServers
+maltego.File,artifact:AIRT-0037/network/generativelanguage-googleapis-com-oauth2-googleapis-com-,artifact,"generativelanguage.googleapis.com, oauth2.googleapis.com, accounts.google.com :4"
+maltego.File,artifact:AIRT-0037/process/gemini-node,artifact,gemini / node
+maltego.File,artifact:AIRT-0041/credential/aws-builder-id-iam-identity-center-token-cache,artifact,AWS Builder ID / IAM Identity Center token cache
+maltego.File,artifact:AIRT-0041/credential/mcpservers-name-env-inside-kiro-settings-mcp-json,artifact,mcpServers.<name>.env inside ~/.kiro/settings/mcp.json
+maltego.File,artifact:AIRT-0041/disk/kiro-mcp-logs-view-output-channel,artifact,Kiro - MCP Logs (View > Output channel)
+maltego.File,artifact:AIRT-0041/disk/kiro-settings-mcp-json,artifact,~/.kiro/settings/mcp.json
+maltego.File,artifact:AIRT-0041/disk/power-md-plugin-json-dev-kiro,artifact,POWER.md / plugin.json / dev.kiro/
+maltego.File,artifact:AIRT-0041/disk/repo-kiro-agents,artifact,<repo>/.kiro/agents/
+maltego.File,artifact:AIRT-0041/disk/repo-kiro-hooks-kiro-hook,artifact,<repo>/.kiro/hooks/*.kiro.hook
+maltego.File,artifact:AIRT-0041/disk/repo-kiro-settings-mcp-json,artifact,<repo>/.kiro/settings/mcp.json
+maltego.File,artifact:AIRT-0041/disk/repo-kiro-specs,artifact,<repo>/.kiro/specs/
+maltego.File,artifact:AIRT-0041/disk/repo-kiro-steering-md,artifact,<repo>/.kiro/steering/*.md
+maltego.File,artifact:AIRT-0041/disk/vs-code-style-globalstorage-extensions-and-state-vscdb-p,artifact,"VS Code-style globalStorage, extensions, and state.vscdb paths"
+maltego.File,artifact:AIRT-0041/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0041/mcp-config/kiro-settings-mcp-json-mcpservers,artifact,~/.kiro/settings/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0041/mcp-config/repo-kiro-settings-mcp-json-mcpservers,artifact,<repo>/.kiro/settings/mcp.json → mcpServers
+maltego.File,artifact:AIRT-0041/network/kiro-dev-aws-kiro-service-endpoints-443-tcp,artifact,"kiro.dev, AWS Kiro service endpoints :443/TCP"
+maltego.File,artifact:AIRT-0041/network/kiro-url-scheme-and-https-kiro-dev-launch-mcp-add-name-c,artifact,kiro:// URL scheme and https://kiro.dev/launch/mcp/add?name=&config= install lin
+maltego.File,artifact:AIRT-0041/process/kiro-ide-kiro-cli,artifact,kiro (IDE); kiro (CLI)
+maltego.File,artifact:AIRT-0044/credential/appdata-com-langflowdesktop-data-database-db,artifact,%APPDATA%\com.LangflowDesktop\data\database.db
+maltego.File,artifact:AIRT-0044/credential/langflow-config-dir-private-key-pem-public-key-pem-along,artifact,<LANGFLOW_CONFIG_DIR>/private_key.pem  (public_key.pem alongside)
+maltego.File,artifact:AIRT-0044/credential/langflow-config-dir-secret-key-default-home-cache-langfl,artifact,<LANGFLOW_CONFIG_DIR>/secret_key  (default <HOME>/.cache/langflow/secret_key on 
+maltego.File,artifact:AIRT-0044/credential/langflow-data-database-db,artifact,~/.langflow/data/database.db
+maltego.File,artifact:AIRT-0044/credential/langflow-database-url,artifact,LANGFLOW_DATABASE_URL
+maltego.File,artifact:AIRT-0044/credential/langflow-db-pip-install-install-lib-python3-x-site-packa,artifact,langflow.db  (pip install: <install>/lib/python3.x/site-packages/langflow/langfl
+maltego.File,artifact:AIRT-0044/credential/langflow-secret-key,artifact,LANGFLOW_SECRET_KEY
+maltego.File,artifact:AIRT-0044/credential/langflow-superuser-langflow-superuser-password,artifact,LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+maltego.File,artifact:AIRT-0044/credential/project-env-path-passed-to-langflow-run-env-file,artifact,<project>/.env  (path passed to `langflow run --env-file`)
+maltego.File,artifact:AIRT-0044/disk/exported-flow-json-files,artifact,Exported flow JSON files
+maltego.File,artifact:AIRT-0044/disk/langflow,artifact,~/.langflow/
+maltego.File,artifact:AIRT-0044/disk/langflow-auto-login,artifact,LANGFLOW_AUTO_LOGIN
+maltego.File,artifact:AIRT-0044/disk/langflow-db-sqlite-in-the-config-dir,artifact,"langflow.db (SQLite, in the config dir)"
+maltego.File,artifact:AIRT-0044/disk/langflow-superuser-langflow-superuser-password,artifact,LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
+maltego.File,artifact:AIRT-0044/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1
+maltego.File,artifact:AIRT-0044/mcp-config/langflow-projects-published-as-mcp-tools-each-project-is,artifact,Langflow projects published as MCP tools - each project is added to Langflow's o
+maltego.File,artifact:AIRT-0044/mcp-config/mcp-server-registrations-added-in-settings-mcp-servers-p,artifact,"MCP server registrations added in Settings - MCP Servers, persisted in langflow."
+maltego.File,artifact:AIRT-0044/network/configured-llm-provider-endpoints-443-tcp,artifact,Configured LLM provider endpoints :443/TCP
+maltego.File,artifact:AIRT-0044/network/langflow-web-ui-api-7860-tcp,artifact,Langflow web UI + API :7860/TCP
+maltego.File,artifact:AIRT-0044/process/python-langflow-run-uvicorn,artifact,python (langflow run) / uvicorn
+maltego.Phrase,asi:ASI01,asi,ASI01 Agent Goal Hijack
+maltego.Phrase,asi:ASI02,asi,ASI02 Tool Misuse and Exploitation
+maltego.Phrase,asi:ASI03,asi,ASI03 Identity and Privilege Abuse
+maltego.Phrase,asi:ASI04,asi,ASI04 Agentic Supply Chain Vulnerabilities
+maltego.Phrase,asi:ASI05,asi,ASI05 Unexpected Code Execution
+maltego.Phrase,asi:ASI06,asi,ASI06 Memory and Context Poisoning
+maltego.Phrase,atlas:AML.T0008,technique,AML.T0008 Acquire Infrastructure
+maltego.Phrase,atlas:AML.T0008.000,technique,AML.T0008.000 AI Development Workspaces
+maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 AI Supply Chain Compromise
+maltego.Phrase,atlas:AML.T0011,technique,AML.T0011 User Execution
+maltego.Phrase,atlas:AML.T0016.002,technique,AML.T0016.002 Generative AI
+maltego.Phrase,atlas:AML.T0016.004,technique,AML.T0016.004 AI Agent Tools
+maltego.Phrase,atlas:AML.T0017.001,technique,AML.T0017.001 Autonomous Exploit Development
+maltego.Phrase,atlas:AML.T0017.002,technique,AML.T0017.002 AI Agent Tools
+maltego.Phrase,atlas:AML.T0024,technique,AML.T0024 Exfiltration via AI Inference API
+maltego.Phrase,atlas:AML.T0034,technique,AML.T0034 Cost Harvesting
+maltego.Phrase,atlas:AML.T0049,technique,AML.T0049 Exploit Public-Facing Application
+maltego.Phrase,atlas:AML.T0051,technique,AML.T0051 LLM Prompt Injection
+maltego.Phrase,atlas:AML.T0053,technique,AML.T0053 AI Agent Tool Invocation
+maltego.Phrase,atlas:AML.T0054,technique,AML.T0054 LLM Jailbreak
+maltego.Phrase,atlas:AML.T0055,technique,AML.T0055 Unsecured Credentials
+maltego.Phrase,atlas:AML.T0080,technique,AML.T0080 AI Agent Context Poisoning
+maltego.Phrase,atlas:AML.T0080.000,technique,AML.T0080.000 Memory
+maltego.Phrase,atlas:AML.T0081,technique,AML.T0081 Modify AI Agent Configuration
+maltego.Phrase,atlas:AML.T0082,technique,AML.T0082 RAG Credential Harvesting
+maltego.Phrase,atlas:AML.T0086,technique,AML.T0086 Exfiltration via AI Agent Tool Invocation
+maltego.Phrase,atlas:AML.T0087,technique,AML.T0087 Gather Victim Identity Information
+maltego.Phrase,atlas:AML.T0096,technique,AML.T0096 AI Service API
+maltego.Phrase,atlas:AML.T0102,technique,AML.T0102 Generate Malicious Commands
+maltego.Phrase,atlas:AML.T0103,technique,AML.T0103 Deploy AI Agent
+maltego.Phrase,atlas:AML.T0115.002,technique,AML.T0115.002 AI Agent Tools
+maltego.Phrase,atlas:AML.T0116,technique,AML.T0116 Autonomous Reconnaissance
+maltego.Phrase,atlas:AML.T0117,technique,AML.T0117 Autonomous Attack-Path Adaptation
+maltego.Phrase,atlas:AML.T0124,technique,AML.T0124 Autonomous Attack Orchestration
+maltego.Phrase,atlas:AML.T0126,technique,AML.T0126 Automated Collection
+maltego.Phrase,attack:T1059,technique,T1059 Command and Scripting Interpreter
+maltego.Phrase,attack:T1070,technique,T1070 Indicator Removal
+maltego.Phrase,attack:T1190,technique,T1190 Exploit Public-Facing Application
+maltego.Phrase,attack:T1195.002,technique,T1195.002 Compromise Software Supply Chain
+maltego.Phrase,attack:T1505.003,technique,T1505.003 Web Shell
+maltego.Phrase,attack:T1528,technique,T1528 Steal Application Access Token
+maltego.Phrase,attack:T1546,technique,T1546 Event Triggered Execution
+maltego.Phrase,attack:T1552.001,technique,T1552.001 Credentials In Files
+maltego.Phrase,attack:T1557,technique,T1557 Adversary-in-the-Middle
+maltego.Phrase,attack:T1566,technique,T1566 Phishing
+maltego.Phrase,attack:T1567,technique,T1567 Exfiltration Over Web Service
+maltego.Phrase,campaign:C0045,attack-campaign,C0045 ShadowRay
+maltego.Phrase,campaign:C0062,attack-campaign,C0062 Anthropic AI-orchestrated Campaign
+maltego.Phrase,case:AIRT-CS-0001,case,GPT Pilot core/telemetry Supply-Chain Credential Stealer
+maltego.Phrase,case:AIRT-CS-0002,case,postmark-mcp npm Backdoor - First In-the-Wild Malicious MCP Server
+maltego.Phrase,case:AIRT-CS-0003,case,Langflow CVE-2025-3248 Mass Exploitation and Flodrix Botnet Deployment
+maltego.Phrase,case:AIRT-CS-0004,case,GTG-1002 - AI-Orchestrated Espionage Campaign
+maltego.Phrase,case:AIRT-CS-0005,case,SesameOp - OpenAI Assistants API as a Covert C2 Relay
+maltego.Phrase,case:AIRT-CS-0006,case,PROMPTFLUX - Malware That Asks an LLM to Rewrite Itself
+maltego.Phrase,case:AIRT-CS-0007,case,PROMPTSTEAL / LAMEHUG - An LLM Writing Collection Commands at Runtime
+maltego.Phrase,case:AIRT-CS-0008,case,EchoLeak (CVE-2025-32711) - Zero-Click Exfiltration from M365 Copilot
+maltego.Phrase,case:AIRT-CS-0009,case,The MCP Vulnerability Cluster - RCE on Connect and the Rug-Pull
+maltego.Phrase,case:AIRT-CS-0010,case,SpAIware - Prompt Injection That Persists in Assistant Memory
+maltego.Phrase,case:AIRT-CS-0011,case,AI Recommendation Poisoning - Memory Manipulation for Profit
+maltego.Phrase,case:AIRT-CS-0012,case,PoisonedRAG - Five Documents Against a Corpus of Millions
+maltego.Phrase,case:AIRT-CS-0013,case,"Mexican Government Breach - AI-Accelerated, Not AI-Orchestrated"
+maltego.Phrase,case:AIRT-CS-0014,case,ShadowRay - AI Compute Clusters Exploited in the Wild
+maltego.Phrase,case:AIRT-CS-0015,case,s1ngularity - A Supply-Chain Payload That Used the Victim's Own AI CLIs
+maltego.Phrase,case:AIRT-CS-0016,case,UNC6780 (TeamPCP) - DUSTMAKER and Trojanised MCP Servers
+maltego.Phrase,case:AIRT-CS-0017,case,MIDNIGHT NEPTUNE - Poisoned Repository Config and Claude Code Hooks
+maltego.Phrase,case:AIRT-CS-0018,case,GTG-20006 - Russian State-Nexus Espionage Run Through AI Workflows
+maltego.Phrase,case:AIRT-CS-0019,case,GTG-50014 - ShinyHunters Affiliates Vibe-Hacking SaaS Estates
+maltego.Phrase,case:AIRT-CS-0020,case,GTG-50020 - From Hotel Booking Fraud to Probing AI Companies
+maltego.Phrase,case:AIRT-CS-0021,case,GTG-50029 - A Single Hacktivist Against European Political Targets
+maltego.Phrase,case:AIRT-CS-0022,case,GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
+maltego.Location,country:CA,country,CA
+maltego.Location,country:FR,country,FR
+maltego.Location,country:MX,country,MX
+maltego.Location,country:UA,country,UA
+maltego.Location,country:US,country,US
+maltego.Phrase,group:G0007,attack-group,G0007 APT28
+maltego.Phrase,group:G0034,attack-group,G0034 Sandworm Team
+maltego.Phrase,group:G0069,attack-group,G0069 MuddyWater
+maltego.Phrase,group:G0094,attack-group,G0094 Kimsuky
+maltego.Phrase,group:G0096,attack-group,G0096 APT41
+maltego.Phrase,group:G0128,attack-group,G0128 ZIRCONIUM
+maltego.Phrase,group:G1044,attack-group,G1044 APT42
+maltego.Phrase,group:G1057,attack-group,G1057 ShinyHunters
+maltego.Phrase,-1003311614569,ioc,-1003311614569
+maltego.Phrase,-1003893854338,ioc,-1003893854338
+maltego.Phrase,8179098353,ioc,8179098353
+maltego.Phrase,8628746407,ioc,8628746407
+maltego.Phrase,8632748474,ioc,8632748474
+maltego.Phrase,8664033117,ioc,8664033117
+maltego.Phrase,8709258476,ioc,8709258476
+maltego.Phrase,https://t.me/Soraki_Bot,ioc,https[:]//t[.]me/Soraki_Bot
+maltego.Phrase,phanpak,ioc,phanpak
+maltego.Phrase,bun,ioc,bun
+maltego.Phrase,065ee8eb,ioc,065ee8eb
+maltego.Phrase,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup,ioc,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
+maltego.Phrase,"<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/",ioc,"<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/"
+maltego.Phrase,rt-*,ioc,rt-*
+maltego.Domain,3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd.onion,ioc,3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd[.]onion
+maltego.Domain,6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad.onion,ioc,6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad[.]onion
+maltego.Domain,ad-g.org,ioc,ad-g[.]org
+maltego.Domain,api-inference.huggingface.co,ioc,api-inference.huggingface.co
+maltego.Domain,api.openai.com,ioc,api.openai.com
+maltego.Domain,api.stuseamandesilt.org,ioc,api.stuseamandesilt[.]org
+maltego.Domain,ari-chain.com,ioc,ari-chain[.]com
+maltego.Domain,arichain.network,ioc,arichain[.]network
+maltego.Domain,autoshop.policenationale.cc,ioc,autoshop.policenationale[.]cc
+maltego.Domain,aws-us-east-3.com,ioc,aws-us-east-3[.]com
+maltego.Domain,awstore.cloud,ioc,awstore[.]cloud
+maltego.Domain,bitmart-mystery.com,ioc,bitmart-mystery[.]com
+maltego.Domain,cdn.stuseamandesilt.org,ioc,cdn.stuseamandesilt[.]org
+maltego.Domain,cdncounter.net,ioc,cdncounter[.]net
+maltego.Domain,chamber-ua.org,ioc,chamber-ua[.]org
+maltego.Domain,chathamhouse.eu,ioc,chathamhouse[.]eu
+maltego.Domain,defi-claim.xyz,ioc,defi-claim[.]xyz
+maltego.Domain,docs-viewer.org,ioc,docs-viewer[.]org
+maltego.Domain,emailsecure.email,ioc,emailsecure[.]email
+maltego.Domain,esvfecawvjmchjslqyemho2fiduc59wzn.oast.fun,ioc,esvfecawvjmchjslqyemho2fiduc59wzn.oast[.]fun
+maltego.Domain,fafwatch.xyz,ioc,fafwatch[.]xyz
+maltego.Domain,frntrs-analytics-863060591218.europe-west1.run.app,ioc,frntrs-analytics-863060591218.europe-west1.run[.]app
+maltego.Domain,frntrs-analytics.dedyn.io,ioc,frntrs-analytics.dedyn[.]io
+maltego.Domain,generativelanguage.googleapis.com,ioc,generativelanguage.googleapis.com
+maltego.Domain,holdboost.store,ioc,holdboost[.]store
+maltego.Domain,itechx.tel,ioc,itechx[.]tel
+maltego.Domain,iymkjuzymkapovrntoxy.supabase.co,ioc,iymkjuzymkapovrntoxy.supabase[.]co
+maltego.Domain,kiro.cheap,ioc,kiro[.]cheap
+maltego.Domain,m365-owa.com,ioc,m365-owa[.]com
+maltego.Domain,meridian-protocol.org,ioc,meridian-protocol[.]org
+maltego.Domain,meridiangroup-corp.com,ioc,meridiangroup-corp[.]com
+maltego.Domain,metricwave.org,ioc,metricwave[.]org
+maltego.Domain,mgsend.org,ioc,mgsend[.]org
+maltego.Domain,mozilla.ws,ioc,mozilla[.]ws
+maltego.Domain,ms365-device.com,ioc,ms365-device[.]com
+maltego.Domain,ms365-live.com,ioc,ms365-live[.]com
+maltego.Domain,mslivetest.duckdns.org,ioc,mslivetest.duckdns[.]org
+maltego.Domain,my-invite.org,ioc,my-invite[.]org
+maltego.Domain,mygreatmarket.com,ioc,mygreatmarket[.]com
+maltego.Domain,mygreatmarket.org,ioc,mygreatmarket[.]org
+maltego.Domain,on-pssword.com,ioc,on-pssword[.]com
+maltego.Domain,owa-ms365.com,ioc,owa-ms365[.]com
+maltego.Domain,pdfviewer2024.b-cdn.net,ioc,pdfviewer2024.b-cdn[.]net
+maltego.Domain,policenationale.cc,ioc,policenationale[.]cc
+maltego.Domain,prod-artfkt.com,ioc,prod-artfkt[.]com
+maltego.Domain,projectnightcrawler.dev,ioc,projectnightcrawler[.]dev
+maltego.Domain,russianearabroad.com,ioc,russianearabroad[.]com
+maltego.Domain,russianearabroad.org,ioc,russianearabroad[.]org
+maltego.Domain,service-infos.info,ioc,service-infos[.]info
+maltego.Domain,signin-1psswoord.com,ioc,signin-1psswoord[.]com
+maltego.Domain,soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers.dev,ioc,soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers[.]dev
+maltego.Domain,soraki.cc,ioc,soraki[.]cc
+maltego.Domain,soraki.work,ioc,soraki[.]work
+maltego.Domain,static-ms.live,ioc,static-ms[.]live
+maltego.Domain,static.cdncounter.net,ioc,static.cdncounter[.]net
+maltego.Domain,statistic-ms.live,ioc,statistic-ms[.]live
+maltego.Domain,stuseamandesilt.org,ioc,stuseamandesilt[.]org
+maltego.Domain,sys-tools.cfd,ioc,sys-tools[.]cfd
+maltego.Domain,teams.ms365-live.com,ioc,teams.ms365-live[.]com
+maltego.Domain,ukrinform-share.net,ioc,ukrinform-share[.]net
+maltego.Domain,update.stuseamandesilt.org,ioc,update.stuseamandesilt[.]org
+maltego.Domain,updatebeacon.duckdns.org,ioc,updatebeacon.duckdns[.]org
+maltego.Domain,wa-connect.eu,ioc,wa-connect[.]eu
+maltego.Domain,wa-meeting.com,ioc,wa-meeting[.]com
+maltego.EmailAddress,anna.manager@russianearabroad.net,ioc,anna.manager@russianearabroad[.]net
+maltego.EmailAddress,events@embassy-protocol.int,ioc,events@embassy-protocol[.]int
+maltego.EmailAddress,phan@giftshop.club,ioc,phan@giftshop[.]club
+maltego.File,%TEMP%\thinking_robot_log.txt,ioc,%TEMP%\thinking_robot_log.txt
+maltego.File,/tmp/inventory.txt,ioc,/tmp/inventory.txt
+maltego.File,<host>.exe.config containing appDomainManagerAssembly,ioc,<host>.exe.config containing appDomainManagerAssembly
+maltego.File,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)",ioc,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)"
+maltego.File,C:\Windows\Temp\*.Netapi64,ioc,C:\Windows\Temp\*.Netapi64
+maltego.File,C:\Windows\Temp\Netapi64.Exception,ioc,C:\Windows\Temp\Netapi64.Exception
+maltego.File,C:\Windows\Temp\Netapi64.start,ioc,C:\Windows\Temp\Netapi64.start
+maltego.File,Framework checkpoint stores (LangGraph SQLite and equivalents),ioc,Framework checkpoint stores (LangGraph SQLite and equivalents)
+maltego.File,Netapi64.dll,ioc,Netapi64.dll
+maltego.File,WUEngine.exe,ioc,WUEngine.exe
+maltego.File,client_20260507093021_4286d211_x64.exe,ioc,client_20260507093021_4286d211_x64.exe
+maltego.File,core/telemetry/.loader.lock,ioc,core/telemetry/.loader.lock
+maltego.File,core/telemetry/__init__.py,ioc,core/telemetry/__init__.py
+maltego.File,core/telemetry/_hooks.py,ioc,core/telemetry/_hooks.py
+maltego.File,core/telemetry/_runtime.bin,ioc,core/telemetry/_runtime.bin
+maltego.File,fix_network.apk,ioc,fix_network.apk
+maltego.File,msedgeupdate_v3.exe,ioc,msedgeupdate_v3.exe
+maltego.File,Додаток.pdf.zip,ioc,Додаток.pdf.zip
+maltego.Hash,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593,ioc,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593
+maltego.Hash,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c,ioc,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c
+maltego.IPv4Address,103.124.165.199,ioc,103.124.165[.]199
+maltego.IPv4Address,103.141.60.144,ioc,103.141.60[.]144
+maltego.IPv4Address,103.216.220.19,ioc,103.216.220[.]19
+maltego.IPv4Address,104.145.210.184,ioc,104.145.210[.]184
+maltego.IPv4Address,104.193.135.207,ioc,104.193.135[.]207
+maltego.IPv4Address,104.194.149.228,ioc,104.194.149[.]228
+maltego.IPv4Address,104.194.151.133,ioc,104.194.151[.]133
+maltego.IPv4Address,104.194.159.55,ioc,104.194.159[.]55
+maltego.IPv4Address,104.36.50.54,ioc,104.36.50[.]54
+maltego.IPv4Address,136.144.242.56,ioc,136.144.242[.]56
+maltego.IPv4Address,138.199.60.29,ioc,138.199.60[.]29
+maltego.IPv4Address,138.199.6.208,ioc,138.199.6[.]208
+maltego.IPv4Address,139.59.2.243,ioc,139.59.2[.]243
+maltego.IPv4Address,141.133.125.208,ioc,141.133.125[.]208
+maltego.IPv4Address,144.172.114.192,ioc,144.172.114[.]192
+maltego.IPv4Address,146.103.101.253,ioc,146.103.101[.]253
+maltego.IPv4Address,146.103.97.169,ioc,146.103.97[.]169
+maltego.IPv4Address,146.70.116.131,ioc,146.70.116[.]131
+maltego.IPv4Address,148.135.195.111,ioc,148.135.195[.]111
+maltego.IPv4Address,149.22.83.6,ioc,149.22.83[.]6
+maltego.IPv4Address,149.54.42.106,ioc,149.54.42[.]106
+maltego.IPv4Address,158.173.46.118,ioc,158.173.46[.]118
+maltego.IPv4Address,162.128.129.106,ioc,162.128.129[.]106
+maltego.IPv4Address,163.172.157.53,ioc,163.172.157[.]53
+maltego.IPv4Address,167.250.111.136,ioc,167.250.111[.]136
+maltego.IPv4Address,176.177.12.62,ioc,176.177.12[.]62
+maltego.IPv4Address,178.16.54.141,ioc,178.16.54[.]141
+maltego.IPv4Address,185.198.234.101,ioc,185.198.234[.]101
+maltego.IPv4Address,185.198.234.26,ioc,185.198.234[.]26
+maltego.IPv4Address,185.65.134.199,ioc,185.65.134[.]199
+maltego.IPv4Address,185.65.134.246,ioc,185.65.134[.]246
+maltego.IPv4Address,193.32.249.161,ioc,193.32.249[.]161
+maltego.IPv4Address,193.32.249.164,ioc,193.32.249[.]164
+maltego.IPv4Address,193.32.249.170,ioc,193.32.249[.]170
+maltego.IPv4Address,194.163.183.216,ioc,194.163.183[.]216
+maltego.IPv4Address,195.178.110.131,ioc,195.178.110[.]131
+maltego.IPv4Address,2.26.53.194,ioc,2.26.53[.]194
+maltego.IPv4Address,2001:ac8:27:89::a02d,ioc,2001:ac8:27[:]89::a02d
+maltego.IPv4Address,2001:ac8:29:84::a01d,ioc,2001:ac8:29[:]84::a01d
+maltego.IPv4Address,2001:bc8:711:5854:dc00:1ff:fe18:ba53,ioc,2001:bc8:711:5854:dc00:1ff:fe18[:]ba53
+maltego.IPv4Address,202.66.167.230,ioc,202.66.167[.]230
+maltego.IPv4Address,213.145.86.112,ioc,213.145.86[.]112
+maltego.IPv4Address,2a01:e0a:2e2:aa40:b15d:5d28:6f4a:8d53,ioc,2a01:e0a:2e2:aa40:b15d:5d28:6f4a[:]8d53
+maltego.IPv4Address,2a04:cec0:1185:34f2:a150:7081:caed:448e,ioc,2a04:cec0:1185:34f2:a150:7081:caed[:]448e
+maltego.IPv4Address,31.57.243.154,ioc,31.57.243[.]154
+maltego.IPv4Address,34.156.199.132,ioc,34.156.199[.]132
+maltego.IPv4Address,34.156.95.176,ioc,34.156.95[.]176
+maltego.IPv4Address,37.27.103.22,ioc,37.27.103[.]22
+maltego.IPv4Address,38.146.28.132,ioc,38.146.28[.]132
+maltego.IPv4Address,38.146.28.75,ioc,38.146.28[.]75
+maltego.IPv4Address,45.148.10.242,ioc,45.148.10[.]242
+maltego.IPv4Address,91.171.138.169,ioc,91.171.138[.]169
+maltego.IPv4Address,92.118.39.3,ioc,92.118.39[.]3
+maltego.Phrase,Netapi64,ioc,Netapi64
+maltego.Phrase,OpenAI APIS,ioc,OpenAI APIS
+maltego.Phrase,"nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0",ioc,"nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0"
+maltego.Phrase,postmark-mcp@1.0.16,ioc,postmark-mcp@1.0.16
+maltego.Phrase,tiktoken_mcp (PyPI),ioc,tiktoken_mcp (PyPI)
+maltego.Phrase,OpenAIAgent.Netapi64,ioc,OpenAIAgent.Netapi64
+maltego.Phrase,XMRig or equivalent miner on a GPU host,ioc,XMRig or equivalent miner on a GPU host
+maltego.URL,Assistant URL carrying a pre-filled prompt in a query parameter,ioc,Assistant URL carrying a pre-filled prompt in a query parameter
+maltego.URL,https://s3.eu-central-1.s4.mega.io/fuckyoubasil/,ioc,https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/
+maltego.Phrase,malware:dustmaker,malware,DUSTMAKER
+maltego.Phrase,malware:flodrix botnet,malware,Flodrix botnet
+maltego.Phrase,malware:lamehug,malware,LAMEHUG
+maltego.Phrase,malware:promptsteal,malware,PROMPTSTEAL
+maltego.Phrase,malware:sandclock,malware,SANDCLOCK
+maltego.Phrase,malware:sombermeme,malware,SOMBERMEME
+maltego.Location,region:Americas,region,Americas
+maltego.Location,region:Europe,region,Europe
+maltego.File,rule:agentic_orchestration_behavior.yml,rule,agentic_orchestration_behavior.yml
+maltego.File,rule:ai_agent_autostart_persistence.yml,rule,ai_agent_autostart_persistence.yml
+maltego.File,rule:ai_agent_credential_file_access.yml,rule,ai_agent_credential_file_access.yml
+maltego.File,rule:ai_agent_docker_socket_mount.yml,rule,ai_agent_docker_socket_mount.yml
+maltego.File,rule:ai_agent_hook_config_modification.yml,rule,ai_agent_hook_config_modification.yml
+maltego.File,rule:ai_agent_mcp_config_modification.yml,rule,ai_agent_mcp_config_modification.yml
+maltego.File,rule:ai_agent_spawning_lolbin.yml,rule,ai_agent_spawning_lolbin.yml
+maltego.File,rule:ai_agent_spawning_shell.yml,rule,ai_agent_spawning_shell.yml
+maltego.File,rule:ai_assistant_outbound_to_camo_proxy.rules,rule,ai_assistant_outbound_to_camo_proxy.rules
+maltego.File,rule:ai_cli_permission_bypass_invocation.yml,rule,ai_cli_permission_bypass_invocation.yml
+maltego.File,rule:ai_inference_endpoint_redirection.yml,rule,ai_inference_endpoint_redirection.yml
+maltego.File,rule:ai_service_api_c2.rules,rule,ai_service_api_c2.rules
+maltego.File,rule:azure_openai_injection.yml,rule,azure_openai_injection.yml
+maltego.File,rule:bedrock_high_token_usage.yml,rule,bedrock_high_token_usage.yml
+maltego.File,rule:browser_agent_session_state_capture.yml,rule,browser_agent_session_state_capture.yml
+maltego.File,rule:chatgpt_paste_sensitive_data.yml,rule,chatgpt_paste_sensitive_data.yml
+maltego.File,rule:chroma_sqlite_unexpected_writer.yml,rule,chroma_sqlite_unexpected_writer.yml
+maltego.File,rule:claude_desktop_config_modify.yml,rule,claude_desktop_config_modify.yml
+maltego.File,rule:claude_session_jsonl_unexpected_access.yml,rule,claude_session_jsonl_unexpected_access.yml
+maltego.File,rule:copilot_rules_file_backdoor.yar,rule,copilot_rules_file_backdoor.yar
+maltego.File,rule:cursor_settings_db_modification.yml,rule,cursor_settings_db_modification.yml
+maltego.File,rule:github_copilot_yolo_mode_enabled.yml,rule,github_copilot_yolo_mode_enabled.yml
+maltego.File,rule:gpu_unexpected_high_utilization.yml,rule,gpu_unexpected_high_utilization.yml
+maltego.File,rule:huggingface_cache_unexpected_writer.yml,rule,huggingface_cache_unexpected_writer.yml
+maltego.File,rule:huggingface_token_exposure.yml,rule,huggingface_token_exposure.yml
+maltego.File,rule:jailbreak_personas.yml,rule,jailbreak_personas.yml
+maltego.File,rule:langflow_rce_exploitation_attempt.yml,rule,langflow_rce_exploitation_attempt.yml
+maltego.File,rule:llm_api_prompt_in_script_generic.yar,rule,llm_api_prompt_in_script_generic.yar
+maltego.File,rule:llm_response_base64_exfil.yml,rule,llm_response_base64_exfil.yml
+maltego.File,rule:local_llm_listener_non_loopback.yml,rule,local_llm_listener_non_loopback.yml
+maltego.File,rule:m365_copilot_anomalous_aggregation.yml,rule,m365_copilot_anomalous_aggregation.yml
+maltego.File,rule:m365_copilot_sensitive_label_access.yml,rule,m365_copilot_sensitive_label_access.yml
+maltego.File,rule:markdown_image_exfil.yml,rule,markdown_image_exfil.yml
+maltego.File,rule:mcp_config_tampering.yml,rule,mcp_config_tampering.yml
+maltego.File,rule:mcp_credential_access.yml,rule,mcp_credential_access.yml
+maltego.File,rule:mcp_outbound_unknown_domain.rules,rule,mcp_outbound_unknown_domain.rules
+maltego.File,rule:mcp_server_remote_code_fetch.yml,rule,mcp_server_remote_code_fetch.yml
+maltego.File,rule:mcp_tool_poisoning.yar,rule,mcp_tool_poisoning.yar
+maltego.File,rule:memory_poisoning.yml,rule,memory_poisoning.yml
+maltego.File,rule:memory_poisoning_indicators.yar,rule,memory_poisoning_indicators.yar
+maltego.File,rule:mlflow_path_traversal.rules,rule,mlflow_path_traversal.rules
+maltego.File,rule:mlflow_unauth_api_access.yml,rule,mlflow_unauth_api_access.yml
+maltego.File,rule:model_file_hash_mismatch.yml,rule,model_file_hash_mismatch.yml
+maltego.File,rule:ollama_vllm_unauth_exposure.rules,rule,ollama_vllm_unauth_exposure.rules
+maltego.File,rule:pickle_malicious_opcodes.yar,rule,pickle_malicious_opcodes.yar
+maltego.File,rule:pip_install_typosquat.yml,rule,pip_install_typosquat.yml
+maltego.File,rule:powershell_llm_api_command_generation.yml,rule,powershell_llm_api_command_generation.yml
+maltego.File,rule:prompt_injection_keywords.yml,rule,prompt_injection_keywords.yml
+maltego.File,rule:promptflux_artifacts_fileevent.yml,rule,promptflux_artifacts_fileevent.yml
+maltego.File,rule:promptflux_thinking_robot.yar,rule,promptflux_thinking_robot.yar
+maltego.File,rule:promptsteal_lamehug.yar,rule,promptsteal_lamehug.yar
+maltego.File,rule:rag_document_hidden_text.yar,rule,rag_document_hidden_text.yar
+maltego.File,rule:ray_dashboard_exposure.rules,rule,ray_dashboard_exposure.rules
+maltego.File,rule:ray_jobs_api_rce.rules,rule,ray_jobs_api_rce.rules
+maltego.File,rule:runtime_ai_malware_correlation.yml,rule,runtime_ai_malware_correlation.yml
+maltego.File,rule:runtime_llm_api_c2.rules,rule,runtime_llm_api_c2.rules
+maltego.File,rule:script_interpreter_llm_api_dns.yml,rule,script_interpreter_llm_api_dns.yml
+maltego.File,rule:sesameop_assistants_api_c2.yml,rule,sesameop_assistants_api_c2.yml
+maltego.File,rule:shadowray_process_masquerading.yml,rule,shadowray_process_masquerading.yml
+maltego.File,rule:ssh_authorized_keys_injection.yml,rule,ssh_authorized_keys_injection.yml
+maltego.File,rule:system_prompt_extraction.yml,rule,system_prompt_extraction.yml
+maltego.File,rule:torchserve_shelltorch.rules,rule,torchserve_shelltorch.rules
+maltego.File,rule:triton_inference_server_exploit.rules,rule,triton_inference_server_exploit.rules
+maltego.File,rule:vector_db_bulk_exfil.yml,rule,vector_db_bulk_exfil.yml
+maltego.File,rule:vector_db_query_anomaly.yml,rule,vector_db_query_anomaly.yml
+maltego.File,rule:vector_db_unauth_exposure.rules,rule,vector_db_unauth_exposure.rules
+maltego.Phrase,sector:chemical,sector,chemical
+maltego.Phrase,sector:commercial-facilities,sector,commercial-facilities
+maltego.Phrase,sector:consumers,sector,consumers
+maltego.Phrase,sector:critical-manufacturing,sector,critical-manufacturing
+maltego.Phrase,sector:cryptocurrency,sector,cryptocurrency
+maltego.Phrase,sector:defense-industrial-base,sector,defense-industrial-base
+maltego.Phrase,sector:education,sector,education
+maltego.Phrase,sector:emergency-services,sector,emergency-services
+maltego.Phrase,sector:energy,sector,energy
+maltego.Phrase,sector:financial-services,sector,financial-services
+maltego.Phrase,sector:government,sector,government
+maltego.Phrase,sector:healthcare,sector,healthcare
+maltego.Phrase,sector:information-technology,sector,information-technology
+maltego.Phrase,sector:media-entertainment,sector,media-entertainment
+maltego.Phrase,sector:ngo-think-tank,sector,ngo-think-tank
+maltego.Phrase,sector:religious-institutions,sector,religious-institutions
+maltego.Phrase,sector:research,sector,research
+maltego.Phrase,sector:retail,sector,retail
+maltego.Phrase,sector:software-supply-chain,sector,software-supply-chain
+maltego.Phrase,sector:telecommunications,sector,telecommunications
+maltego.Phrase,sector:transportation,sector,transportation
+maltego.Phrase,tactic:AML.TA0001,tactic,AML.TA0001 AI Attack Adaptation
+maltego.Phrase,tactic:AML.TA0002,tactic,AML.TA0002 Reconnaissance
+maltego.Phrase,tactic:AML.TA0003,tactic,AML.TA0003 Resource Development
+maltego.Phrase,tactic:AML.TA0004,tactic,AML.TA0004 Initial Access
+maltego.Phrase,tactic:AML.TA0005,tactic,AML.TA0005 Execution
+maltego.Phrase,tactic:AML.TA0006,tactic,AML.TA0006 Persistence
+maltego.Phrase,tactic:AML.TA0007,tactic,AML.TA0007 Defense Evasion
+maltego.Phrase,tactic:AML.TA0009,tactic,AML.TA0009 Collection
+maltego.Phrase,tactic:AML.TA0010,tactic,AML.TA0010 Exfiltration
+maltego.Phrase,tactic:AML.TA0011,tactic,AML.TA0011 Impact
+maltego.Phrase,tactic:AML.TA0012,tactic,AML.TA0012 Privilege Escalation
+maltego.Phrase,tactic:AML.TA0013,tactic,AML.TA0013 Credential Access
+maltego.Phrase,tactic:AML.TA0014,tactic,AML.TA0014 Command and Control
+maltego.Phrase,tactic:AML.TA0015,tactic,AML.TA0015 Lateral Movement
+maltego.Phrase,tool:AIRT-0001,tool,Claude Code
+maltego.Phrase,tool:AIRT-0002,tool,Cursor
+maltego.Phrase,tool:AIRT-0006,tool,Codeium / Windsurf
+maltego.Phrase,tool:AIRT-0008,tool,Amazon Q Developer (ex-CodeWhisperer)
+maltego.Phrase,tool:AIRT-0011,tool,Claude Desktop (MCP host)
+maltego.Phrase,tool:AIRT-0016,tool,GPT Pilot
+maltego.Phrase,tool:AIRT-0037,tool,Google Gemini CLI
+maltego.Phrase,tool:AIRT-0041,tool,Kiro
+maltego.Phrase,tool:AIRT-0044,tool,Langflow

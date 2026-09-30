@@ -24,6 +24,12 @@ write LF endings on every platform so the generated feeds stay byte-identical.
 ```bash
 python scripts/validate.py                    # schema + sigma + confidence gate
 python scripts/validate_techniques.py         # ATLAS/ATT&CK ids exist (--refresh re-pins)
+python scripts/cve_status.py                  # KEV claims match the pinned CISA catalog (--refresh)
+python scripts/sync_mappings.py               # MAPPINGS index tables from the pins (--check gates)
+python scripts/intel_graph.py --check         # actors + case studies, schemas and cross-refs
+python scripts/intel_graph.py --export        # intel.json, STIX 2.1 bundle, Maltego CSVs
+python scripts/intel_watch.py --dry-run       # what the weekly intel watcher would raise
+python scripts/forbidden_terms.py             # FORBIDDEN_TERMS env/secret; never prints the terms
 python scripts/readme_counts.py               # README Contents block (--check gates it)
 python scripts/normalize.py                   # collapse vocabulary drift
 python scripts/export.py                      # regenerate docs/api feeds
@@ -47,11 +53,13 @@ there rather than from `artifacts/`.
 
 `validate.py` is the gate CI runs. Never commit while it reports problems.
 Always regenerate the feeds in the same commit as a catalog change, or CI fails
-the staleness check. "The feeds" is five scripts, not two: `export.py`,
-`export_forensicartifacts.py`, `export_kape.py`, `export_velociraptor.py` and
-`collectors/gen_credential_targets.py`. The last one is easy to forget because it
-lives outside `artifacts/` — an entry that adds a credential location and skips it
-passes every local check and fails CI.
+the staleness check. "The feeds" is six scripts, not two: `export.py`,
+`export_forensicartifacts.py`, `export_kape.py`, `export_velociraptor.py`,
+`intel_graph.py --export` and `collectors/gen_credential_targets.py`. The last one
+is easy to forget because it lives outside `artifacts/` — an entry that adds a
+credential location and skips it passes every local check and fails CI. The
+intel export regenerates from the catalog too, because actor profiles derive
+their collect rows from it.
 
 `validate_techniques.py` resolves every `atlas_techniques` and
 `attack_techniques` id against pinned framework data in
@@ -65,6 +73,16 @@ answer rather than an error - ATLAS ships a `dist/ATLAS.yaml` that declares
 itself deprecated and carries fewer techniques than the current release, and the
 ATLAS YAML uses anchors, so grepping it undercounts by about sixteen techniques
 that never appear as literal text.
+
+It checks every surface that carries an id, not only `catalog/*.yml` - rules,
+MAPPINGS, case studies, actor profiles, playbooks, the guide. Checking only the
+catalog let `AML.T0104` and `AML.T0019` sit in five files for a month after
+ATLAS folded them into `AML.T0115`. It buckets the pin by object type (tactics,
+techniques, mitigations, case studies); keeping every `AML.T*` id once pinned
+sixteen tactics as techniques. `--atlas-dir` and `--attack-dir` read local clones
+for runners that reach git but not raw.githubusercontent.com. The pin keeps
+ATLAS case-study ids, names, dates and techniques, and deliberately **not**
+upstream's free-text actor, target or reporter fields - see the employer rule.
 
 ## Rules that are not negotiable
 
@@ -205,6 +223,44 @@ Splunk, purely to prove the rules parse. The backend choice there is arbitrary.
 **Defensive content only.** Document where artifacts live and what they prove.
 No exploit code, no working attack tooling, no step-by-step abuse instructions.
 
+**Threat-intel rules.** The actor and case layer (`artifacts/intel/`,
+`artifacts/case-studies/`, `scripts/intel_graph.py`) follows the catalog's rules
+and adds these:
+
+- `AIRT-TA-NNNN` actor ids are permanent, like entry ids.
+- Scope is **attributed groups and reporter-named clusters**. An unnamed operator
+  stays in its case study. Private individuals are not profiled: a handle an
+  actor used stays out, and so do company names from influence-operation
+  reporting.
+- An actor link carries **two** confidences. `link_confidence` is ours and
+  measures provenance: one reporting party is `medium`, however authoritative.
+  `stated_confidence` is the attributing party's own words, verbatim.
+- Techniques, victims, indicators, detections, dates and recovery are **derived**
+  on a profile, never authored, so a profile cannot contradict its cases.
+  Reported AI use with no indicators is a `sighting`, not a case study: "no IOCs,
+  no case study" still holds.
+- **Facts only from CC BY-SA sources.** AIID and the OWASP documents are CC BY-SA
+  4.0 and this repository's data is CC BY 4.0. Take ids, dates, names, category
+  mappings and URLs, and write summaries in our own words. Never paste their prose.
+- Victims are only what the source states. A blank sector is a source that did
+  not say, not a sector nobody targeted.
+- Analytics (similarity, clusters, co-occurrence) are descriptive, computed in
+  `intel_graph.py`, and labelled as triage aids. They are never evidence of
+  attribution.
+
+**The employer rule covers upstream text too.** Third-party reference data
+names organisations, including the maintainer's employer, in free-text fields.
+That is why the ATLAS pin drops case-study actor, target and reporter strings,
+why one cluster whose only source is the employer's own research was left out,
+and why the refresh workflow checks added lines against a `FORBIDDEN_TERMS`
+secret before it will auto-merge. The terms live in the secret so they are never
+committed. Before committing generated reference data, grep it.
+
+**"On CISA KEV" is gated.** `schema/cve-status.json` pins the KEV status of every
+CVE the repository cites, and `cve_status.py` fails a line that calls a CVE
+KEV-listed when the pin disagrees. The Ray rule said it was listed while the guide
+said, correctly, that it was not.
+
 ## What a restricted runner cannot verify
 
 A documentation pass is not a substitute for a host, but it is not available
@@ -275,8 +331,16 @@ IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
 names a different category here than it did there -
 `scripts/remap_owasp_2026.py` holds the mapping table and the reasoning.
 
-Detection content totals 68 rule files / 159 signatures across the nine attack-class
-directories plus `artifacts/detections/`, all indexed in `MAPPINGS.md`.
+Detection content totals 70 rule files / 161 signatures across the nine attack-class
+directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
+`MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
+Those values are this project's assessment, because OWASP maps no detection
+content. Frameworks pinned: ATLAS 2026.09, ATT&CK 19.2, CISA KEV 2026.09.29,
+OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
+
+Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
+29 ATLAS techniques observed. 14 have a rule, 11 are off-host by nature, and the
+detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
 
 Confidence: 27 high, 20 medium, 4 low.
 Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
@@ -336,7 +400,24 @@ detection rules, the ATLAS/OWASP indexes, case studies, the investigation guide
 handoff and why, including which findings were declined and the two places the
 review itself was wrong. Read it before re-opening any of those questions.
 
-Three things worth not relearning:
+The Threat intel, Graph and triage-script views live in `site_intel.py`; the
+script templates live in `site_scripts.py`; `triage_spec.py` decides how each row
+is collected, beside the KAPE and Velociraptor exporters so the three agree.
+Cytoscape.js is vendored under `scripts/vendor/` with its sha256 in
+`VENDOR.json`, and `--check` fails if the file changes without the record. It is
+inlined as inert text and only evaluated when the Graph tab opens.
+
+Four things worth not relearning:
+
+- Every embedded data blob goes through `js_data()`, which escapes `</`. A
+  `</script>` anywhere in a rule body or case summary would otherwise end the
+  script element early and the page would render as text.
+- The generated triage scripts hash credentials instead of copying them. The
+  first version applied that only to credential rows, so a picked directory row
+  (`~/.claude/`) swept the token file into the copy. The script now carries every
+  credential path in the catalog for that OS, and anything matched in a directory
+  sweep is hashed only. Test the scripts against a fixture with `--home`, never
+  against a real profile - this container's own `~/.claude` holds live tokens.
 
 - `docs/api/artifacts.csv` is a published feed. Never change an existing column
   in place; add new ones. Display-only reshaping belongs in the site build.
@@ -373,6 +454,28 @@ resolved by whoever picks this up next without asking.
    documentation alone is how a responder collects nothing.
 
 **Then, in order of value:**
+
+0. **Threat-intel follow-through.**
+   - The first `intel_watch.py` run offline found five Langflow CVEs added to CISA
+     KEV this year that the catalog and `cve-status.json` do not cite:
+     CVE-2026-0770, -9198, -33017, -55255 and CVE-2025-34291. Research them into
+     AIRT-0044 and AIRT-CS-0003.
+   - Set up auto-merge: an `AUTOMATION_TOKEN` secret, branch protection on
+     `main`, and "Allow auto-merge". Without them the refresh PR opens but waits.
+   - Run the generated PowerShell triage script on a Windows host. The bash
+     variant was executed against a fixture here; the `.ps1` was reviewed but not
+     run, because no `pwsh` was available.
+   - Add a `FORBIDDEN_TERMS` repository secret (comma-separated). CI's
+     `forbidden_terms.py` step and the refresh guard both read it; until it
+     exists they pass with a notice and guard nothing. The threat-intel work
+     was squashed into one commit before any PR existed, because its first
+     versions republished upstream text and vendor alias lists that name the
+     employer or use its actor-naming scheme. A PR preserves every commit it
+     was opened with, so history like that has to be fixed before the PR, not
+     after.
+   - Research more actors and cases from a session with vendor egress: ATLAS
+     CS0068-CS0071, the OWASP ASI incident tracker and the OpenAI threat reports.
+     Only AIRT-TA ids with a case or a sighting belong.
 
 3. **Apply the rest of `docs/RESEARCH-2026-08-14.md`.** Roughly thirty candidate
    rows survived adversarial verification and were deliberately not committed,
@@ -418,3 +521,9 @@ previous day and had three wrong `high` paths.
   handoff, what was declined, and why
 - `artifacts/docs/EXTRACTION.md` — how to split this into its own repo, and when
 - `CONTRIBUTING.md` — submission rules for entries, detections, and case studies
+- `artifacts/intel/` — actor profiles and the intel-watch source list
+- `artifacts/schema/{case-study,actor}.schema.json`, `intel-vocab.json`,
+  `owasp.json`, `cve-status.json` — the closed shapes and pins behind the intel
+  layer
+- `.github/workflows/framework-refresh.yml`, `intel-watch.yml` — the automation,
+  and what each needs set up once

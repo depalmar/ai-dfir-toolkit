@@ -241,6 +241,14 @@
         "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
       }
     },
+    "owasp_agentic": {
+      "type": "array",
+      "description": "OWASP Top 10 for Agentic Applications 2026 risks this tool's footprint gives evidence of. Author only where the mapping is clear; titles live in schema/owasp.json.",
+      "items": {
+        "type": "string",
+        "pattern": "^ASI(0[1-9]|10)$"
+      }
+    },
     "references": {
       "type": "array",
       "items": {

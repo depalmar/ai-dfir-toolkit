@@ -1,0 +1,45 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0009 - Sandworm
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0009
+name: Sandworm
+aliases:
+- name: APT44
+  source: MITRE ATT&CK G0034
+- name: SANDWORM RELIC
+  source: GTIG (2026 designation)
+- name: FROZENBARENTS
+  source: GTIG (former designation)
+kind: state-nexus
+nexus: RU
+motivation:
+- espionage
+- destruction
+summary: Russian group that GTIG reports integrated Gemini into operations against Ukraine.
+  It used the model for AI-themed phishing domains, automated password spraying and host profiling,
+  and called the Gemini API directly from its own automation.
+confidence: medium
+basis: The group is well established (ATT&CK G0034). Its AI use rests on one reporting party.
+external_ids:
+  attack_group:
+  - G0034
+sightings:
+- date: '2026-09-08'
+  reporter: GTIG
+  summary: Gemini used for intelligence gathering, social engineering, asynchronous password-spraying
+    scripts and endpoint fingerprinting; the Gemini API was called directly from tooling.
+  atlas:
+  - AML.T0016.002
+  - AML.T0096
+  ai_services:
+  - Gemini API
+  victims:
+    countries:
+    - UA
+    basis: 'GTIG: continued operations targeting Ukraine.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
+references:
+- title: 'GTIG - AI Threat Tracker: From Prompting to Autonomy (8 Sep 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai

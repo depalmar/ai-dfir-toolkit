@@ -41,6 +41,8 @@ osquery.
 | `langflow_rce_exploitation_attempt` | high | CVE-2025-3248 (CISA KEV) and CVE-2026-5027 exploitation |
 | `ai_agent_docker_socket_mount` | high | Agent container given host-root-equivalent daemon access |
 | `ai_model_file_written_to_endpoint` | low | Model weights landing on an endpoint - shadow AI signal |
+| `ai_cli_permission_bypass_invocation` | high | AI CLI started with its approval-bypass flag by a package manager or runtime - the s1ngularity pattern |
+| `ai_agent_hook_config_modification` | low | Claude Code settings or hooks file written - persistence that travels with a clone |
 
 ## On tuning, honestly
 

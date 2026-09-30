@@ -1,0 +1,51 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0020 - GTG-10007
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0020
+name: GTG-10007
+kind: unattributed-cluster
+motivation:
+- espionage
+summary: 'Anthropic''s cluster for Chinese-speaking operators who used Claude as the engineering
+  and orchestration layer for an exploit foundry: binary reversing, vulnerability hypotheses,
+  exploit writing and testing. They also ran agent swarms, in which a lead agent dispatched
+  reconnaissance and post-exploitation work to parallel sub-agents. Anthropic counts around
+  fifty targeted organisations.'
+confidence: medium
+basis: A single reporting party. No indicators were published for this cluster, so it carries
+  a sighting rather than a case study.
+external_ids:
+  vendor_cluster:
+  - GTG-10007
+sightings:
+- date: '2026-09-10'
+  reporter: Anthropic
+  summary: Claude used for autonomous binary reversing and exploit development, and to run
+    agent swarms in which a lead agent dispatched reconnaissance and post-exploitation to
+    parallel sub-agents.
+  atlas:
+  - AML.T0017.001
+  - AML.T0124
+  - AML.T0116
+  ai_services:
+  - Claude
+  victims:
+    sectors:
+    - education
+    - retail
+    - energy
+    - information-technology
+    - healthcare
+    - financial-services
+    - critical-manufacturing
+    - government
+    org_count:
+      value: 50
+      qualifier: approx
+    basis: 'Anthropic: roughly fifty organisations across those sectors, globally.'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026
+references:
+- title: Anthropic - Threat Intelligence Report, September 2026
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026

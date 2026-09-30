@@ -280,6 +280,29 @@ Add one only for a **documented, dated, publicly reported** incident. Use
 plus response actions and the transferable lesson. A case study without IOCs is
 a news summary, and does not belong here.
 
+Validate against `schema/case-study.schema.json`. Take the IOC `type` from its
+closed enum. When the source names an actor, link it with `actors:`. Each link
+carries our `link_confidence` (provenance: one reporting party is `medium`) and
+the attributor's own words in `stated_confidence`. Add `victims` only as
+stated: sector enum and ISO country codes. Where the cited party gives phases,
+`response_actions` can carry them (`contain`, `eradicate`, `recover`, `harden`).
+
+## Threat actor profiles
+
+`intel/actors/airt-ta-XXXX.yml`, against `schema/actor.schema.json`. Take the next
+free id; ids are permanent. In scope are attributed groups and clusters a
+reporter named. An unnamed operator stays in its case study, and private
+individuals are never profiled.
+
+Author the identity only: name, aliases with their source, `kind`, a stated
+`nexus`, `motivation`, summary, confidence, basis and references. Everything
+else is derived by `scripts/intel_graph.py` from the linked cases and from
+`sightings`, which record reported AI use that published no indicators.
+
+Sources licensed CC BY-SA 4.0 (AIID, OWASP) give facts only. Write every summary
+yourself. Before committing, run `intel_graph.py --check` and `--export`, then
+grep generated reference data for names the project does not publish.
+
 ## Boundaries
 
 This catalog is defensive. Document where artifacts live and what they prove.

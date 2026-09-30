@@ -62,3 +62,9 @@ references:
     url: https://arxiv.org/abs/2509.10540
   - title: "The Hacker News - Zero-Click AI Vulnerability Exposes Microsoft 365 Copilot Data Without User Interaction"
     url: https://thehackernews.com/2025/06/zero-click-ai-vulnerability-exposes.html
+
+owasp_agentic:
+  - ASI01
+external_ids:
+  cve:
+    - CVE-2025-32711

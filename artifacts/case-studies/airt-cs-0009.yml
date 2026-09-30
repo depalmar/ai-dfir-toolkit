@@ -70,3 +70,14 @@ references:
     url: https://osv.dev/vulnerability/CVE-2025-49596
   - title: "NVD - CVE-2025-54136 (MCPoison)"
     url: https://nvd.nist.gov/vuln/detail/CVE-2025-54136
+
+owasp_agentic:
+  - ASI04
+  - ASI05
+external_ids:
+  cve:
+    - CVE-2025-49596
+    - CVE-2025-54136
+    - CVE-2025-6514
+  ghsa:
+    - GHSA-6xpm-ggf7-wc3p

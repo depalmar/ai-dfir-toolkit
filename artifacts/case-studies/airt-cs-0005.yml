@@ -79,3 +79,7 @@ references:
     url: https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/
   - title: "The Hacker News - Microsoft Detects SesameOp Backdoor Using OpenAI's API as a Stealth Command Channel"
     url: https://thehackernews.com/2025/11/microsoft-detects-sesameop-backdoor.html
+
+external_ids:
+  atlas_case_study:
+    - AML.CS0042

@@ -142,6 +142,35 @@ generated feeds in four downstream formats:
 | [Velociraptor](https://docs.velociraptor.app/) artifacts | Velociraptor hunts |
 | CSV / JSON | anything else — see [`artifacts/docs/api/`](artifacts/docs/api/) |
 
+### Threat intel
+
+On top of the catalog sits a threat-intel layer:
+- **Actor profiles:** 20 profiles, covering attributed groups and
+  reporter-named clusters.
+- **Case studies:** 22, with 221 indicators.
+- **Pinned frameworks:** ATLAS 2026.09, ATT&CK 19.2, CISA KEV, and the OWASP
+  LLM and Agentic 2026 lists.
+
+Each profile is derived from the cases and reported sightings that cite it. It
+gives the techniques the actor uses, the rule in this repository that detects
+each one, the catalogued tools the actor abused, and which of those tools'
+artifacts to collect first. The site adds:
+- a cross-filtering Threat intel view: ATLAS matrix with coverage gaps,
+  victimology, timeline, technique heatmap, detection backlog, actor similarity
+  and clusters
+- a Maltego-style graph workbench
+- a collection plan that generates a self-contained triage script (PowerShell or
+  bash) or the equivalent Velociraptor / KAPE command
+
+Feeds: [`intel.json`](artifacts/docs/api/intel.json), a
+[STIX 2.1 bundle](artifacts/docs/api/stix/ai-dfir-intel.json) for OpenCTI or
+MISP, and [Maltego import CSVs](artifacts/docs/api/graph/). Two scheduled
+workflows keep it current:
+- the framework pins refresh weekly and auto-merge when only reference data
+  changed
+- new public reporting arrives as `intel-candidate` issues for a person to
+  research
+
 For current counts — catalogued tools, documented artifacts, credential
 locations, MCP config paths, case studies, and the risk and confidence
 breakdowns — see the Contents table in [`artifacts/README.md`](artifacts/README.md).
@@ -152,22 +181,22 @@ the one place those numbers are guaranteed current.
 
 ## Coverage overview
 
-68 rule files containing 159 individual signatures — nine attack-class categories
+70 rule files containing 161 individual signatures — nine attack-class categories
 plus a cross-tool endpoint set:
 
-| Category | Files | Signatures | ATLAS Techniques | OWASP LLM |
-|----------|-------|-----------:|------------------|-----------|
-| LLM Prompt Injection | 8 | 10 | T0051, T0054, T0029 | LLM01, LLM07, LLM10 |
-| MCP Attacks | 5 | 14 | T0010, T0104, T0110, T0086 | LLM03, LLM06 |
-| Model Supply Chain | 8 | 23 | T0010, T0018, T0020 | LLM03, LLM04 |
-| AI Infrastructure | 9 | 31 | T0011, T0017, T0019 | LLM10 |
-| Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM06 |
-| RAG / Vector DB | 5 | 17 | T0020 | LLM08 |
-| Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM06 |
-| Agentic Orchestration & AI-Service C2 | 3 | 12 | T0096, T0086, T0054 | LLM06 |
-| Agent Memory & Context Poisoning | 2 | 5 | T0080, T0080.000, T0086 | LLM01, LLM02, LLM06 |
-| Endpoint (cross-tool) | 12 | 12 | T0053, T0081, T0082 | LLM02, LLM06, LLM03 |
-| **Total** | **68** | **159** | | |
+| Category | Files | Signatures | ATLAS Techniques | OWASP LLM 2026 | OWASP Agentic |
+|----------|-------|-----------:|------------------|-----------|---------------|
+| LLM Prompt Injection | 8 | 10 | T0051, T0054, T0029 | LLM01, LLM02, LLM06, LLM08 | ASI01 |
+| MCP Attacks | 5 | 14 | T0010, T0115.002, T0110, T0086 | LLM02, LLM03, LLM04 | ASI02, ASI03, ASI04, ASI05 |
+| Model Supply Chain | 8 | 23 | T0010, T0018, T0020 | LLM04 | ASI03, ASI04, ASI05 |
+| AI Infrastructure | 9 | 31 | T0011, T0049, T0029 | LLM06 | — |
+| Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM03, LLM04 | ASI01, ASI02, ASI03, ASI04, ASI05 |
+| RAG / Vector DB | 5 | 17 | T0020 | LLM01, LLM02, LLM09 | ASI01, ASI06 |
+| Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM03 | — |
+| Agentic Orchestration & AI-Service C2 | 3 | 12 | T0096, T0086, T0054 | LLM03 | ASI02 |
+| Agent Memory & Context Poisoning | 2 | 5 | T0080, T0080.000, T0086 | LLM01, LLM02, LLM03 | ASI06 |
+| Endpoint (cross-tool) | 14 | 14 | T0053, T0081, T0083, T0098 | LLM02, LLM03, LLM04, LLM06 | ASI02, ASI03, ASI04, ASI05 |
+| **Total** | **70** | **161** | | | |
 
 The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
 scoped to agent behaviour on a host rather than to one attack class, so it applies

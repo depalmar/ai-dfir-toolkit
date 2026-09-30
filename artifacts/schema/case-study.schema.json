@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "case-study.schema.json",
+  "title": "AI DFIR case study",
+  "description": "One documented incident or disclosed campaign. Formalises what build_site.check_cases already enforced, and adds the structured actor, victim and framework fields the threat-intel layer derives from. Closed shape: a field that is not here does not exist.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "date_range",
+    "disclosed",
+    "affects",
+    "confidence",
+    "basis",
+    "summary",
+    "iocs",
+    "response_actions",
+    "lesson",
+    "detections",
+    "references"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^AIRT-CS-[0-9]{4}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date_range": {
+      "type": "string",
+      "minLength": 1
+    },
+    "disclosed": {
+      "type": "string",
+      "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"
+    },
+    "affects": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "basis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contested": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "atlas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^AML\\.T[0-9]{4}(\\.[0-9]{3})?$"
+      }
+    },
+    "attack": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
+      }
+    },
+    "owasp_agentic": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^ASI(0[1-9]|10)$"
+      }
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "link_confidence",
+          "attributed_by",
+          "reference"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^AIRT-TA-[0-9]{4}$"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "operator",
+              "developer",
+              "broker",
+              "suspected"
+            ]
+          },
+          "link_confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "attributed_by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stated_confidence": {
+            "type": "string",
+            "description": "The attributing party's own words about its confidence, verbatim - kept separate from link_confidence, which is ours and measures provenance."
+          },
+          "reference": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "victims": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sectors": {
+          "type": "array",
+          "items": {
+            "$ref": "intel-vocab.json#/$defs/sector"
+          }
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "org_count": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "qualifier"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "qualifier": {
+              "type": "string",
+              "enum": [
+                "exact",
+                "approx",
+                "at-least"
+              ]
+            }
+          }
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "description": "Omit any field the source does not state. A guessed sector becomes somebody's wrong victimology chart."
+    },
+    "external_ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attack_campaign": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^C[0-9]{4}$"
+          }
+        },
+        "attack_group": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^G[0-9]{4}$"
+          }
+        },
+        "atlas_case_study": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^AML\\.CS[0-9]{4}$"
+          }
+        },
+        "aiid": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "cve": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CVE-[0-9]{4}-[0-9]{4,7}$"
+          }
+        },
+        "ghsa": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^GHSA(-[23456789cfghjmpqrvwx]{4}){3}$"
+          }
+        },
+        "mit_risk_domain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-7]\\.[0-9]$"
+          }
+        },
+        "vendor_cluster": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "iocs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "file",
+              "directory",
+              "binary",
+              "process",
+              "commit",
+              "domain",
+              "ip",
+              "url",
+              "hash",
+              "email",
+              "package",
+              "account",
+              "mutex",
+              "endpoint",
+              "config",
+              "pattern",
+              "behavior",
+              "malware"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "response_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "phase",
+              "action"
+            ],
+            "properties": {
+              "phase": {
+                "type": "string",
+                "enum": [
+                  "contain",
+                  "eradicate",
+                  "recover",
+                  "harden"
+                ]
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    "lesson": {
+      "type": "string",
+      "minLength": 1
+    },
+    "detections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "url"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "accessed": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

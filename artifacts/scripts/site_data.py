@@ -64,22 +64,36 @@ def category_label(dirname: str) -> str:
     return stem[:1].upper() + stem[1:]
 
 
+# ATLAS technique ids are T0xxx; ATT&CK's are T1xxx. The extractor used to take
+# any T followed by four digits, so a Suricata rule citing ATT&CK T1190 in its
+# metadata shipped with an "ATLAS" technique AML.T1190 that does not exist.
+ATLAS_IN_TEXT = r"AML\.T\d{4}(?:\.\d{3})?|\bT0\d{3}(?:\.\d{3})?\b"
+
+
 def _norm_atlas(v: str) -> str:
-    """T0051.000, AML.T0051, attack.atlas.t0051 -> AML.T0051.000 style."""
-    v = v.strip().replace("attack.atlas.", "").upper()
-    if not v:
-        return ""
-    if v.startswith("AML."):
-        v = v[4:]
-    if not v.startswith("T"):
-        return ""
-    return "AML." + v
+    """T0051.000, AML.T0051, attack.atlas.t0051, atlas.aml-t0051 -> AML.T0051.000.
+
+    The last form is used by 18 tags across 07, 08 and 09, and used to normalise
+    to "", so those rules showed only whatever MAPPINGS said about them.
+    Anything that is not an ATLAS technique id comes back empty rather than as
+    a plausible-looking wrong one - "T1611 (ATT&CK)" is not AML.T1611.
+    """
+    v = v.strip().upper().replace("ATTACK.ATLAS.", "").replace("ATLAS.", "")
+    v = re.sub(r"^AML[.-]", "", v)
+    m = re.fullmatch(r"T(0\d{3})(\.\d{3})?", v)
+    return f"AML.T{m.group(1)}{m.group(2) or ''}" if m else ""
 
 
 def _norm_owasp(v: str) -> str:
     """owasp.llm01, LLM01:2025 -> LLM01."""
     m = re.search(r"LLM\s*0?(\d+)", v.strip().upper().replace("OWASP.", ""))
     return f"LLM{int(m.group(1)):02d}" if m else ""
+
+
+def _norm_asi(v: str) -> str:
+    """owasp.asi01, ASI01, ASI 01, ASI01:2026 -> ASI01 (OWASP Agentic Top 10)."""
+    m = re.search(r"ASI\s*0?(\d+)", v.strip().upper())
+    return f"ASI{int(m.group(1)):02d}" if m and 1 <= int(m.group(1)) <= 10 else ""
 
 
 def _tags_split(tags):
@@ -93,6 +107,7 @@ def _tags_split(tags):
             if v:
                 atlas.append(v)
         elif "owasp" in low:
+            # ASI tags live in the owasp namespace too; _tags_asi collects them.
             v = _norm_owasp(t)
             if v:
                 owasp.append(v)
@@ -105,11 +120,17 @@ def parse_sigma(path: Path):
     """Sigma: a real YAML document. Multi-document files take the first doc."""
     raw = path.read_text(encoding="utf-8")
     try:
-        doc = next(d for d in yaml.safe_load_all(raw) if isinstance(d, dict))
-    except (StopIteration, yaml.YAMLError):
+        docs = [d for d in yaml.safe_load_all(raw) if isinstance(d, dict)]
+        doc = docs[0]
+    except (IndexError, yaml.YAMLError):
         return None
     ls = doc.get("logsource") or {}
-    atlas, owasp, attack = _tags_split(doc.get("tags"))
+    # Tags from every document, not the first. A multi-rule file tags each rule
+    # separately, and reading only the first dropped T0086 from the second rule
+    # of agentic_orchestration_behavior.yml.
+    all_tags = [t for d in docs for t in (d.get("tags") or [])]
+    atlas, owasp, attack = _tags_split(all_tags)
+    atlas, owasp, attack = sorted(set(atlas)), sorted(set(owasp)), sorted(set(attack))
     return {
         "format": "Sigma",
         "title": doc.get("title", path.stem),
@@ -135,7 +156,7 @@ def parse_yara(path: Path):
             meta.setdefault(k.lower(), v)
     names = re.findall(r"^\s*rule\s+(\w+)", raw, re.M)
     header = re.search(r"/\*(.*?)\*/", raw, re.S)
-    atlas = [_norm_atlas(x) for x in re.findall(r"AML\.T[\d.]+|T\d{4}(?:\.\d+)?",
+    atlas = [_norm_atlas(x) for x in re.findall(ATLAS_IN_TEXT,
              (meta.get("atlas", "") + " " + (header.group(1) if header else "")))]
     owasp = [_norm_owasp(x) for x in re.findall(r"LLM\s*0?\d+",
              (meta.get("owasp", "") + " " + (header.group(1) if header else "")))]
@@ -165,7 +186,7 @@ def parse_suricata(path: Path):
     meta_blob = " ".join(re.findall(r"metadata:\s*([^;]+);", joined))
     header = re.search(r"#(.*?)(?:\nalert)", raw, re.S)
     scope = (meta_blob + " " + (header.group(1) if header else ""))
-    atlas = [_norm_atlas(x) for x in re.findall(r"AML\.T[\d.]+|T\d{4}(?:\.\d+)?", scope)]
+    atlas = [_norm_atlas(x) for x in re.findall(ATLAS_IN_TEXT, scope)]
     owasp = [_norm_owasp(x) for x in re.findall(r"LLM\s*0?\d+", scope)]
     return {
         "format": "Suricata",
@@ -212,7 +233,9 @@ def load_rules(mapping_rows):
             # MAPPINGS is the curated source where present; tags fill the gaps.
             atlas = sorted(set(r["atlas"]) | {_norm_atlas(x) for x in row.get("atlas", [])})
             owasp = sorted(set(r["owasp"]) | {_norm_owasp(x) for x in row.get("owasp", [])})
+            asi = sorted({_norm_asi(x) for x in row.get("asi", [])} - {""})
             r.update({
+                "asi": asi,
                 "file": path.name,
                 "path": str(path.relative_to(REPO)),
                 "category": category_label(label),
@@ -225,10 +248,54 @@ def load_rules(mapping_rows):
 
 
 def load_mappings():
-    """Parse MAPPINGS.md: per-rule rows plus the ATLAS / OWASP index tables."""
+    """Parse MAPPINGS.md: per-rule rows plus the ATLAS / OWASP index tables.
+
+    Columns are read by header name, not by position. The per-rule parser used
+    to require five cells, and section 04 had four - no OWASP column - so all
+    nine AI-infrastructure rows were dropped and those rules lost their
+    reference text on the site with nothing failing.
+    """
     rows, atlas_index, owasp_index = {}, [], []
     if not MAPPINGS.exists():
         return rows, atlas_index, owasp_index
+    section, header = None, []
+
+    def ids(cell):
+        return [x.strip() for x in cell.split(",") if x.strip() and x.strip() not in ("-", "—")]
+
+    for line in MAPPINGS.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            head = line[3:].strip().lower()
+            section = ("atlas_index" if "atlas technique index" in head
+                       else "asi_index" if "agentic" in head and "index" in head
+                       else "owasp_index" if "owasp top 10" in head and "index" in head
+                       else "rules")
+            header = []
+            continue
+        if not line.startswith("|") or set(line.strip()) <= set("|-: "):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not header:
+            header = [c.lower() for c in cells]
+            continue
+        col = dict(zip(header, cells))
+        if section == "rules":
+            name = cells[0].strip("`")
+            rows[name] = {
+                "format": col.get("format", ""),
+                "atlas": ids(col.get("atlas", "")),
+                "owasp": ids(col.get("owasp", "")),
+                "asi": ids(col.get("asi", "")),
+                "reference": next((v for k, v in col.items()
+                                   if "reference" in k), ""),
+            }
+        elif section == "atlas_index" and len(cells) >= 3:
+            atlas_index.append({"id": _norm_atlas(cells[0]), "raw": cells[0],
+                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
+        elif section == "owasp_index" and len(cells) >= 3:
+            owasp_index.append({"id": _norm_owasp(cells[0]), "raw": cells[0],
+                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
+    return rows, atlas_index, owasp_index
     section = None
     for line in MAPPINGS.read_text(encoding="utf-8").splitlines():
         if line.startswith("## "):
@@ -303,9 +370,22 @@ def load_case_studies():
             # that names none, because it implies coverage nobody has.
             "detections": [str(d) for d in (c.get("detections") or [])],
             "iocs": iocs,
-            "response_actions": [str(a) for a in (c.get("response_actions") or [])],
+            # Legacy strings, or {phase, action}. Normalised to one shape so the
+            # page renders recovery as its own lane without guessing a phase for
+            # the strings that never stated one.
+            "response_actions": [
+                {"phase": str(a.get("phase", "")), "action": str(a.get("action", ""))}
+                if isinstance(a, dict) else {"phase": "", "action": str(a)}
+                for a in (c.get("response_actions") or [])],
             "lesson": c.get("lesson", ""),
             "references": refs,
+            # Structured intel fields. Absent means the source did not say.
+            "attack": [str(a) for a in (c.get("attack") or [])],
+            "owasp_agentic": [str(a) for a in (c.get("owasp_agentic") or [])],
+            "actors": [dict(a) for a in (c.get("actors") or []) if isinstance(a, dict)],
+            "victims": dict(c.get("victims") or {}),
+            "external_ids": {k: [str(x) for x in (v if isinstance(v, list) else [v])]
+                             for k, v in (c.get("external_ids") or {}).items()},
         })
     return out
 

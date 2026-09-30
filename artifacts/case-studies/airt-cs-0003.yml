@@ -51,3 +51,10 @@ references:
     url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
   - title: "Trend Micro - Langflow CVE-2025-3248 exploited to deliver the Flodrix botnet"
     url: https://www.trendmicro.com/en_us/research/25/f/langflow-flodrix-botnet.html
+
+owasp_agentic:
+  - ASI05
+external_ids:
+  cve:
+    - CVE-2025-3248
+    - CVE-2026-5027

@@ -1,0 +1,55 @@
+title: AI Coding CLI Invoked With Permission Bypass by a Script or Package Manager
+id: bb0847db-e7dc-5690-ab79-68764f5a1f8c
+status: experimental
+description: |
+  Detects an AI coding CLI started with its approval-bypass flag by a runtime,
+  package manager or script interpreter, not by a person at a terminal. The
+  s1ngularity compromise of the Nx build system (August 2025) did exactly this
+  from an npm postinstall script. It looked for Claude Code, Gemini CLI and Amazon
+  Q on the host and ran each with the flag that suppresses tool approval
+  (--dangerously-skip-permissions, --yolo, --trust-all-tools). It then prompted
+  them to inventory secrets into /tmp/inventory.txt. The malware carried no
+  scanner of its own; the developer's agent was the scanner. A human running
+  these flags interactively is normal on some estates. The parent process is
+  what separates the two.
+references:
+    - https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0015.yml
+author: AI DFIR Toolkit contributors
+date: 2026-09-30
+tags:
+    - attack.execution
+    - attack.t1059
+    - attack.credential_access
+    - attack.t1552.001
+    - attack.atlas.t0053
+    - attack.atlas.t0098
+    - owasp.asi05
+    - owasp.asi02
+logsource:
+    category: process_creation
+detection:
+    selection_flag:
+        CommandLine|contains:
+            - '--dangerously-skip-permissions'
+            - '--yolo'
+            - '--trust-all-tools'
+    selection_parent:
+        ParentImage|endswith:
+            - '/node'
+            - '/npm'
+            - '/npx'
+            - '/pnpm'
+            - '/yarn'
+            - '/bun'
+            - '/python'
+            - '/python3'
+            - '\node.exe'
+            - '\npm.exe'
+            - '\bun.exe'
+            - '\python.exe'
+    condition: all of selection_*
+falsepositives:
+    - CI pipelines that deliberately run an agent headless with approvals disabled - scope by host or service account
+    - Wrapper scripts a developer wrote around their own agent
+level: high

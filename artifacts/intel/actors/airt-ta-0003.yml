@@ -1,0 +1,51 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0003 - GTG-2002
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0003
+name: GTG-2002
+kind: criminal
+motivation:
+- financial
+summary: Anthropic's designation for a data-extortion operator that used Claude Code to automate
+  reconnaissance, credential harvesting and network penetration. Anthropic also reports the
+  model analysed stolen financial data to set ransom demands, some above USD 500,000. At least
+  17 organisations were affected, in healthcare, emergency services, government and religious
+  institutions.
+confidence: medium
+basis: One reporting party, the provider whose product was abused. No host indicators were
+  published. The cluster name comes from Anthropic's full report, and the public summary page
+  describes the operation without the name.
+abuses:
+- AIRT-0001
+sightings:
+- date: '2025-08-27'
+  reporter: Anthropic
+  summary: Claude Code used to automate reconnaissance, credential harvesting and network
+    penetration for data extortion, and to analyse exfiltrated financial data to set ransom
+    amounts.
+  atlas:
+  - AML.T0103
+  - AML.T0116
+  - AML.T0055
+  owasp_agentic:
+  - ASI02
+  abuses:
+  - AIRT-0001
+  ai_services:
+  - Claude Code
+  victims:
+    sectors:
+    - healthcare
+    - emergency-services
+    - government
+    - religious-institutions
+    org_count:
+      value: 17
+      qualifier: at-least
+    basis: Anthropic, August 2025 threat intelligence report.
+  reference: https://www.anthropic.com/news/detecting-countering-misuse-aug-2025
+references:
+- title: 'Anthropic - Detecting and countering misuse of AI: August 2025'
+  url: https://www.anthropic.com/news/detecting-countering-misuse-aug-2025

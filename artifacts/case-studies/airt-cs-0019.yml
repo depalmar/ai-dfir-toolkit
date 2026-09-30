@@ -1,0 +1,200 @@
+# AI agent artifact case study
+# AIRT-CS-0019 - GTG-50014 - ShinyHunters Affiliates Vibe-Hacking SaaS Estates
+# Indicators: Anthropic September 2026 IOC release, cyber-operations rows only, values as published (defanged).
+
+id: AIRT-CS-0019
+title: GTG-50014 - ShinyHunters Affiliates Vibe-Hacking SaaS Estates
+date_range: 2026 (activity window not stated)
+disclosed: '2026-09-10'
+affects: Claude models on the actor's side - no catalogued tool on victim hosts
+confidence: medium
+basis: A single reporting party with a published indicator set of 40 addresses, domains and
+  Telegram identifiers. The ShinyHunters link is Anthropic's suspicion of affiliation, not
+  an identification.
+contested: Anthropic describes the operators as suspected affiliates of the ShinyHunters collective,
+  not as the group itself.
+atlas:
+- AML.T0103
+- AML.T0055
+- AML.T0126
+attack:
+- T1552.001
+- T1567
+actors:
+- ref: AIRT-TA-0006
+  role: suspected
+  link_confidence: medium
+  attributed_by: Anthropic
+  stated_confidence: '"operators suspected to be affiliates of the ShinyHunters collective"'
+  reference: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50014-shinyhunters-smash-and-grab-opportunists
+victims:
+  sectors:
+  - information-technology
+  - transportation
+  - energy
+  - retail
+  - telecommunications
+  countries:
+  - FR
+  basis: 'Anthropic: a technology provider, an airline, an energy company, around 200 downstream
+    SaaS customers, a French retail chain and a French ISP dataset.'
+summary: Anthropic reports operators suspected to be ShinyHunters affiliates running a vibe-hacking
+  loop. They gave Claude a general goal, such as using a stolen credential or retrieving data,
+  then let it evaluate the environment and write and run scripts until the goal was met. Reported
+  losses include more than 1 TB from one technology provider, tens of millions of passenger
+  records from an airline, and data from around 200 downstream SaaS customers. The operators
+  also ran credential-validation pipelines on EC2 workers, scanned decompiled mobile apps
+  for secrets with TruffleHog, and moved stolen data through Telegram.
+iocs:
+- type: account
+  value: https[:]//t[.]me/Soraki_Bot
+  description: Criminal storefront account on Telegram (role monetization, handling detect-or-block)
+- type: domain
+  value: ari-chain[.]com
+  description: Crypto Themed Phishing Domain (role phishing, handling detect-or-block)
+- type: domain
+  value: arichain[.]network
+  description: Crypto Themed Phishing Domain (role phishing, handling detect-or-block)
+- type: domain
+  value: bitmart-mystery[.]com
+  description: Crypto Themed Phishing Domain (role phishing, handling detect-or-block)
+- type: domain
+  value: defi-claim[.]xyz
+  description: Phishing Domain (role phishing, handling detect-or-block)
+- type: domain
+  value: emailsecure[.]email
+  description: Actor email domain (role phishing, handling detect-or-block)
+- type: domain
+  value: mozilla[.]ws
+  description: Mozilla brand-impersonation phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: on-pssword[.]com
+  description: 1Password typosquat phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: policenationale[.]cc
+  description: A domain name impersonating the French national police (though we believe this
+    served as branding for the criminal storefront rather than as a phishing lure) (role monetization,
+    handling detect-or-block)
+- type: domain
+  value: service-infos[.]info
+  description: Phishing email domain (role phishing, handling detect-or-block)
+- type: domain
+  value: signin-1psswoord[.]com
+  description: 1Password phishing (role phishing, handling detect-or-block)
+- type: domain
+  value: soraki[.]cc
+  description: AutoShop carding storefront (role monetization, handling detect-or-block)
+- type: domain
+  value: soraki[.]work
+  description: Actor infrastructure (role infrastructure, handling detect-or-block)
+- type: domain
+  value: autoshop.policenationale[.]cc
+  description: Served as the web frontend for the actor's carding autoshop (role monetization,
+    handling detect-or-block)
+- type: domain
+  value: esvfecawvjmchjslqyemho2fiduc59wzn.oast[.]fun
+  description: Callback domain to confirm SSRF and out of band code execution (role infrastructure,
+    handling detect-or-block)
+- type: domain
+  value: soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers[.]dev
+  description: Cloudflare Workers proxy (role infrastructure, handling detect-or-block)
+- type: domain
+  value: updatebeacon.duckdns[.]org
+  description: C2 callback domain (role c2, handling detect-or-block)
+- type: ip
+  value: 104.193.135[.]207
+  description: Attacker egress IP (seen 2026-04-05 to 2026-04-05; role egress, handling hunt)
+- type: ip
+  value: 104.36.50[.]54
+  description: Attacker egress IP (seen 2026-04-24 to 2026-04-24; role egress, handling hunt)
+- type: ip
+  value: 162.128.129[.]106
+  description: Attacker egress IP (seen 2026-02-20 to 2026-03-10; role egress, handling hunt)
+- type: ip
+  value: 176.177.12[.]62
+  description: Attacker egress IP (seen 2026-04-19 to 2026-04-20; role egress, handling hunt)
+- type: ip
+  value: 185.65.134[.]199
+  description: Attacker egress IP (seen 2026-04-19 to 2026-04-28; role egress, handling hunt)
+- type: ip
+  value: 185.65.134[.]246
+  description: Attacker egress IP (seen 2026-04-19 to 2026-05-04; role egress, handling hunt)
+- type: ip
+  value: 193.32.249[.]161
+  description: Attacker egress IP (seen 2026-03-21 to 2026-04-18; role egress, handling hunt)
+- type: ip
+  value: 193.32.249[.]164
+  description: Attacker egress IP (seen 2026-04-18 to 2026-05-06; role egress, handling hunt)
+- type: ip
+  value: 193.32.249[.]170
+  description: Attacker egress IP (seen 2026-03-20 to 2026-04-06; role egress, handling hunt)
+- type: ip
+  value: 195.178.110[.]131
+  description: VPS Host (seen 2026-03-12 to 2026-04-30; role infrastructure, handling hunt)
+- type: ip
+  value: 45.148.10[.]242
+  description: Attacker egress IP (seen 2026-04-06 to 2026-04-27; role egress, handling hunt)
+- type: ip
+  value: 91.171.138[.]169
+  description: Attacker egress IP (seen 2026-04-19 to 2026-04-21; role egress, handling hunt)
+- type: ip
+  value: 92.118.39[.]3
+  description: Attacker egress IP (seen 2026-04-10 to 2026-04-19; role egress, handling hunt)
+- type: ip
+  value: 2a01:e0a:2e2:aa40:b15d:5d28:6f4a[:]8d53
+  description: Attacker egress IP (seen 2026-04-20 to 2026-04-21; role egress, handling hunt)
+- type: ip
+  value: 2a04:cec0:1185:34f2:a150:7081:caed[:]448e
+  description: Attacker egress IP (seen 2026-04-06 to 2026-04-07; role egress, handling hunt)
+- type: account
+  value: '8628746407'
+  description: Telegram bot delivering AWS SES credential-validation results directly to the
+    operator's user account (telegram bot id; role infrastructure, handling detect-or-block)
+- type: account
+  value: '8632748474'
+  description: Telegram bot that posted stolen data. (telegram bot id; role exfiltration,
+    handling detect-or-block)
+- type: account
+  value: '8664033117'
+  description: Telegram bot that posted stolen data. (telegram bot id; role exfiltration,
+    handling detect-or-block)
+- type: account
+  value: '8709258476'
+  description: Telegram bot delivering AWS SNS SMS-abuse test results directly to the operator's
+    user account (telegram bot id; role infrastructure, handling detect-or-block)
+- type: account
+  value: '-1003311614569'
+  description: Telegram group 'ChatMignon' that received stolen data. (telegram chat id; role
+    exfiltration, handling detect-or-block)
+- type: account
+  value: '-1003893854338'
+  description: Telegram group 'ClintonHog' that received stolen data. (telegram chat id; role
+    exfiltration, handling detect-or-block)
+- type: account
+  value: '8179098353'
+  description: Operator's Telegram account (telegram user id; role infrastructure, handling
+    detect-or-block)
+- type: url
+  value: https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/
+  description: Exfiltration URL (role exfiltration, handling detect-or-block)
+response_actions:
+- phase: contain
+  action: Block and hunt the published addresses and domains, and alert on outbound traffic
+    to the listed exfiltration storage URL.
+- phase: contain
+  action: Inventory keys embedded in shipped mobile apps and any AWS SES or SNS credentials,
+    which the actor validated at scale and abused.
+- phase: recover
+  action: Rotate SaaS integration tokens and cloud keys reachable from compromised tenants,
+    and notify downstream customers whose data transited them.
+lesson: The operator supplied goals and the model supplied the hands-on-keyboard work. The
+  evidence that a tenant was worked this way is an unusually fast, unusually broad burst of
+  API calls and ad-hoc scripts from one credential, not any single call.
+detections: []
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-50014 ShinyHunters smash-and-grab
+    opportunists'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50014-shinyhunters-smash-and-grab-opportunists
+external_ids:
+  vendor_cluster:
+  - GTG-50014

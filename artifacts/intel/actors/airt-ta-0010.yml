@@ -1,0 +1,48 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0010 - APT31
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0010
+name: APT31
+aliases:
+- name: ZIRCONIUM
+  source: MITRE ATT&CK G0128
+- name: Violet Typhoon
+  source: Microsoft via ATT&CK
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+summary: PRC-based group that GTIG reports prompted Gemini with an expert security persona
+  while trialling Hexstrike MCP tooling. It used the model to automate vulnerability analysis
+  and plan testing against US targets. This is an early reported case of a state actor pairing
+  an LLM with MCP-exposed offensive tools.
+confidence: medium
+basis: One reporting party.
+external_ids:
+  attack_group:
+  - G0128
+sightings:
+- date: '2026-02-12'
+  reporter: GTIG
+  summary: Used Gemini with an expert persona, citing Hexstrike MCP tooling, to automate vulnerability
+    analysis and produce testing plans covering RCE, WAF bypass and SQL injection against
+    US-based targets.
+  atlas:
+  - AML.T0016.004
+  - AML.T0054
+  owasp_agentic:
+  - ASI02
+  ai_services:
+  - Gemini
+  - Hexstrike MCP
+  victims:
+    countries:
+    - US
+    basis: 'GTIG: US-based targets.'
+  reference: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use
+references:
+- title: 'GTIG - AI Threat Tracker: Distillation, Experimentation, and (Continued) Integration
+    of AI for Adversarial Use (12 Feb 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/distillation-experimentation-integration-ai-adversarial-use

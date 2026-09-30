@@ -1,0 +1,42 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0013 - Kimsuky
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0013
+name: Kimsuky
+aliases:
+- name: Emerald Sleet
+  source: Microsoft
+- name: APT43
+  source: MITRE ATT&CK G0094
+kind: state-nexus
+nexus: KP
+motivation:
+- espionage
+summary: North Korean group that Microsoft and OpenAI reported in 2024 using LLMs to research
+  think tanks and North Korea experts, draft spear-phishing content and troubleshoot scripts.
+confidence: medium
+basis: One joint report.
+external_ids:
+  attack_group:
+  - G0094
+sightings:
+- date: '2024-02-14'
+  reporter: Microsoft Threat Intelligence
+  summary: Used LLMs to research experts and organisations, generate spear-phishing content,
+    research public vulnerabilities and assist with scripting.
+  atlas:
+  - AML.T0016.002
+  ai_services:
+  - OpenAI models
+  victims:
+    sectors:
+    - ngo-think-tank
+    - education
+    basis: 'Microsoft: individuals with North Korea expertise, academic institutions and NGOs.'
+  reference: https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/
+references:
+- title: Microsoft Threat Intelligence - Staying ahead of threat actors in the age of AI (14
+    Feb 2024)
+  url: https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/

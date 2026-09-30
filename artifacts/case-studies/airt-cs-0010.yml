@@ -66,3 +66,6 @@ references:
     url: https://atlas.mitre.org/techniques/AML.T0080.000
   - title: "The Hacker News - ChatGPT macOS Flaw Could've Enabled Long-Term Spyware via Memory Function"
     url: https://thehackernews.com/2024/09/chatgpt-macos-flaw-couldve-enabled-long.html
+
+owasp_agentic:
+  - ASI06

@@ -38,8 +38,8 @@ every field carries a `confidence` rating tied to how it was sourced.
 | Documented artifacts | **622** |
 | Credential locations | **164** |
 | MCP config locations | **66** |
-| Sigma detection rules | **12** |
-| Case studies | **14** |
+| Sigma detection rules | **14** |
+| Case studies | **22** |
 
 Artifacts counts every row the catalog yields, so it matches the site and
 `build_site.py --check`. Sigma rules counts `detections/sigma/` only - the
@@ -60,6 +60,7 @@ Categories: llm-runtime (11), coding-agent-ide (10), agent-framework (9), coding
 artifacts/
 ├── catalog/          one YAML file per tool
 ├── case-studies/     documented incidents with IOC blocks
+├── intel/            threat actor profiles + intel-watch sources
 ├── detections/       vendor-neutral Sigma rules + osquery pack
 ├── schema/           JSON Schema + entry template
 ├── scripts/          validate, export, normalize
@@ -78,6 +79,9 @@ format can change without breaking you:
 | `docs/api/collection-targets.txt` | High-value paths, for triage sweeps |
 | `docs/api/detections.json` | Sigma rule index with levels and tags |
 | `docs/api/forensicartifacts.yaml` | ForensicArtifacts format — Plaso / GRR / Timesketch |
+| `docs/api/intel.json` | Actors with derived TTPs, victims, detections and collect rows; cases; the entity graph; stats and analytics |
+| `docs/api/stix/ai-dfir-intel.json` | STIX 2.1 bundle - intrusion sets, reports, indicators, attack patterns, relationships (deterministic ids) |
+| `docs/api/graph/maltego-*.csv` | Entity and link tables for Maltego's table import |
 
 ## Detections
 
@@ -88,7 +92,7 @@ language anywhere:
 sigma convert -t splunk detections/sigma/     # or elasticsearch, sentinel, ...
 ```
 
-All 12 rules are verified in CI to compile against a real backend, so a rule that
+All 14 rules are verified in CI to compile against a real backend, so a rule that
 would not convert cannot merge. See `detections/README.md` for the rule table and
 honest notes on tuning — several rules are deliberately `level: low` because on a
 developer estate they describe the product working correctly.

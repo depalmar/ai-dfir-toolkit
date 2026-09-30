@@ -1,0 +1,26 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0016 - GTG-20006
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0016
+name: GTG-20006
+kind: state-nexus
+nexus: RU
+motivation:
+- espionage
+summary: Anthropic's cluster for a Russian-speaking operator whose tradecraft and targeting
+  it assesses as consistent with Russian state-nexus espionage. It linked the cluster to Midnight
+  Blizzard only as consistent with public reporting. From December 2025 to August 2026 the
+  operator ran reconnaissance, phishing and collection through Claude-driven workflows, mostly
+  by editing the Claude Code skills that drove them.
+confidence: medium
+basis: A single reporting party, with a published indicator set.
+contested: The Midnight Blizzard link is stated as consistency with public reporting, not
+  as an attribution Anthropic makes itself.
+external_ids:
+  vendor_cluster:
+  - GTG-20006
+references:
+- title: 'Anthropic - Threat Intelligence Report, September 2026: GTG-20006 Russian espionage'
+  url: https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-20006-russian-espionage
