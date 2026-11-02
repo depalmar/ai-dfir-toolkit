@@ -1716,6 +1716,7 @@ function planGroups(){
   return groups;
 }
 function planHTML(){
+  refreshRowStates();
   const rows=[...picks].map(a=>ROWMAP[a]).filter(Boolean);
   const vol={};
   for(const r of rows)vol[r.vol]=(vol[r.vol]||0)+1;
@@ -1764,17 +1765,17 @@ function planHTML(){
       <div class="pgroup"><div class="ghead"><span class="badge vol v-${g.vol}"
         ><i>volatility</i>${g.vol}</span>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
-      ${g.rows.map(r=>`<div class="prow">
+      ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>
+        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
         <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
       <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
     : planGroups().map(g=>`
       <div class="pgroup"><div class="ghead">${triageBadge(g.t.triage)}<b>${esc(g.t.tool)}</b>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
-      ${g.rows.map(r=>`<div class="prow">
+      ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>
+        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
         <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
         ${fvBadge(r.forensic_value)}</div>`).join('')}
       ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
@@ -2796,7 +2797,7 @@ function renderMain(){
     // deliberate move rather than the only thing a click can do.
     $$('#main .tool').forEach(c=>c.onclick=()=>openToolDrawer(c.dataset.id,c));
   }else{
-    main.innerHTML=planHTML()+triageHTML();
+    main.innerHTML=`<div class="planwrap${picks.size?' has-build':''}"><div class="planmain">${planHTML()}</div>${triageHTML()}</div>`;
     wireTriage();
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
@@ -2906,6 +2907,7 @@ function applyHash(){
     return}
   if(h==='sources'){view='sources';update();return}
   if(h==='mappings'){view='mappings';update();return}
+  if(h==='plan'){view='plan';update();return}
   if(h.startsWith('src-')){view='sources';update();
     const el=document.getElementById(h);
     if(el){el.open=true;el.scrollIntoView()}

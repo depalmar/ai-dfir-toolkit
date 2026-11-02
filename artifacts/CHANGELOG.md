@@ -12,6 +12,15 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   GRR and Timesketch, and a `targets.yaml` subset for the repository's Python
   collector. Each one lists the rows it cannot carry and why, instead of
   dropping them.
+- **Collection plan builder.** Case id, operator, output directory,
+  repository and home paths and a copy-secrets toggle, saved with the plan,
+  feeding the generated script's manifest and a ready-to-paste run command for
+  every collector. Each plan row now shows what the chosen collector will do
+  with it (hashed only, live state, needs a repo path, not on this OS, manual),
+  a summary strip counts those states and the plan's confidence mix, and a
+  "Before you run it" checklist sits above the builder, which is sticky beside
+  the plan on wide screens. Pattern borrowed from edge-dfir-toolkit's command
+  builder, where withheld steps grey out as the operator changes options.
 - **Mappings.** Technique coverage gains an Actors column from the intel layer,
   a `gap` flag (used by an actor or incident, on-host, no rule), per-tactic
   grouping, text and state filters, sortable columns, stat tiles, a CSV

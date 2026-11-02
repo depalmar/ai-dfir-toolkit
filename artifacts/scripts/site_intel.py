@@ -131,6 +131,35 @@ CSS = r"""
 .skiplist .lnk{background:none;border:0;color:var(--accent);cursor:pointer;padding:0;font-size:12px;text-align:left}
 .skiplist .lnk:hover{text-decoration:underline}
 .fwskip{margin-top:8px}
+.tbuild .tsum{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0 2px}
+.tbuild .tsum2{margin:2px 0 6px}
+.tchip{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--muted)}
+.tchip b{color:var(--ink)}
+.tchip.t-hash,.tchip.t-repo,.tchip.t-manual{border-style:dashed}
+.tchip.t-secret{border-color:var(--gap);color:var(--gap)}.tchip.t-secret b{color:var(--gap)}
+.tchip.t-skip{opacity:.7}
+.tconf{display:inline-flex;height:8px;width:120px;border-radius:3px;overflow:hidden;background:var(--line-soft);margin-left:4px}
+.tconf .cs{display:block;height:100%}
+.tconf .c-high{background:var(--conf-strong)}.tconf .c-med{background:var(--series-3)}.tconf .c-low{background:var(--gap)}
+.brun{margin:6px 0 10px}.brun ol{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--muted)}.brun li{margin:3px 0}
+.tform{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 12px;margin:10px 0 6px}
+.tform label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted)}
+.tform input:not([type=checkbox]){border:1px solid var(--field-line,var(--line));border-radius:7px;padding:6px 9px;font-size:13px;background:var(--bg);color:var(--ink)}
+.tform label.tog{flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:12.5px;grid-column:1/-1}
+.tform label.tog input{margin:0}
+.cmdwrap{position:relative;margin:4px 0 8px}
+.cmdwrap .mini{position:absolute;right:6px;top:6px;font-size:11px;padding:2px 8px}
+.tcmd{margin:0;white-space:pre-wrap;word-break:break-all;font-size:12px;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:8px;padding:10px 64px 10px 12px;max-height:none}
+.need{font-size:10.5px;border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap;color:var(--muted);border:1px dashed var(--line)}
+.need.n-secret{color:var(--gap);border-color:var(--gap);border-style:solid}
+.need.n-live{border-style:solid}
+.need.n-skip{opacity:.75}
+.prow.off .path,.prow.off .ptool{opacity:.45}
+.planwrap{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+@media (min-width:1240px){
+  .planwrap.has-build{grid-template-columns:minmax(0,1fr) 420px}
+  .planwrap.has-build .tbuild{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;margin:0}
+}
 /* graph workbench */
 .gbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);
   border-radius:10px;background:var(--panel)}
@@ -1071,6 +1100,84 @@ function renderGraph(){
    templates are fixed and live in scripts/site_scripts.py; this only writes the
    target lines, from specs triage_spec.py computed at build time. */
 let triageOS='win', triageFw='native';
+/* Operator inputs live on the plan, so the command you built for a host is
+   still there when you come back to it. They never leave the browser. */
+const OPT_DEF=()=>({case:'',operator:'',out:'',repos:'',home:'',secrets:false,oneLine:false});
+function triageOpts(){const p=activePlan();if(!p)return OPT_DEF();if(!p.opts)p.opts=OPT_DEF();return p.opts}
+const repoList=()=>String(triageOpts().repos||'').split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);
+const OSL={win:'Windows',mac:'macOS',linux:'Linux'};
+let FWSKIP={};
+// What the chosen collector will do with each picked row, so the plan shows the
+// consequence of every builder option on the row it affects rather than only
+// in a count at the bottom. Mirrors the script's own branches.
+function refreshRowStates(){
+  FWSKIP={};
+  if(triageFw!=='native'&&FW[triageFw]&&picks.size){const x=FW[triageFw].make();FWSKIP=Object.fromEntries(x.skip.map(([r,w])=>[r.anchor,w]))}
+}
+function rowState(r){
+  const s=r.spec||{kind:'manual'}, o=triageOpts();
+  if(triageFw!=='native'){
+    if(FWSKIP[r.anchor])return {state:'skip',note:FWSKIP[r.anchor]};
+    return s.secret?{state:'hash',note:triageFw==='velo'?'metadata unless Upload':triageFw==='py'?(o.secrets?'copied - secret':'hashed only'):'copied - secret'}:{state:'copy',note:''};
+  }
+  if(s.kind==='manual')return {state:'manual',note:'manual - '+(s.why||'needs a person')};
+  if(s.kind==='process'||s.kind==='network')return {state:'live',note:'live state'};
+  if(s.kind==='registry'||s.kind==='eventlog')return triageOS==='win'
+    ?{state:'copy',note:s.kind==='registry'?(s.secret&&!o.secrets?'key read, values not exported':'registry'):'event log'}
+    :{state:'skip',note:'Windows only'};
+  const ts=s[triageOS]||[], others=(s.win||[]).length+(s.mac||[]).length+(s.linux||[]).length;
+  if(!ts.length)return others?{state:'skip',note:'not on '+OSL[triageOS]}:{state:'manual',note:'manual - no fixed path'};
+  if(ts.every(t=>t.startsWith('{REPO}'))&&!repoList().length)return {state:'repo',note:'needs a repo path'};
+  if(s.secret)return o.secrets?{state:'secret',note:'copied - secret'}:{state:'hash',note:'hashed only'};
+  return {state:'copy',note:''};
+}
+function rowNeed(r){const st=rowState(r);return st.note?`<span class="need n-${st.state}">${esc(st.note)}</span>`:''}
+const STATE_LABEL={copy:'collected',hash:'hashed only',secret:'secrets copied',live:'live state',manual:'manual',repo:'need a repo path',skip:'not in this output'};
+function triageSummaryHTML(rows){
+  const c={};for(const r of rows){const st=rowState(r).state;c[st]=(c[st]||0)+1}
+  const conf={high:0,medium:0,low:0,unv:0};for(const r of rows){conf[r.confidence]=(conf[r.confidence]||0)+1;if(r.unverified)conf.unv++}
+  const order=['copy','hash','secret','live','manual','repo','skip'];
+  return `<div class="tsum">${order.filter(k=>c[k]).map(k=>`<span class="tchip t-${k}"><b>${c[k]}</b> ${STATE_LABEL[k]}</span>`).join('')}</div>
+    <div class="tsum tsum2"><span class="tconf" title="Row confidence: high is host- or vendor-verified, medium is multi-source, low is single-source">
+      <i class="cs c-high" style="flex:${conf.high}"></i><i class="cs c-med" style="flex:${conf.medium}"></i><i class="cs c-low" style="flex:${conf.low}"></i></span>
+    <span class="gnote">${conf.high} verified · ${conf.medium} multi-source · ${conf.low} single-source${conf.unv?` · <b>${conf.unv} unverified</b>`:''}</span></div>`;
+}
+function runCmd(){
+  const o=triageOpts(), rl=repoList();
+  if(triageFw!=='native')return FW[triageFw].make().cmd;
+  const name=triageScript(triageOS).name, parts=[];
+  if(triageOS==='win'){
+    parts.push(`powershell -ExecutionPolicy Bypass -File .\\${name}`);
+    if(o.case)parts.push(`-CaseId ${psq(o.case)}`);if(o.operator)parts.push(`-Operator ${psq(o.operator)}`);
+    if(o.out)parts.push(`-Out ${psq(o.out)}`);if(rl.length)parts.push(`-RepoPath ${rl.map(psq).join(',')}`);
+    if(o.home)parts.push(`-HomePath ${psq(o.home)}`);if(o.secrets)parts.push('-CollectSecrets');
+    return parts.join(o.oneLine?' ':' `\n    ');
+  }
+  parts.push(`sudo bash ${name}`);
+  if(o.case)parts.push(`--case ${shq(o.case)}`);if(o.operator)parts.push(`--operator ${shq(o.operator)}`);
+  if(o.out)parts.push(`--out ${shq(o.out)}`);rl.forEach(r=>parts.push(`--repo ${shq(r)}`));
+  if(o.home)parts.push(`--home ${shq(o.home)}`);if(o.secrets)parts.push('--collect-secrets');
+  return parts.join(o.oneLine?' ':' \\\n    ');
+}
+function tformHTML(){
+  const o=triageOpts(), win=triageOS==='win'&&triageFw==='native', native=triageFw==='native';
+  const f=(k,label,ph,title)=>`<label title="${esc(title||'')}">${label}<input data-opt="${k}" value="${esc(o[k]||'')}" placeholder="${esc(ph)}" autocomplete="off" spellcheck="false"></label>`;
+  return `<div class="tform">
+    ${f('case','Case id','IR-2026-001','Names the evidence folder and the manifest')}
+    ${f('operator','Operator','your name','Recorded in the chain-of-custody manifest')}
+    ${native||triageFw==='py'?f('out','Output directory',win?'D:\\evidence':'/evidence','Where the case folder is created; a removable or network target, not the host disk'):''}
+    ${native||triageFw==='py'?f('repos','Repository paths','/src/app, /src/other','Checkouts the <repo> rows resolve against; without one those rows are recorded as needing it'):''}
+    ${native?f('home','Home path','one profile; default is every profile','Limit collection to one user\u2019s home on a shared host'):''}
+    ${native||triageFw==='py'?`<label class="tog"><input type="checkbox" data-opt="secrets"${o.secrets?' checked':''}> Copy credential files <span class="gnote">(default records hash and metadata only)</span></label>`:''}
+    <label class="tog"><input type="checkbox" data-opt="oneLine"${o.oneLine?' checked':''}> One line, for pasting into a ticket</label>
+  </div>`;
+}
+const BEFORE_RUN=[
+  'Do not close the agent, the IDE or the terminal it ran in, and do not reboot: every row marked <b>live</b> goes with it, and several agents truncate their session logs on restart.',
+  'Credential files are hashed, not copied, by default. Copying them is a decision - make it deliberately and record who made it.',
+  'Name the user and the checkouts. <code style="display:inline">&lt;repo&gt;</code> rows resolve only against the paths you pass; a home-wide sweep on a shared host is slow and noisy.',
+  'Capture MCP configuration before any remediation. Removing a server destroys the record of what the agent was allowed to run.'];
+
 const psq=s=>"'"+String(s??'').replace(/'/g,"''")+"'";
 const shq=s=>"'"+String(s??'').replace(/'/g,"'\\''")+"'";
 function planRowsOrdered(){
@@ -1113,7 +1220,8 @@ function triageScript(os){
   const p=activePlan()||{};
   const t=triageTargets(os);
   const name=(p.name||'ai-triage').replace(/[^\w.-]+/g,'_').slice(0,40)||'ai-triage';
-  const meta=`plan: ${(p.name||'untitled').replace(/[\r\n]/g,' ')} | host: ${(p.host||'-').replace(/[\r\n]/g,' ')} | generated ${new Date().toISOString()} | ${t.n} targets | ${REPO_URL}`;
+  const o=triageOpts();
+  const meta=`plan: ${(p.name||'untitled').replace(/[\r\n]/g,' ')} | host: ${(p.host||'-').replace(/[\r\n]/g,' ')}${o.case?' | case: '+o.case.replace(/[\r\n]/g,' '):''}${o.operator?' | operator: '+o.operator.replace(/[\r\n]/g,' '):''} | generated ${new Date().toISOString()} | ${t.n} targets | ${REPO_URL}`;
   const tpl=os==='win'?TRIAGE_PS1:TRIAGE_SH;
   // Secret patterns from the whole catalog: tokens become wildcards, a
   // directory becomes "everything under it".
@@ -1182,7 +1290,7 @@ function kapePlan(){
   const text=`Description: ${ysq(oneLine(p.name||'AI triage plan')+' - AI agent artifacts picked in the collection plan')}\nAuthor: AI Agent Artifact Catalog (ai-dfir-toolkit)\nVersion: 1.0\nId: ${planGuid()}\nRecreateDirectories: true\nTargets:\n${rows.join('\n')}\n`;
   return {name:slug+'.tkape',mime:'text/plain',text,n:rows.length,skip,
     how:`Copy the file into KAPE's <code style="display:inline">Targets\\Custom\\</code> folder, then:`,
-    cmd:`kape.exe --tsource C: --tdest D:\\kape_out --target ${slug} --vhdx ${slug}`};
+    cmd:`kape.exe --tsource C: --tdest D:\\kape_out\\${(triageOpts().case||slug).replace(/[^\w.-]+/g,'_')} --target ${slug} --vhdx ${(triageOpts().case||slug).replace(/[^\w.-]+/g,'_')}`};
 }
 function veloPlan(){
   const slug='Custom.AIAgents.Plan.'+planSlug(), p=activePlan()||{};
@@ -1221,7 +1329,7 @@ function veloPlan(){
   const text=`name: ${slug}\ndescription: |\n  ${oneLine(p.name||'AI triage plan')} - artifacts picked in the collection plan${p.host?' for '+oneLine(p.host,60):''}.\n\n  Generated by the ai-dfir-toolkit site from the catalog's collection specs.\n  Metadata only unless Upload is set: credential stores are in here, so pulling\n  them back is a decision, not a default.${hosts.length?`\n  Network rows also name these endpoints, which netstat() cannot match by name:\n  ${hosts.join(', ')}`:''}\nauthor: AI Agent Artifact Catalog (ai-dfir-toolkit)\ntype: CLIENT\nparameters:\n  - name: Upload\n    description: Upload matching files rather than only recording their metadata.\n    type: bool\n    default: "N"\nsources:\n${src}`;
   return {name:slug+'.yaml',mime:'text/yaml',text,n,skip,
     how:'Import the definition (Server Artifacts &#8594; Upload, or <code style="display:inline">--definitions</code>), then collect:',
-    cmd:`velociraptor --definitions . artifacts collect ${slug} --output ${planSlug()}.zip`};
+    cmd:`velociraptor --definitions . artifacts collect ${slug} --output ${(triageOpts().case||planSlug()).replace(/[^\w.-]+/g,'_')}.zip`};
 }
 function faPlan(){
   const p=activePlan()||{}, skip=[], byTool={};
@@ -1279,7 +1387,7 @@ function pyPlan(){
   const text=`# targets.yaml subset for one collection plan - ${oneLine(p.name||'',60)}\n# Generated by the ai-dfir-toolkit site; same schema as collectors/targets.yaml.\n# Project-scoped rows need --project-dir. Secrets are hashed, not copied,\n# unless you pass --collect-secrets.\nversion: 1\n\ntargets:\n${out.join('\n\n')}\n`;
   return {name:'targets-'+planSlug().toLowerCase()+'.yaml',mime:'text/yaml',text,n:out.length,skip,
     how:'Run the repository collector against this file instead of the full registry:',
-    cmd:`python3 collectors/collect_ai_artifacts.py --targets targets-${planSlug().toLowerCase()}.yaml --case-id IR-001 --operator you --output ./cases${out.some(x=>/scope: project/.test(x))?' --project-dir /path/to/repo':''}`};
+    cmd:(()=>{const o=triageOpts(),rl=repoList();return `python3 collectors/collect_ai_artifacts.py --targets targets-${planSlug().toLowerCase()}.yaml --case-id ${shq(o.case||'IR-001')} --operator ${shq(o.operator||'you')} --output ${shq(o.out||'./cases')}${rl.length?rl.map(r=>' --project-dir '+shq(r)).join(''):(out.some(x=>/scope: project/.test(x))?' --project-dir /path/to/repo':'')}${o.secrets?' --collect-secrets':''}`})()};
 }
 const FW={native:{label:'Native script'},velo:{label:'Velociraptor',make:veloPlan,
     feed:'velociraptor',feedLabel:'per-tool artifact definitions',note:'Best for a fleet, or when you already run it. One artifact, one source per OS, metadata-only unless Upload is set.'},
@@ -1299,7 +1407,9 @@ function fwPanel(fw){
     <p class="tcount">${x.n} of ${planRowsOrdered().length} picked rows rendered${x.skip.length?`, <b>${x.skip.length}</b> not expressible in this format (listed below)`:''}.</p>
     <div class="gbtns"><button class="btn primary" id="fwDl">Download ${esc(x.name)}</button>
       <button class="btn" id="fwCopy">Copy</button></div>
-    <p class="gnote" style="margin-top:8px">${x.how}</p><code>${esc(x.cmd)}</code>
+    ${tformHTML()}
+    <p class="gnote" style="margin-top:8px">${x.how}</p>
+    <div class="cmdwrap"><button class="btn mini" id="tCmdCopy">Copy</button><pre class="tcmd" id="tCmd">${esc(runCmd())}</pre></div>
     ${pre.length?`<p class="gnote" style="margin-top:8px">Or use the repository's ${d.feedLabel} for the picked tools:
       <code style="display:inline">${pre.map(esc).join(' ')}</code> &middot;
       <a href="${REPO_URL}/tree/main/artifacts/docs/api/${d.feed}" target="_blank" rel="noopener">browse &#8599;</a></p>`:''}
@@ -1314,10 +1424,14 @@ function triageHTML(){
   if(!picks.size)return '';
   const osL={win:'Windows (PowerShell)',mac:'macOS (bash)',linux:'Linux (bash)'};
   const sc=triageScript(triageOS);
+  refreshRowStates();
+  const prow=planRowsOrdered();
   return `<div class="tbuild"><h3>Collect it</h3>
     <p class="gnote">The plan rendered for whichever collector you will run. All five read the same
     per-row collection spec, so they agree on what each path is; they differ in what they can carry.
-    The native script is the default because it needs nothing installed on the host.</p>
+    The native script is the default because it needs nothing installed on the host. Nothing typed here leaves your browser.</p>
+    ${triageSummaryHTML(prow)}
+    <details class="brun"><summary class="gnote">Before you run it</summary><ol>${BEFORE_RUN.map(x=>`<li>${x}</li>`).join('')}</ol></details>
     <div class="seg small" role="group" aria-label="Collection method">${Object.entries(FW).map(([k,d])=>
       `<button class="segbtn${triageFw===k?' on':''}" data-fw="${k}">${d.label}</button>`).join('')}</div>
     ${triageFw==='native'?`
@@ -1328,9 +1442,12 @@ function triageHTML(){
         ${triageOS==='win'?'<code>-CollectSecrets</code>':'<code>--collect-secrets</code>'}. Repository-scoped rows need
         ${triageOS==='win'?'<code>-RepoPath</code>':'<code>--repo</code>'}; limit to one user with
         ${triageOS==='win'?'<code>-HomePath</code>':'<code>--home</code>'}.</p>
+      ${tformHTML()}
       <div class="gbtns"><button class="btn primary" id="tDl">Download ${esc(sc.name)}</button>
-        <button class="btn" id="tCopy">Copy</button></div>
-      <details><summary class="gnote">Preview</summary><pre>${esc(sc.text)}</pre></details>`
+        <button class="btn" id="tCopy">Copy script</button></div>
+      <p class="gnote" style="margin-top:8px">Then, on the host:</p>
+      <div class="cmdwrap"><button class="btn mini" id="tCmdCopy">Copy</button><pre class="tcmd" id="tCmd">${esc(runCmd())}</pre></div>
+      <details><summary class="gnote">Preview the script</summary><pre>${esc(sc.text)}</pre></details>`
     :fwPanel(triageFw)}
   </div>`;
 }
@@ -1344,5 +1461,14 @@ function wireTriage(){
     download(x.name,x.text.replace(/\r?\n/g,triageFw==='kape'?'\r\n':'\n'),x.mime);flash(fd,'downloaded')};
   const fc=$('#fwCopy');if(fc)fc.onclick=()=>copy(FW[triageFw].make().text,fc);
   $$('#main .fwskip [data-row]').forEach(b=>b.onclick=()=>openDrawer(b.dataset.row,b));
+  const cc=$('#tCmdCopy');if(cc)cc.onclick=()=>copy(runCmd(),cc);
+  // Text inputs save on every keystroke and refresh the command in place; the
+  // ones that change what a row will do (repo paths, home, secrets) re-render
+  // on change so the annotations beside the rows follow.
+  $$('#main .tform input[data-opt]').forEach(i=>{const k=i.dataset.opt;
+    if(i.type==='checkbox'){i.onchange=()=>{triageOpts()[k]=i.checked;const a=activePlan();if(a){a.updated=nowISO();savePlans()}renderMain()};return}
+    i.oninput=()=>{triageOpts()[k]=i.value;const a=activePlan();if(a){a.updated=nowISO();savePlans()}const c=$('#tCmd');if(c)c.textContent=runCmd()};
+    if(k==='repos'||k==='home')i.onchange=()=>renderMain();
+  });
 }
 """
