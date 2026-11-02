@@ -720,6 +720,8 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .srcstate b{color:var(--ink)}
 
 .srcsub{margin-top:3px;font-size:12px;color:var(--muted)}
+.srctool{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font-size:inherit}
+.srctool:hover{text-decoration:underline}
 /* Cap the column count as well as the width. auto-fit alone kept adding columns
    on a wide screen until each one was a single ragged word, and three columns of
    prose stretched edge to edge is the opposite problem - both hurt to read. */
@@ -1673,7 +1675,7 @@ function sourcesHTML(){
     <details class="src" id="src-${esc(s.id)}">
       <summary class="srchead">
         <div><h3>${esc(s.name)}</h3>
-          <div class="srcsub">${esc(s.kind)}${s.n_rows?` &middot; ${s.n_rows} rows`:''}${
+          <div class="srcsub">${esc(s.kind)}${(s.covers.os||[]).length?` &middot; ${s.covers.os.map(esc).join(', ')}`:''}${s.n_rows?` &middot; ${s.n_rows} row${s.n_rows===1?'':'s'}`:''}${
             s.n_eventlog_rows?` &middot; ${s.n_eventlog_rows} event log rows`:''}${
             s.n_rules?` &middot; ${s.n_rules} rule${s.n_rules>1?'s':''}`:''}</div></div>
         <div class="badgerow"><span class="badge vol v-${esc(s.volatility)}"
@@ -1690,10 +1692,13 @@ function sourcesHTML(){
         ${s.n_eventlog_rows?`<button class="srcstat" data-cls="eventlog"
           ><b>${s.n_eventlog_rows}</b> event log rows</button>`:''}
         ${(s.covers.classes||[]).map(c=>`<button class="srcstat" data-cls="${esc(c)}"
-          ><b>${CLS_COUNT[c]||0}</b> ${esc(c)} rows</button>`).join('')}
+          ><b>${(s.class_rows||{})[c]||0}</b> ${esc(c)} rows${(s.covers.os||[]).length?' on '+esc(s.covers.os.join('/')):''}</button>`).join('')}
+        ${(s.covers.hosts||[]).length?`<span class="srcstat flat" title="Network rows naming these endpoints tie this source to the catalog"><b>${s.n_rows}</b> network row${s.n_rows===1?'':'s'} naming ${s.covers.hosts.map(esc).join(', ')}</span>`:''}
+        ${(s.covers.locators||[]).length?`<span class="srcstat flat"><b>${s.n_rows}</b> rows scoped to ${s.covers.locators.map(l=>'&lt;'+esc(l)+'&gt;').join(', ')}</span>`:''}
         ${s.n_rules?`<button class="srcstat" data-rules="${esc(s.id)}"
           ><b>${s.n_rules}</b> detection rule${s.n_rules>1?'s':''}</button>`:''}
-        ${s.n_tools?`<span class="srcstat flat"><b>${s.n_tools}</b> tools affected</span>`:''}
+        ${s.n_tools?(s.n_tools<=6?`<span class="srcstat flat"><b>${s.n_tools}</b> tool${s.n_tools===1?'':'s'}: ${s.tools.map(t=>`<button class="lnk srctool" data-tool="${esc(t.id)}">${esc(t.name)}</button>`).join(', ')}</span>`
+          :`<span class="srcstat flat"><b>${s.n_tools}</b> tools affected</span>`):''}
         ${(s.references||[]).map(r=>`<a class="srcref" href="${esc(r.url)}"
           target="_blank" rel="noopener">${esc(r.title)} &#8599;</a>`).join('')}
       </div>
@@ -2717,6 +2722,7 @@ function renderMain(){
     $$('#main .srcstat[data-cls]').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();
     });
+    $$('#main .srctool[data-tool]').forEach(b=>b.onclick=e=>{e.preventDefault();openToolDrawer(b.dataset.tool,b)});
     $$('#main .srcstat[data-rules]').forEach(b=>b.onclick=()=>{
       pushNav();resetRuleFilters();view='rules';
       ruleSet=new Set(SRCMAP[b.dataset.rules].rules);

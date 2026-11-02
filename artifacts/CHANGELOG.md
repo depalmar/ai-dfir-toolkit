@@ -21,6 +21,27 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   "Before you run it" checklist sits above the builder, which is sticky beside
   the plan on wide screens. Pattern borrowed from edge-dfir-toolkit's command
   builder, where withheld steps grey out as the operator changes options.
+- **Data sources.** Sixteen telemetry sources join the nine Windows-host ones:
+  EDR telemetry, macOS Endpoint Security and the unified log, Linux auditd and
+  Sysmon for Linux, shell history, Windows execution artifacts (Prefetch,
+  Amcache, SRUM), network egress logs, container runtime logs, version control
+  history, package manager caches, and the provider-side records - Anthropic
+  organization audit logs and Compliance API, OpenAI audit logs, AWS CloudTrail
+  and Bedrock invocation logging, Google Cloud audit logs, the GitHub audit
+  log's Copilot events, Purview Copilot interactions, and identity provider
+  sign-in and consent logs. The coverage model gains `os`, `hosts` and
+  `locators` dimensions so every one of them is tied to the corpus by
+  derivation, the Windows sources are now scoped to Windows rows, and the audit
+  checks class coverage per OS. The enable and retention facts behind the new
+  sources were checked against the vendor pages from a network that reaches
+  them: the Anthropic audit-log window (180 days, Enterprise only), Bedrock
+  invocation logging off by default, CloudTrail's 90-day event history, the
+  GitHub audit log's 180 days, Google's 400-day `_Required` and 30-day
+  `_Default` buckets, Docker's unbounded json-file default, npm's logs-max,
+  auditd's num_logs default of zero, PSReadLine's 4096 entries, git's 90- and
+  30-day reflog expiry and Entra's 7- and 30-day tiers all read as the entries
+  state them. Google Workspace token-event retention was not found and the
+  entry says so.
 - **Mappings.** Technique coverage gains an Actors column from the intel layer,
   a `gap` flag (used by an actor or incident, on-host, no rule), per-tactic
   grouping, text and state filters, sortable columns, stat tiles, a CSV

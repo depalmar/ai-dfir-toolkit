@@ -23,8 +23,16 @@
 #   without_it     the investigative question that becomes unanswerable
 #   covers:
 #     classes      catalog row classes this source makes visible
+#     os           optional - narrows `classes` to rows naming these platforms,
+#                  so a macOS-only source is not credited with Windows rows
 #     sigma        Sigma logsource categories this source satisfies
 #     eventlog     [channel, event_id] pairs, matched against catalog rows
+#     hosts        hostnames or parent domains that network rows name. This is
+#                  how a provider's own audit log is tied to the catalogued
+#                  tools that talk to it - the link is derived from the rows,
+#                  and a host nothing names fails the audit
+#     locators     locator prefixes such as repo, for sources that exist only
+#                  where a row is scoped to a checkout
 #   confidence     provenance of the facts in `enable` and `retention`
 #   references     where those facts came from
 
@@ -53,6 +61,8 @@ sources:
     covers:
       classes:
         - process
+      os:
+        - windows
       sigma:
         - process_creation
       eventlog:
@@ -91,6 +101,8 @@ sources:
     covers:
       classes:
         - process
+      os:
+        - windows
       sigma:
         - process_creation
       eventlog: []
@@ -123,6 +135,8 @@ sources:
     covers:
       classes:
         - network
+      os:
+        - windows
       sigma:
         - network_connection
       eventlog: []
@@ -167,6 +181,8 @@ sources:
     covers:
       classes:
         - registry
+      os:
+        - windows
       sigma:
         - registry_set
       eventlog: []
@@ -223,8 +239,8 @@ sources:
       everything else there.
     volatility: rotating
     without_it: >-
-      Whether anything other than the owning agent opened the token. This
-      catalog lists 154 plaintext credential locations; without read telemetry
+      Whether anything other than the owning agent opened the token. Every
+      plaintext credential location in this catalog is a target; without read telemetry
       the only available answer to "was it taken" is "assume yes and rotate",
       which is the answer most incidents end on.
     covers:
@@ -291,3 +307,607 @@ sources:
       - title: "RFC 3227: Guidelines for Evidence Collection and Archiving"
         url: https://www.rfc-editor.org/rfc/rfc3227
         accessed: "2026-08-13"
+
+  # ---- Host telemetry beyond Windows -------------------------------------
+  # The first nine sources were written against a Windows host. Most of the
+  # catalog runs on macOS and Linux too, and the process and network rows there
+  # were being credited to Sysmon, which cannot see them. These are the sources
+  # that can.
+
+  - id: edr-telemetry
+    name: EDR process, network and file telemetry
+    kind: eventlog
+    enable: >-
+      An EDR or XDR sensor on the host, with process, network and file events
+      forwarded rather than only alerts. Every mainstream sensor records process
+      creation with command line on all three platforms; file-open and
+      network-connection events are usually tiered or sampled, so check what the
+      estate's licence actually ships before assuming the row is there.
+    default_state: >-
+      Present wherever the estate has a sensor, which on developer workstations
+      is less often than anywhere else - the machines running these agents are
+      the ones with the most exceptions.
+    retention: >-
+      Set by the vendor's cloud tenancy, not by the host, and typically the
+      shortest window in the estate - a week to a month of raw telemetry, with
+      only alerts kept longer. Export what you need during the incident; the raw
+      events will not wait for the report.
+    volatility: rotating
+    without_it: >-
+      Cross-platform process lineage. This is the only source that answers
+      "what did the agent spawn" on a macOS or Linux host without Sysmon,
+      auditd or an Endpoint Security client having been set up beforehand, and
+      the only one that ties a credential-file read to the process that did it.
+    covers:
+      classes:
+        - process
+        - network
+      sigma:
+        - process_creation
+        - network_connection
+        - file_event
+        - file_access
+      eventlog: []
+    confidence: medium
+    references:
+      - title: "MITRE ATT&CK data source DS0009: Process"
+        url: https://attack.mitre.org/datasources/DS0009/
+        accessed: "2026-11-02"
+      - title: "MITRE ATT&CK data source DS0029: Network Traffic"
+        url: https://attack.mitre.org/datasources/DS0029/
+        accessed: "2026-11-02"
+
+  - id: macos-endpoint-security
+    name: macOS Endpoint Security events and the unified log
+    kind: eventlog
+    enable: >-
+      A client of Apple's Endpoint Security framework - an EDR sensor, osquery
+      with its es_process_events table, or Santa - subscribed to process exec,
+      fork and exit. The unified log needs nothing switched on but records
+      far less about an arbitrary process; it is the fallback, not the plan.
+    default_state: >-
+      The unified log is always on. Endpoint Security events exist only while a
+      client is running and subscribed; a stock Mac has none.
+    retention: >-
+      Endpoint Security events live wherever the client sends them. The unified
+      log prunes by size, age and entry type together, and on a busy laptop the
+      persisted store covers days, not weeks - collect it with log collect, or
+      from a disk image, early.
+    volatility: rotating
+    without_it: >-
+      Process execution on a Mac. Roughly a third of this catalog's process
+      rows name a macOS process, and nothing in the default install records that
+      the agent binary, or the node and python interpreters that host most of
+      these tools, ever ran.
+    covers:
+      classes:
+        - process
+      os:
+        - macos
+      sigma:
+        - process_creation
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Endpoint Security - Apple Developer Documentation
+        url: https://developer.apple.com/documentation/endpointsecurity
+        accessed: "2026-11-02"
+      - title: ES_EVENT_TYPE_NOTIFY_EXEC - Apple Developer Documentation
+        url: https://developer.apple.com/documentation/endpointsecurity/es_event_type_notify_exec
+        accessed: "2026-11-02"
+      - title: osquery schema (es_process_events)
+        url: https://osquery.io/schema/
+        accessed: "2026-11-02"
+      - title: "Inside the Unified Log 3: log storage and attrition (The Eclectic Light Company)"
+        url: https://eclecticlight.co/2025/09/29/inside-the-unified-log-3-log-storage-and-attrition/
+        accessed: "2026-11-02"
+
+  - id: linux-audit
+    name: Linux auditd execve and Sysmon for Linux
+    kind: eventlog
+    enable: >-
+      auditd with an execve rule for both syscall ABIs - the usual pair is
+      -a always,exit -F arch=b64 -S execve and its arch=b32 twin - or Sysmon for
+      Linux, which writes its Event ID 1 process creation records to syslog with
+      the same fields as the Windows build. Either one logs every subprocess of
+      every agent, so filter on the user or key rather than switching it off.
+    default_state: >-
+      auditd is installed on most server distributions and on few developer
+      desktops, and ships with no execve rule either way. Sysmon for Linux is
+      never present unless somebody installed it.
+    retention: >-
+      auditd rotates by size: max_log_file is small in every distribution's
+      default configuration, and the compiled default for num_logs is zero,
+      which is no rotation at all - distributions commonly set five. Sysmon for
+      Linux inherits syslog's rotation, usually a week of dailies. Both are days
+      on a host that runs a coding agent.
+    volatility: rotating
+    without_it: >-
+      Process execution on Linux, where the self-hosted engines in this catalog
+      - vLLM, Open WebUI, Langflow, n8n, Dify - actually run. Without it a
+      container that spawned a shell left a process row in the catalog and no
+      record on the host.
+    covers:
+      classes:
+        - process
+      os:
+        - linux
+      sigma:
+        - process_creation
+      eventlog: []
+    confidence: medium
+    references:
+      - title: auditd.conf(5) - Linux manual page
+        url: https://man7.org/linux/man-pages/man5/auditd.conf.5.html
+        accessed: "2026-11-02"
+      - title: Sysmon - Sysinternals (includes Sysmon for Linux)
+        url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+        accessed: "2026-11-02"
+
+  - id: shell-history
+    name: Shell history - bash, zsh, fish and PSReadLine
+    kind: file
+    enable: >-
+      Nothing. Every interactive shell writes it unless the user turned it off,
+      which is exactly the first thing an intruder who knows the host does.
+      PSReadLine keeps ConsoleHost_history.txt under the user's AppData; zsh and
+      bash keep ~/.zsh_history and ~/.bash_history.
+    default_state: >-
+      On. macOS's system zshrc sets a 2000-line in-memory and 1000-line saved
+      history; PowerShell's MaximumHistoryCount defaults to 4096 entries.
+    retention: >-
+      A fixed number of lines, not a period. A developer who lives in the
+      terminal can roll a 1000-line zsh history in a day. Timestamps are present
+      only if EXTENDED_HISTORY or HISTTIMEFORMAT was set beforehand.
+    volatility: rotating
+    without_it: >-
+      How the agent was invoked, and by whom. claude --dangerously-skip-
+      permissions, aider --yes and ollama serve are command lines, and on a host
+      without process auditing the shell history is the only place they were
+      ever written down.
+    covers:
+      classes:
+        - process
+      sigma: []
+      eventlog: []
+    confidence: medium
+    references:
+      - title: about_History (PowerShell) - MaximumHistoryCount
+        url: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_history
+        accessed: "2026-11-02"
+      - title: "zsh-users: macOS /etc/zshrc history defaults"
+        url: https://www.zsh.org/mla/users/2025/msg00228.html
+        accessed: "2026-11-02"
+
+  - id: windows-execution-artifacts
+    name: Windows execution artifacts - Prefetch, Amcache, SRUM
+    kind: file
+    enable: >-
+      Nothing. These are side effects of running a program on Windows: Prefetch
+      records the executable and its recent run times, Amcache its hash and
+      first-seen, and SRUM per-application network bytes in hourly buckets.
+      Prefetch is disabled on some server SKUs and on systems with it switched
+      off for SSD reasons, so check the setting before concluding from silence.
+    default_state: On for workstation editions.
+    retention: >-
+      Prefetch keeps a bounded number of recent executables and a busy
+      developer host cycles through it in weeks. SRUM holds roughly thirty days
+      and purges older data on the next boot. Amcache persists until the entry
+      is overwritten.
+    volatility: rotating
+    without_it: >-
+      Execution evidence on a Windows host that had no Sysmon and no 4688.
+      Prefetch says the agent ran and when; SRUM says how much it talked to the
+      network, per binary and per hour, which is the only host-side volume
+      measure for a tool that uploads context.
+    covers:
+      classes:
+        - process
+        - network
+      os:
+        - windows
+      sigma: []
+      eventlog: []
+    confidence: medium
+    references:
+      - title: "System Resource Usage Monitor (SRUM) - Digital Forensics Artifact Knowledge Base"
+        url: https://artifacts-kb.readthedocs.io/en/latest/sources/windows/SystemResourceUsageMonitor.html
+        accessed: "2026-11-02"
+      - title: "System Resource Utilization Monitor (SANS ISC)"
+        url: https://isc.sans.edu/diary/21927
+        accessed: "2026-11-02"
+
+  - id: network-egress-logs
+    name: Network egress logs - proxy, DNS, firewall
+    kind: network
+    enable: >-
+      A forward proxy, DNS resolver or firewall that logs per-connection with
+      the hostname - SNI or the proxied Host header - and the source address.
+      TLS-inspecting proxies also see the request path, which distinguishes a
+      model call from a telemetry beacon to the same vendor.
+    default_state: >-
+      Enterprise networks usually have at least one of the three; home and
+      hotspot networks, where much agent use happens, have none.
+    retention: >-
+      Set by the proxy or the SIEM it feeds, not by the host, and usually the
+      longest-lived telemetry in the estate. The catch is coverage, not
+      retention: a laptop off the corporate network leaves nothing here.
+    volatility: rotating
+    without_it: >-
+      Which model endpoints the host talked to and how often, from a vantage
+      point the host cannot tamper with. The catalog's network rows name the
+      vendor endpoints; this is where a connection to an unexpected one - a
+      local runtime pointed at a third-party API, an agent calling a
+      non-default base URL - shows up for every host at once.
+    covers:
+      classes:
+        - network
+      sigma: []
+      eventlog: []
+    confidence: medium
+    references:
+      - title: "MITRE ATT&CK data source DS0029: Network Traffic"
+        url: https://attack.mitre.org/datasources/DS0029/
+        accessed: "2026-11-02"
+
+  - id: container-runtime-logs
+    name: Container runtime logs and layers
+    kind: file
+    enable: >-
+      Nothing for the logs: Docker's default json-file driver captures each
+      container's stdout and stderr under /var/lib/docker/containers/<id>/.
+      The writable layer and named volumes hold the engine's own state and
+      survive a container stop; they do not survive docker rm.
+    default_state: >-
+      On, with no rotation. The json-file driver's max-size defaults to
+      unlimited and max-file to one, so the log grows until the disk fills or
+      somebody deletes the container.
+    retention: >-
+      Until the container is removed, which is exactly what a remediation runbook
+      does first. Collect the log file and the volume before anyone recreates
+      the stack from compose.
+    volatility: rotating
+    without_it: >-
+      The request log of a self-hosted engine. Open WebUI, vLLM, Langflow, n8n,
+      Dify and Flowise are deployed as containers more often than not, and the
+      container log is where their access and error output went.
+    covers:
+      classes:
+        - disk
+        - credential
+      os:
+        - docker
+        - container
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: JSON File logging driver - Docker Docs
+        url: https://docs.docker.com/engine/logging/drivers/json-file/
+        accessed: "2026-11-02"
+
+  - id: version-control-history
+    name: Version control history - commits and reflog
+    kind: file
+    enable: >-
+      Nothing. A coding agent's edits land in the working tree and, if it or the
+      user committed, in the repository's history. Several agents add a trailer
+      or a distinctive author to the commits they make, and the reflog records
+      resets and rebases that rewrote what the agent did.
+    default_state: On in every repository.
+    retention: >-
+      Commits persist until history is rewritten and garbage-collected. The
+      reflog expires: ninety days for reachable entries and thirty for
+      unreachable ones by default, so an agent's commit that was later reset
+      away has a month before gc can drop it.
+    volatility: rotating
+    without_it: >-
+      What the agent changed. The repo-scoped rows in this catalog - CLAUDE.md,
+      .cursor/rules, .aider.chat.history.md, .mcp.json - are the instructions
+      and transcripts; the history is the diff they produced, and in a supply-
+      chain case it is the artifact.
+    covers:
+      classes: []
+      locators:
+        - repo
+        - project
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: git-config documentation (gc.reflogExpire, gc.reflogExpireUnreachable)
+        url: https://git-scm.com/docs/git-config
+        accessed: "2026-11-02"
+
+  - id: package-registry-logs
+    name: Package manager caches and logs
+    kind: file
+    enable: >-
+      Nothing. npm writes a debug log per invocation under the _logs directory
+      of its cache and keeps the packages that npx fetched to run - which is how
+      most MCP servers are started - in the same cache. pip and uv keep
+      equivalent caches.
+    default_state: On. npm keeps the ten most recent logs by default (logs-max).
+    retention: >-
+      Ten invocations for the logs, which on a host running several MCP servers
+      is a single session. The cached packages persist until the cache is
+      cleaned.
+    volatility: rotating
+    without_it: >-
+      Which MCP server packages were actually fetched and run, as opposed to
+      configured. The MCP config names a package; the npm cache holds the exact
+      version that executed and the log records when it was installed - the
+      evidence in a poisoned-server case.
+    covers:
+      classes: []
+      hosts:
+        - registry.npmjs.org
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Logging - npm Docs
+        url: https://docs.npmjs.com/cli/v10/using-npm/logging
+        accessed: "2026-11-02"
+
+  # ---- Provider-side logs -----------------------------------------------------
+  # The host's record of a model call is a connection. The provider's record is
+  # the request. These sources sit in somebody else's tenancy and are tied to
+  # the catalog by the endpoints the network rows name.
+
+  - id: anthropic-org-audit
+    name: Anthropic organization audit logs and Compliance API
+    kind: network
+    enable: >-
+      An Enterprise organization - the vendor's help centre states audit logs
+      are available to Enterprise organizations only - and for programmatic
+      access the Compliance API, which has to be enabled for the organization
+      before a Compliance Access Key can be created. Every endpoint lives under
+      /v1/compliance/ on api.anthropic.com. Team and individual plans have
+      neither.
+    default_state: >-
+      Off for individual and Team plans. On an Enterprise organization the
+      audit log is kept by Anthropic; the Compliance API is enabled on request.
+    retention: >-
+      The audit log can be exported for the past 180 days, per the vendor's
+      help centre. Nothing says what happens to older entries, so pull the
+      export or the Compliance API activity feed into your own store if the
+      retention matters.
+    volatility: rotating
+    without_it: >-
+      The account-side view of Claude Code, Claude Desktop and the API: which
+      user authenticated, which API keys were created or revoked, which
+      conversations and projects exist. The host shows a token file; only the
+      provider shows what the token did.
+    covers:
+      classes: []
+      hosts:
+        - api.anthropic.com
+        - claude.ai
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Access audit logs - Claude Help Center
+        url: https://support.claude.com/en/articles/9970975-access-audit-logs
+        accessed: "2026-11-02"
+      - title: Access the Compliance API - Claude Help Center
+        url: https://support.claude.com/en/articles/13015708-access-the-compliance-api
+        accessed: "2026-11-02"
+      - title: Compliance API - Claude Platform documentation
+        url: https://platform.claude.com/docs/en/manage-claude/compliance-api
+        accessed: "2026-11-02"
+
+  - id: openai-org-audit
+    name: OpenAI API Platform audit logs
+    kind: network
+    enable: >-
+      An organization owner enables audit logging under organization settings,
+      data controls. Once on it cannot be turned off in settings. The Audit
+      Logs API then exposes administrative events - API key, project, member
+      and setting changes.
+    default_state: Off until an owner enables it.
+    retention: >-
+      No fixed period. OpenAI states that API Platform audit logs are retained
+      on a best-effort basis with no guarantee of permanent availability, and
+      advises exporting them. Zero Data Retention agreements do not change
+      this.
+    volatility: rotating
+    without_it: >-
+      Who created the API key the Codex CLI or an agent framework is using, and
+      whether it was rotated after the incident. The host-side credential rows
+      say where the key sits; this is the only record of its lifecycle.
+    covers:
+      classes: []
+      hosts:
+        - api.openai.com
+        - chatgpt.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Admin and Audit Logs API for the API Platform - OpenAI Help Center
+        url: https://help.openai.com/en/articles/9687866-admin-and-audit-logs-api-for-the-api-platform
+        accessed: "2026-11-02"
+
+  - id: aws-cloudtrail-bedrock
+    name: AWS CloudTrail and Bedrock model invocation logging
+    kind: network
+    enable: >-
+      Two different things. CloudTrail records Bedrock runtime calls -
+      InvokeModel, Converse and their streaming forms - as management events
+      with no setup; a trail or a CloudTrail Lake store is needed to keep them
+      past the console's window. Model invocation logging, which captures the
+      prompt and response bodies to S3 or CloudWatch Logs, is disabled by
+      default and is switched on per Region in the Bedrock settings.
+    default_state: >-
+      CloudTrail event history on; invocation logging off.
+    retention: >-
+      Event history covers the past 90 days of management events and cannot be
+      extended; a trail delivers to S3 under your own lifecycle. Invocation logs
+      stay until the logging configuration or the destination is deleted.
+    volatility: rotating
+    without_it: >-
+      What was sent to a Bedrock-hosted model, by which principal, from which
+      address. For Amazon Q and for any agent framework pointed at Bedrock,
+      CloudTrail is the record of the call and invocation logging is the only
+      record of its content.
+    covers:
+      classes: []
+      hosts:
+        - amazonaws.com
+        - awsapps.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Monitor model invocation using CloudWatch Logs and Amazon S3 - Amazon Bedrock
+        url: https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html
+        accessed: "2026-11-02"
+      - title: Monitor Amazon Bedrock API calls using CloudTrail
+        url: https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html
+        accessed: "2026-11-02"
+      - title: How CloudTrail works - Event history
+        url: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/how-cloudtrail-works.html
+        accessed: "2026-11-02"
+
+  - id: google-cloud-audit-logs
+    name: Google Cloud audit logs for Gemini and Vertex AI
+    kind: network
+    enable: >-
+      Admin Activity audit logs cannot be disabled. Data Access audit logs,
+      which record the model calls themselves, must be enabled explicitly for
+      the Vertex AI service. Calls made through the Gemini Developer API with an
+      API key from AI Studio are attributed to the project the key belongs to,
+      and a key with no project behind it has no audit trail at all.
+    default_state: Admin Activity on; Data Access off.
+    retention: >-
+      Admin Activity logs land in the _Required bucket, retained 400 days and
+      not configurable. Data Access logs land in _Default, retained 30 days
+      unless the bucket's retention is raised.
+    volatility: rotating
+    without_it: >-
+      The provider-side record of the Gemini CLI and of any framework calling
+      Gemini: which project, which principal, which model, how often. The host
+      has an OAuth credential cache and a connection; neither says what was
+      asked.
+    covers:
+      classes: []
+      hosts:
+        - generativelanguage.googleapis.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Vertex AI audit logging information
+        url: https://docs.cloud.google.com/vertex-ai/docs/general/audit-logging
+        accessed: "2026-11-02"
+      - title: Store log entries - log bucket retention (Cloud Logging)
+        url: https://docs.cloud.google.com/logging/docs/store-log-entries
+        accessed: "2026-11-02"
+
+  - id: github-copilot-audit
+    name: GitHub audit log - Copilot events
+    kind: network
+    enable: >-
+      Nothing for Copilot Business and Enterprise: the organization or
+      enterprise audit log records Copilot seat, policy and settings changes and
+      agent activity on github.com under action:copilot. Client-side activity -
+      the prompts a user sent from the IDE or the CLI - is not in it, and needs
+      a hook that forwards events to your own logging.
+    default_state: On for Business and Enterprise plans.
+    retention: >-
+      180 days, after which GitHub recommends streaming the audit log to a SIEM
+      for longer history.
+    volatility: rotating
+    without_it: >-
+      Who held a Copilot seat when, which policies allowed agent mode and
+      third-party models, and what the coding agent did on github.com. The host
+      rows record the extension and its token; the audit log records the
+      entitlement that made them work.
+    covers:
+      classes: []
+      hosts:
+        - api.githubcopilot.com
+        - copilot-proxy.githubusercontent.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Reviewing audit logs for GitHub Copilot
+        url: https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/review-audit-logs
+        accessed: "2026-11-02"
+
+  - id: purview-copilot-audit
+    name: Microsoft Purview audit - Copilot and Copilot Studio interactions
+    kind: network
+    enable: >-
+      Nothing beyond auditing being on for the tenant, which it is for
+      enterprise licences. Every interaction with a Copilot Studio agent, like
+      every Microsoft 365 Copilot prompt, writes a CopilotInteraction record
+      naming the user, the host application and the resources the agent read.
+      The prompt and response text are stored separately, as Teams messages in
+      the user's mailbox, under the tenant's retention policies.
+    default_state: On, under Audit (Standard).
+    retention: >-
+      180 days under Audit (Standard) for records generated since 17 October
+      2023; up to a year under Audit (Premium) and longer with a custom
+      retention policy. Interactions with non-Microsoft AI applications are a
+      separate, pay-as-you-go record type, also 180 days.
+    volatility: rotating
+    without_it: >-
+      What a Copilot Studio agent read and said, on whose behalf. The catalog
+      has nothing on the endpoint for a cloud agent but its channel endpoints;
+      this is the whole record.
+    covers:
+      classes: []
+      hosts:
+        - directline.botframework.com
+        - powerapps.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Audit logs for Copilot and AI applications - Microsoft Purview
+        url: https://learn.microsoft.com/en-us/purview/audit-copilot
+        accessed: "2026-11-02"
+      - title: Learn about auditing solutions in Microsoft Purview - retention
+        url: https://learn.microsoft.com/en-us/purview/audit-solutions-overview
+        accessed: "2026-11-02"
+
+  - id: identity-provider-logs
+    name: Identity provider sign-in and consent logs
+    kind: network
+    enable: >-
+      Nothing to switch on, but a short clock to beat. Agents and MCP servers
+      that act through a user's cloud identity - the Gemini CLI's Google
+      sign-in, Copilot Studio connections, any connector granted through an
+      OAuth consent - leave a sign-in and a consent grant in the identity
+      provider. Export them to a SIEM or Log Analytics; the native windows are
+      days.
+    default_state: On in every tenant.
+    retention: >-
+      Microsoft Entra keeps sign-in and audit logs for seven days on the Free
+      tier and thirty on P1 and P2; upgrading does not recover what has already
+      aged out. Google Workspace token events sit in the admin console's audit
+      and investigation tool; its retention window was not found in the
+      vendor's documentation when this was written, so confirm it for the
+      tenant rather than assuming parity with Entra.
+    volatility: rotating
+    without_it: >-
+      Whether an application was consented to, by whom, and what scopes it
+      holds. An agent's OAuth credential on disk is a consequence of a consent
+      event; the event is where the scope, the time and the approving user are
+      written down, and it is the record that says the token survived rotation.
+    covers:
+      classes: []
+      hosts:
+        - oauth2.googleapis.com
+        - accounts.google.com
+      sigma: []
+      eventlog: []
+    confidence: medium
+    references:
+      - title: Microsoft Entra data retention
+        url: https://learn.microsoft.com/en-us/entra/identity/monitoring-health/reference-reports-data-retention
+        accessed: "2026-11-02"
