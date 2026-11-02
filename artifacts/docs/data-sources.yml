@@ -392,6 +392,9 @@ sources:
       - title: Endpoint Security - Apple Developer Documentation
         url: https://developer.apple.com/documentation/endpointsecurity
         accessed: "2026-11-02"
+      - title: ES_EVENT_TYPE_NOTIFY_EXEC - Apple Developer Documentation
+        url: https://developer.apple.com/documentation/endpointsecurity/es_event_type_notify_exec
+        accessed: "2026-11-02"
       - title: osquery schema (es_process_events)
         url: https://osquery.io/schema/
         accessed: "2026-11-02"
@@ -610,7 +613,7 @@ sources:
         - project
       sigma: []
       eventlog: []
-    confidence: medium
+    confidence: high
     references:
       - title: git-config documentation (gc.reflogExpire, gc.reflogExpireUnreachable)
         url: https://git-scm.com/docs/git-config
@@ -656,18 +659,20 @@ sources:
     name: Anthropic organization audit logs and Compliance API
     kind: network
     enable: >-
-      An organization on a plan that includes audit logs, and for programmatic
+      An Enterprise organization - the vendor's help centre states audit logs
+      are available to Enterprise organizations only - and for programmatic
       access the Compliance API, which has to be enabled for the organization
       before a Compliance Access Key can be created. Every endpoint lives under
-      /v1/compliance/ on api.anthropic.com. Individual accounts have neither.
+      /v1/compliance/ on api.anthropic.com. Team and individual plans have
+      neither.
     default_state: >-
-      Off for individual plans. Where the plan includes it the audit log is
-      kept by Anthropic; the Compliance API is enabled on request.
+      Off for individual and Team plans. On an Enterprise organization the
+      audit log is kept by Anthropic; the Compliance API is enabled on request.
     retention: >-
-      Set by the provider. Third-party reporting puts the audit-log export
-      window at 180 days; treat that as the figure to confirm with the vendor
-      rather than one to plan on. Pull the activity feed into your own store if
-      the retention matters.
+      The audit log can be exported for the past 180 days, per the vendor's
+      help centre. Nothing says what happens to older entries, so pull the
+      export or the Compliance API activity feed into your own store if the
+      retention matters.
     volatility: rotating
     without_it: >-
       The account-side view of Claude Code, Claude Desktop and the API: which
@@ -681,8 +686,14 @@ sources:
         - claude.ai
       sigma: []
       eventlog: []
-    confidence: medium
+    confidence: high
     references:
+      - title: Access audit logs - Claude Help Center
+        url: https://support.claude.com/en/articles/9970975-access-audit-logs
+        accessed: "2026-11-02"
+      - title: Access the Compliance API - Claude Help Center
+        url: https://support.claude.com/en/articles/13015708-access-the-compliance-api
+        accessed: "2026-11-02"
       - title: Compliance API - Claude Platform documentation
         url: https://platform.claude.com/docs/en/manage-claude/compliance-api
         accessed: "2026-11-02"
@@ -878,8 +889,10 @@ sources:
     retention: >-
       Microsoft Entra keeps sign-in and audit logs for seven days on the Free
       tier and thirty on P1 and P2; upgrading does not recover what has already
-      aged out. Google Workspace token events have their own window in the
-      admin audit log - confirm it for the tenant rather than assuming parity.
+      aged out. Google Workspace token events sit in the admin console's audit
+      and investigation tool; its retention window was not found in the
+      vendor's documentation when this was written, so confirm it for the
+      tenant rather than assuming parity with Entra.
     volatility: rotating
     without_it: >-
       Whether an application was consented to, by whom, and what scopes it
