@@ -2,6 +2,35 @@
 
 Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 
+## [Unreleased] - 2026-11-02
+
+### Added
+- **Collection plan exports.** The plan now renders for the collectors people
+  already run, from the same per-row spec the native scripts use: a KAPE
+  `.tkape` target, a Velociraptor artifact (file globs per OS, registry,
+  process and socket sources), a ForensicArtifacts definition file for Plaso,
+  GRR and Timesketch, and a `targets.yaml` subset for the repository's Python
+  collector. Each one lists the rows it cannot carry and why, instead of
+  dropping them.
+- **Mappings.** Technique coverage gains an Actors column from the intel layer,
+  a `gap` flag (used by an actor or incident, on-host, no rule), per-tactic
+  grouping, text and state filters, sortable columns, stat tiles, a CSV
+  download, and two more indexes: OWASP Agentic (ASI01-ASI10) and the ATT&CK
+  Enterprise techniques the rules tag and the cases cite. The detections view
+  gains OWASP Agentic and ATT&CK facets.
+- **Graph.** Starting presets, incremental placement (expanding a node no
+  longer re-lays out the canvas), hover highlighting with relationship labels,
+  relationship-grouped expansion from the side panel with a cap per step, undo,
+  focus, zoom controls, keyboard shortcuts, re-tick-to-restore type filters,
+  copyable canvas links and degree-scaled nodes.
+
+### Fixed
+- The Mappings coverage table showed 0 rules for every ATLAS technique. The
+  index parser read the count by column position and the ATLAS index had
+  gained a Tactic column; it now reads by header.
+- Rule ATT&CK tags are normalised to technique ids; tactic tags such as
+  `attack.initial_access` no longer appear as techniques.
+
 ## [Unreleased] - 2026-09-30
 
 ### Added

@@ -887,6 +887,7 @@ pre.yaml.grown{max-height:none}
   text-align:right}
 .irow .cvcaret{margin-right:0}
 .irow.open .cvcaret{transform:rotate(90deg)}
+.irow-attack{grid-template-columns:16px 92px minmax(0,1fr) 84px}
 .bar{grid-column:1/-1;height:4px;border-radius:3px;background:var(--line-soft);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
 
@@ -1000,6 +1001,25 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .thinflag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;
   color:var(--med);border:1px dashed var(--med);border-radius:4px;
   padding:0 5px;margin-left:8px;opacity:.85}
+.covstats .istat{text-align:left;cursor:default;font:inherit;color:var(--ink)}
+button.istat{cursor:pointer}
+button.istat:hover{background:var(--hover)}
+.istat.on{outline:2px solid var(--accent);outline-offset:1px}
+.covctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px}
+.covctl input[type=search]{flex:1 1 220px;max-width:360px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;
+  background:var(--panel);color:var(--ink);font-size:13px}
+.covtog{font-size:12.5px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.covsort{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+.covsort.on{color:var(--accent)}
+.covtac td{background:var(--panel-2);font-size:12px;padding:7px 12px;border-top:1px solid var(--line)}
+.covflag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-radius:4px;padding:0 5px;margin-left:8px}
+.covflag.gap{color:var(--gap);border:1px solid var(--gap)}
+.covflag.off{color:var(--offhost);border:1px dashed var(--offhost)}
+.covrow.isgap .iid{color:var(--gap)}
+.cdlinks{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px;font-size:11.5px}
+.cdlinks .cdref{margin-top:0}
+.asbtn{background:none;cursor:pointer;font:inherit;font-size:11.5px;padding:0}
+.idx h2 .n{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--line-soft);border-radius:20px;padding:0 7px;color:var(--muted);vertical-align:middle}
 .covlink{background:none;border:0;color:var(--accent);cursor:pointer;
   font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:2px 4px;
   border-radius:4px;text-decoration:underline;text-underline-offset:2px}
@@ -1287,13 +1307,15 @@ const OPTIONS={
 // answer. RULEFILE keeps bare-filename links from before this change working.
 const RULEMAP=Object.fromEntries(RULES.map(r=>[r.path,r]));
 const RULEFILE=Object.fromEntries(RULES.map(r=>[r.file,r]));
-const RGROUPS={fmt:'Format',rcat:'Category',ratlas:'ATLAS technique',rowasp:'OWASP LLM'};
-const RFIELD={fmt:r=>[r.format],rcat:r=>[r.category],ratlas:r=>r.atlas,rowasp:r=>r.owasp};
+const RGROUPS={fmt:'Format',rcat:'Category',ratlas:'ATLAS technique',rowasp:'OWASP LLM',rasi:'OWASP Agentic',rattack:'ATT&CK'};
+const RFIELD={fmt:r=>[r.format],rcat:r=>[r.category],ratlas:r=>r.atlas,rowasp:r=>r.owasp,rasi:r=>r.asi||[],rattack:r=>r.attack||[]};
 const ROPTIONS={
   fmt:[...new Set(RULES.map(r=>r.format))].sort(),
   rcat:[...new Set(RULES.map(r=>r.category))].sort(),
   ratlas:[...new Set(RULES.flatMap(r=>r.atlas))].sort(),
   rowasp:[...new Set(RULES.flatMap(r=>r.owasp))].sort(),
+  rasi:[...new Set(RULES.flatMap(r=>r.asi||[]))].sort(),
+  rattack:[...new Set(RULES.flatMap(r=>r.attack||[]))].sort(),
 };
 
 /* ---------- navigation history ----------
@@ -1344,7 +1366,7 @@ let view='catalog', query='', unvOnly=false, dense=false,
     // collection order instead.
     sortKey='triage', sortDir=1, sel=null, selRule=null, lastFocus=null;
 const filters={triage:[],cls:[],mech:[],vol:[],os:[],fv:[],conf:[],tool:[]};
-const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[]};
+const rfilters={fmt:[],rcat:[],ratlas:[],rowasp:[],rasi:[],rattack:[]};
 // 'aiart-' was the AIRTIFACTS working name, dropped when the catalog folded
 // into this repo. Read the old key once so anyone who saved picks under it
 // keeps them, then write only the current key from here on.
@@ -2186,13 +2208,15 @@ function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
   ruleSet=null;query='';$('#q').value=''}
 
 /* ---------- mappings ---------- */
-function indexHTML(title,sub,items,key){
+// One index renderer for every framework list: id, title, a count of rules,
+// and - opened - the rules themselves, so "what is in this category" is
+// answered on the page rather than one filter away.
+function indexHTML(title,sub,items,key,field,extra){
   const max=Math.max(1,...items.map(i=>i.count));
-  // Which rules, not just how many. The count alone made every row a link to a
-  // filtered list you had to leave the page to read.
-  const rulesFor=id=>RULES.filter(r=>(r.owasp||[]).some(o=>o===id)).map(r=>r.file);
-  return `<div class="idx"><h2>${esc(title)}</h2><p class="isub">${esc(sub)}</p>`+
-    items.map(i=>{const files=rulesFor(i.id);return `<div class="iwrap">
+  const rulesFor=id=>RULES.filter(r=>(field(r)||[]).some(o=>o===id)).map(r=>r.file);
+  const covered=items.filter(i=>i.count).length;
+  return `<div class="idx"><h2>${esc(title)} <span class="n">${covered}/${items.length}</span></h2><p class="isub">${esc(sub)}</p>`+
+    items.map(i=>{const files=rulesFor(i.id);const ex=extra?extra(i.id):'';return `<div class="iwrap">
       <div class="irow" data-idx="${key}" data-v="${esc(i.id)}" data-x="${esc(i.id)}"
         role="button" tabindex="0" aria-expanded="false">
       <span class="cvcaret"></span>
@@ -2203,27 +2227,29 @@ function indexHTML(title,sub,items,key){
       <div class="idet" data-for="${esc(i.id)}" hidden>
         ${files.length?files.map(f=>`<button class="cdchip" data-rule="${esc(f)}"
           >${esc(f)}</button>`).join(''):'<p class="muted">No rule maps to this category.</p>'}
-        <button class="btn idrill" data-idx="${key}" data-v="${esc(i.id)}"
-          >Filter detections to this category &#8594;</button>
+        ${ex}
+        ${files.length?`<button class="btn idrill" data-idx="${key}" data-v="${esc(i.id)}"
+          >Filter detections to this category &#8594;</button>`:''}
       </div></div>`}).join('')+'</div>';
 }
-// Coverage across all three corpora, not just the rules.
+// Coverage across every corpus, not just the rules.
 //
 // The old view counted rules per technique and stopped there, which answered
 // "what do we detect" and never "what do we say is out there". The catalog maps
 // 29 tools to AML.T0053 and carries 4 rules for it; that ratio is the useful
-// number and it was not on the page at all.
+// number and it was not on the page at all. The intel layer adds the fourth
+// corpus: which techniques named actors have actually used.
 //
-// Sub-techniques are rolled into their parent because the two corpora map at
+// Sub-techniques are rolled into their parent because the corpora map at
 // different depths: rules cite AML.T0051.000, entries cite AML.T0051. Counting
 // them as separate rows split the evidence and understated both sides.
 const PARENT=id=>String(id||'').split('.').slice(0,2).join('.');
-
+let covQ='', covOnly='all', covGroup=false, covSort='tools';
 function coverageRows(){
   const by={};
   const touch=id=>{const p=PARENT(id);
-    return by[p]=by[p]||{id:p,title:'',subs:new Set(),rules:0,tools:0,cases:0,
-      toolNames:[],ruleNames:[],caseNames:[]}};
+    return by[p]=by[p]||{id:p,title:TNAME(p)||'',subs:new Set(),rules:0,tools:0,cases:0,actors:0,
+      toolNames:[],ruleNames:[],caseNames:[],actorNames:[]}};
   for(const i of ATLAS_INDEX){const r=touch(i.id);
     r.rules+=i.count; if(!r.title)r.title=i.title;
     if(PARENT(i.id)!==i.id)r.subs.add(i.id);
@@ -2240,92 +2266,200 @@ function coverageRows(){
     const r=touch(a); r.cases++; r.caseNames.push(c);
     if(PARENT(a)!==a)r.subs.add(a);
   }
-  // Exposure first: the techniques this catalog says the most tools exhibit are
-  // the ones a reader should weigh their rule count against.
-  return Object.values(by).sort((a,b)=>b.tools-a.tools||b.rules-a.rules
-    ||a.id.localeCompare(b.id));
+  for(const ac of INTEL.actors){const seen=new Set();
+    for(const a of ac.derived.techniques||[]){const p=PARENT(a);if(seen.has(p))continue;seen.add(p);
+      const r=touch(a); r.actors++; r.actorNames.push(ac);
+      if(PARENT(a)!==a)r.subs.add(a)}}
+  for(const r of Object.values(by)){
+    // Count the rules we can name, not the index's figure: a rule tagged with a
+    // parent and one of its sub-techniques is one rule, not two.
+    r.rules=r.ruleNames.length;
+    r.tactics=ATL.technique_tactics[r.id]||[];
+    r.offhost=!!offHost(r.id);
+    // "Thin" is a ratio: many tools and few rules. "Gap" is stronger: a named
+    // actor or a documented incident used it, no rule covers it, and it happens
+    // on the host, where a rule could. Flagged rather than scored, because the
+    // right rule count for a technique is a judgement.
+    r.thin=r.tools>=5&&r.rules<=r.tools/3;
+    r.gap=!r.rules&&(r.actors||r.cases)&&!r.offhost;
+  }
+  return Object.values(by);
 }
-
+function covSorted(rows){
+  const k=covSort;
+  return rows.sort((a,b)=>k==='id'?a.id.localeCompare(b.id):(b[k]-a[k])||b.tools-a.tools||b.rules-a.rules||a.id.localeCompare(b.id));
+}
+function covFiltered(rows){
+  const q=covQ.trim().toLowerCase();
+  return rows.filter(r=>(covOnly==='all'||(covOnly==='thin'&&r.thin)||(covOnly==='gap'&&r.gap)||(covOnly==='norule'&&!r.rules)||(covOnly==='observed'&&(r.actors||r.cases)))
+    &&(!q||r.id.toLowerCase().includes(q)||(r.title||'').toLowerCase().includes(q)||[...r.subs].some(s=>s.toLowerCase().includes(q))
+      ||r.tactics.some(t=>(ATL.tactics[t]||'').toLowerCase().includes(q))));
+}
+function covRowHTML(r,maxT,maxR){
+  return `<tr class="covrow${r.thin?' thin':''}${r.gap?' isgap':''}" data-t="${esc(r.id)}"
+      role="button" tabindex="0" aria-expanded="false">
+    <td><span class="cvcaret"></span><span class="iid">${esc(r.id)}</span>
+      <span class="ittl">${esc(r.title||'')}</span>
+      ${r.subs.size?`<span class="subs">${[...r.subs].sort().map(x=>
+        esc(x.split('.').slice(2).join('.'))).map(x=>'.'+x).join(' ')}</span>`:''}
+      ${r.gap?'<span class="covflag gap" title="Used by a named actor or a documented incident, no rule covers it, and it happens on the host">gap</span>':''}
+      ${r.thin?'<span class="thinflag" title="Many tools exhibit it, few rules cover it">thin</span>':''}
+      ${r.offhost?'<span class="covflag off" title="Happens off the endpoint - a host rule cannot see it">off-host</span>':''}</td>
+    <td class="num">${r.rules?`<button class="covlink" data-atlas="${esc(r.id)}"
+      >${r.rules}</button>`:'<span class="zero">0</span>'}</td>
+    <td class="num">${r.tools?`<button class="covlink" data-tooltech="${esc(r.id)}"
+      title="${esc(r.toolNames.slice(0,6).join(', '))}${r.tools>6?' and more':''}"
+      >${r.tools}</button>`:'<span class="zero">0</span>'}</td>
+    <td class="num">${r.cases?`<button class="covlink" data-casetech="${esc(r.id)}"
+      >${r.cases}</button>`:'<span class="zero">0</span>'}</td>
+    <td class="num">${r.actors?`<button class="covlink" data-actortech="${esc(r.id)}"
+      title="${esc(r.actorNames.map(a=>a.name).join(', '))}">${r.actors}</button>`:'<span class="zero">0</span>'}</td>
+    <td><span class="cbar"
+      ><i class="cbt" style="width:${Math.round(r.tools/maxT*100)}%"
+        title="${r.tools} tool${r.tools===1?'':'s'} exhibit this, the most for any technique being ${maxT}"></i>
+      <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"
+        title="${r.rules} rule${r.rules===1?'':'s'} cover this, the most for any technique being ${maxR}"></i></span></td>
+  </tr>
+  <tr class="covdet" data-for="${esc(r.id)}" hidden><td colspan="6">
+    <div class="cdgrid">
+      <div><h3>Rules <span class="n">${r.ruleNames.length}</span></h3>
+        ${r.ruleNames.length?r.ruleNames.map(f=>
+          `<button class="cdchip" data-rule="${esc(f)}">${esc(f)}</button>`).join('')
+          :`<p class="muted">None in this repo.${r.gap?' This is the detection backlog.':''}</p>`}</div>
+      <div><h3>Tools <span class="n">${r.toolNames.length}</span></h3>
+        ${r.toolNames.length?r.toolNames.map(t=>
+          `<button class="cdchip" data-tool="${esc(t)}">${esc(t)}</button>`).join('')
+          :'<p class="muted">No catalogued tool maps to this.</p>'}</div>
+      <div><h3>Incidents <span class="n">${r.caseNames.length}</span></h3>
+        ${r.caseNames.length?r.caseNames.map(c=>
+          `<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')
+          :'<p class="muted">None documented here.</p>'}</div>
+      <div><h3>Actors <span class="n">${r.actorNames.length}</span></h3>
+        ${r.actorNames.length?r.actorNames.map(a=>
+          `<button class="cdchip" data-actor="${esc(a.id)}">${esc(a.name)}</button>`).join('')
+          :'<p class="muted">No profiled actor is recorded using it.</p>'}</div>
+    </div>
+    <div class="cdlinks">
+      ${r.tactics.length?`<span class="muted">Tactic${r.tactics.length===1?'':'s'}: ${r.tactics.map(t=>esc(ATL.tactics[t]||t)).join(', ')}</span>`:''}
+      <a class="cdref" href="https://atlas.mitre.org/techniques/${esc(r.id)}"
+        target="_blank" rel="noopener">${esc(r.id)} on MITRE ATLAS &#8599;</a>
+      <button class="cdref asbtn" data-graphtech="${esc(r.id)}">Open in graph &#8599;</button>
+    </div>
+  </td></tr>`;
+}
 function coverageHTML(){
-  const rows=coverageRows();
-  const maxT=Math.max(1,...rows.map(r=>r.tools));
-  const maxR=Math.max(1,...rows.map(r=>r.rules));
-  // "Thin" is a ratio, not a threshold on either number alone: many tools and
-  // few rules. Flagged rather than scored, because the right rule count for a
-  // technique is a judgement and the page should not pretend otherwise.
-  const thin=r=>r.tools>=5&&r.rules<=r.tools/3;
+  const all=coverageRows();
+  const rows=covSorted(covFiltered(all));
+  const maxT=Math.max(1,...all.map(r=>r.tools));
+  const maxR=Math.max(1,...all.map(r=>r.rules));
+  const n={all:all.length,ruled:all.filter(r=>r.rules).length,thin:all.filter(r=>r.thin).length,
+    gap:all.filter(r=>r.gap).length,observed:all.filter(r=>r.actors||r.cases).length,norule:all.filter(r=>!r.rules).length};
+  const asiCovered=Object.keys(INTEL.asi).filter(k=>RULES.some(r=>(r.asi||[]).includes(k))).length;
+  const llmCovered=OWASP_INDEX.filter(i=>i.count).length;
+  const attackIds=new Set([...RULES.flatMap(r=>r.attack||[]),...CASES.flatMap(c=>c.attack||[])]);
+  const head=(k,l,title)=>`<th class="num"><button class="covsort${covSort===k?' on':''}" data-sort="${k}" title="${esc(title)}">${l}${covSort===k?' &#9662;':''}</button></th>`;
+  const body=covGroup
+    ?ATL.tactic_order.map(ta=>{const rs=rows.filter(r=>r.tactics.includes(ta));if(!rs.length)return '';
+        return `<tr class="covtac"><td colspan="6"><b>${esc(ATL.tactics[ta]||ta)}</b> <span class="muted">${esc(ta)} · ${rs.length} technique${rs.length===1?'':'s'}${OFFHOST.has(ta)?' · off-host tactic':''}</span></td></tr>`
+          +rs.map(r=>covRowHTML(r,maxT,maxR)).join('')}).join('')
+      +(rows.some(r=>!r.tactics.length)?`<tr class="covtac"><td colspan="6"><b>No tactic in the pin</b></td></tr>`+rows.filter(r=>!r.tactics.length).map(r=>covRowHTML(r,maxT,maxR)).join(''):'')
+    :rows.map(r=>covRowHTML(r,maxT,maxR)).join('');
   return `<div class="gtop"><div><h2>Technique coverage</h2>
     <p>Every MITRE ATLAS technique this project touches, and how much of each
-    corpus sits behind it: detection rules, catalogued tools that exhibit it, and
-    documented incidents that used it. Sub-techniques are counted against their
-    parent, because rules cite them and catalog entries cite the parent.</p>
+    corpus sits behind it: detection rules, catalogued tools that exhibit it,
+    documented incidents that used it, and profiled actors recorded using it.
+    Sub-techniques are counted against their parent, because rules cite them and
+    catalog entries cite the parent. Framework pins: ATLAS ${esc(ATL.release)}.</p>
     <p class="covnote">A technique with many tools and few rules is not
     necessarily under-covered - one good rule can cover a whole class. It is
-    where to look first.</p></div></div>
+    where to look first. A <b>gap</b> is stronger: an actor or incident used it,
+    nothing detects it, and it happens on the host.</p></div>
+    <div class="acts"><button class="btn" id="covCsv">Download coverage CSV</button>
+      <a class="btn" href="${REPO_URL}/blob/main/MAPPINGS.md" target="_blank" rel="noopener">MAPPINGS.md &#8599;</a></div></div>
+    <div class="istats covstats">
+      <button class="istat${covOnly==='all'?' on':''}" data-only="all"><b>${n.all}</b><span>ATLAS techniques touched</span></button>
+      <button class="istat${covOnly==='norule'?' on':''}" data-only="norule"><b>${n.ruled} <small>/ ${n.all}</small></b><span>with at least one rule</span></button>
+      <button class="istat${covOnly==='observed'?' on':''}" data-only="observed"><b>${n.observed}</b><span>used by an actor or incident</span></button>
+      <button class="istat${covOnly==='gap'?' on':''}" data-only="gap"><b class="gapn">${n.gap}</b><span>gaps: observed, on-host, no rule</span></button>
+      <button class="istat${covOnly==='thin'?' on':''}" data-only="thin"><b>${n.thin}</b><span>thin: many tools, few rules</span></button>
+      <div class="istat"><b>${llmCovered}<small>/10</small> · ${asiCovered}<small>/10</small></b><span>OWASP LLM · Agentic categories with a rule</span></div>
+      <div class="istat"><b>${attackIds.size}</b><span>ATT&amp;CK techniques referenced</span></div>
+    </div>
+    <div class="covctl">
+      <input type="search" id="covQ" value="${esc(covQ)}" placeholder="Filter techniques: id, title, tactic" aria-label="Filter techniques">
+      <div class="seg small" role="group" aria-label="Show"><button class="segbtn${covOnly==='all'?' on':''}" data-only="all">All</button>
+        <button class="segbtn${covOnly==='gap'?' on':''}" data-only="gap">Gaps</button>
+        <button class="segbtn${covOnly==='thin'?' on':''}" data-only="thin">Thin</button>
+        <button class="segbtn${covOnly==='norule'?' on':''}" data-only="norule">No rule</button>
+        <button class="segbtn${covOnly==='observed'?' on':''}" data-only="observed">Observed</button></div>
+      <label class="covtog"><input type="checkbox" id="covGroup"${covGroup?' checked':''}> Group by tactic</label>
+      <span class="muted">${rows.length} of ${all.length}</span>
+    </div>
     <div class="covwrap">
       <table class="cov">
-      <colgroup><col><col class="c-num"><col class="c-num"><col class="c-num"
+      <colgroup><col><col class="c-num"><col class="c-num"><col class="c-num"><col class="c-num"
         ><col class="c-exp"></colgroup>
       <thead><tr>
-        <th>Technique</th><th class="num">Rules</th><th class="num">Tools</th>
-        <th class="num">Cases</th>
+        <th><button class="covsort${covSort==='id'?' on':''}" data-sort="id">Technique${covSort==='id'?' &#9662;':''}</button></th>
+        ${head('rules','Rules','Detection rules mapped to the technique or one of its sub-techniques')}
+        ${head('tools','Tools','Catalogued tools whose entry maps to it')}
+        ${head('cases','Cases','Documented incidents that used it')}
+        ${head('actors','Actors','Profiled actors recorded using it')}
         <th class="cbhead"><i class="cbt"></i>tools <i class="cbr"></i>rules</th>
-        </tr></thead><tbody>
-        ${rows.map(r=>`<tr class="covrow${thin(r)?' thin':''}" data-t="${esc(r.id)}"
-            role="button" tabindex="0" aria-expanded="false">
-          <td><span class="cvcaret"></span><span class="iid">${esc(r.id)}</span>
-            <span class="ittl">${esc(r.title||'')}</span>
-            ${r.subs.size?`<span class="subs">${[...r.subs].sort().map(x=>
-              esc(x.split('.').slice(2).join('.'))).map(x=>'.'+x).join(' ')}</span>`:''}
-            ${thin(r)?'<span class="thinflag">thin</span>':''}</td>
-          <td class="num">${r.rules?`<button class="covlink" data-atlas="${esc(r.id)}"
-            >${r.rules}</button>`:'<span class="zero">0</span>'}</td>
-          <td class="num">${r.tools?`<button class="covlink" data-tooltech="${esc(r.id)}"
-            title="${esc(r.toolNames.join(', '))}${r.tools>3?' and more':''}"
-            >${r.tools}</button>`:'<span class="zero">0</span>'}</td>
-          <td class="num">${r.cases?`<button class="covlink" data-casetech="${esc(r.id)}"
-            >${r.cases}</button>`:'<span class="zero">0</span>'}</td>
-          <td><span class="cbar"
-            ><i class="cbt" style="width:${Math.round(r.tools/maxT*100)}%"
-              title="${r.tools} tool${r.tools===1?'':'s'} exhibit this, the most for any technique being ${maxT}"></i>
-            <i class="cbr" style="width:${Math.round(r.rules/maxR*100)}%"
-              title="${r.rules} rule${r.rules===1?'':'s'} cover this, the most for any technique being ${maxR}"></i></span></td>
-        </tr>
-        <tr class="covdet" data-for="${esc(r.id)}" hidden><td colspan="5">
-          <div class="cdgrid">
-            <div><h3>Rules <span class="n">${r.ruleNames.length}</span></h3>
-              ${r.ruleNames.length?r.ruleNames.map(f=>
-                `<button class="cdchip" data-rule="${esc(f)}">${esc(f)}</button>`).join('')
-                :'<p class="muted">None in this repo.</p>'}</div>
-            <div><h3>Tools <span class="n">${r.toolNames.length}</span></h3>
-              ${r.toolNames.length?r.toolNames.map(t=>
-                `<button class="cdchip" data-tool="${esc(t)}">${esc(t)}</button>`).join('')
-                :'<p class="muted">No catalogued tool maps to this.</p>'}</div>
-            <div><h3>Incidents <span class="n">${r.caseNames.length}</span></h3>
-              ${r.caseNames.length?r.caseNames.map(c=>
-                `<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')
-                :'<p class="muted">None documented here.</p>'}</div>
-          </div>
-          <a class="cdref" href="https://atlas.mitre.org/techniques/${esc(r.id)}"
-            target="_blank" rel="noopener">${esc(r.id)} on MITRE ATLAS &#8599;</a>
-        </td></tr>`).join('')}
-      </tbody></table>
+        </tr></thead><tbody>${body||'<tr><td colspan="6" class="muted" style="padding:18px">Nothing matches.</td></tr>'}</tbody></table>
       <div class="covkey">Each bar is scaled against the largest value in its own
         column, so the two are compared with each other rather than to a shared
         scale - a technique with many tools and a short rules bar is the shape to
-        look at.</div>
+        look at. Click a count to open that corpus filtered to the technique.</div>
     </div>`;
 }
-
+function attackIndexHTML(){
+  const names=INTEL.attack_names||{};
+  const by={};
+  const touch=id=>by[id]=by[id]||{id,rules:[],cases:[],actors:[]};
+  for(const r of RULES)for(const a of r.attack||[])touch(a).rules.push(r.file);
+  for(const c of CASES)for(const a of c.attack||[])touch(a).cases.push(c);
+  for(const ac of INTEL.actors)for(const a of ac.derived.attack||[])touch(a).actors.push(ac);
+  const items=Object.values(by).sort((a,b)=>(b.rules.length+b.cases.length)-(a.rules.length+a.cases.length)||a.id.localeCompare(b.id));
+  if(!items.length)return '';
+  return `<div class="idx"><h2>MITRE ATT&amp;CK Enterprise <span class="n">${items.length}</span></h2>
+    <p class="isub">Enterprise techniques the rules tag and the case studies cite, for the parts of an AI-tooling
+    intrusion that are ordinary intrusion. Names from the pinned ATT&amp;CK release; the counts are rules, then
+    incidents, then actors.</p>
+    ${items.map(i=>`<div class="iwrap"><div class="irow irow-attack" data-x="${esc(i.id)}" role="button" tabindex="0" aria-expanded="false">
+      <span class="cvcaret"></span><span class="iid">${esc(i.id)}</span><span class="ittl">${esc(names[i.id]||names[i.id.split('.')[0]]||'')}</span>
+      <span class="icount">${i.rules.length} · ${i.cases.length} · ${i.actors.length}</span></div>
+      <div class="idet" data-for="${esc(i.id)}" hidden>
+        ${i.rules.map(f=>`<button class="cdchip" data-rule="${esc(f)}">${esc(f)}</button>`).join('')}
+        ${i.cases.map(c=>`<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')}
+        ${i.actors.map(a=>`<button class="cdchip" data-actor="${esc(a.id)}">${esc(a.name)}</button>`).join('')}
+        <a class="cdref" href="https://attack.mitre.org/techniques/${esc(i.id.replace('.','/'))}" target="_blank" rel="noopener">${esc(i.id)} on MITRE ATT&amp;CK &#8599;</a>
+      </div></div>`).join('')}</div>`;
+}
 function mappingsHTML(){
+  const asiItems=Object.entries(INTEL.asi).map(([id,title])=>({id,raw:id,title,
+    count:RULES.filter(r=>(r.asi||[]).includes(id)).length}));
+  const asiExtra=id=>{const cs=CASES.filter(c=>(c.owasp_agentic||[]).includes(id));
+    return cs.length?`<p class="muted" style="margin:8px 0 4px">Incidents mapped here</p>${cs.map(c=>`<button class="cdchip" data-case="${esc(c.id)}">${esc(c.title)}</button>`).join('')}`:''};
   return coverageHTML()+`<div class="idxwrap">
       ${indexHTML('OWASP Top 10 for LLM Applications 2026',
         'Application-layer risk categories, remapped to the 2026 list published 4 August 2026. '+
         'Rule counts only - the catalog maps tools to ATLAS, not to OWASP. Eight of the ten IDs '+
         'changed meaning between the 2025 and 2026 editions, so an ID quoted from an older report '+
         'may name a different category here than it did there.',
-        OWASP_INDEX,'rowasp')}
+        OWASP_INDEX,'rowasp',r=>r.owasp)}
+      ${indexHTML('OWASP Top 10 for Agentic Applications 2026',
+        'Agent-layer risks - ASI01 to ASI10. OWASP maps no detection content, so every value here is this '+
+        'project’s own assessment of which category a rule speaks to; case studies carry their own mapping.',
+        asiItems,'rasi',r=>r.asi,asiExtra)}
+      ${attackIndexHTML()}
     </div>`;
+}
+function coverageCSV(){
+  const rows=covSorted(coverageRows());
+  const h=['technique','title','tactics','rules','tools','cases','actors','thin','gap','off_host','rule_files','tool_names','case_ids','actor_ids'];
+  return h.join(',')+'\n'+rows.map(r=>[r.id,r.title,r.tactics.join(' '),r.rules,r.tools,r.cases,r.actors,r.thin?1:0,r.gap?1:0,r.offhost?1:0,
+    r.ruleNames.join(' '),r.toolNames.join('; '),r.caseNames.map(c=>c.id).join(' '),r.actorNames.map(a=>a.id).join(' ')].map(csvCell).join(',')).join('\n')+'\n';
 }
 
 /* ---------- case studies ---------- */
@@ -2490,6 +2624,19 @@ function renderMain(){
   }
   if(view==='mappings'){
     main.innerHTML=mappingsHTML();
+    const cq=$('#covQ');if(cq){cq.oninput=()=>{covQ=cq.value;const pos=cq.selectionStart;renderMain();const n=$('#covQ');if(n){n.focus();n.setSelectionRange(pos,pos)}}}
+    $$('#main [data-only]').forEach(b=>b.onclick=()=>{covOnly=covOnly===b.dataset.only&&b.classList.contains('istat')?'all':b.dataset.only;renderMain()});
+    const cg=$('#covGroup');if(cg)cg.onchange=()=>{covGroup=cg.checked;renderMain()};
+    $$('#main .covsort').forEach(b=>b.onclick=()=>{covSort=b.dataset.sort;renderMain()});
+    const cc=$('#covCsv');if(cc)cc.onclick=()=>download(`ai-dfir-atlas-coverage-${stamp()}.csv`,coverageCSV(),'text/csv');
+    $$('#main .covlink[data-actortech]').forEach(b=>b.onclick=()=>{
+      pushNav();for(const k of Object.keys(IF))delete IF[k];IF.technique=b.dataset.actortech;view='intel';update();
+    });
+    $$('#main .cdchip[data-actor]').forEach(b=>b.onclick=()=>{pushNav();view='intel';update();openActorDrawer(b.dataset.actor,b)});
+    $$('#main [data-graphtech]').forEach(b=>b.onclick=()=>{pushNav();graphSeed='atlas:'+b.dataset.graphtech;view='graph';update()});
+    $$('#main .irow-attack').forEach(el=>{const t=()=>{const d=$(`#main .idet[data-for="${CSS.escape(el.dataset.x)}"]`);
+      const open=d.hidden;d.hidden=!open;el.setAttribute('aria-expanded',String(open));el.classList.toggle('open',open)};
+      el.onclick=t;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
     const go=el=>{
       pushNav();resetRuleFilters();
       rfilters[el.dataset.idx]=[el.dataset.v];
@@ -2505,7 +2652,7 @@ function renderMain(){
       el.setAttribute('aria-expanded',String(open));
       el.classList.toggle('open',open);
     };
-    $$('#main .irow').forEach(el=>{
+    $$('#main .irow:not(.irow-attack)').forEach(el=>{
       el.onclick=()=>toggleIdx(el);
       el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleIdx(el)}};
     });
@@ -2758,6 +2905,7 @@ function applyHash(){
     if(el){el.open=true;el.scrollIntoView({block:'start'})}
     return}
   if(h==='sources'){view='sources';update();return}
+  if(h==='mappings'){view='mappings';update();return}
   if(h.startsWith('src-')){view='sources';update();
     const el=document.getElementById(h);
     if(el){el.open=true;el.scrollIntoView()}
@@ -3065,6 +3213,13 @@ def main():
                   "tactics": pin["atlas"]["tactics"], "techniques": pin["atlas"]["techniques"],
                   "technique_tactics": pin["atlas"]["technique_tactics"]},
         "asi": {k: v["title"] for k, v in isrc["owasp"]["agentic_2026"]["items"].items()},
+        # Names only for the Enterprise ids the content references, so the
+        # page does not carry the whole ATT&CK technique list for one index.
+        "attack_names": {k: v for k, v in pin["attack"]["techniques"].items()
+                         if k in {a for r in rules for a in r.get("attack", [])}
+                         | {a for c in cases for a in c.get("attack", [])}
+                         | {a.split(".")[0] for r in rules for a in r.get("attack", [])}
+                         | {a.split(".")[0] for c in cases for a in c.get("attack", [])}},
         "region_of": {c: r for r, cs in isrc["vocab"]["regions"].items() for c in cs},
         "atomic_types": sorted(intel_graph.ATOMIC_IOC),
         "off_host_tactics": sorted(intel_graph.OFF_HOST_TACTICS),

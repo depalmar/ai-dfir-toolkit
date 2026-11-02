@@ -127,8 +127,40 @@ CSS = r"""
 .hmap td.h-offhost{background:color-mix(in srgb,var(--offhost) 45%,var(--panel))}
 .hmap.sim td{min-width:30px;font-size:10px;color:var(--ink)}
 .vlab{writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;color:var(--muted);white-space:nowrap}
+.skiplist{margin:2px 0 8px;padding-left:18px;font-size:12px}
+.skiplist .lnk{background:none;border:0;color:var(--accent);cursor:pointer;padding:0;font-size:12px;text-align:left}
+.skiplist .lnk:hover{text-decoration:underline}
+.fwskip{margin-top:8px}
 /* graph workbench */
-.gwrap{display:grid;grid-template-columns:230px 1fr 280px;gap:10px;min-height:620px}
+.gbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);
+  border-radius:10px;background:var(--panel)}
+.gbar .btn{font-size:12px;padding:4px 9px}
+.gbar .btn[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.gsel{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.gsel select{font-size:12px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);max-width:260px}
+.gsep{width:1px;height:20px;background:var(--line);margin:0 4px}
+.gwrap{display:grid;grid-template-columns:230px 1fr 300px;gap:10px;min-height:620px}
+.gcanvas{position:relative;min-width:0}
+.gzoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:3px}
+.gzoom button{width:28px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font-size:15px;line-height:1;cursor:pointer}
+.gzoom button:hover{background:var(--hover)}
+.ghint{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:13px;color:var(--muted);text-align:center;
+  max-width:36ch;pointer-events:none}
+#cy.pathmode{cursor:crosshair;outline:2px solid var(--accent);outline-offset:-2px}
+#cy:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.gcnt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:var(--faint)}
+.ghelp{margin-top:8px}
+.ghelp ul{margin:4px 0 0;padding-left:16px}
+.ghelp li{margin:2px 0}
+.ghelp kbd,.gtop kbd{font:11px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:var(--panel-2)}
+.ginfo-h{display:flex;align-items:center;gap:6px}
+.ginfo-h h4{margin:6px 0}
+.gtitle{font-weight:600;margin:2px 0 4px;line-height:1.3;word-break:break-word}
+.relh{display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-top:8px}
+.relh .lnk{background:none;border:0;color:var(--accent);cursor:pointer;font-size:11px;padding:0}
+.relh .lnk:hover{text-decoration:underline}
+.nbl button.onc{color:var(--muted)}
+.nbl button i{font-style:normal;color:var(--covered);font-size:10px}
 .gpane{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:10px;overflow:auto;max-height:78vh}
 .gpane h4{margin:6px 0;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 #cy{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);min-height:620px;height:78vh}
@@ -143,7 +175,7 @@ CSS = r"""
 .gbtns .btn{font-size:12px;padding:4px 8px}
 .dot2{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:0}
 .nbl{display:flex;flex-direction:column}
-.nbl .rel{font-size:11px;color:var(--faint);margin-top:6px}
+.nbl .rel{font-size:11px;color:var(--faint)}
 .gnote{font-size:12px;color:var(--muted)}
 /* triage builder */
 .tbuild{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px 14px;margin:14px 0}
@@ -151,7 +183,7 @@ CSS = r"""
 .tbuild .tcount{font-size:12px;color:var(--muted);margin:6px 0}
 .tbuild pre{max-height:320px;overflow:auto;background:var(--panel-2);border:1px solid var(--line-soft);
   border-radius:8px;padding:8px;font-size:11px}
-.fw{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
+.fw{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
 .fwc{border:1px solid var(--line-soft);border-radius:8px;padding:9px 11px;background:var(--panel-2)}
 .fwc h4{margin:0 0 4px;font-size:13px}
 .fwc p{margin:0 0 6px;font-size:12px;color:var(--muted)}
@@ -159,6 +191,7 @@ CSS = r"""
   border:1px solid var(--line-soft);border-radius:6px;padding:6px}
 @media (max-width:900px){
   .gwrap{grid-template-columns:1fr}
+  .gbar{position:sticky;top:0;z-index:4}
   #cy{height:60vh;min-height:420px}
   .gpane{max-height:none}
   .vbar{grid-template-columns:110px 1fr 24px}
@@ -623,14 +656,17 @@ function openActorDrawer(id,fromEl){
 
 /* ---------- graph workbench ----------
    A Maltego-style researcher view over the same derived graph the STIX and
-   Maltego feeds export. Starts small - a seed and its neighbours - and grows by
+   Maltego feeds export. It starts from a small, connected seed and grows by
    expansion, because 500 nodes at once is a hairball, not an investigation.
-   Cytoscape is inlined as inert text and only evaluated the first time this view
-   opens, so the catalog does not pay for it. */
+   New nodes are placed around the node they came from and nothing else moves;
+   a global re-layout is something the user asks for, not something that
+   happens under the pointer. Cytoscape is inlined as inert text and only
+   evaluated the first time this view opens, so the catalog does not pay for it. */
 const GNODE=Object.fromEntries(GRAPH.nodes.map(n=>[n.id,n]));
 const GADJ=(()=>{const m={};for(const e of GRAPH.edges){
   (m[e.source]=m[e.source]||[]).push({id:e.target,rel:e.rel,dir:'out'});
   (m[e.target]=m[e.target]||[]).push({id:e.source,rel:e.rel,dir:'in'})}return m})();
+const GDEG=id=>(GADJ[id]||[]).length;
 const GTYPES=['actor','case','tool','artifact','rule','technique','tactic','asi','ioc','malware','sector','country','region','attack-group','attack-campaign'];
 const GCOLOR={actor:'--series-6',case:'--series-3',tool:'--series-1',artifact:'--series-8',rule:'--series-2',
   technique:'--series-4',tactic:'--series-4',asi:'--series-5',ioc:'--series-7',malware:'--series-6',
@@ -638,11 +674,36 @@ const GCOLOR={actor:'--series-6',case:'--series-3',tool:'--series-1',artifact:'-
 const GSHAPE={actor:'hexagon',case:'round-rectangle',tool:'ellipse',artifact:'rectangle',rule:'diamond',
   technique:'triangle',tactic:'vee',asi:'star',ioc:'tag',malware:'octagon',sector:'barrel',country:'round-tag',
   region:'round-tag','attack-group':'hexagon','attack-campaign':'round-rectangle'};
-let cy=null, graphSeed=null, gHidden=new Set(['artifact','tactic','region']), gPathMode=false, gPathFrom=null;
+// What a relationship reads as from each end, so the neighbour list says
+// "detected by 3 rules" rather than "detects (in) · 3".
+const GREL={uses:['uses','used by'],'attributed-to':['attributed to','attributed actor'],targets:['targets','targeted by'],
+  affects:['affects','affected in'],abuses:['abuses','abused by'],leaves:['leaves on disk','left by'],detects:['detects','detected by'],
+  'detected-by':['detected by','detects'],indicator:['has indicator','indicator of'],'in-tactic':['in tactic','techniques'],
+  'maps-to':['maps to','mapped from'],'same-as':['same as','same as'],'in-region':['in region','countries']};
+const relLabel=(rel,dir)=>(GREL[rel]||[rel,rel+' (in)'])[dir==='out'?0:1];
+const GPRESETS={
+  story:['Actors, their cases and techniques',()=>{const a=GRAPH.nodes.filter(n=>n.type==='actor').map(n=>n.id);
+    return [...a,...a.flatMap(id=>(GADJ[id]||[]).filter(x=>['case','technique'].includes(GNODE[x.id].type)).map(x=>x.id))]}],
+  actors:['Actors and what they abuse',()=>{const a=GRAPH.nodes.filter(n=>n.type==='actor').map(n=>n.id);
+    return [...a,...a.flatMap(id=>(GADJ[id]||[]).filter(x=>['tool','malware','attack-group'].includes(GNODE[x.id].type)).map(x=>x.id))]}],
+  rules:['Rules and the techniques they detect',()=>{const r=GRAPH.nodes.filter(n=>n.type==='rule').map(n=>n.id);
+    return [...r,...r.flatMap(id=>(GADJ[id]||[]).filter(x=>GNODE[x.id].type==='technique').map(x=>x.id))]}],
+  victims:['Victimology: actors, sectors, countries',()=>{const a=GRAPH.nodes.filter(n=>n.type==='actor').map(n=>n.id);
+    return [...a,...a.flatMap(id=>(GADJ[id]||[]).filter(x=>['sector','country'].includes(GNODE[x.id].type)).map(x=>x.id))]}],
+  cases:['Cases and the tools they hit',()=>{const c=GRAPH.nodes.filter(n=>n.type==='case').map(n=>n.id);
+    return [...c,...c.flatMap(id=>(GADJ[id]||[]).filter(x=>GNODE[x.id].type==='tool').map(x=>x.id))]}],
+};
+let cy=null, graphSeed=null, gHidden=new Set(['artifact','tactic','region']), gPathMode=false, gPathFrom=null,
+    gUndo=[], gRemoved={}, gPreset='story', gLastExpand=null;
+const GEXPAND_CAP=40;
 // cose's repulsion is in its own units - the default is 2048 per node pair, and
 // anything under ~1e5 leaves labelled nodes stacked on each other.
-const COSE=()=>({name:'cose',animate:false,fit:true,padding:40,nodeDimensionsIncludeLabels:true,
-  nodeRepulsion:()=>450000,nodeOverlap:30,idealEdgeLength:()=>110,edgeElasticity:()=>80,gravity:.4,numIter:1500});
+const COSE=()=>({name:'cose',animate:false,fit:true,padding:30,nodeDimensionsIncludeLabels:true,
+  nodeRepulsion:()=>220000,nodeOverlap:20,idealEdgeLength:()=>90,edgeElasticity:()=>100,gravity:.7,numIter:1500,
+  stop:()=>gAfterLayout()});
+// A fit that zooms out past readable is not a fit. Clamp it and let the user pan.
+function gAfterLayout(){if(!cy)return;cy.fit(undefined,30);
+  if(cy.zoom()<.6){const bb=cy.elements().boundingBox();cy.zoom({level:.6,position:{x:(bb.x1+bb.x2)/2,y:(bb.y1+bb.y2)/2}})}}
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888'}
 function loadCyto(){
   if(window.cytoscape)return true;
@@ -653,88 +714,204 @@ function loadCyto(){
 }
 function graphHTML(){
   return `<div class="gtop"><div><h2>Graph</h2>
-    <p>Actors, cases, catalogued tools, rules, techniques and indicators as one graph. Double-click
-    a node to expand it; select two and find the path between them. Artifact rows, tactics and regions
-    are hidden until you ask for them, so the first view stays readable.</p></div>
+    <p>Actors, cases, catalogued tools, rules, techniques and indicators as one graph - the same one the
+    STIX and Maltego feeds export. Start from a preset or a search, then grow it: <b>double-click</b> a node
+    (or press <kbd>E</kbd>) to pull in its neighbours, <b>hover</b> to see what connects to what,
+    <b>Path</b> to find how two things are linked. Nothing moves unless you ask it to.</p></div>
     <div class="acts"><button class="btn" id="gBackIntel">&#8592; Threat intel</button></div></div>
+  <div class="gbar" role="toolbar" aria-label="Graph tools">
+    <label class="gsel">Start from <select id="gPreset" aria-label="Starting view">${Object.entries(GPRESETS).map(([k,[l]])=>
+      `<option value="${k}"${k===gPreset?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+    <button class="btn" id="gLoad" title="Replace the canvas with this preset">Load</button>
+    <span class="gsep"></span>
+    <button class="btn" id="gExpand" title="Pull in the neighbours of the selected nodes (E)">Expand</button>
+    <button class="btn" id="gFocus" title="Keep only the selected nodes and their neighbours (K)">Focus</button>
+    <button class="btn" id="gHide" title="Remove the selected nodes from the canvas (Delete)">Hide</button>
+    <button class="btn" id="gPath" aria-pressed="false" title="Find a route between two nodes, through nodes nobody has expanded yet (P)">Path</button>
+    <span class="gsep"></span>
+    <button class="btn" id="gUndo" title="Undo the last change to the canvas (Ctrl+Z)" disabled>Undo</button>
+    <button class="btn" id="gRelayout" title="Re-run the force layout on everything (L)">Re-layout</button>
+    <button class="btn" id="gFit" title="Fit everything in view (F)">Fit</button>
+    <button class="btn" id="gClear">Clear</button>
+    <span class="gsep"></span>
+    <button class="btn" id="gLink" title="Copy a link that reopens this canvas">Copy link</button>
+    <button class="btn" id="gPng">PNG</button><button class="btn" id="gJson">JSON</button>
+    <button class="btn" id="gCsv">Maltego CSV</button>
+  </div>
   <div class="gwrap">
     <div class="gpane">
       <h4>Find</h4>
-      <input class="gsearch" id="gq" type="search" placeholder="actor, tool, CVE, domain..." aria-label="Search the graph">
+      <input class="gsearch" id="gq" type="search" placeholder="actor, tool, rule, CVE, domain..." aria-label="Search the graph">
       <div class="gres" id="gres"></div>
-      <h4>Show types</h4>
-      <div class="tfilter">${GTYPES.map(t=>`<label><input type="checkbox" data-gt="${t}" ${gHidden.has(t)?'':'checked'}
-        ><span class="dot2" style="background:var(${GCOLOR[t]})"></span>${esc(t)}</label>`).join('')}</div>
+      <h4>Types on canvas</h4>
+      <div class="tfilter">${GTYPES.map(t=>`<label title="Show or hide every ${esc(t)} node"><input type="checkbox" data-gt="${t}" ${gHidden.has(t)?'':'checked'}
+        ><span class="dot2" style="background:var(${GCOLOR[t]})"></span>${esc(t)} <span class="gcnt" data-cnt="${t}"></span></label>`).join('')}</div>
       <h4>Layout</h4>
       <div class="gbtns">${['cose','concentric','breadthfirst','circle'].map(l=>
         `<button class="btn" data-lay="${l}">${l}</button>`).join('')}</div>
-      <h4>Actions</h4>
-      <div class="gbtns">
-        <button class="btn" id="gExpand">Expand selected</button>
-        <button class="btn" id="gHide">Hide selected</button>
-        <button class="btn" id="gPath" aria-pressed="false">Path: pick 2</button>
-        <button class="btn" id="gAll">All actors</button>
-        <button class="btn" id="gClear">Clear</button>
-      </div>
-      <h4>Export view</h4>
-      <div class="gbtns"><button class="btn" id="gPng">PNG</button><button class="btn" id="gJson">JSON</button>
-        <button class="btn" id="gCsv">Maltego CSV</button></div>
-      <p class="gnote" id="gstat"></p>
+      <p class="gnote" id="gstat" aria-live="polite"></p>
+      <details class="ghelp"><summary class="gnote">Keys and gestures</summary>
+        <ul class="gnote"><li><b>Click</b> selects and shows a node's neighbours on the right</li>
+        <li><b>Double-click</b> / <kbd>E</kbd> expands, at most ${GEXPAND_CAP} new nodes at a time</li>
+        <li><b>Hover</b> highlights a node's neighbourhood and names the links</li>
+        <li><b>Shift-drag</b> box-selects; <kbd>Delete</kbd> hides; <kbd>K</kbd> focuses</li>
+        <li><kbd>P</kbd> then two clicks finds a path; <kbd>Esc</kbd> cancels</li>
+        <li><kbd>F</kbd> fits, <kbd>L</kbd> re-lays out, <kbd>Ctrl+Z</kbd> undoes, <kbd>/</kbd> searches</li>
+        <li>Drag a node to pin it where you put it; layouts leave it there</li></ul></details>
     </div>
-    <div id="cy" role="img" aria-label="Entity graph. Use the Find box and the neighbour list to navigate by keyboard."></div>
-    <div class="gpane" id="ginfo"><p class="gnote">Select a node.</p></div>
+    <div class="gcanvas"><div id="cy" tabindex="0" role="application" aria-label="Entity graph. Use the Find box and the neighbour list to navigate by keyboard."></div>
+      <div class="gzoom" aria-hidden="true"><button id="gzIn" title="Zoom in">+</button><button id="gzOut" title="Zoom out">&minus;</button><button id="gzFit" title="Fit">&#8982;</button></div>
+      <div class="ghint" id="ghint" hidden></div></div>
+    <div class="gpane" id="ginfo"><p class="gnote">Select a node to see what it connects to.</p></div>
   </div>`;
 }
 function gEls(ids){
   const els=[], have=new Set(ids);
   for(const id of ids){const n=GNODE[id];if(!n)continue;
-    els.push({group:'nodes',data:{id,label:n.label.length>42?n.label.slice(0,40)+'…':n.label,type:n.type}})}
+    const d=GDEG(id), size=(n.type==='actor'?26:14)+Math.min(16,2*Math.sqrt(d));
+    els.push({group:'nodes',data:{id,label:n.label.length>42?n.label.slice(0,40)+'…':n.label,type:n.type,size}})}
   for(const e of GRAPH.edges)if(have.has(e.source)&&have.has(e.target))
     els.push({group:'edges',data:{id:e.source+'>'+e.rel+'>'+e.target,source:e.source,target:e.target,rel:e.rel}});
   return els;
 }
-function gAdd(ids,center){
-  const fresh=ids.filter(id=>GNODE[id]&&!gHidden.has(GNODE[id].type)&&cy.getElementById(id).empty());
-  if(!fresh.length){gStat();return}
-  const cur=cy.nodes().map(n=>n.id());
-  const els=gEls([...cur,...fresh]).filter(e=>cy.getElementById(e.data.id).empty());
-  const pos=center&&cy.getElementById(center).nonempty()?cy.getElementById(center).position():null;
-  cy.add(els.map(e=>pos&&e.group==='nodes'?{...e,position:{x:pos.x+(Math.random()-.5)*160,y:pos.y+(Math.random()-.5)*160}}:e));
-  cy.layout({...COSE(),randomize:false}).run();
-  gStat();gHash();
+function gSnap(){
+  if(!cy)return;
+  gUndo.push(cy.nodes().map(n=>({id:n.id(),x:n.position('x'),y:n.position('y'),locked:n.locked()})));
+  if(gUndo.length>30)gUndo.shift();
+  const b=$('#gUndo');if(b)b.disabled=false;
 }
-function gExpand(id){gAdd((GADJ[id]||[]).map(x=>x.id),id)}
-function gStat(){const s=$('#gstat');if(s)s.textContent=`${cy.nodes().length} nodes · ${cy.edges().length} edges on canvas`}
+function gUndoDo(){
+  const st=gUndo.pop();if(!st)return;
+  cy.elements().remove();
+  cy.add(gEls(st.map(s=>s.id)));
+  st.forEach(s=>{const n=cy.getElementById(s.id);if(n.nonempty()){n.position({x:s.x,y:s.y});if(s.locked)n.lock()}});
+  gStat();gHash();
+  const b=$('#gUndo');if(b)b.disabled=!gUndo.length;
+}
+// Place new nodes on a ring around the node they came from, radius growing
+// with how many there are, and leave everything already on the canvas alone.
+function gPlace(fresh,center){
+  const c=center&&cy.getElementById(center).nonempty()?cy.getElementById(center).position():null;
+  const ext=cy.extent(), base=c||{x:(ext.x1+ext.x2)/2,y:(ext.y1+ext.y2)/2};
+  const n=fresh.length, r=Math.max(90,18*n/Math.PI+40), start=Math.random()*Math.PI*2;
+  const taken=new Set(cy.nodes().map(x=>Math.round(x.position('x')/40)+':'+Math.round(x.position('y')/40)));
+  return Object.fromEntries(fresh.map((id,i)=>{let a=start+i*2*Math.PI/n, rr=r, p;
+    for(let k=0;k<6;k++){p={x:base.x+rr*Math.cos(a),y:base.y+rr*Math.sin(a)};
+      const key=Math.round(p.x/40)+':'+Math.round(p.y/40);if(!taken.has(key)){taken.add(key);break}rr+=34}
+    return [id,p]}));
+}
+function gAdd(ids,center,opts={}){
+  const seen=new Set(); const fresh=ids.filter(id=>{if(seen.has(id))return false;seen.add(id);
+    return GNODE[id]&&!gHidden.has(GNODE[id].type)&&cy.getElementById(id).empty()});
+  if(!fresh.length){gStat(opts.quiet?'':'Nothing new to add - every neighbour that is visible is already on the canvas.');return[]}
+  gSnap();
+  const cur=cy.nodes().map(n=>n.id());
+  const pos=gPlace(fresh,center);
+  const els=gEls([...cur,...fresh]).filter(e=>cy.getElementById(e.data.id).empty());
+  const added=cy.add(els.map(e=>e.group==='nodes'?{...e,position:pos[e.data.id]}:e));
+  if(center&&cy.getElementById(center).nonempty()){
+    const hood=added.nodes().union(cy.getElementById(center));
+    const ext=cy.extent(), bb=hood.boundingBox();
+    if(bb.x1<ext.x1||bb.x2>ext.x2||bb.y1<ext.y1||bb.y2>ext.y2)cy.animate({fit:{eles:hood.union(cy.nodes()),padding:40},duration:250});
+  }else if(!cur.length)cy.fit(undefined,40);
+  gStat();gHash();
+  return fresh;
+}
+function gExpand(id,rel){
+  let nb=(GADJ[id]||[]).filter(x=>!rel||x.rel+':'+x.dir===rel).map(x=>x.id);
+  const visible=nb.filter(x=>!gHidden.has(GNODE[x].type)&&cy.getElementById(x).empty());
+  const hiddenTypes=[...new Set(nb.filter(x=>gHidden.has(GNODE[x].type)).map(x=>GNODE[x].type))];
+  let note='';
+  if(visible.length>GEXPAND_CAP){
+    // Actors first, then by how connected the node is: the well-linked
+    // neighbours are the ones that lead somewhere.
+    visible.sort((a,b)=>(GNODE[b].type==='actor')-(GNODE[a].type==='actor')||GDEG(b)-GDEG(a));
+    note=`Added ${GEXPAND_CAP} of ${visible.length} neighbours - expand again, or add a relationship group from the panel.`;
+    nb=visible.slice(0,GEXPAND_CAP);
+  }
+  const added=gAdd(nb,id,{quiet:true});
+  if(hiddenTypes.length)note+=(note?' ':'')+`${hiddenTypes.join(', ')} nodes stay hidden until you tick the type.`;
+  if(!added.length&&!note)note='Every visible neighbour is already on the canvas.';
+  gStat(note);
+  gLastExpand=id;
+  return added;
+}
+function gStat(msg){
+  const s=$('#gstat');if(!s||!cy)return;
+  const counts={};cy.nodes().forEach(n=>{const t=n.data('type');counts[t]=(counts[t]||0)+1});
+  $$('#main .gcnt').forEach(el=>{const c=counts[el.dataset.cnt];el.textContent=c?c:''});
+  s.textContent=`${cy.nodes().length} nodes · ${cy.edges().length} edges on canvas${msg?' · '+msg:''}`;
+  const h=$('#ghint');if(h){h.hidden=!!cy.nodes().length;h.textContent='Empty canvas. Load a preset, search for something, or open a node from any drawer.'}
+}
 function gHash(){
   const ids=cy.nodes().map(n=>n.id());
-  if(ids.length<=40)history.replaceState(null,'','#graph/'+encodeURIComponent(ids.join('|')));
+  if(ids.length<=60)history.replaceState(null,'','#graph/'+encodeURIComponent(ids.join('|')));
+  else history.replaceState(null,'','#graph');
+}
+function gFacts(n){
+  const id=n.id;
+  if(n.type==='actor'){const a=ACTORMAP[n.actor_id];return a?`${KIND_LABEL[a.kind]||a.kind}${a.nexus?' · '+a.nexus:''} · ${a.derived.techniques.length} techniques · ${a.cases.length} case${a.cases.length===1?'':'s'}`:''}
+  if(n.type==='case'){const c=CASEMAP[n.case_id];return c?`${c.disclosed||''} · confidence ${c.confidence||'-'} · ${(c.iocs||[]).length} indicators`:''}
+  if(n.type==='technique')return `${n.framework||''} ${TNAME(id.split(':')[1])||''}`.trim();
+  if(n.type==='rule'){const r=RULEFILE[id.split(':').slice(1).join(':')]||RULEMAP[id.split(':').slice(1).join(':')];return r?`${r.format||''} · ${r.category||''}${r.level?' · '+r.level:''}`:''}
+  if(n.type==='tool'){const t=TOOLMAP[n.entry_id];return t?`${t.category||''} · ${t.n_rows||''} artifact rows · risk ${t.risk||'-'}`:''}
+  if(n.type==='artifact'){const r=ROWMAP[n.anchor];return r?`${r.cls} · ${r.vol} · value ${r.forensic_value||'-'}`:''}
+  if(n.type==='ioc')return n.ioc_type||'';
+  return '';
 }
 function gInfo(id){
   const n=GNODE[id], box=$('#ginfo'); if(!n||!box)return;
   const nb=(GADJ[id]||[]);
-  const byRel={};for(const x of nb)(byRel[x.rel+' ('+x.dir+')']=byRel[x.rel+' ('+x.dir+')']||[]).push(x.id);
+  const groups={};
+  for(const x of nb){const k=x.rel+':'+x.dir;(groups[k]=groups[k]||{rel:x.rel,dir:x.dir,ids:[]}).ids.push(x.id)}
+  const on=x=>cy.getElementById(x).nonempty();
   const open=n.type==='actor'?`<button class="btn" data-open="actor">Open profile</button>`:
     n.type==='rule'?`<button class="btn" data-open="rule">Open rule</button>`:
     n.type==='tool'?`<button class="btn" data-open="tool">Open tool</button>`:
     n.type==='artifact'?`<button class="btn" data-open="artifact">Open artifact</button>`:
     n.type==='case'?`<button class="btn" data-open="case">Open case study</button>`:
-    n.type==='technique'&&n.framework==='ATLAS'?`<a class="btn" href="https://atlas.mitre.org/techniques/${esc(id.split(':')[1])}" target="_blank" rel="noopener">ATLAS &#8599;</a>`:'';
-  box.innerHTML=`<h4>${esc(n.type)}</h4><p><b>${esc(n.label)}</b></p>
-    <p class="gnote mono">${esc(id)}</p><div class="gbtns">${open}
-    <button class="btn" data-exp="1">Expand (${nb.length})</button></div>
-    <h4>Neighbours</h4><div class="nbl">${Object.entries(byRel).map(([rel,ids])=>
-      `<span class="rel">${esc(rel)} · ${ids.length}</span>${ids.slice(0,30).map(x=>
-        `<button data-add="${esc(x)}"><span class="dot2" style="background:var(${GCOLOR[(GNODE[x]||{}).type]||'--faint'})"></span>${
-        esc(((GNODE[x]||{}).label||x).slice(0,60))}</button>`).join('')}`).join('')}</div>`;
+    n.type==='technique'&&n.framework==='ATLAS'?`<a class="btn" href="https://atlas.mitre.org/techniques/${esc(id.split(':')[1])}" target="_blank" rel="noopener">ATLAS &#8599;</a>`:
+    n.type==='technique'?`<a class="btn" href="https://attack.mitre.org/techniques/${esc(id.split(':')[1].replace('.','/'))}" target="_blank" rel="noopener">ATT&amp;CK &#8599;</a>`:'';
+  const facts=gFacts(n);
+  const missing=nb.filter(x=>!on(x.id)).length;
+  box.innerHTML=`<div class="ginfo-h"><span class="dot2" style="background:var(${GCOLOR[n.type]})"></span><h4>${esc(n.type)}</h4></div>
+    <p class="gtitle">${esc(n.label)}</p>
+    ${facts?`<p class="gnote">${esc(facts)}</p>`:''}
+    <p class="gnote mono">${esc(id)}</p>
+    <div class="gbtns">${open}
+      <button class="btn" data-exp="1" ${missing?'':'disabled'}>Expand all (${missing})</button>
+      <button class="btn" data-focus="1">Focus</button>
+      <button class="btn" data-hide="1">Hide</button></div>
+    <h4>Connections <span class="gnote">${nb.length}</span></h4>
+    <div class="nbl">${Object.entries(groups).sort((a,b)=>b[1].ids.length-a[1].ids.length).map(([k,g])=>{
+      const off=g.ids.filter(x=>!on(x)&&!gHidden.has(GNODE[x].type)).length;
+      const hid=g.ids.filter(x=>gHidden.has(GNODE[x].type)).length;
+      return `<div class="relh"><span class="rel">${esc(relLabel(g.rel,g.dir))} · ${g.ids.length}</span>
+        ${off?`<button class="lnk" data-addrel="${esc(k)}">add ${off}</button>`:hid?`<span class="gnote">${hid} hidden by type</span>`:''}</div>
+        ${g.ids.slice(0,40).map(x=>`<button data-add="${esc(x)}" class="${on(x)?'onc':''}" title="${on(x)?'On canvas - click to select':'Click to add'}">
+          <span class="dot2" style="background:var(${GCOLOR[(GNODE[x]||{}).type]||'--faint'})"></span>${esc(((GNODE[x]||{}).label||x).slice(0,60))}${on(x)?' <i>&#10003;</i>':''}</button>`).join('')}
+        ${g.ids.length>40?`<span class="gnote">and ${g.ids.length-40} more - use "add" above</span>`:''}`}).join('')}</div>`;
   box.querySelector('[data-exp]').onclick=()=>gExpand(id);
+  box.querySelector('[data-focus]').onclick=()=>gFocus([id]);
+  box.querySelector('[data-hide]').onclick=()=>{gSnap();cy.getElementById(id).remove();gStat();gHash();box.innerHTML='<p class="gnote">Hidden. Undo brings it back.</p>'};
+  box.querySelectorAll('[data-addrel]').forEach(b=>b.onclick=()=>gExpand(id,b.dataset.addrel));
   box.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const t=GNODE[b.dataset.add];
     if(t&&gHidden.has(t.type)){gHidden.delete(t.type);const cb=$(`#main input[data-gt="${t.type}"]`);if(cb)cb.checked=true}
-    gAdd([b.dataset.add],id);cy.getElementById(b.dataset.add).select();gInfo(b.dataset.add)});
+    gAdd([b.dataset.add],id,{quiet:true});const el=cy.getElementById(b.dataset.add);cy.$(':selected').unselect();el.select();gInfo(b.dataset.add)});
   const o=box.querySelector('[data-open]');
   if(o)o.onclick=()=>{const k=o.dataset.open, v=id.split(':').slice(1).join(':');
     if(k==='actor')openActorDrawer(v,o);else if(k==='rule')openRuleDrawer(v,o);
     else if(k==='tool')openToolDrawer(v,o);else if(k==='artifact')openDrawer(v,o);
     else{pushNav();view='cases';update();const el=document.getElementById('cs-'+v);if(el){el.open=true;el.scrollIntoView()}}};
+}
+function gFocus(ids){
+  if(!ids.length)return;
+  gSnap();
+  const keep=new Set(ids);ids.forEach(id=>(GADJ[id]||[]).forEach(x=>keep.add(x.id)));
+  cy.nodes().filter(n=>!keep.has(n.id())).remove();
+  gAdd([...keep],ids[0],{quiet:true});
+  cy.animate({fit:{eles:cy.elements(),padding:50},duration:250});
+  gStat(`Focused on ${ids.length} node${ids.length===1?'':'s'} and their neighbours.`);
 }
 function gPath(a,b){
   // Breadth-first over the full graph, not the canvas, so a path can surface
@@ -745,57 +922,119 @@ function gPath(a,b){
   if(!(b in prev))return null;
   const path=[];for(let x=b;x;x=prev[x])path.unshift(x);return path;
 }
+function gSetPathMode(on){
+  gPathMode=on;gPathFrom=null;
+  const b=$('#gPath');if(!b)return;
+  b.setAttribute('aria-pressed',String(on));b.textContent=on?'Path: click the 1st node':'Path';
+  $('#cy').classList.toggle('pathmode',on);
+  if(on)gStat('Path mode: click two nodes. Esc cancels.');
+}
+function gHighlight(n){
+  const hood=n.closedNeighborhood();
+  cy.elements().addClass('dim');hood.removeClass('dim');hood.addClass('hl');
+}
+function gUnhighlight(){cy.elements().removeClass('dim hl');const sel=cy.$('node:selected');if(sel.length===1)gHighlight(sel)}
+function gLoadPreset(k){
+  const ids=(GPRESETS[k]||GPRESETS.story)[1]();
+  const types=new Set(ids.map(id=>GNODE[id].type));
+  types.forEach(t=>{if(gHidden.has(t)){gHidden.delete(t);const cb=$(`#main input[data-gt="${t}"]`);if(cb)cb.checked=true}});
+  gSnap();cy.elements().remove();
+  cy.add(gEls([...new Set(ids)]));
+  cy.layout(COSE()).run();
+  gStat(`Loaded "${GPRESETS[k][0]}".`);gHash();
+  $('#ginfo').innerHTML='<p class="gnote">Select a node to see what it connects to.</p>';
+}
 function renderGraph(){
   $('#main').innerHTML=graphHTML();
   $('#gBackIntel').onclick=()=>{view='intel';update()};
   if(!loadCyto()){$('#cy').innerHTML='<p class="gnote" style="padding:12px">Graph library unavailable in this build.</p>';return}
+  const ink=cssVar('--ink'), line=cssVar('--line'), acc=cssVar('--accent'), gap=cssVar('--gap');
   const style=[
-    {selector:'node',style:{'label':'data(label)','font-size':9,'color':cssVar('--ink'),'text-valign':'bottom',
-      'text-margin-y':3,'width':18,'height':18,'border-width':1,'border-color':cssVar('--line'),
-      'text-wrap':'ellipsis','text-max-width':110}},
+    {selector:'node',style:{'label':'data(label)','font-size':9,'color':ink,'text-valign':'bottom',
+      'text-margin-y':3,'width':'data(size)','height':'data(size)','border-width':1,'border-color':line,
+      'text-wrap':'ellipsis','text-max-width':96,'text-background-color':cssVar('--panel-2'),
+      'text-background-opacity':.75,'text-background-padding':1,'text-background-shape':'roundrectangle',
+      'transition-property':'opacity','transition-duration':'120ms'}},
     ...GTYPES.map(t=>({selector:`node[type="${t}"]`,style:{'background-color':cssVar(GCOLOR[t]),'shape':GSHAPE[t]}})),
-    {selector:'node[type="actor"]',style:{'width':30,'height':30,'font-size':11,'font-weight':'bold'}},
-    {selector:'node:selected',style:{'border-width':3,'border-color':cssVar('--accent')}},
-    {selector:'node.path',style:{'border-width':4,'border-color':cssVar('--gap')}},
-    {selector:'edge',style:{'width':1,'line-color':cssVar('--line'),'target-arrow-shape':'triangle',
-      'target-arrow-color':cssVar('--line'),'curve-style':'bezier','arrow-scale':.6,'label':'data(rel)',
-      'font-size':7,'color':cssVar('--faint'),'text-rotation':'autorotate'}},
-    {selector:'edge.path',style:{'width':3,'line-color':cssVar('--gap'),'target-arrow-color':cssVar('--gap')}},
+    {selector:'node[type="actor"]',style:{'font-size':11,'font-weight':'bold'}},
+    {selector:'node:selected',style:{'border-width':3,'border-color':acc}},
+    {selector:'node:locked',style:{'border-style':'double','border-width':3}},
+    {selector:'node.hl',style:{'border-width':2,'border-color':ink}},
+    {selector:'node.path',style:{'border-width':4,'border-color':gap}},
+    {selector:'edge',style:{'width':1,'line-color':line,'target-arrow-shape':'triangle',
+      'target-arrow-color':line,'curve-style':'bezier','arrow-scale':.6,'label':'data(rel)',
+      'font-size':7,'color':cssVar('--faint'),'text-rotation':'autorotate','text-opacity':0,
+      'text-background-color':cssVar('--panel-2'),'text-background-opacity':.85,'text-background-padding':1}},
+    {selector:'edge.zl',style:{'text-opacity':1}},
+    {selector:'edge.hl',style:{'width':2,'line-color':ink,'target-arrow-color':ink,'text-opacity':1,'color':ink}},
+    {selector:'edge.path',style:{'width':3,'line-color':gap,'target-arrow-color':gap,'text-opacity':1}},
+    {selector:'.dim',style:{'opacity':.18}},
   ];
-  cy=window.cytoscape({container:$('#cy'),elements:[],style,wheelSensitivity:.25,minZoom:.1,maxZoom:1.4});
+  cy=window.cytoscape({container:$('#cy'),elements:[],style,wheelSensitivity:.25,minZoom:.1,maxZoom:2.2,
+    boxSelectionEnabled:true,selectionType:'additive'});
+  gUndo=[];gRemoved={};
   const fromHash=decodeURIComponent(location.hash.slice(1));
   let seed=[];
   if(fromHash.startsWith('graph/'))seed=fromHash.slice(6).split('|').filter(x=>GNODE[x]);
-  if(!seed.length&&graphSeed&&GNODE[graphSeed])seed=[graphSeed,...(GADJ[graphSeed]||[]).map(x=>x.id)];
-  if(!seed.length)seed=GRAPH.nodes.filter(n=>n.type==='actor').map(n=>n.id);
-  seed.forEach(id=>{const t=(GNODE[id]||{}).type;if(t&&gHidden.has(t)&&seed.length<40)gHidden.delete(t)});
-  cy.add(gEls(seed.filter(id=>!gHidden.has((GNODE[id]||{}).type))));
-  cy.layout(COSE()).run();
-  gStat();
+  if(!seed.length&&graphSeed&&GNODE[graphSeed])seed=[graphSeed,...(GADJ[graphSeed]||[]).map(x=>x.id).slice(0,GEXPAND_CAP)];
+  if(seed.length){
+    seed.forEach(id=>{const t=(GNODE[id]||{}).type;if(t&&gHidden.has(t)&&seed.length<40){gHidden.delete(t);const cb=$(`#main input[data-gt="${t}"]`);if(cb)cb.checked=true}});
+    cy.add(gEls(seed.filter(id=>!gHidden.has((GNODE[id]||{}).type))));
+    cy.layout(COSE()).run();
+    gStat();
+  }else gLoadPreset(gPreset);
+  gUndo=[];const ub=$('#gUndo');if(ub)ub.disabled=true;
+  // interactions
   cy.on('dbltap','node',e=>gExpand(e.target.id()));
+  cy.on('mouseover','node',e=>{if(!gPathMode)gHighlight(e.target)});
+  cy.on('mouseout','node',()=>gUnhighlight());
+  cy.on('zoom',()=>cy.edges().toggleClass('zl',cy.zoom()>1.15));
+  cy.on('dragfree','node',e=>e.target.lock());
+  cy.on('select','node',e=>{if(cy.$('node:selected').length===1)gUnhighlight()});
+  cy.on('unselect','node',()=>gUnhighlight());
+  cy.on('tap',e=>{if(e.target===cy&&!gPathMode){$('#ginfo').innerHTML='<p class="gnote">Select a node to see what it connects to.</p>'}});
   cy.on('tap','node',e=>{const id=e.target.id();gInfo(id);
-    if(gPathMode){if(!gPathFrom){gPathFrom=id;$('#gPath').textContent='Path: pick 2nd'}
+    if(gPathMode){if(!gPathFrom){gPathFrom=id;$('#gPath').textContent='Path: click the 2nd node';gStat(`Path from ${GNODE[id].label} - click the destination.`)}
       else{const p=gPath(gPathFrom,id);cy.elements().removeClass('path');
-        if(p){gAdd(p,gPathFrom);p.forEach((x,i)=>{cy.getElementById(x).addClass('path');
-          if(i)cy.edges().filter(ed=>(ed.source().id()===p[i-1]&&ed.target().id()===x)||(ed.source().id()===x&&ed.target().id()===p[i-1])).addClass('path')})}
-        else $('#gstat').textContent='No path between those two.';
-        gPathMode=false;gPathFrom=null;$('#gPath').setAttribute('aria-pressed','false');$('#gPath').textContent='Path: pick 2'}}});
+        if(p){gAdd(p,gPathFrom,{quiet:true});p.forEach((x,i)=>{cy.getElementById(x).addClass('path');
+          if(i)cy.edges().filter(ed=>(ed.source().id()===p[i-1]&&ed.target().id()===x)||(ed.source().id()===x&&ed.target().id()===p[i-1])).addClass('path')});
+          cy.animate({fit:{eles:cy.$('.path'),padding:60},duration:250});
+          gSetPathMode(false);
+          gStat(`Path: ${p.map(x=>GNODE[x].label).join(' → ')} (${p.length-1} hop${p.length===2?'':'s'}).`)}
+        else{gSetPathMode(false);gStat('No path between those two.')}}}});
+  // search
+  const goTo=id=>{const t=GNODE[id].type;
+    if(gHidden.has(t)){gHidden.delete(t);const cb=$(`#main input[data-gt="${t}"]`);if(cb)cb.checked=true}
+    gAdd([id],null,{quiet:true});const el=cy.getElementById(id);cy.$(':selected').unselect();el.select();
+    cy.animate({center:{eles:el},duration:200});gInfo(id);$('#gres').innerHTML='';$('#gq').value=''};
   $('#gq').oninput=e=>{const q=e.target.value.trim().toLowerCase();
-    $('#gres').innerHTML=q.length<2?'':GRAPH.nodes.filter(n=>n.label.toLowerCase().includes(q)||n.id.toLowerCase().includes(q))
-      .slice(0,25).map(n=>`<button data-go="${esc(n.id)}"><span class="dot2" style="background:var(${GCOLOR[n.type]})"></span>${esc(n.label.slice(0,50))}
-        <span class="gnote">${esc(n.type)}</span></button>`).join('');
-    $$('#gres [data-go]').forEach(b=>b.onclick=()=>{const id=b.dataset.go,t=GNODE[id].type;
-      if(gHidden.has(t)){gHidden.delete(t);const cb=$(`#main input[data-gt="${t}"]`);if(cb)cb.checked=true}
-      gAdd([id]);const el=cy.getElementById(id);cy.$(':selected').unselect();el.select();cy.center(el);gInfo(id)})};
+    const hits=q.length<2?[]:GRAPH.nodes.filter(n=>n.label.toLowerCase().includes(q)||n.id.toLowerCase().includes(q))
+      .sort((a,b)=>(a.label.toLowerCase().startsWith(q)?0:1)-(b.label.toLowerCase().startsWith(q)?0:1)||GDEG(b.id)-GDEG(a.id)).slice(0,25);
+    $('#gres').innerHTML=hits.map(n=>`<button data-go="${esc(n.id)}"><span class="dot2" style="background:var(${GCOLOR[n.type]})"></span>${esc(n.label.slice(0,50))}
+        <span class="gnote">${esc(n.type)} · ${GDEG(n.id)}</span></button>`).join('')||(q.length<2?'':'<p class="gnote">No match.</p>');
+    $$('#gres [data-go]').forEach(b=>b.onclick=()=>goTo(b.dataset.go))};
+  $('#gq').onkeydown=e=>{if(e.key==='Enter'){const f=$('#gres [data-go]');if(f){e.preventDefault();goTo(f.dataset.go)}}
+    if(e.key==='Escape'){$('#gq').value='';$('#gres').innerHTML=''}};
+  // type filter: unticking removes, re-ticking brings back what it removed
   $$('#main input[data-gt]').forEach(cb=>cb.onchange=()=>{const t=cb.dataset.gt;
-    if(cb.checked)gHidden.delete(t);else{gHidden.add(t);cy.nodes(`[type="${t}"]`).remove()}gStat()});
-  $$('#main [data-lay]').forEach(b=>b.onclick=()=>cy.layout(b.dataset.lay==='cose'?COSE():{name:b.dataset.lay,animate:false,padding:40,spacingFactor:1.3,nodeDimensionsIncludeLabels:true}).run());
-  $('#gExpand').onclick=()=>cy.$('node:selected').forEach(n=>gExpand(n.id()));
-  $('#gHide').onclick=()=>{cy.$('node:selected').remove();gStat();gHash()};
-  $('#gClear').onclick=()=>{cy.elements().remove();gStat();$('#ginfo').innerHTML='<p class="gnote">Select a node.</p>'};
-  $('#gAll').onclick=()=>gAdd(GRAPH.nodes.filter(n=>n.type==='actor').map(n=>n.id));
-  $('#gPath').onclick=()=>{gPathMode=!gPathMode;gPathFrom=null;$('#gPath').setAttribute('aria-pressed',String(gPathMode));
-    $('#gPath').textContent=gPathMode?'Path: pick 1st':'Path: pick 2'};
+    if(cb.checked){gHidden.delete(t);const back=(gRemoved[t]||[]);delete gRemoved[t];
+      if(back.length)gAdd(back,null,{quiet:true});gStat()}
+    else{gHidden.add(t);gSnap();gRemoved[t]=cy.nodes(`[type="${t}"]`).map(n=>n.id());cy.nodes(`[type="${t}"]`).remove();gStat();gHash()}});
+  $$('#main [data-lay]').forEach(b=>b.onclick=()=>{cy.nodes().unlock();cy.layout(b.dataset.lay==='cose'?COSE():{name:b.dataset.lay,animate:false,padding:30,spacingFactor:1.2,nodeDimensionsIncludeLabels:true,stop:()=>gAfterLayout()}).run()});
+  const sel=()=>cy.$('node:selected').map(n=>n.id());
+  $('#gLoad').onclick=()=>{gPreset=$('#gPreset').value;gLoadPreset(gPreset)};
+  $('#gExpand').onclick=()=>{const s=sel();if(!s.length){gStat('Select a node first - click it, or shift-drag a box.');return}s.forEach(id=>gExpand(id))};
+  $('#gFocus').onclick=()=>{const s=sel();if(!s.length){gStat('Select a node first.');return}gFocus(s)};
+  $('#gHide').onclick=()=>{const s=cy.$('node:selected');if(!s.length){gStat('Select a node first.');return}gSnap();s.remove();gStat();gHash()};
+  $('#gClear').onclick=()=>{gSnap();cy.elements().remove();gStat();gHash();$('#ginfo').innerHTML='<p class="gnote">Select a node to see what it connects to.</p>'};
+  $('#gPath').onclick=()=>gSetPathMode(!gPathMode);
+  $('#gUndo').onclick=gUndoDo;
+  $('#gRelayout').onclick=()=>{cy.nodes().unlock();cy.layout(COSE()).run()};
+  $('#gFit').onclick=()=>cy.animate({fit:{eles:cy.elements(),padding:40},duration:200});
+  $('#gzIn').onclick=()=>cy.animate({zoom:{level:cy.zoom()*1.3,renderedPosition:{x:cy.width()/2,y:cy.height()/2}},duration:150});
+  $('#gzOut').onclick=()=>cy.animate({zoom:{level:cy.zoom()/1.3,renderedPosition:{x:cy.width()/2,y:cy.height()/2}},duration:150});
+  $('#gzFit').onclick=()=>cy.animate({fit:{eles:cy.elements(),padding:40},duration:200});
+  $('#gLink').onclick=e=>{gHash();copy(location.href,e.target)};
   $('#gPng').onclick=()=>{const a=document.createElement('a');a.href=cy.png({full:true,scale:2,bg:cssVar('--panel')});
     a.download=`ai-dfir-graph-${stamp()}.png`;document.body.appendChild(a);a.click();a.remove()};
   $('#gJson').onclick=()=>download(`ai-dfir-graph-${stamp()}.json`,JSON.stringify({source:REPO_URL,
@@ -810,7 +1049,21 @@ function renderGraph(){
       return [typ(d.source),val(d.source),typ(d.target),val(d.target),d.rel].map(csvCell).join(',')}).join('\n');
     download(`ai-dfir-graph-entities-${stamp()}.csv`,ent+'\n','text/csv');
     setTimeout(()=>download(`ai-dfir-graph-links-${stamp()}.csv`,lnk+'\n','text/csv'),300)};
-  if(graphSeed&&cy.getElementById(graphSeed).nonempty()){cy.getElementById(graphSeed).select();gInfo(graphSeed)}
+  // keyboard, scoped to the canvas so the rest of the page keeps its own keys
+  $('#cy').onkeydown=e=>{
+    if(e.target.tagName==='INPUT')return;
+    const k=e.key.toLowerCase();
+    if(k==='escape'){if(gPathMode)gSetPathMode(false);else cy.$(':selected').unselect();return}
+    if(k==='delete'||k==='backspace'){const s=cy.$('node:selected');if(s.length){gSnap();s.remove();gStat();gHash()}e.preventDefault();return}
+    if(k==='e'){sel().forEach(id=>gExpand(id));return}
+    if(k==='k'){gFocus(sel());return}
+    if(k==='f'){cy.animate({fit:{eles:cy.elements(),padding:40},duration:200});return}
+    if(k==='l'){cy.nodes().unlock();cy.layout(COSE()).run();return}
+    if(k==='p'){gSetPathMode(!gPathMode);return}
+    if(k==='/'){e.preventDefault();$('#gq').focus();return}
+    if(k==='z'&&(e.ctrlKey||e.metaKey)){e.preventDefault();gUndoDo()}
+  };
+  if(graphSeed&&cy.getElementById(graphSeed).nonempty()){cy.getElementById(graphSeed).select();gInfo(graphSeed);graphSeed=null}
 }
 
 /* ---------- triage script builder ----------
@@ -872,17 +1125,201 @@ function triageScript(os){
     .replace('__TARGETS__',()=>body||(os==='win'?'':': # no targets'))
     .replace('__SECRETS__',()=>secBlock)};
 }
+/* ---------- framework exports from the same plan ----------
+   The native script is one rendering of the plan. The collectors people already
+   run are the others: KAPE, Velociraptor, ForensicArtifacts (Plaso, GRR,
+   Timesketch) and the repository's own Python collector. All four read the same
+   per-row spec triage_spec.py computed at build time, so the five outputs cannot
+   disagree about what a locator means; this code only formats. Each rendering
+   reports what it could not express - a registry key is not a file, a checkout
+   path has no fixed location - instead of silently dropping the row. */
+const ysq=s=>"'"+String(s??'').replace(/'/g,"''")+"'";
+const oneLine=(s,n=180)=>String(s??'').replace(/\s+/g,' ').trim().slice(0,n);
+const reEsc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const planSlug=()=>((activePlan()||{}).name||'AI triage').replace(/[^A-Za-z0-9]+/g,'').slice(0,40)||'AITriage';
+const WINEVT='C:\\Windows\\System32\\winevt\\Logs\\';
+const evtxFile=ch=>String(ch||'').replace(/\//g,'%4')+'.evtx';
+// A GUID derived from the plan id, so downloading the same plan twice yields the
+// same KAPE Id and gkape does not see two targets where there is one.
+function planGuid(){
+  const s=String((activePlan()||{}).id||'plan');
+  const words=[0x811c9dc5,0x01000193,0x9e3779b9,0x7f4a7c15].map((seed,i)=>{let x=seed>>>0;
+    for(const c of s+'|'+i){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0}return x.toString(16).padStart(8,'0')}).join('');
+  return `${words.slice(0,8)}-${words.slice(8,12)}-4${words.slice(13,16)}-${((parseInt(words[16],16)&3)|8).toString(16)}${words.slice(17,20)}-${words.slice(20,32)}`;
+}
+const skipWhy={repo:'repository-relative - only the native script can take a checkout path',
+  nofix:'no fixed path (environment variable, keychain, database or a location the operator supplies)',
+  live:'live state, not a file - the native script captures it',
+  reg:'registry key - this collector copies files, not keys',
+  nowin:'no Windows location', manual:'needs a person'};
+function kapePlan(){
+  const slug='AIDFIR_'+planSlug(), p=activePlan()||{}, rows=[], skip=[], seen=new Set();
+  const add=(path,mask,rec,r)=>{const k=path+'|'+mask;if(seen.has(k))return;seen.add(k);
+    rows.push(`    -\n        Name: ${ysq(oneLine(r.artifact,80))}\n        Category: AIAgents\n        Path: ${ysq(path)}\n        FileMask: ${ysq(mask)}\n${rec?'        Recursive: true\n':''}        Comment: ${ysq(r.entry_id+' | '+r.tool+' | '+oneLine(r.description))}`)};
+  for(const r of planRowsOrdered()){
+    const s=r.spec||{kind:'manual'};
+    if(s.kind==='path'){
+      const ts=s.win||[];
+      if(!ts.length){skip.push([r,(s.mac||[]).length||(s.linux||[]).length?skipWhy.nowin:skipWhy.nofix]);continue}
+      let any=false;
+      for(const t of ts){
+        if(t.startsWith('{REPO}')){skip.push([r,skipWhy.repo]);continue}
+        any=true;
+        const full=t.replace('{HOME}','C:\\Users\\%user%');
+        const segs=full.split('\\'), wild=segs.findIndex((x,i)=>i<segs.length-1&&x.includes('*'));
+        if(wild>0){ // a wildcard directory: KAPE's Path takes no wildcards, so stop above it and recurse
+          const tail=segs[segs.length-1];
+          add(segs.slice(0,wild).join('\\')+'\\',tail&&!tail.includes('\\')?tail||'*':'*',true,r);
+        }else if(full.endsWith('\\'))add(full,'*',true,r);
+        else{const i=full.lastIndexOf('\\');add(full.slice(0,i+1),full.slice(i+1)||'*',false,r)}
+      }
+      if(!any&&!skip.some(x=>x[0]===r))skip.push([r,skipWhy.repo]);
+    }else if(s.kind==='eventlog')add(WINEVT,evtxFile(s.channel),false,r);
+    else if(s.kind==='registry')skip.push([r,skipWhy.reg]);
+    else if(s.kind==='process'||s.kind==='network')skip.push([r,skipWhy.live]);
+    else skip.push([r,s.why||skipWhy.manual]);
+  }
+  const text=`Description: ${ysq(oneLine(p.name||'AI triage plan')+' - AI agent artifacts picked in the collection plan')}\nAuthor: AI Agent Artifact Catalog (ai-dfir-toolkit)\nVersion: 1.0\nId: ${planGuid()}\nRecreateDirectories: true\nTargets:\n${rows.join('\n')}\n`;
+  return {name:slug+'.tkape',mime:'text/plain',text,n:rows.length,skip,
+    how:`Copy the file into KAPE's <code style="display:inline">Targets\\Custom\\</code> folder, then:`,
+    cmd:`kape.exe --tsource C: --tdest D:\\kape_out --target ${slug} --vhdx ${slug}`};
+}
+function veloPlan(){
+  const slug='Custom.AIAgents.Plan.'+planSlug(), p=activePlan()||{};
+  const HOMEV={win:'C:\\Users\\*',mac:'/Users/*',linux:'/home/*'}, OSK={win:'windows',mac:'macos',linux:'linux'};
+  const PRE={windows:"SELECT OS FROM info() WHERE OS = 'windows'",macos:"SELECT OS FROM info() WHERE OS = 'darwin'",linux:"SELECT OS FROM info() WHERE OS = 'linux'"};
+  const globs={windows:[],macos:[],linux:[]}, reg=[], procs=[], ports=[], hosts=[], skip=[];
+  const push=(a,v)=>{if(!a.includes(v))a.push(v)};
+  let n=0;
+  for(const r of planRowsOrdered()){
+    const s=r.spec||{kind:'manual'};
+    if(s.kind==='path'){
+      let any=false, repo=false;
+      for(const os of ['win','mac','linux'])for(const t of (s[os]||[])){
+        if(t.startsWith('{REPO}')){repo=true;continue}
+        any=true;const sep=os==='win'?'\\':'/';
+        let g=t.replace('{HOME}',HOMEV[os]);
+        if(/[\\/]$/.test(g))g=g.replace(/[\\/]+$/,'')+sep+'**';
+        push(globs[OSK[os]],g);
+      }
+      if(any)n++;else skip.push([r,repo?skipWhy.repo:skipWhy.nofix]);
+    }else if(s.kind==='registry'){n++;
+      push(reg,s.win[0].replace(/^HKCU\\/i,'HKEY_USERS\\*\\').replace(/^HKLM\\/i,'HKEY_LOCAL_MACHINE\\')
+        .replace(/^HKU\\/i,'HKEY_USERS\\').replace(/^HKCR\\/i,'HKEY_CLASSES_ROOT\\')+'\\*');
+    }else if(s.kind==='eventlog'){n++;push(globs.windows,WINEVT+evtxFile(s.channel))}
+    else if(s.kind==='process'){n++;s.names.forEach(x=>push(procs,x.replace(/\.exe$/i,'')))}
+    else if(s.kind==='network'){n++;(s.ports||[]).forEach(x=>push(ports,x));(s.hosts||[]).forEach(x=>push(hosts,x))}
+    else skip.push([r,s.why||skipWhy.manual]);
+  }
+  let src='';
+  for(const os of ['windows','macos','linux'])if(globs[os].length)
+    src+=`  - name: ${os[0].toUpperCase()+os.slice(1)}\n    precondition: |\n      ${PRE[os]}\n    query: |\n      LET Globs = [${globs[os].map(ysq).join(', ')}]\n      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime\n        FROM glob(globs=Globs)\n        WHERE NOT IsDir\n      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload\n      FROM Hits\n`;
+  if(reg.length)src+=`  - name: WindowsRegistry\n    precondition: |\n      ${PRE.windows}\n    query: |\n      SELECT OSPath, Name, Data, Mtime\n      FROM glob(globs=[${reg.map(ysq).join(', ')}], accessor='registry')\n`;
+  if(procs.length)src+=`  - name: Processes\n    query: |\n      SELECT Pid, Ppid, Name, Exe, CommandLine, CreateTime, Username\n      FROM pslist()\n      WHERE Name =~ ${ysq('(?i)^('+procs.map(reEsc).join('|')+')(\\.exe)?$')}\n`;
+  if(ports.length)src+=`  - name: Network\n    query: |\n      SELECT Pid, FamilyString AS Family, TypeString AS Type, Laddr, Raddr, Status\n      FROM netstat()\n      WHERE ${ports.map(x=>`Laddr.Port = ${x} OR Raddr.Port = ${x}`).join('\n        OR ')}\n`;
+  if(!src)src='  []\n';
+  const text=`name: ${slug}\ndescription: |\n  ${oneLine(p.name||'AI triage plan')} - artifacts picked in the collection plan${p.host?' for '+oneLine(p.host,60):''}.\n\n  Generated by the ai-dfir-toolkit site from the catalog's collection specs.\n  Metadata only unless Upload is set: credential stores are in here, so pulling\n  them back is a decision, not a default.${hosts.length?`\n  Network rows also name these endpoints, which netstat() cannot match by name:\n  ${hosts.join(', ')}`:''}\nauthor: AI Agent Artifact Catalog (ai-dfir-toolkit)\ntype: CLIENT\nparameters:\n  - name: Upload\n    description: Upload matching files rather than only recording their metadata.\n    type: bool\n    default: "N"\nsources:\n${src}`;
+  return {name:slug+'.yaml',mime:'text/yaml',text,n,skip,
+    how:'Import the definition (Server Artifacts &#8594; Upload, or <code style="display:inline">--definitions</code>), then collect:',
+    cmd:`velociraptor --definitions . artifacts collect ${slug} --output ${planSlug()}.zip`};
+}
+function faPlan(){
+  const p=activePlan()||{}, skip=[], byTool={};
+  const fa=(t,os)=>{let x=t;
+    if(os==='win')x=x.replace(/^\{HOME\}\\AppData\\Roaming/i,'%%users.appdata%%').replace(/^\{HOME\}\\AppData\\Local/i,'%%users.localappdata%%').replace(/^\{HOME\}/,'%%users.homedir%%');
+    else x=x.replace(/^\{HOME\}/,'%%users.homedir%%');
+    return /[\\/]$/.test(x)?x+'**':x};
+  const OSN={win:'Windows',mac:'Darwin',linux:'Linux'};
+  let n=0;
+  for(const r of planRowsOrdered()){
+    const s=r.spec||{kind:'manual'};
+    const g=byTool[r.entry_id]=byTool[r.entry_id]||{tool:r.tool,files:{win:[],mac:[],linux:[]},keys:[],urls:new Set()};
+    if(s.kind==='path'){let any=false,repo=false;
+      for(const os of ['win','mac','linux'])for(const t of (s[os]||[])){if(t.startsWith('{REPO}')){repo=true;continue}
+        any=true;const v=fa(t,os);if(!g.files[os].includes(v))g.files[os].push(v)}
+      if(any)n++;else skip.push([r,repo?skipWhy.repo:skipWhy.nofix]);
+    }else if(s.kind==='registry'){n++;
+      g.keys.push(s.win[0].replace(/^HKCU\\/i,'HKEY_USERS\\%%users.sid%%\\').replace(/^HKLM\\/i,'HKEY_LOCAL_MACHINE\\').replace(/^HKU\\/i,'HKEY_USERS\\').replace(/^HKCR\\/i,'HKEY_CLASSES_ROOT\\'));
+    }else if(s.kind==='eventlog'){n++;const v=WINEVT+evtxFile(s.channel);if(!g.files.win.includes(v))g.files.win.push(v)}
+    else if(s.kind==='process'||s.kind==='network')skip.push([r,skipWhy.live]);
+    else skip.push([r,s.why||skipWhy.manual]);
+  }
+  const docs=[];
+  for(const [eid,g] of Object.entries(byTool)){
+    const srcs=[], oses=new Set();
+    for(const os of ['win','mac','linux'])if(g.files[os].length){oses.add(OSN[os]);
+      srcs.push(`- type: FILE\n  attributes:\n    paths:\n${g.files[os].map(x=>'    - '+ysq(x)).join('\n')}\n    separator: ${ysq(os==='win'?'\\':'/')}\n  supported_os: [${OSN[os]}]`)}
+    if(g.keys.length){oses.add('Windows');srcs.push(`- type: REGISTRY_KEY\n  attributes:\n    keys:\n${g.keys.map(x=>'    - '+ysq(x)).join('\n')}\n  supported_os: [Windows]`)}
+    if(!srcs.length)continue;
+    const camel=g.tool.replace(/\(.*\)/,'').split(/[^A-Za-z0-9]+/).filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join('');
+    docs.push(`name: ${planSlug()}${camel}\ndoc: ${ysq(`${g.tool} (${eid}) - rows picked in the collection plan ${oneLine(p.name||'',60)}`.trim())}\nsources:\n${srcs.join('\n')}\nsupported_os: [${[...oses].sort().join(', ')}]`);
+  }
+  const text=`# ForensicArtifacts-format definitions for one collection plan, generated by the\n# ai-dfir-toolkit site. Spec: https://github.com/ForensicArtifacts/artifacts\n# Load into Plaso, GRR or Timesketch alongside their stock definitions.\n---\n${docs.join('\n---\n')}\n`;
+  return {name:'aidfir-'+planSlug().toLowerCase()+'.yaml',mime:'text/yaml',text,n,skip,
+    how:'Drop the file into your artifact definitions directory and name the definitions when you collect, e.g. with Plaso:',
+    cmd:`log2timeline.py --artifact-definitions ./artifacts --artifact-filters ${Object.keys(byTool).length?planSlug()+'*':''} ${planSlug()}.plaso /`};
+}
+function pyPlan(){
+  const p=activePlan()||{}, skip=[], out=[];
+  const tok=(t,os)=>{let x=t;
+    if(x.startsWith('{REPO}'))return x.replace(/^\{REPO\}[\\/]?/,'').replace(/\\/g,'/');
+    if(os==='win')x=x.replace(/^\{HOME\}\\AppData\\Roaming/i,'$APPDATA').replace(/^\{HOME\}\\AppData\\Local/i,'$LOCALAPPDATA').replace(/^\{HOME\}/,'~');
+    else x=x.replace(/^\{HOME\}/,'~');
+    return x};
+  for(const r of planRowsOrdered()){
+    const s=r.spec||{kind:'manual'};
+    if(s.kind!=='path'){skip.push([r,s.kind==='manual'?(s.why||skipWhy.manual):s.kind==='registry'?skipWhy.reg:skipWhy.live]);continue}
+    const all=['win','mac','linux'].flatMap(os=>(s[os]||[]).map(t=>[os,t]));
+    if(!all.length){skip.push([r,skipWhy.nofix]);continue}
+    const proj=all.every(([,t])=>t.startsWith('{REPO}')), paths=[...new Set(all.filter(([,t])=>t.startsWith('{REPO}')===proj).map(([os,t])=>tok(t,os)))];
+    const oses=[...new Set(all.map(([os])=>({win:'windows',mac:'macos',linux:'linux'})[os]))];
+    const type=paths.some(x=>/[*?\[]/.test(x))?'glob':paths.every(x=>/[\\/]$/.test(x))?'dir':'file';
+    out.push(`  - id: ${r.anchor.replace(/[^A-Za-z0-9_]+/g,'_')}\n    name: ${ysq(oneLine(r.tool+': '+r.artifact,120))}\n    repo_cat: cross\n    cosai: []\n    os: [${oses.join(', ')}]\n    scope: ${proj?'project':'user'}\n    type: ${type}\n    sensitivity: ${s.secret?'secret':'normal'}\n    paths:\n${paths.map(x=>'      - '+ysq(x)).join('\n')}\n    notes: ${ysq(oneLine(r.description,200))}`);
+  }
+  const text=`# targets.yaml subset for one collection plan - ${oneLine(p.name||'',60)}\n# Generated by the ai-dfir-toolkit site; same schema as collectors/targets.yaml.\n# Project-scoped rows need --project-dir. Secrets are hashed, not copied,\n# unless you pass --collect-secrets.\nversion: 1\n\ntargets:\n${out.join('\n\n')}\n`;
+  return {name:'targets-'+planSlug().toLowerCase()+'.yaml',mime:'text/yaml',text,n:out.length,skip,
+    how:'Run the repository collector against this file instead of the full registry:',
+    cmd:`python3 collectors/collect_ai_artifacts.py --targets targets-${planSlug().toLowerCase()}.yaml --case-id IR-001 --operator you --output ./cases${out.some(x=>/scope: project/.test(x))?' --project-dir /path/to/repo':''}`};
+}
+const FW={native:{label:'Native script'},velo:{label:'Velociraptor',make:veloPlan,
+    feed:'velociraptor',feedLabel:'per-tool artifact definitions',note:'Best for a fleet, or when you already run it. One artifact, one source per OS, metadata-only unless Upload is set.'},
+  kape:{label:'KAPE',make:kapePlan,feed:'kape',feedLabel:'per-tool .tkape targets',
+    note:'Windows only. One target file holding every picked row KAPE can express; the compound AIAgents_P1 target is the fallback when there is no time to pick.'},
+  fa:{label:'ForensicArtifacts',make:faPlan,feed:'',feedLabel:'',
+    note:'The format Plaso, GRR and Timesketch read. One definition per picked tool, FILE and REGISTRY_KEY sources with knowledge-base tokens.'},
+  py:{label:'Python collector',make:pyPlan,feed:'',feedLabel:'',
+    note:'The repository\'s cross-platform collector, scoped to this plan. Needs Python 3 and PyYAML on the host; hashes everything and writes a chain-of-custody manifest.'}};
+function fwPanel(fw){
+  const d=FW[fw], x=d.make();
+  const tools=[...new Set(planRowsOrdered().map(r=>r.entry_id))].map(id=>TOOLMAP[id]).filter(Boolean);
+  const pre=fw==='velo'?tools.filter(t=>t.velo).map(t=>t.velo):fw==='kape'?tools.filter(t=>t.kape).map(t=>t.kape):[];
+  const bySkip={};for(const [r,why] of x.skip)(bySkip[why]=bySkip[why]||[]).push(r);
+  return `<div class="fw"><div class="fwc">
+    <p class="gnote">${d.note}</p>
+    <p class="tcount">${x.n} of ${planRowsOrdered().length} picked rows rendered${x.skip.length?`, <b>${x.skip.length}</b> not expressible in this format (listed below)`:''}.</p>
+    <div class="gbtns"><button class="btn primary" id="fwDl">Download ${esc(x.name)}</button>
+      <button class="btn" id="fwCopy">Copy</button></div>
+    <p class="gnote" style="margin-top:8px">${x.how}</p><code>${esc(x.cmd)}</code>
+    ${pre.length?`<p class="gnote" style="margin-top:8px">Or use the repository's ${d.feedLabel} for the picked tools:
+      <code style="display:inline">${pre.map(esc).join(' ')}</code> &middot;
+      <a href="${REPO_URL}/tree/main/artifacts/docs/api/${d.feed}" target="_blank" rel="noopener">browse &#8599;</a></p>`:''}
+    ${x.skip.length?`<details class="fwskip"><summary class="gnote">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</summary>
+      ${Object.entries(bySkip).map(([why,rs])=>`<p class="gnote"><b>${esc(why)}</b></p><ul class="skiplist">${rs.map(r=>
+        `<li><button class="lnk" data-row="${esc(r.anchor)}">${esc(r.tool)} &middot; ${esc(r.artifact)}</button></li>`).join('')}</ul>`).join('')}
+      <p class="gnote">The native script carries every one of these as a manifest line, so nothing is lost by running both.</p></details>`:''}
+    <details><summary class="gnote">Preview</summary><pre>${esc(x.text)}</pre></details>
+  </div></div>`;
+}
 function triageHTML(){
   if(!picks.size)return '';
   const osL={win:'Windows (PowerShell)',mac:'macOS (bash)',linux:'Linux (bash)'};
   const sc=triageScript(triageOS);
-  const tools=[...new Set(planRowsOrdered().map(r=>r.entry_id))].map(id=>TOOLMAP[id]).filter(Boolean);
-  const velo=tools.filter(t=>t.velo).map(t=>t.velo), kape=tools.filter(t=>t.kape).map(t=>t.kape);
-  return `<div class="tbuild"><h3>Triage script</h3>
-    <p class="gnote">Collection without writing one. Pick how you will collect; the native script is the
-    default because it needs nothing installed on the host.</p>
-    <div class="seg small" role="group" aria-label="Collection method">${[['native','Native script'],['velo','Velociraptor'],
-      ['kape','KAPE'],['py','Python collector']].map(([k,l])=>`<button class="segbtn${triageFw===k?' on':''}" data-fw="${k}">${l}</button>`).join('')}</div>
+  return `<div class="tbuild"><h3>Collect it</h3>
+    <p class="gnote">The plan rendered for whichever collector you will run. All five read the same
+    per-row collection spec, so they agree on what each path is; they differ in what they can carry.
+    The native script is the default because it needs nothing installed on the host.</p>
+    <div class="seg small" role="group" aria-label="Collection method">${Object.entries(FW).map(([k,d])=>
+      `<button class="segbtn${triageFw===k?' on':''}" data-fw="${k}">${d.label}</button>`).join('')}</div>
     ${triageFw==='native'?`
       <div class="seg small" role="group" aria-label="Operating system" style="margin-top:8px">${Object.entries(osL).map(([k,l])=>
         `<button class="segbtn${triageOS===k?' on':''}" data-os="${k}">${l}</button>`).join('')}</div>
@@ -894,22 +1331,7 @@ function triageHTML(){
       <div class="gbtns"><button class="btn primary" id="tDl">Download ${esc(sc.name)}</button>
         <button class="btn" id="tCopy">Copy</button></div>
       <details><summary class="gnote">Preview</summary><pre>${esc(sc.text)}</pre></details>`
-    :triageFw==='velo'?`<div class="fw"><div class="fwc"><h4>Velociraptor</h4>
-      <p>Best for a fleet, or when you already run it. Import the artifact definitions from the feed, then collect.</p>
-      ${velo.length?`<code>velociraptor --definitions artifacts/docs/api/velociraptor/ artifacts collect ${velo.map(esc).join(' ')} --output triage.zip</code>`
-        :'<p>No picked tool has a Velociraptor artifact.</p>'}
-      <p style="margin-top:6px"><a href="${REPO_URL}/tree/main/artifacts/docs/api/velociraptor" target="_blank" rel="noopener">artifact definitions &#8599;</a>
-      · <code style="display:inline">Custom.AIAgents.Triage</code> collects every catalogued tool.</p></div></div>`
-    :triageFw==='kape'?`<div class="fw"><div class="fwc"><h4>KAPE (Windows)</h4>
-      <p>Best if your Windows triage already runs through KAPE. Copy the .tkape targets into KAPE's Targets folder.</p>
-      ${kape.length?`<code>kape.exe --tsource C: --tdest D:\\kape_out --target ${kape.map(esc).join(',')} --vhdx triage</code>`
-        :'<p>No picked tool has a KAPE target.</p>'}
-      <p style="margin-top:6px"><a href="${REPO_URL}/tree/main/artifacts/docs/api/kape" target="_blank" rel="noopener">targets &#8599;</a>
-      · <code style="display:inline">AIAgents_P1</code> is the priority-one compound target.</p></div></div>`
-    :`<div class="fw"><div class="fwc"><h4>Python collector</h4>
-      <p>The repository's cross-platform collector, driven by collectors/targets.yaml. Needs Python 3 and PyYAML on the host.</p>
-      <code>python3 collectors/collect_ai_artifacts.py --case-id IR-001 --operator you --output ./cases --project-dir /path/to/repo</code>
-      <p style="margin-top:6px">Add <code style="display:inline">--dry-run</code> to enumerate and hash without copying.</p></div></div>`}
+    :fwPanel(triageFw)}
   </div>`;
 }
 function wireTriage(){
@@ -918,5 +1340,9 @@ function wireTriage(){
   const dl=$('#tDl');if(dl)dl.onclick=()=>{const s=triageScript(triageOS);
     download(s.name,s.text.replace(/\r?\n/g,triageOS==='win'?'\r\n':'\n'),'text/plain');flash(dl,'downloaded')};
   const cp=$('#tCopy');if(cp)cp.onclick=()=>copy(triageScript(triageOS).text,cp);
+  const fd=$('#fwDl');if(fd)fd.onclick=()=>{const x=FW[triageFw].make();
+    download(x.name,x.text.replace(/\r?\n/g,triageFw==='kape'?'\r\n':'\n'),x.mime);flash(fd,'downloaded')};
+  const fc=$('#fwCopy');if(fc)fc.onclick=()=>copy(FW[triageFw].make().text,fc);
+  $$('#main .fwskip [data-row]').forEach(b=>b.onclick=()=>openDrawer(b.dataset.row,b));
 }
 """

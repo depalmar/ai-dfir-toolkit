@@ -90,6 +90,15 @@ def _norm_owasp(v: str) -> str:
     return f"LLM{int(m.group(1)):02d}" if m else ""
 
 
+def _norm_attack(v: str) -> str:
+    """attack.t1059.001, T1059.001, attack.T1059 -> T1059.001. Tactic tags such as
+    attack.initial_access are not techniques and normalise to ''."""
+    m = re.search(r"(?:^|\.)t(\d{4})(?:\.(\d{3}))?$", str(v).strip().lower())
+    if not m:
+        return ""
+    return "T" + m.group(1) + ("." + m.group(2) if m.group(2) else "")
+
+
 def _norm_asi(v: str) -> str:
     """owasp.asi01, ASI01, ASI 01, ASI01:2026 -> ASI01 (OWASP Agentic Top 10)."""
     m = re.search(r"ASI\s*0?(\d+)", v.strip().upper())
@@ -234,8 +243,10 @@ def load_rules(mapping_rows):
             atlas = sorted(set(r["atlas"]) | {_norm_atlas(x) for x in row.get("atlas", [])})
             owasp = sorted(set(r["owasp"]) | {_norm_owasp(x) for x in row.get("owasp", [])})
             asi = sorted({_norm_asi(x) for x in row.get("asi", [])} - {""})
+            attack = sorted({_norm_attack(x) for x in r.get("attack", [])} - {""})
             r.update({
                 "asi": asi,
+                "attack": attack,
                 "file": path.name,
                 "path": str(path.relative_to(REPO)),
                 "category": category_label(label),
@@ -289,40 +300,18 @@ def load_mappings():
                 "reference": next((v for k, v in col.items()
                                    if "reference" in k), ""),
             }
-        elif section == "atlas_index" and len(cells) >= 3:
-            atlas_index.append({"id": _norm_atlas(cells[0]), "raw": cells[0],
-                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
-        elif section == "owasp_index" and len(cells) >= 3:
-            owasp_index.append({"id": _norm_owasp(cells[0]), "raw": cells[0],
-                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
-    return rows, atlas_index, owasp_index
-    section = None
-    for line in MAPPINGS.read_text(encoding="utf-8").splitlines():
-        if line.startswith("## "):
-            head = line[3:].strip().lower()
-            section = ("atlas_index" if "atlas technique index" in head
-                       else "owasp_index" if "owasp top 10" in head and "index" in head
-                       else "rules")
-            continue
-        if not line.startswith("|") or set(line.strip()) <= set("|-: "):
-            continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if not cells or cells[0].lower() in ("rule", "atlas id", "owasp"):
-            continue
-        if section == "rules" and len(cells) >= 5:
-            name = cells[0].strip("`")
-            rows[name] = {
-                "format": cells[1],
-                "atlas": [x.strip() for x in cells[2].split(",") if x.strip() and x.strip() != "-"],
-                "owasp": [x.strip() for x in cells[3].split(",") if x.strip() and x.strip() != "-"],
-                "reference": cells[4],
-            }
-        elif section == "atlas_index" and len(cells) >= 3:
-            atlas_index.append({"id": _norm_atlas(cells[0]), "raw": cells[0],
-                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
-        elif section == "owasp_index" and len(cells) >= 3:
-            owasp_index.append({"id": _norm_owasp(cells[0]), "raw": cells[0],
-                                "title": cells[1], "count": int(re.sub(r"\D", "", cells[2]) or 0)})
+        elif section in ("atlas_index", "owasp_index") and len(cells) >= 3:
+            # The count is read by header, not by position. The ATLAS index
+            # gained a Tactic column between the ID and the count, and reading
+            # cells[2] turned "Initial Access" into 0 for every technique - the
+            # coverage table showed no rules anywhere and nothing failed.
+            count_cell = next((v for k, v in col.items() if "count" in k), cells[-1])
+            item = {"raw": cells[0], "title": cells[1],
+                    "count": int(re.sub(r"\D", "", count_cell) or 0)}
+            if section == "atlas_index":
+                atlas_index.append({"id": _norm_atlas(cells[0]), **item})
+            else:
+                owasp_index.append({"id": _norm_owasp(cells[0]), **item})
     return rows, atlas_index, owasp_index
 
 
