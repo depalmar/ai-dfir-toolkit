@@ -138,9 +138,9 @@ CSS = r"""
 .tchip.t-hash,.tchip.t-repo,.tchip.t-manual{border-style:dashed}
 .tchip.t-secret{border-color:var(--gap);color:var(--gap)}.tchip.t-secret b{color:var(--gap)}
 .tchip.t-skip{opacity:.7}
-.tconf{display:inline-flex;height:8px;width:120px;border-radius:3px;overflow:hidden;background:var(--line-soft);margin-left:4px}
-.tconf .cs{display:block;height:100%}
-.tconf .c-high{background:var(--conf-strong)}.tconf .c-med{background:var(--series-3)}.tconf .c-low{background:var(--gap)}
+.tconf{display:inline-flex;height:8px;width:120px;border-radius:3px;overflow:hidden;background:var(--line-soft);margin-right:4px;flex:none}
+.tconf .tcseg{display:block;height:8px;min-width:0;padding:0;border:0;border-radius:0}
+.tconf .tc-high{background:var(--conf-strong)}.tconf .tc-med{background:var(--series-3)}.tconf .tc-low{background:var(--gap)}
 .brun{margin:6px 0 10px}.brun ol{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--muted)}.brun li{margin:3px 0}
 .tform{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 12px;margin:10px 0 6px}
 .tform label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted)}
@@ -1139,7 +1139,7 @@ function triageSummaryHTML(rows){
   const order=['copy','hash','secret','live','manual','repo','skip'];
   return `<div class="tsum">${order.filter(k=>c[k]).map(k=>`<span class="tchip t-${k}"><b>${c[k]}</b> ${STATE_LABEL[k]}</span>`).join('')}</div>
     <div class="tsum tsum2"><span class="tconf" title="Row confidence: high is host- or vendor-verified, medium is multi-source, low is single-source">
-      <i class="cs c-high" style="flex:${conf.high}"></i><i class="cs c-med" style="flex:${conf.medium}"></i><i class="cs c-low" style="flex:${conf.low}"></i></span>
+      ${[['high',conf.high],['med',conf.medium],['low',conf.low]].filter(([,n])=>n).map(([k,n])=>`<i class="tcseg tc-${k}" style="flex:${n}"></i>`).join('')}</span>
     <span class="gnote">${conf.high} verified · ${conf.medium} multi-source · ${conf.low} single-source${conf.unv?` · <b>${conf.unv} unverified</b>`:''}</span></div>`;
 }
 function runCmd(){
