@@ -167,13 +167,13 @@ configs, plaintext credential files, model files, macOS autostart). It answers
 
 ## ATLAS Technique Index
 
-Titles are ATLAS 2026.09 names, generated from `artifacts/schema/technique-ids.json` by `artifacts/scripts/sync_mappings.py`.
+Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.json` by `artifacts/scripts/sync_mappings.py`.
 
 | ATLAS ID | Title | Tactic | Rule count |
 |----------|-------|--------|------------|
-| T0010    | AI Supply Chain Compromise | Initial Access | 9 |
-| T0010.002 | AI Supply Chain Compromise: Data | Initial Access | 3 |
-| T0010.003 | AI Supply Chain Compromise: Model | Initial Access | 3 |
+| T0010    | Supply Chain Compromise | Initial Access | 9 |
+| T0010.002 | Supply Chain Compromise: Data Repository | Initial Access | 3 |
+| T0010.003 | Supply Chain Compromise: Model Repository | Initial Access | 3 |
 | T0011    | User Execution | Execution | 13 |
 | T0018    | Manipulate AI Model | AI Attack Adaptation, Persistence | 5 |
 | T0020    | Training Data Poisoning | Persistence | 3 |
