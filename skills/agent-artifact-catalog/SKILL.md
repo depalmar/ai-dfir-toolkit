@@ -202,6 +202,18 @@ count is computed. `enable`, `retention`, `default_state`, `without_it` and at
 least one reference are all required, on the same reasoning as a catalog entry -
 an unsourced claim about somebody's estate is a guess.
 
+A source ties itself to the corpus through `covers`, and every dimension there
+is matched against the rows rather than counted by hand: `classes` (narrowed by
+`os` when the source only exists on some platforms - Sysmon does not see a macOS
+process row), `sigma`, `eventlog`, `hosts` and `locators`. Use `hosts` for a
+provider-side log: the network rows already name `api.anthropic.com` or
+`amazonaws.com`, so CloudTrail or the Compliance API is linked to exactly the
+tools that talk to it, and a host nothing names fails the audit. Use `locators`
+for a source that exists only where a row is scoped to a checkout. Do not add a
+tool list; if none of the five fits, the source is prose for the guide, not a
+row here. Coverage is audited per OS, so a class that only Windows sources
+claim fails on the day a macOS row of that class is added.
+
 ## MCP entries need extra care
 
 **Pick the mechanism before you look for a path.** `config-file` is only one of

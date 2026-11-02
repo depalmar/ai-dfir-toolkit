@@ -14,12 +14,23 @@ day it is written and silently wrong afterwards. Volatility falls out of the row
 class and the artifact type. Source coverage falls out of the catalog and the
 rule corpus, matched against the prose in docs/data-sources.yml.
 
+A source claims coverage through five derived dimensions, all matched against
+the corpus rather than counted by hand:
+  classes    row classes it makes visible, optionally narrowed by `os` so a
+             macOS-only source is not credited with Windows rows
+  sigma      Sigma logsource categories it satisfies
+  eventlog   [channel, event_id] pairs
+  hosts      hostnames (or parent domains) that network rows name - this is how
+             a provider's own audit log is tied to the tools that talk to it
+  locators   locator prefixes such as <repo>, for sources that only exist where
+             a row is scoped to a checkout
+
 `audit()` is the gate. It fails when:
   - an eventlog row's channel and ID map to no defined source
   - a Sigma logsource category in the rule corpus maps to no defined source
-  - a catalog row class maps to no defined source
-  - a source claims coverage - a class, a category, a channel - that nothing in
-    the corpus actually uses
+  - a catalog row class maps to no defined source, on any OS its rows name
+  - a source claims coverage - a class, an OS, a category, a channel, a host, a
+    locator - that nothing in the corpus actually uses
 
 The last one matters as much as the others. A source that over-claims makes the
 coverage numbers look better than the estate does, which is the failure this
@@ -33,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import re
 import sys
 from pathlib import Path
 
@@ -118,47 +130,98 @@ def sigma_categories() -> dict[str, list[str]]:
     return out
 
 
+HOST_RE = re.compile(r"\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b")
+LOCATOR_RE = re.compile(r"^<(\w+)>")
+
+
+def _os_of(row: dict, entry: dict, cls: str = "") -> list[str]:
+    # A registry key or an event log channel is a Windows artifact whatever the
+    # entry's supported_os says; the row rarely repeats the platform.
+    if cls in ("registry", "eventlog"):
+        return ["windows"]
+    declared = [str(o).lower() for o in (row.get("os") or entry.get("supported_os") or [])]
+    return declared or ["any"]
+
+
 def coverage(sources: list[dict], entries: list[dict]) -> dict:
     """Count what each source actually makes visible. Derived, never authored."""
     cats = sigma_categories()
 
-    # Row counts per class, and the eventlog channel/ID pairs in use.
-    per_class: dict[str, int] = {}
-    channels: dict[tuple, int] = {}
-    tools_by_class: dict[str, set] = {}
+    # Every row once, with the facets a source can match on: class, OS, the
+    # hostnames a network row names, and the locator prefix a scoped row starts
+    # with. eventlog rows also carry their channel and ID.
+    rows: list[dict] = []
     for e in entries:
         for cls, items in (e.get("artifacts") or {}).items():
-            per_class[cls] = per_class.get(cls, 0) + len(items or [])
-            tools_by_class.setdefault(cls, set()).add(e["name"])
-            if cls == "eventlog":
-                for row in items or []:
-                    key = (row.get("channel"), str(row.get("event_id")))
-                    channels[key] = channels.get(key, 0) + 1
-        for _ in e.get("credentials") or []:
-            per_class["credential"] = per_class.get("credential", 0) + 1
-            tools_by_class.setdefault("credential", set()).add(e["name"])
-        for _ in e.get("mcp") or []:
-            per_class["mcp-config"] = per_class.get("mcp-config", 0) + 1
-            tools_by_class.setdefault("mcp-config", set()).add(e["name"])
+            for row in items or []:
+                loc = str(row.get("path") or row.get("key") or row.get("indicator") or
+                          row.get("channel") or row.get("name") or "")
+                rows.append({"cls": cls, "tool": e["name"], "entry_id": e["id"],
+                             "os": _os_of(row, e, cls),
+                             "hosts": HOST_RE.findall(loc.lower()) if cls == "network" else [],
+                             "locator": (LOCATOR_RE.match(loc) or [None, ""])[1],
+                             "channel": (row.get("channel"), str(row.get("event_id")))
+                             if cls == "eventlog" else None})
+        for c in e.get("credentials") or []:
+            loc = str(c.get("location") or "")
+            rows.append({"cls": "credential", "tool": e["name"], "entry_id": e["id"],
+                         "os": _os_of(c, e), "hosts": [],
+                         "locator": (LOCATOR_RE.match(loc) or [None, ""])[1], "channel": None})
+        for m in e.get("mcp") or []:
+            loc = str(m.get("config_path") or "")
+            rows.append({"cls": "mcp-config", "tool": e["name"], "entry_id": e["id"],
+                         "os": _os_of(m, e), "hosts": [],
+                         "locator": (LOCATOR_RE.match(loc) or [None, ""])[1], "channel": None})
+
+    per_class: dict[str, int] = {}
+    class_os: dict[str, set] = {}
+    channels: dict[tuple, int] = {}
+    hosts_seen: set[str] = set()
+    locators_seen: set[str] = set()
+    for r in rows:
+        per_class[r["cls"]] = per_class.get(r["cls"], 0) + 1
+        class_os.setdefault(r["cls"], set()).update(r["os"])
+        if r["channel"]:
+            channels[r["channel"]] = channels.get(r["channel"], 0) + 1
+        hosts_seen.update(r["hosts"])
+        if r["locator"]:
+            locators_seen.add(r["locator"])
+
+    def host_hit(claimed: str, names: list[str]) -> bool:
+        c = claimed.lower()
+        return any(h == c or h.endswith("." + c) for h in names)
 
     out = []
     for s in sources:
         cov = s.get("covers") or {}
         classes = cov.get("classes") or []
-        rows = sum(per_class.get(c, 0) for c in classes)
+        os_filter = [str(o).lower() for o in cov.get("os") or []]
+        hosts = cov.get("hosts") or []
+        locators = cov.get("locators") or []
+        hit = []
+        for r in rows:
+            by_class = r["cls"] in classes and (not os_filter or
+                                                 set(os_filter) & set(r["os"]))
+            by_host = any(host_hit(h, r["hosts"]) for h in hosts)
+            by_loc = r["locator"] in locators if r["locator"] else False
+            if by_class or by_host or by_loc:
+                hit.append(r)
+        class_rows: dict[str, int] = {}
+        for r in hit:
+            class_rows[r["cls"]] = class_rows.get(r["cls"], 0) + 1
         # An eventlog source is credited with the rows whose channel and ID it
         # names, on top of any class it covers. Both are real coverage and they
         # count different things, so they are reported separately.
         elog = sum(channels.get((c, str(i)), 0) for c, i in
                    (tuple(p) for p in cov.get("eventlog") or []))
         rules = sorted({f for cat in cov.get("sigma") or [] for f in cats.get(cat, [])})
-        tools = set()
-        for c in classes:
-            tools |= tools_by_class.get(c, set())
-        out.append({**s, "n_rows": rows, "n_eventlog_rows": elog,
-                    "rules": rules, "n_rules": len(rules), "n_tools": len(tools)})
-    return {"sources": out, "per_class": per_class, "channels": channels,
-            "sigma_categories": cats}
+        tools = sorted({(r["entry_id"], r["tool"]) for r in hit})
+        out.append({**s, "n_rows": len(hit), "class_rows": class_rows,
+                    "n_eventlog_rows": elog, "rules": rules, "n_rules": len(rules),
+                    "n_tools": len(tools), "tools": [{"id": i, "name": n} for i, n in tools]})
+    return {"sources": out, "per_class": per_class, "class_os": class_os,
+            "channels": channels, "sigma_categories": cats,
+            "hosts": hosts_seen, "locators": locators_seen}
 
 
 def audit(cov: dict) -> list[str]:
@@ -181,6 +244,16 @@ def audit(cov: dict) -> list[str]:
         if cls not in claimed_classes:
             problems.append(f"row class {cls!r} maps to no data source - "
                             f"{cov['per_class'][cls]} rows are unattributed")
+            continue
+        # A class is covered per OS, not in the abstract: five Windows-only
+        # sources claiming `process` left the macOS and Linux process rows
+        # credited to Sysmon, which cannot see them.
+        for os_name in sorted(cov["class_os"].get(cls, ())):
+            if not any(cls in ((x.get("covers") or {}).get("classes") or []) and
+                       (not (x.get("covers") or {}).get("os") or os_name == "any" or
+                        os_name in [str(o).lower() for o in x["covers"]["os"]])
+                       for x in srcs):
+                problems.append(f"row class {cls!r} on {os_name} maps to no data source")
     for cat in sorted(cov["sigma_categories"]):
         if cat not in claimed_cats:
             problems.append(f"sigma logsource category {cat!r} maps to no data "
@@ -205,6 +278,24 @@ def audit(cov: dict) -> list[str]:
             if (pair[0], str(pair[1])) not in {(a, str(b)) for a, b in cov["channels"]}:
                 problems.append(f"{s['id']}: claims {pair[0]} EID {pair[1]}, which "
                                 f"no catalog row uses")
+        for os_name in cov_.get("os") or []:
+            if str(os_name).lower() not in {o for v in cov["class_os"].values() for o in v}:
+                problems.append(f"{s['id']}: claims OS {os_name!r}, which no catalog "
+                                f"row names")
+        if cov_.get("os") and not cov_.get("classes"):
+            problems.append(f"{s['id']}: `os` narrows `classes`, and there are none")
+        for host in cov_.get("hosts") or []:
+            h = str(host).lower()
+            if not any(x == h or x.endswith("." + h) for x in cov["hosts"]):
+                problems.append(f"{s['id']}: claims host {host!r}, which no network "
+                                f"row names")
+        for loc in cov_.get("locators") or []:
+            if loc not in cov["locators"]:
+                problems.append(f"{s['id']}: claims locator <{loc}>, which no row "
+                                f"starts with")
+        if s.get("kind") not in ("eventlog", "file", "live", "network"):
+            problems.append(f"{s['id']}: kind {s.get('kind')!r} is not one of "
+                            f"eventlog, file, live, network")
         if s.get("volatility") not in VOLATILITY_ORDER:
             problems.append(f"{s['id']}: volatility {s.get('volatility')!r} is not "
                             f"one of {VOLATILITY_ORDER}")

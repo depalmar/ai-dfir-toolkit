@@ -171,7 +171,16 @@ switch a source on, what it costs to keep, what you cannot answer without it.
 Every count on the Data sources tab is computed at build time, and `audit()`
 fails **both** directions - a row class, Sigma logsource category or event log
 channel that maps to no source, and a source claiming coverage the corpus does
-not supply. The second half matters as much as the first: an over-claiming
+not supply. A source ties itself to the corpus through five derived dimensions:
+`classes` (optionally narrowed by `os`), `sigma`, `eventlog`, `hosts` and
+`locators`. `hosts` is how a provider-side log - CloudTrail, Purview, the
+GitHub audit log, Anthropic's Compliance API - is linked to the tools that
+talk to it: the network rows name the endpoint, so the link is derived and a
+host nothing names fails the audit. Coverage is checked **per OS**: the first
+nine sources were all Windows, and the macOS and Linux process rows were being
+credited to Sysmon, which cannot see them. Never author a tool list on a
+source; if a source cannot be tied to the corpus by one of the five, it is
+prose, and prose goes in the guide. The second half matters as much as the first: an over-claiming
 source makes an estate look better instrumented than it is. `validate.py` and
 `build_site.py --check` both run it.
 
@@ -317,7 +326,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 ## Current state
 
 51 entries, 622 artifacts, 164 credential locations, 66 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 9 telemetry sources.
+locations, 12 endpoint Sigma rules, 14 case studies, 25 telemetry sources.
 Validation clean.
 
 Volatility across the 622 site rows: live 114 · rotating 53 · stable 455
