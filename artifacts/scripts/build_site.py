@@ -2809,7 +2809,7 @@ function renderMain(){
     if(hs)hs.oninput=()=>{const a=activePlan();if(a){a.host=hs.value;a.updated=nowISO();savePlans()}};
     const sw=$('#pSwitch'); if(sw)sw.onchange=()=>switchPlan(sw.value);
     const nw=$('#pNew'); if(nw)nw.onclick=()=>createPlan('');
-    $$('#main .segbtn').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
+    $$('#main .segbtn[data-mode]').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
     const cl=$('#cpClear');
     // Two-step, because a plan is assembled one tick at a time across the whole
     // catalog and there is no undo for throwing it away.
