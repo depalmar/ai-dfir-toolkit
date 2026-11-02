@@ -427,6 +427,16 @@ Four things worth not relearning:
   now, so a seventh class fails loudly instead of quietly.
 - Row **anchors**, not row indexes, are what picks and permalinks persist
   against. `--check` enforces that they are unique and URL-safe.
+- `site_data.load_mappings()` reads MAPPINGS index tables **by header name**,
+  never by cell position. The ATLAS index gained a Tactic column between the
+  ID and the count, and a positional read turned "Initial Access" into 0 for
+  every technique - the coverage table showed no rules anywhere, and no gate
+  noticed because the counts it compared were both derived the same wrong way.
+  If a MAPPINGS table gains a column, the site must still find `Rule count`.
+- The collection plan's KAPE, Velociraptor, ForensicArtifacts and collector
+  exports are rendered in the browser from `triage_spec.py`'s per-row specs,
+  the same ones the native scripts use. Add a new locator shape there, not in
+  the JavaScript, or the five outputs drift apart.
 - "What it proves" is derived for registry, network and process rows, because
   the schema only declares `evidence_type` on disk artifacts. Derive inside the
   schema's enum, and prefer fixing the schema when it is next touched.
