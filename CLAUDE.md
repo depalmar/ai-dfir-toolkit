@@ -423,6 +423,13 @@ table. The guide's incident timeline is injected at the
 never rows to it. Anchor offsets come from `--hdrh`, measured from the sticky
 header by `syncHdr()`; do not reintroduce a fixed pixel offset.
 
+The catalog only sees AI that ran on the responder's systems. Do not let it
+imply otherwise: an attacker's AI on their own infrastructure leaves no row,
+which is what the guide's "Where did the AI run?" section and each drawer's
+derived "Where you would see it" line say. Guide diagrams are capped at
+760x420 with click-to-enlarge; the SVGs carry an inline max-width, hence the
+!important.
+
 Four things worth not relearning:
 
 - Every embedded data blob goes through `js_data()`, which escapes `</`. A

@@ -1159,6 +1159,15 @@ button.istat:hover{background:var(--hover)}
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
 @media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+.scopenote{position:relative;margin:0 0 12px;padding:10px 40px 10px 14px;background:var(--panel);
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:12.5px;color:var(--muted)}
+.scopenote p{margin:0 0 4px;max-width:110ch}
+.scopenote b{color:var(--ink)}
+.scopenote ol{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:2px 18px;counter-reset:sn}
+.scopenote li{counter-increment:sn}
+.scopenote li::before{content:counter(sn) ". ";color:var(--accent);font-weight:600}
+.scopenote .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline}
+.scopenote .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--faint);font-size:13px}
 .okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
 .okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
   border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
@@ -1291,13 +1300,14 @@ figure.mmd text,figure.mmd tspan,figure.mmd p,figure.mmd span,
 figure.mmd div{fill:#1f2328;color:#1f2328}
 figure.mmd p{margin:0;font-size:inherit}
 figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
-figure.mmd svg{width:auto;max-width:100%;height:auto;max-height:560px;display:block;margin:0 auto}
+/* !important because each pre-rendered SVG carries an inline max-width:100%. */
+figure.mmd svg{width:auto;max-width:min(100%,760px)!important;height:auto;max-height:420px;display:block;margin:0 auto}
 figure.mmd{cursor:zoom-in;position:relative}
 figure.mmd::after{content:'Click to enlarge';position:absolute;right:10px;bottom:8px;font-size:11px;
   color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
 figure.mmd.big{cursor:zoom-out}
 figure.mmd.big::after{content:'Click to shrink'}
-figure.mmd.big svg{width:100%;max-height:none}
+figure.mmd.big svg{width:100%;max-width:100%!important;max-height:none}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -1456,6 +1466,9 @@ function goBack(){
 window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 
 let codeWrap=false, codeGrow=false, planMode='tool';
+// Per-viewer convenience only: storage may be unavailable, and the note
+// simply shows again.
+let scopeHidden=(()=>{try{return localStorage.getItem('aidfir-scope-hidden')==='1'}catch(e){return false}})();
 let view='guide', query='', unvOnly=false, dense=false,
     // Was entry_id, which sorted first paint by the one field a responder never
     // needs. triage_priority is on every row since F09, so the table can open in
@@ -1918,6 +1931,17 @@ function planLinks(){
 }
 
 /* ---------- drawer ---------- */
+// Where a row is visible, by class. Derived, not authored: the point is the
+// same for every row of a class, and a network row in particular is only in
+// your logs when the tool ran on your network.
+const SEEN_WHERE={
+  network:'In your egress, proxy or DNS logs, and only when this tool runs inside your network. An attacker running the same tool on their own infrastructure never appears here.',
+  disk:'On the host where the tool is installed or ran. Absent if the AI ran somewhere else.',
+  credential:'On the host where the tool is installed. If the token was stolen and used elsewhere, that use shows only in the provider\'s audit log.',
+  'mcp-config':'On the host or in the repository where the agent is configured.',
+  process:'In process telemetry on the host where the tool ran, if process auditing was on beforehand.',
+  registry:'On the Windows host where the tool was installed or ran.',
+  eventlog:'In the event log of the Windows host where the tool ran, if the channel was enabled beforehand.'};
 function drawerHTML(r){
   const t=TOOLMAP[r.entry_id]||{};
   const base=location.origin==='null'?'':location.origin+location.pathname;
@@ -1938,6 +1962,8 @@ function drawerHTML(r){
       ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}
       ${r.mechanism?`<div class="requires"><b>How it is defined.</b> ${
         esc(MECH_MEANING[r.mechanism]||r.mechanism)}</div>`:''}</div>
+    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
     <div class="dsec"><h4>Tool context</h4>
       <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
         :'never verified against a host or a current release'}</div>
@@ -2841,6 +2867,7 @@ function renderMain(){
   const railed=(view==='catalog'||view==='rules');
   shell.classList.toggle('nocol',!railed);
   $('#controls').hidden=!railed;
+  $('#scopeNote').hidden=!(view==='catalog'&&!scopeHidden);
   $('#unvBtn').hidden=view!=='catalog';
   $('#denseBtn').hidden=view!=='catalog';
   $('#metaRow').hidden=!railed;
@@ -3172,7 +3199,7 @@ function applyHash(){
     if(el){el.open=true;el.scrollIntoView()}
     return}
   if(h==='guide'){view='guide';update();return}
-  if(h.startsWith('g-')){view='guide';update();
+  if(h.startsWith('g-')){if(!$('#drawer').hidden)closeDrawer();view='guide';update();
     const el=document.getElementById(h);if(el)el.scrollIntoView();return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
   const t=TOOLS.find(t=>t.entry_id.toLowerCase()===h.toLowerCase()||t.slug===h.toLowerCase());
@@ -3273,6 +3300,9 @@ function setThemeBtn(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
 window.addEventListener('hashchange',applyHash);
+$('#scopeX').onclick=()=>{scopeHidden=true;try{localStorage.setItem('aidfir-scope-hidden','1')}catch(e){}
+  $('#scopeNote').hidden=true};
+$('#scopeNote [data-goplan]').onclick=()=>{pushNav();view='plan';update()};
 // The header wraps to a different height per viewport and per tab row, so the
 // anchor offset is measured rather than hard-coded.
 function syncHdr(){
@@ -3578,6 +3608,15 @@ def main():
 </aside>
 <main class="content">
   <div id="backbar" hidden></div>
+  <div class="scopenote" id="scopeNote" hidden>
+    <p><b>What these rows are.</b> What an AI tool leaves on the machine it ran on. They apply when the
+      AI ran on your systems: your own agents, an insider's, or an attacker driving them. An attacker's
+      AI on their own infrastructure leaves none of this in your telemetry; read your evidence for tempo
+      instead. <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
+    <ol><li>Filter to the tool you found on the host.</li><li>Open a row to see what it proves and where you would see it.</li>
+      <li>Tick the rows you need, then build the <button type="button" class="lnk" data-goplan="1">collection plan</button>.</li></ol>
+    <button type="button" class="x" id="scopeX" aria-label="Hide this note">&#10005;</button>
+  </div>
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."

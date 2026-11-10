@@ -43,6 +43,29 @@ Ask three questions, in order:
 
 If the answer to the first or second question is no, AI is not in scope. If you cannot answer the second question because the logs were never enabled, say so in the report rather than assuming either way.
 
+## Where did the AI run? What you can actually see
+
+The evidence depends less on which AI was involved than on where it ran. Most of what this project catalogues is what an AI tool leaves on the machine it ran on. That machine is often not yours.
+
+| Where the AI ran | What you can see | Where to look | Documented examples |
+|---|---|---|---|
+| **On your hosts.** Your own agents, an insider's, or an attacker driving them | The tool's own traces: session transcripts, configuration, tokens, the processes it spawned, its connections to its vendor | Catalog, then Collection plan | s1ngularity, MIDNIGHT NEPTUNE, postmark-mcp |
+| **Attacker code on your host calls a model API** | An unexpected process talking to an AI provider; sometimes the prompt is in the binary | The provider hostnames in the catalog's network rows, the runtime AI-malware detections, egress logs | PROMPTSTEAL, PROMPTFLUX, SesameOp |
+| **Your AI accounts or keys, used from elsewhere** | Nothing on any host. Usage you did not make, in the provider's audit log | Data sources, provider-side logs | GTG-50021, a fake reseller that harvested the credentials customers gave it |
+| **On the attacker's own infrastructure** | No AI artifact at all. A conventional intrusion, carried out at machine tempo | Your normal IR evidence, read for tempo and pattern | GTG-1002 |
+
+The last row is the one people expect the catalog to cover, and it cannot. The attacker's own coding agent connecting to its vendor happens on the attacker's network, so no row in your proxy or DNS logs will show it. What reaches you is the work the agent did, and the only AI-specific thing about it is how it was done.
+
+None of these signs proves an agent on its own. Together they are reason to scope the incident as automated:
+
+- **Tempo.** Actions seconds apart, sustained for hours, faster than a person can read the output of the last step.
+- **Breadth in parallel.** Many hosts, accounts or targets worked at the same time rather than one after another.
+- **Fast, specific correction.** A failed step retried within seconds with exactly the fix the error called for.
+- **Prose where no operator writes it.** Scripts and one-line commands carrying explanatory comments or step-by-step reasoning.
+- **Plausible but wrong details.** Paths, package names or values that look right and do not exist, or are copied from documentation examples.
+
+Scoping changes when the operator is automated. Assume breadth, not a single path: an agent that found one way in has usually tried many in parallel, so look for the attempts that failed as well as the one that succeeded.
+
 ## What AI incidents have looked like so far
 
 Every case below is documented in this project with sources, indicators and a confidence rating. The count is what this project has catalogued, not a measure of all AI incidents, but the trend and the mix of roles are the point: most are recent, and most involve a tool you can find on an endpoint.

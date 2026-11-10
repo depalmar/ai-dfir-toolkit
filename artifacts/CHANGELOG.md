@@ -15,6 +15,16 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   cumulative line chart by disclosure quarter, is generated from the case
   studies at build time so it cannot drift from them. Feedback from Joshua
   Wright.
+- **Where did the AI run?** A guide section and catalog framing for the case
+  the catalog cannot see: an attacker's AI on the attacker's own
+  infrastructure. The guide splits incidents by where the AI ran (on your
+  hosts, attacker code calling a model API from your hosts, your keys used
+  elsewhere, or entirely on the attacker's side) with what each leaves and
+  where to look, and lists the tempo and pattern signs that the operator is
+  an agent. The catalog opens with a scope note and a three-step how-to-use,
+  and every row's drawer says where you would see it, derived from its class:
+  a network row is only in your logs when the tool ran on your network.
+  Feedback from Joshua Wright.
 - **Landing graphic.** Beside the orientation, a chart of where the evidence
   lives: the catalog's locations by type, each bar opening the catalog
   filtered to it, and a sparkline of documented incidents that links to the
