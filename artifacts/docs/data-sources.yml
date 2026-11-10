@@ -655,6 +655,57 @@ sources:
   # the request. These sources sit in somebody else's tenancy and are tied to
   # the catalog by the endpoints the network rows name.
 
+  - id: ai-gateway-logs
+    name: AI gateway logs - prompts, completions and tool calls in transit
+    kind: network
+    enable: >-
+      A gateway the model traffic actually passes through, with message logging
+      switched on. Clients have to be pointed at it: Claude Code reads the
+      gateway address from ANTHROPIC_BASE_URL, and managed settings can set
+      allowedProviders to customEndpoint so it refuses any other destination.
+      In Azure API Management, a diagnostic setting sends the generative AI
+      gateway log to Log Analytics with model and token usage; prompt and
+      completion text are recorded only when Log LLM messages is enabled on the
+      API, and messages over 32 KB are split into numbered entries. MCP
+      requests it proxies go to a separate MCP gateway log.
+    default_state: >-
+      None until someone deploys a gateway, and API Management's default
+      logging settings leave out request and response bodies.
+    retention: >-
+      Whatever the gateway's log store keeps. For API Management that is the Log
+      Analytics workspace - 30 days for Analytics tables by default, extendable
+      to two years, and to twelve with long-term retention.
+    volatility: rotating
+    without_it: >-
+      What a model was actually sent and what it answered, recorded on your side
+      of the provider. Provider prompt logging is opt-in or metadata only on
+      most platforms, so for an injection that arrived as a tool result this is
+      often the only record of the turn sequence - the tool call with no user
+      turn before it. It sees only traffic routed through it; content the
+      vendor's own service fetches never crosses it.
+    covers:
+      classes: []
+      hosts:
+        - api.anthropic.com
+        - api.openai.com
+        - generativelanguage.googleapis.com
+      sigma: []
+      eventlog: []
+    confidence: high
+    references:
+      - title: Log token usage, prompts, and completions for language model APIs - Azure API Management
+        url: https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-llm-logs
+        accessed: "2026-11-10"
+      - title: Monitor API Management - logging settings and resource log categories
+        url: https://learn.microsoft.com/en-us/azure/api-management/monitor-api-management
+        accessed: "2026-11-10"
+      - title: Manage data retention in a Log Analytics workspace
+        url: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-retention-configure
+        accessed: "2026-11-10"
+      - title: Other LLM gateways - Claude Code Docs
+        url: https://code.claude.com/docs/en/llm-gateway
+        accessed: "2026-11-10"
+
   - id: anthropic-org-audit
     name: Anthropic organization audit logs and Compliance API
     kind: network
