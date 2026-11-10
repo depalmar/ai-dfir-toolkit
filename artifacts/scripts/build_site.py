@@ -563,14 +563,16 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 190px);min-height:320px}
 table{border-collapse:collapse;width:100%;min-width:940px}
 th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
-th{position:sticky;top:0;z-index:2;background:var(--panel-2);cursor:pointer;
+th{position:sticky;top:0;z-index:2;background:var(--panel-2);
   font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
   color:var(--muted);white-space:nowrap;padding:8px 11px}
 th .dir{color:var(--accent)}
 th:hover,th:focus-visible{color:var(--ink);outline:none}
 td{padding:10px 11px;font-size:13px}
 .dense td{padding:5px 10px}
-tbody tr{cursor:pointer}
+/* Only the catalog's rows open a drawer and only its headers sort, so only
+   they get the pointer; the hover highlight stays on every table. */
+.tablescroll tbody tr,th[data-k]{cursor:pointer}
 tbody tr:hover{background:var(--hover)}
 tbody tr.sel{background:var(--accent-soft)}
 tr:last-child td{border-bottom:0}
