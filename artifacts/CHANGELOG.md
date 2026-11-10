@@ -5,6 +5,9 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Talks in the guide's further reading.** The SANS DFIR Summit 2026 opening
+  keynote, "The AI System Was the Victim", is linked as the background to the
+  guide's "Target" role.
 - **Investigation guide is the landing page.** The site now opens on the guide,
   with a three-step orientation (decide, locate, collect) that says what the
   site is for before the reader meets a 622-row table. The guide gains a

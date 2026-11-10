@@ -1031,6 +1031,10 @@ IR teams are increasingly high-value targets because they touch compromised syst
 - Embrace The Red (Johann Rehberger): indirect prompt injection and memory persistence research
 - Simon Willison's weblog: authoritative running coverage of MCP security issues
 
+### Talks
+
+- Raymond DePalma, "The AI System Was the Victim: Forensics for a Crime Scene With No Disk Image", opening keynote, SANS DFIR Summit 2026 (16 October 2026): [sans.org](https://www.sans.org/presentations/keynote-the-ai-system-was-the-victim-forensics-for-a-crime-scene-with-no-disk-image). The talk behind the "Target" role in Part I.
+
 ### Tools and detection content
 
 - Detection pack (this repository): [github.com/depalmar/ai-dfir-toolkit](https://github.com/depalmar/ai-dfir-toolkit)
