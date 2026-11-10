@@ -580,19 +580,26 @@ tr:last-child td{border-bottom:0}
    slack. Artifact holds paths that break anywhere, and with no widths at all it
    took whatever it wanted and squeezed Notes into a 38ch ribbon. */
 col.k-pick{width:40px}
-col.k-id{width:96px}
-col.k-tool{width:132px}
+col.k-id{width:90px}
+col.k-tool{width:112px}
 col.k-cls{width:92px}
-col.k-os{width:108px}
+col.k-os{width:134px}
 col.k-fv{width:74px}
 col.k-conf{width:74px}
-col.k-art{width:34%}
+col.k-art{width:32%}
+/* Fixed layout so the catalog fits its box instead of sizing Notes to its
+   longest sentence and pushing it off-screen; Notes takes what is left and
+   stays clamped, with the full text one click away in the drawer. */
+.tablescroll table{table-layout:fixed}
 /* word-break:break-all lets a path shrink to a single character, so in auto
    layout the Artifact column surrendered everything to Notes and ended up
    narrower than the OS column. A floor on the cell stops the giveaway; the two
    prose columns then split what is left. */
 td.artcell{min-width:300px}
-td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
+td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;overflow-wrap:anywhere}
+.oscell{font-size:12px;display:inline-flex;flex-wrap:wrap;gap:0 6px}
+.oscell span{white-space:nowrap}
+.nil{color:var(--faint)}
 td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap}
 /* Clamped to two lines. Measured over all 615 rows this takes the total table
    from 55353px to 46212px, the p90 row from 133px to 99px and the tallest row
@@ -604,7 +611,7 @@ td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted
    r.description unclamped. The Notes column carries the operational caveats,
    and a responder who never opens the row must still be able to reach the
    sentence that changes what they collect. */
-td .note{font-size:12.5px;color:var(--muted);display:-webkit-box;
+td .note{font-size:12.5px;color:var(--muted);display:-webkit-box;overflow-wrap:anywhere;
   -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pick{width:24px;height:24px;border-radius:6px;border:1px solid var(--field-line);
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
@@ -812,6 +819,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .planhead h2{margin:0 0 4px;font-size:16px}
 .planhead p{margin:0;font-size:12.5px;color:var(--muted)}
 .planhead .acts{display:flex;gap:8px}
+.pstart{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:12px auto 14px;max-width:760px}
 .plan-empty{border:1px dashed var(--field-line);border-radius:11px;padding:48px 20px;
   text-align:center;color:var(--muted)}
 .pgroup{border:1px solid var(--line);border-radius:11px;background:var(--panel);
@@ -849,6 +857,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
   word-break:break-all}
 .rule p{margin:0;font-size:12.5px;color:var(--muted)}
+.rule p.rdesc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .rule .rfoot{display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--line-soft);
   padding-top:9px}
 .fmt{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
@@ -1150,6 +1159,21 @@ button.istat:hover{background:var(--hover)}
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
 @media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+.okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
+  border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
+.okpi b{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.okpi:hover{border-color:var(--accent);color:var(--ink)}
+.otrust{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.oth{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;font-size:13px}
+.oth span{font-size:12px;color:var(--muted)}
+.otbar{display:flex;gap:2px;height:10px;margin:8px 0 6px;border-radius:5px;overflow:hidden;background:var(--line-soft)}
+.otbar .tcseg{display:block;height:100%}
+.otkey{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--muted)}
+.otkey span{display:inline-flex;align-items:center;gap:5px}
+.otkey i{display:inline-block;width:9px;height:9px;border-radius:2px}
+.otkey .lnk{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent);text-decoration:underline}
+.tc-high{background:var(--conf-strong)}.tc-med{background:var(--series-3)}.tc-low{background:var(--gap)}
 .ovis{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
 .ovis h3{margin:0;font-size:13.5px}
 .orient .ovsub{margin:2px 0 10px;font-size:12px}
@@ -1267,7 +1291,13 @@ figure.mmd text,figure.mmd tspan,figure.mmd p,figure.mmd span,
 figure.mmd div{fill:#1f2328;color:#1f2328}
 figure.mmd p{margin:0;font-size:inherit}
 figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
-figure.mmd svg{max-width:100%;height:auto;display:block;margin:0 auto}
+figure.mmd svg{width:auto;max-width:100%;height:auto;max-height:560px;display:block;margin:0 auto}
+figure.mmd{cursor:zoom-in;position:relative}
+figure.mmd::after{content:'Click to enlarge';position:absolute;right:10px;bottom:8px;font-size:11px;
+  color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+figure.mmd.big{cursor:zoom-out}
+figure.mmd.big::after{content:'Click to shrink'}
+figure.mmd.big svg{width:100%;max-height:none}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -1538,6 +1568,11 @@ function sBadge(v,label,bare,scale){
 // and repeating it in every cell is noise. Everywhere else the badge travels
 // without a header, so it carries its own label.
 const fvBadge=(v,bare)=>sBadge(v,'value',bare,'sc-value');
+const OS_SHORT={windows:'Win',macos:'macOS',linux:'Linux',docker:'Docker',container:'Container',cloud:'Cloud'};
+// One line for the common three-OS row; longer lists wrap between names, never inside one.
+const osCell=os=>`<span class="oscell">${os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ')}</span>`;
+// Paths and hostnames wrap at their separators, never mid-name.
+const pathHTML=p=>esc(p).replace(/([\/\\.:_\-])/g,'$1<wbr>');
 const confBadge=(v,bare)=>sBadge(v,'sourcing',bare,'sc-conf');
 const riskBadge=(v,p)=>badge(v,v==='critical',p);
 const triageBadge=v=>badge(v,true,'triage');
@@ -1666,9 +1701,9 @@ function tableHTML(rows){
       <td><span class="id">${esc(r.entry_id)}</span></td>
       <td>${esc(r.tool)}</td>
       <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td class="artcell"><span class="path">${esc(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
-      <td>${esc(r.os.join(', '))}</td>
-      <td>${fvBadge(r.forensic_value,true)}</td>
+      <td class="artcell"><span class="path">${pathHTML(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
+      <td>${osCell(r.os)}</td>
+      <td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>
       <td>${confBadge(r.confidence,true)}</td>
       <td><span class="note">${esc(r.description)}</span></td>
     </tr>`).join('')+'</tbody></table></div>';
@@ -1680,7 +1715,7 @@ function cardsHTML(rows){
     <div class="card" data-a="${esc(r.anchor)}" tabindex="0">
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
         ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
-      <span class="path">${esc(r.artifact)}</span>
+      <span class="path">${pathHTML(r.artifact)}</span>
       <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
     </div>`).join('');
 }
@@ -1818,8 +1853,14 @@ function planHTML(){
       <button class="btn" id="cpLinks">Copy permalinks</button>
       <button class="btn primary" id="cpList">Copy as triage list</button>
       <button class="btn danger" id="cpClear">Clear all</button></div></div>`;
-  if(!rows.length)return head+`<div class="plan-empty">Nothing picked yet.
-    Tick artifacts in the catalog to build a collection plan.</div>`;
+  if(!rows.length){
+    const by={};ROWS.forEach(r=>{by[r.tool]=(by[r.tool]||0)+1});
+    const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    return head+`<div class="plan-empty"><b>Nothing picked yet.</b>
+      Tick rows in the catalog, or start from the tool you found on the host:
+      <div class="pstart">${top.map(([t,n])=>`<button type="button" class="chip" data-starttool="${esc(t)}">${esc(t)} <span class="n">${n}</span></button>`).join('')}</div>
+      <button type="button" class="btn" data-goto="catalog">Open the catalog</button></div>`;
+  }
   // A standing summary of what is in the plan, because the thing a responder
   // needs to know before starting is how much of it will not wait.
   const summary=`<div class="plansum">
@@ -1836,7 +1877,7 @@ function planHTML(){
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
+        <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
       <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
     : planGroups().map(g=>`
@@ -1844,7 +1885,7 @@ function planHTML(){
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
+        <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
         ${fvBadge(r.forensic_value)}</div>`).join('')}
       ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
@@ -2086,7 +2127,7 @@ function rulesHTML(rules){
       <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
-      ${r.description?`<p>${esc(r.description.split('\n')[0])}</p>`:''}
+      ${r.description?`<p class="rdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
       <div class="rfoot"><span class="fmt">${esc(r.format)}</span>
         ${r.atlas.map(a=>`<span class="tchip">${esc(a)}</span>`).join('')}
         ${r.owasp.map(o=>`<span class="tchip">${esc(o)}</span>`).join('')}</div>
@@ -2546,7 +2587,9 @@ function iocGroups(iocs){
     .map(k=>({kind:k,items:by[k]}));
 }
 function caseStudiesHTML(){
-  const LIST=caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES;
+  // Newest disclosure first: the case a responder is most likely chasing.
+  const LIST=(caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES.slice())
+    .sort((a,b)=>(b.disclosed||'').localeCompare(a.disclosed||'')||b.id.localeCompare(a.id));
   if(!LIST.length)return`<div class="empty">No case studies.</div>`;
   const byConf={};
   for(const c of LIST){const k=c.confidence||'unrated'; byConf[k]=(byConf[k]||0)+1}
@@ -2669,6 +2712,26 @@ function csSeries(){
 const CLS_NAME={disk:'Files and folders',credential:'Credentials and tokens',
   'mcp-config':'MCP configuration',network:'Network endpoints',process:'Processes',
   registry:'Registry keys',eventlog:'Event log channels'};
+// Count pills that double as navigation, after the edge toolkit's start page.
+function orientKpisHTML(){
+  const k=[[ROWS.length,'artifact locations','catalog'],[TOOLS.length,'tools','tools'],
+    [RULES.length,'detections','rules'],[SOURCES.length,'telemetry sources','sources'],
+    [CASES.length,'case studies','cases'],[INTEL.actors.length,'actors','intel']];
+  return `<nav class="okpis" aria-label="What is here">${k.map(([n,t,v])=>
+    `<button type="button" class="okpi" data-goto="${v}"><b>${n}</b> ${t}</button>`).join('')}</nav>`;
+}
+// How far to trust a row: the provenance mix, the question a responder asks
+// before acting on a path. Same colours as the collection plan's mix bar.
+function orientTrustHTML(){
+  const c={high:0,medium:0,low:0}; ROWS.forEach(r=>{if(r.confidence in c)c[r.confidence]++});
+  const unv=ROWS.filter(r=>r.unverified).length, n=ROWS.length||1;
+  const seg=(k,cls)=>c[k]?`<span class="tcseg ${cls}" style="flex:${c[k]}" title="${c[k]} ${k}"></span>`:'';
+  return `<div class="otrust"><div class="oth"><b>How far to trust a row</b>
+      <span>${Math.round(c.high/n*100)}% verified on a host or documented by the vendor</span></div>
+    <div class="otbar">${seg('high','tc-high')}${seg('medium','tc-med')}${seg('low','tc-low')}</div>
+    <div class="otkey"><span><i class="tc-high"></i>${c.high} high</span><span><i class="tc-med"></i>${c.medium} medium, several sources agree</span>
+      <span><i class="tc-low"></i>${c.low} low, single source</span>${unv?`<button type="button" class="lnk" data-unv="1">${unv} marked unverified</button>`:''}</div></div>`;
+}
 // Landing graphic: where the evidence lives, by row class, and how the
 // documented incident count has grown. Every number is computed from the data.
 function orientVisHTML(){
@@ -2749,20 +2812,21 @@ function guideHTML(){
     `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
     p.sections.map(s=>`<a class="sub" href="#g-${esc(s.anchor)}">${esc(s.title)}</a>`).join('')
   ).join('');
-  const nTools=new Set(ROWS.map(r=>r.entry_id)).size;
   return `<section class="orient"><div class="otext">
     <h2>AI agents leave evidence most IR playbooks never collect</h2>
     <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
       configuration to disk that show what the agent was told and what it did. This site
       says where those traces are, what each one proves, and in what order to collect them.</p>
+    ${orientKpisHTML()}
     <ol class="steps">
       <li><a href="#g-is-this-an-ai-incident-decide-before-you-use-this-guide"><b>Decide</b>
         <span>Is an AI system the target, the way in, or the attacker's tool? If not, this isn't your guide.</span></a></li>
       <li><button type="button" data-goto="catalog"><b>Locate</b>
-        <span>${ROWS.length} artifact locations across ${nTools} tools, by OS and evidence type.</span></button></li>
+        <span>Where each tool leaves its traces, by OS, and what each one proves.</span></button></li>
       <li><button type="button" data-goto="plan"><b>Collect</b>
         <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
-    </ol></div>
+    </ol>
+    ${orientTrustHTML()}</div>
     ${orientVisHTML()}
   </section>
   <div class="guidewrap">
@@ -2922,6 +2986,11 @@ function renderMain(){
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
     $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
+    $$('#main [data-unv]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();unvOnly=true;
+      $('#unvBtn').setAttribute('aria-pressed','true');view='catalog';update();window.scrollTo(0,0)});
+    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.title='Click to enlarge';
+      const t=()=>{f.classList.toggle('big');f.title=f.classList.contains('big')?'Click to shrink':'Click to enlarge'};
+      f.onclick=t;f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
     $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
@@ -2986,6 +3055,9 @@ function renderMain(){
   }else{
     main.innerHTML=`<div class="planwrap${picks.size?' has-build':''}"><div class="planmain">${planHTML()}</div>${triageHTML()}</div>`;
     wireTriage();
+    $$('#main [data-starttool]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();
+      filters.tool=[b.dataset.starttool];view='catalog';update();window.scrollTo(0,0)});
+    $$('#main .plan-empty [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update()});
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
