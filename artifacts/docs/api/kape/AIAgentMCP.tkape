@@ -78,6 +78,12 @@ Targets:
         FileMask: 'mcp-config.json'
         Comment: 'AIRT-0003 | GitHub Copilot (Agent Mode / CLI): mcpServers'
     -
+        Name: 'Google Antigravity CLI: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\config\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0052 | Google Antigravity CLI: mcpServers'
+    -
         Name: 'Google Gemini CLI: mcpServers'
         Category: AIAgents
         Path: 'C:\Users\%user%\.gemini\'

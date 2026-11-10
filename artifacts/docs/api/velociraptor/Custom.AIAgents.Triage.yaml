@@ -54,6 +54,9 @@ sources:
   - name: GitHubCopilot
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.GitHubCopilot(Upload=Upload)
+  - name: GoogleAntigravityCLI
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.GoogleAntigravityCLI(Upload=Upload)
   - name: GoogleGeminiCLI
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.GoogleGeminiCLI(Upload=Upload)

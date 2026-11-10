@@ -325,11 +325,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-51 entries, 622 artifacts, 164 credential locations, 66 MCP config
+52 entries, 636 artifacts, 167 credential locations, 68 MCP config
 locations, 12 endpoint Sigma rules, 14 case studies, 26 telemetry sources.
 Validation clean.
 
-Volatility across the 622 site rows: live 114 · rotating 53 · stable 455
+Volatility across the 636 site rows: live 115 · rotating 55 · stable 466
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
@@ -351,11 +351,11 @@ Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
 29 ATLAS techniques observed. 14 have a rule, 11 are off-host by nature, and the
 detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
 
-Confidence: 27 high, 20 medium, 4 low.
-Provenance: 51/51 entries carry a reference. AIRT-0034 was the last holdout and
+Confidence: 28 high, 20 medium, 4 low.
+Provenance: 52/52 entries carry a reference. AIRT-0034 was the last holdout and
 sourcing it turned up a correction rather than a citation - Operator is EOL and
-its only network indicator was a domain that had been sunset. 30/51 carry aliases.
-50/51 carry `last_verified`, and `validate.py` lists the remaining one as never
+its only network indicator was a domain that had been sunset. 31/52 carry aliases.
+51/52 carry `last_verified`, and `validate.py` lists the remaining one as never
 verified rather than letting it look fresh.
 
 That holdout is **AIRT-0007 Devin**, and `verification_worklist.py` annotates it
@@ -395,7 +395,7 @@ copy wins on a clean packaged install. Collect **both**, plus the manifest from
 uninstall. Reasoning from `unvirtualizedResources` to "writes are not
 virtualized" is the specific trap here - it was refuted five times over in
 verification, and it is the error this catalog made first.
-Risk: 11 critical, 27 high, 12 medium, 1 low.
+Risk: 11 critical, 28 high, 12 medium, 1 low.
 
 ## Site generation
 
@@ -490,13 +490,19 @@ resolved by whoever picks this up next without asking.
 
 0. **Threat-intel follow-through.**
    - Gemini CLI (AIRT-0037) is `legacy`: Google moved consumer tiers to
-     Antigravity CLI on 18 June 2026. Antigravity CLI has no entry yet - add one
-     only from a host or vendor-documented paths, not from the migration post.
+     Antigravity CLI on 18 June 2026. Antigravity CLI is AIRT-0052, sourced
+     from vendor documentation only (see `docs/VERIFICATION.md`, 2026-11-10).
+     Install it on a host and confirm the `brain/` transcripts and
+     `cache/projects.json`, which rests on one early release note.
    - Set up auto-merge: an `AUTOMATION_TOKEN` secret, branch protection on
      `main`, and "Allow auto-merge". Without them the refresh PR opens but waits.
-   - Run the generated PowerShell triage script on a Windows host. The bash
-     variant was executed against a fixture here; the `.ps1` was reviewed but not
-     run, because no `pwsh` was available.
+   - Run the generated PowerShell triage script on a Windows host, under
+     Windows PowerShell 5.1 as the usage line says. It has been run end to end
+     under PowerShell 7.6 on Linux against a fixture (credentials hashed, not
+     copied; checksums verify), which cannot exercise the CIM, TCP, DNS cache,
+     `reg.exe` and `wevtutil` collectors. Also decide whether a directory-level
+     credential row should keep making the Claude Desktop MCP config and logs
+     hash-only by default - see `docs/VERIFICATION.md`, 2026-11-10.
    - Add a `FORBIDDEN_TERMS` repository secret (comma-separated). CI's
      `forbidden_terms.py` step and the refresh guard both read it; until it
      exists they pass with a notice and guard nothing. The threat-intel work

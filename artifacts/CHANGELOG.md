@@ -5,6 +5,17 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-0052 Google Antigravity CLI.** The tool Google moved Gemini CLI's
+  consumer users to in June 2026. Eight disk rows, one process, three
+  credential rows and two MCP config locations, all from vendor
+  documentation: the per-conversation `brain/` folder holding
+  `transcript.jsonl`, `settings.json`, the workspace-to-project map, the
+  CLI-only skills folder that outranks every other skill, and the
+  `~/.gemini/config/` scope it shares with the Antigravity App (hooks,
+  plugins, `mcp_config.json`). Sign-in lives in the OS keyring, so the
+  credential rows say where to look rather than pointing at a file. Rows on a
+  path the App or IDE also writes carry no row-level `last_verified`, and say
+  so in their descriptions.
 - **Start from the alert.** The landing panel asks which tool the alert
   named, where the AI ran and what role it played, and answers with that
   tool's rows grouped live, rotating and stable, its sourcing mix, unverified
@@ -145,6 +156,11 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **PowerShell triage script read back CSVs it had not written.** Export-Csv
+  writes no file for empty input, so a host with an empty DNS cache logged an
+  Import-Csv error for `dns_cache.csv`. The script now reads back only files
+  that exist. Found by running the generated `.ps1` for the whole catalog
+  under PowerShell 7.6 against a fixture profile.
 - **Site UX batch 5, trust signals, semantics, dark mode and URL state.**
   No text uses the faint grey any more (facet counts 2.67:1 → 5.36:1, drawer
   headings 2.77:1 → 5.55:1), and medium and low sourcing badges use the same

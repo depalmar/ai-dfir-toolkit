@@ -1632,6 +1632,17 @@ targets:
     paths:
       - "~/.langflow/data/database.db"
     notes: "sqlite/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0052_gemini_config_mcp_config_json_mcpservers
+    name: "Google Antigravity CLI credential store (AIRT-0052)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.gemini/config/mcp_config.json -> mcpServers.<name>.headers / .env"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: art_airt_0003_copilot_mcp_config_json
     name: "GitHub Copilot (Agent Mode / CLI) artifact (AIRT-0003)"
     repo_cat: "art"
@@ -2204,4 +2215,70 @@ targets:
     paths:
       - "~/.vscode-server/data/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json"
     notes: "mcp-config, forensic_value high, catalog confidence medium."
+  - id: art_airt_0052_gemini_antigravity_cli_brain
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/antigravity-cli/brain/"
+    notes: "session-artifact, forensic_value high, catalog confidence high."
+  - id: art_airt_0052_gemini_antigravity_cli_cache_projects_js
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/antigravity-cli/cache/projects.json"
+    notes: "session-artifact, forensic_value high, catalog confidence high."
+  - id: art_airt_0052_gemini_antigravity_cli_settings_json
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/antigravity-cli/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0052_gemini_antigravity_cli_skills
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/antigravity-cli/skills/"
+    notes: "agent-definition, forensic_value high, catalog confidence high."
+  - id: art_airt_0052_gemini_config_hooks_json
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/config/hooks.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0052_gemini_config_plugins
+    name: "Google Antigravity CLI artifact (AIRT-0052)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.gemini/config/plugins/"
+    notes: "extension-bundle, forensic_value high, catalog confidence high."
 # <<< END GENERATED CREDENTIAL TARGETS >>>

@@ -636,13 +636,71 @@ urls:
 - https://docs.github.com/en/copilot
 - https://www.npmjs.com/package/@github/copilot
 ---
+name: GoogleAntigravityCliArtifacts
+doc: Google Antigravity CLI (AIRT-0052) - Terminal coding agent, binary `agy`. Google
+  moved free, Google AI Pro and Ultra users of Gemini CLI (AIRT-0037) to it on 18
+  June 2026, so a host that had Gemini CLI may now carry both. It shares `~/.gemini/config/`
+  with the Antigravity App and the IDE extensions, and keeps its own state under `~/.gemini/antigravity-cli/`.
+  Sign-in goes to the OS keyring; a Gemini API key comes only from the environment.
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/antigravity-cli/brain/'
+    - '%%users.homedir%%/.gemini/antigravity-cli/cache/projects.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/settings.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/skills/'
+    - '%%users.homedir%%/.gemini/config/'
+    - '%%users.homedir%%/.gemini/config/hooks.json'
+    - '%%users.homedir%%/.gemini/config/mcp_config.json'
+    - '%%users.homedir%%/.gemini/config/plugins/'
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/antigravity-cli/brain/'
+    - '%%users.homedir%%/.gemini/antigravity-cli/cache/projects.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/settings.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/skills/'
+    - '%%users.homedir%%/.gemini/config/'
+    - '%%users.homedir%%/.gemini/config/hooks.json'
+    - '%%users.homedir%%/.gemini/config/mcp_config.json'
+    - '%%users.homedir%%/.gemini/config/plugins/'
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.gemini/antigravity-cli/brain/'
+    - '%%users.homedir%%/.gemini/antigravity-cli/cache/projects.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/settings.json'
+    - '%%users.homedir%%/.gemini/antigravity-cli/skills/'
+    - '%%users.homedir%%/.gemini/config/'
+    - '%%users.homedir%%/.gemini/config/hooks.json'
+    - '%%users.homedir%%/.gemini/config/mcp_config.json'
+    - '%%users.homedir%%/.gemini/config/plugins/'
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://antigravity.google/docs/customization-discovery/
+- https://antigravity.google/docs/hooks/
+- https://antigravity.google/docs/cli/using/
+---
 name: GoogleGeminiCliArtifacts
 doc: Google Gemini CLI (AIRT-0037) - Terminal agent installed via npm @google/gemini-cli.
   Binary `gemini`. Supports system-wide policy config. On 18 June 2026 Google stopped
   serving it to free, Google AI Pro and Ultra users and moved them to Antigravity
-  CLI. Gemini Code Assist Standard and Enterprise, Google Cloud and paid API-key use
-  continue, and the repository still receives security fixes, so installs remain on
-  enterprise hosts and orphaned ones on personal machines.
+  CLI (AIRT-0052). Gemini Code Assist Standard and Enterprise, Google Cloud and paid
+  API-key use continue, and the repository still receives security fixes, so installs
+  remain on enterprise hosts and orphaned ones on personal machines.
 sources:
 - type: FILE
   attributes:

@@ -1107,3 +1107,63 @@ the case study's `basis`, never in `last_verified`.
 | `airt-cs-0002.yml` | disclosed | 2025-09 (unquoted) | **"2025-09"** | YAML read the unquoted value as a string by accident. It is quoted like every other `disclosed` value. |
 | `airt-cs-0004.yml` | ATLAS | T0053, T0054, T0096 | **+ T0116, T0117** | ATLAS's own case study for this campaign (`AML.CS0069`) maps it to Autonomous Reconnaissance and Autonomous Attack-Path Adaptation, both added in 2026.08. |
 | Actor profiles | scope | - | **20 actors** | Attributed groups and reporter-named clusters only. One cluster was left out because its only public source is research published by the maintainer's employer, and the project's neutrality rule covers citing it as well as naming it. Anthropic's September 2026 influence-operation, surveillance and scam clusters are also left out. They leave no host artefacts, and several name private companies and individuals. |
+
+## 2026-11-10 - AIRT-0052 Antigravity CLI from vendor documentation, and the PowerShell triage script run
+
+**How the vendor pages were read.** This runner's egress policy blocks
+`antigravity.google`, as it blocks every vendor documentation domain. Two
+routes reached the vendor anyway. The vendor's GitHub repository
+(`google-antigravity/antigravity-cli`, commit `3e9fbcc`) was cloned directly,
+and its `CHANGELOG.md` was read in full. The documentation pages were fetched
+through a scraping relay that returns the page body verbatim, not a search
+engine's summary. The hooks page was additionally read in quote mode, so the
+transcript location below is the vendor's text. Nothing was installed:
+the CLI's installer is on the blocked domain. So no row rests on a host, and
+the entry is `high` on vendor documentation alone.
+
+| Row | Source | Note |
+|---|---|---|
+| `~/.gemini/antigravity-cli/brain/` | docs/hooks: `transcriptPath` lives in `<app_data_dir>/brain/<conversationId>/.system_generated/logs/transcript.jsonl`, `<app_data_dir>` is `~/.gemini/antigravity-cli` for the CLI | Catalogued as the directory. A `<conversationId>` placeholder would ship literally into the KAPE target, as `<version>` already does for one Codeium row. Row-level stamp: CLI-specific path. |
+| `~/.gemini/antigravity-cli/settings.json` | docs/cli/using, docs/install | Row-level stamp. Hooks placed here are not loaded (docs/hooks). |
+| `~/.gemini/antigravity-cli/skills/` | docs/customization-discovery | Outranks every other skill; manifest `exclude` cannot hide it. Row-level stamp. |
+| `~/.gemini/antigravity-cli/cache/projects.json` | CHANGELOG 1.0.4 only | Not stamped. Release notes for an early version; nothing later contradicts it, nothing later restates it. |
+| `~/.gemini/config/` and its `hooks.json`, `plugins/`, `mcp_config.json` | docs/customization-discovery, docs/hooks, docs/mcp | **Not stamped**: the Antigravity App and IDE read and write the same folder, so presence does not prove the CLI. Each description says so. |
+| `<repo>/.agents/` | docs/customization-discovery | Workspace scope, same layout. |
+| OS keyring credential | docs/install ("Local silent keyring sign-in"); CHANGELOG 1.4.x on oversized tokens going to "the CLI's private secrets file" | The secrets file's path is not documented and is left out rather than guessed. |
+| `GEMINI_API_KEY` | docs/install | Read only from the environment; not from `.env`, not `GOOGLE_API_KEY`. |
+
+Left out on purpose: the install location of `agy` (only a third-party
+tutorial shows `~/.local/bin`), the network endpoints (no vendor page names a
+host for the CLI's account sign-in), and `keybindings.json` (no forensic
+value). A string search of the `localharness` binary in the vendor's
+`google-antigravity` SDK wheel showed `~/.gemini/config/` paths consistent with
+the documentation, but strings in a binary are not documentation, and no row
+rests on them.
+
+**PowerShell triage script.** No Windows host was available. PowerShell 7.6.9
+was installed from Microsoft's package repository and the generated `.ps1` for
+the whole catalog (578 Windows targets) was:
+
+- parsed with the PowerShell parser: 0 errors;
+- run end to end against a fixture profile (a fake `C:\Users\alice` with dummy
+  token files, configs, logs and a repository), with the target paths'
+  separators rewritten for Linux. Every credential file - `.claude/.credentials.json`,
+  `.codex/auth.json`, `.gemini/oauth_creds.json`, and the token file inside a
+  swept `~/.claude/` directory - came out `hashed-only` and none was copied.
+  Copies re-hashed equal, `SHA256SUMS` and the zip's `.sha256` verify with
+  `sha256sum -c`, and the manifest records operator, host and UTC window.
+
+What this does **not** cover: Windows PowerShell 5.1 (the usage line invokes
+`powershell`, not `pwsh`), and the Windows-only collectors - CIM process
+listing, `Get-NetTCPConnection`, `Get-DnsClientCache`, `reg.exe export`,
+`wevtutil epl` and the elevation check - all of which failed as expected on
+Linux and were logged without stopping the run. Running it on a Windows host
+is still open.
+
+One defect found and fixed: the script read `tcp.csv` and `dns_cache.csv`
+back without checking they existed, and Export-Csv writes no file for empty
+input. One behaviour found and **not** changed, because it is a policy call:
+a directory-level credential row (`%APPDATA%\Claude\`, DPAPI-encrypted OAuth
+ciphertext) makes every file under it secret, so by default the Claude
+Desktop MCP config and its `mcp*.log` JSON-RPC transcripts are hashed, not
+copied, unless the operator passes `-CollectSecrets`.
