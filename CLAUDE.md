@@ -414,8 +414,13 @@ script templates live in `site_scripts.py`; `triage_spec.py` decides how each ro
 is collected, beside the KAPE and Velociraptor exporters so the three agree. What a
 locator means as a path - `a | b` and `a ; b` splitting, `<version>`-style
 placeholders, which OS a path can exist on - lives once in `locators.py`, imported by
-triage_spec and all three path exporters. Change it there; the KAPE, Velociraptor and
-ForensicArtifacts feeds each carried a private copy that drifted until 2026-11-10.
+triage_spec, all three path exporters, and `collectors/gen_credential_targets.py`
+(which writes resolved paths into `targets.yaml`) and `check_target_drift.py`. Change it
+there; the KAPE, Velociraptor and ForensicArtifacts feeds each carried a private copy
+that drifted until 2026-11-10, and the collector opened `<repo>/...` as a literal folder
+until the same week. The collector itself stays stdlib + PyYAML because it is copied to
+suspect hosts, so it imports nothing from `artifacts/`; it only refuses to open a path
+that still holds `<` or `>`.
 Cytoscape.js is vendored under `scripts/vendor/` with its sha256 in
 `VENDOR.json`, and `--check` fails if the file changes without the record. It is
 inlined as inert text and only evaluated when the Graph tab opens.

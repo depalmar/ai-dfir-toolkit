@@ -22,9 +22,14 @@ This module makes the decisions that do not depend on the target tool, once:
   Windows, an absolute `/` path is not, and `~/Library/` is macOS only
 * what a placeholder means - a segment that varies per install or per user
   widens to `*`; a checkout root is templated by a caller that can take one
-  (the native triage script) and refused by the rest; anything else in angle
-  brackets, an elided `...` or an unexpanded `$VAR` is a location only a person
-  knows, so the path is dropped rather than guessed
+  (the native triage script, and the Python collector through `--project-dir`)
+  and refused by the rest; anything else in angle brackets, an elided `...` or
+  an unexpanded `$VAR` is a location only a person knows, so the path is dropped
+  rather than guessed
+* the one exception to that last rule - a caller that runs on the host can
+  expand a `$VAR` itself (collectors/collect_ai_artifacts.py does), so it asks
+  for `env=True` and gets the path back with the variable intact. Every export
+  is written on one machine and run on another, so none of them does
 
 Rendering for one tool - `%user%` for KAPE, `C:\\Users\\*` for Velociraptor,
 `%%users.homedir%%` for ForensicArtifacts, `{HOME}` for the triage scripts -
@@ -51,6 +56,10 @@ REPO_TOKEN = re.compile(r"^<(repo|project|gitroot)>", re.I)
 # A locator is a path only if it starts at one of these.
 ROOTED = re.compile(r"^(~|%|/|<(repo|project|gitroot)>|[A-Za-z]:[\\/])", re.I)
 
+# An environment variable root ($CLAUDE_CONFIG_DIR/...). A root only for a
+# caller that passes env=True, because only that caller can expand it.
+ENV_ROOT = re.compile(r"^\$\{?[A-Za-z_]\w*\}?[\\/]")
+
 # Roots that exist only on macOS, so a row that also lists Linux must not
 # render them there - '/home/*/Library/Application Support/...' matches nothing.
 MAC_ONLY = re.compile(r"^/(Users|Library|Applications|System)/|^~/Library/")
@@ -70,11 +79,12 @@ def clean(path: str) -> str:
     return re.sub(r"\s+\(.*\)$", "", p).strip()
 
 
-def resolve(path: str, repo: str | None = None) -> str:
+def resolve(path: str, repo: str | None = None, env: bool = False) -> str:
     """Apply the placeholder rule to one cleaned path, or return '' to drop it.
 
     `repo` is what a leading checkout placeholder becomes. Leave it None in an
     exporter that cannot template a checkout, and those paths are dropped.
+    `env` keeps a `$VAR` for a caller that expands it on the host at run time.
     """
     p = path
     m = REPO_TOKEN.match(p)
@@ -83,7 +93,7 @@ def resolve(path: str, repo: str | None = None) -> str:
             return ""
         p = repo + p[m.end():]
     p = WILDCARD_TOKEN.sub("*", p)
-    if re.search(r"[<>]", p) or "..." in p or "$" in p:
+    if re.search(r"[<>]", p) or "..." in p or ("$" in p and not env):
         return ""
     return p
 
@@ -105,14 +115,14 @@ def applies(path: str, os_name: str) -> bool:
     return True          # a checkout path is wherever the operator says it is
 
 
-def locator_paths(value: str, repo: str | None = None) -> list[str]:
+def locator_paths(value: str, repo: str | None = None, env: bool = False) -> list[str]:
     """Every collectable path one catalog field names, placeholders resolved."""
     out: list[str] = []
     for one in split_paths(value):
         p = clean(one)
-        if not ROOTED.match(p):
+        if not (ROOTED.match(p) or (env and ENV_ROOT.match(p))):
             continue
-        p = resolve(p, repo)
+        p = resolve(p, repo, env)
         if p and p not in out:
             out.append(p)
     return out

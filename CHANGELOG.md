@@ -47,6 +47,41 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **The Python collector opened catalog placeholders as literal folder names.**
+  `gen_credential_targets.py` copied catalog locators into `collectors/targets.yaml`
+  verbatim, and `collect_ai_artifacts.py` only expanded `~` and `$VAR`, so with
+  `--project-dir /x` the target `<repo>/.cursor/mcp.json` became
+  `/x/<repo>/.cursor/mcp.json` and matched nothing. On a fixture project 38 paths
+  the collector tried to open held `<` or `>`, and the generated targets for
+  `.kiro/hooks/`, `.amazonq/cli-agents/` and the rest never fired. The generator now
+  resolves every path through `artifacts/scripts/locators.py`, the rule the triage
+  scripts and the three path exporters share, and writes the result the way the
+  site's own collector export already did: `<repo>`, `<project>` and `<gitroot>`
+  become paths relative to `--project-dir`, `screenshot_<uuid4hex>.png` becomes
+  `screenshot_*.png`, and goose's `permission.yaml ; permissions/...` compound,
+  emitted as one path, is split. The 26 locations whose root only a person knows -
+  22 under `<install>`, `<VS Code User dir>`, `<LANGFLOW_CONFIG_DIR>` and the like, and
+  four prose rows - move to a new `unresolved:` list, and the collector records each one in the manifest's
+  `skipped` list as not attempted rather than opening it. `<install>` is not treated
+  as `--project-dir`: every other output drops it too, and probing every repository
+  for `config.json` would attribute hits to GPT Pilot. A `$VAR` root is kept, through
+  a new `env=True` that only the collector passes, because it can expand the
+  variable on the host; an unset one is now skipped, where the old guard checked four
+  hard-coded names and opened `$CLAUDE_CONFIG_DIR/.credentials.json` relative to the
+  current directory. Target ids, which come from the catalog location, are unchanged,
+  and `--check` fails on `<`, `>`, `|`, ` ; ` or `...` in an emitted path. The six
+  feeds regenerate byte-identical.
+- **`check_target_drift.py` credited a bare `.env` with every `.env` in the catalog.**
+  Its suffix match let the project-scoped `.env` targets cover `~/.gemini/.env` and
+  `<install>/docker/.env`, neither of which they open. Most `<install>` credentials
+  passed the gate only that way, and the env var `SECRET_KEY` was "covered" because it
+  normalised to the same string as Langflow's `<LANGFLOW_CONFIG_DIR>/secret_key`. A
+  suffix match now needs a directory on its shorter side. The 11 plaintext locations
+  that were covered only by those matches are reported as `[UNRESOLVED]`
+  (informational, like `[UNPINNED]`), and `SECRET_KEY` is `[NOT-A-FILE]`. Splitting
+  compound catalog paths and widening `<version>`-style segments the way the targets
+  are resolved also clears two false `[CATALOG-GAP]` rows, AIRT-0003's
+  `.github/mcp.json` and `ollama_host_keys`.
 - **KAPE targets carried catalog placeholders as literal folder names.**
   `CodeiumWindsurf.tkape` shipped `Path: 'C:\Users\%user%\.codeium\<version>\'`,
   and KAPE searches for a folder literally named `<version>`, so the target matched
