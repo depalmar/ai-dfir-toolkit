@@ -1234,7 +1234,14 @@ button.istat:hover{background:var(--hover)}
 .orient{margin:0 0 18px;padding:18px 22px;background:var(--panel);border:1px solid var(--line);
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
-@media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}
+  /* One column: the result follows the questions that produced it, rather than
+     landing below the lede, the counts and the three steps. */
+  .orient{row-gap:0}
+  .orient>.otext{display:contents}
+  .orient>.otext>h2{order:-3}
+  .orient>.otext>.alstart{order:-2}
+  .orient>#alSide{order:-1;margin:0 0 16px}}
 .palbtn{display:inline-flex;align-items:center;gap:10px;min-height:34px;padding:5px 8px 5px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);font-size:12.5px}
 .palbtn:hover{border-color:var(--accent);color:var(--ink)}
@@ -1293,6 +1300,64 @@ body.palopen{overflow:hidden}
 .otkey .lnk{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent);text-decoration:underline}
 .tc-high{background:var(--conf-strong)}.tc-med{background:var(--series-3)}.tc-low{background:var(--gap)}
 .ovis{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+/* ---- start from the alert ---- */
+.alstart{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin:12px 0 14px}
+.alstart h3{margin:0 0 10px;font-size:15px;font-weight:600}
+.allab{display:block;font-size:12.5px;color:var(--muted);margin:0 0 5px;padding:0}
+.alcombo{position:relative;margin:0 0 12px}
+#alTool{width:100%;padding:8px 10px;border:1px solid var(--field-line);border-radius:8px;background:var(--panel);
+  color:var(--ink);font:inherit;font-size:13.5px;min-height:38px}
+#alList{position:absolute;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 24px var(--shadow);z-index:5;max-height:280px;overflow:auto}
+#alList[hidden]{display:none}
+#alList li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;padding:7px 9px;border-radius:6px;cursor:pointer;font-size:13px}
+#alList li[aria-selected=true],#alList li:hover{background:var(--accent-soft)}
+#alList .mono{font-size:12px;color:var(--muted)}
+#alList .alv{font-size:12.5px;color:var(--muted);margin-left:auto}
+fieldset.alq{border:0;padding:0;margin:0 0 12px;min-width:0}
+.algrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.alopt{position:relative;display:block;cursor:pointer}
+.alopt input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.alopt span{display:block;height:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+  font-size:12.5px;color:var(--ink);background:var(--panel)}
+.alopt:hover span{border-color:var(--accent-border)}
+.alopt input:checked+span{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.alopt input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.alpills{display:flex;flex-wrap:wrap;gap:6px}
+.alpills .alopt span{border-radius:999px;padding:6px 12px}
+.alhelp{margin:0;font-size:12.5px;color:var(--muted)}
+.alhelp b{color:var(--ink);font-weight:600}
+.alres{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
+.alrh{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.alrh b{font-size:16px;font-weight:600;margin-right:2px}
+.alrh .mono{font-size:12px;color:var(--muted);margin-right:4px}
+.alrmeta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+.altier{margin:0 0 8px;border:1px solid var(--line-soft);border-radius:7px;overflow:hidden}
+.alth{background:var(--panel-2);border-bottom:1px solid var(--line-soft);padding:6px 11px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alth .badge{margin-right:8px}
+.altier ul{list-style:none;margin:0;padding:4px 0}
+.altier li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;padding:3px 11px;font-size:12px}
+.alcls{font-size:11px;color:var(--muted)}
+.altier .mono{font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.alres .lnk{background:none;border:0;padding:2px 11px 6px;font:inherit;font-size:12px;color:var(--accent);
+  text-decoration:underline;min-height:24px;cursor:pointer}
+.alnote{font-size:13px;margin:0 0 8px}
+.alsigns{margin:0 0 8px;padding-left:18px;font-size:12.5px}
+.alsigns li{margin:0 0 3px}
+.alguid{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.alacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.alphone{display:none;gap:6px;flex-wrap:wrap;margin:6px 0}
+@media(max-width:620px){
+  .algrid{grid-template-columns:1fr}
+  .alopt span{min-height:44px;display:flex;align-items:center}
+  .altier.t-rotating,.altier.t-stable{display:none}
+  .alphone{display:flex}
+  .alacts .btn{flex:1 1 100%;min-height:44px;justify-content:center}
+  #alAll{display:none}
+  .alacts .primary-phone{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .alacts #alShow{background:var(--panel);color:var(--ink);border-color:var(--line)}
+}
 .ovis h3{margin:0;font-size:13.5px}
 .orient .ovsub{margin:2px 0 10px;font-size:12px}
 .ovbars{display:grid;gap:3px}
@@ -3142,6 +3207,154 @@ function wireTimeline(){
     r.addEventListener('mouseleave',()=>{tip.hidden=true;cross.setAttribute('visibility','hidden')});
   });
 }
+/* ---------- landing: start from the alert ----------
+   A responder arrives with a tool name, not a question about the catalog.
+   Three answers - which tool, where the AI ran, what role it played - route to
+   that tool's rows in collection order without leaving the landing view. The
+   choices are held in memory only: nothing about a case is written to storage. */
+const AL_WHERE=[['host','On your hosts'],['api','Attacker code on your host calls a model API'],
+  ['acct','Your AI accounts or keys, used from elsewhere'],['infra',"On the attacker's own infrastructure"]];
+const AL_ROLE=[['target','Target'],['wayin','Way in'],['tool',"Attacker's tool"],['bystander','Bystander'],['unsure','Not sure yet']];
+// The guide's own words for each role ("Is this an AI incident?" table).
+const AL_ROLE_HELP={
+  target:'The AI system itself is what was compromised. The guide picks this up in Part II, sections 2 and 3.',
+  wayin:'Content the AI read made it act for the attacker. The guide picks this up in Part II, section 1.',
+  tool:'The adversary used AI to run the operation. The guide picks this up in Part II, sections 1 and 4.',
+  bystander:'Not this guide. Run your normal investigation and note the tool in the report.',
+  unsure:'You do not have to prove AI to act. Collect what disappears first and settle the role as the evidence comes in.'};
+// The tempo signs from "Where did the AI run?", for the branch where the AI
+// ran on the attacker's side and no row in the catalog applies.
+const AL_SIGNS=[
+  ['Tempo','Actions seconds apart, sustained for hours, faster than a person can read the output of the last step.'],
+  ['Breadth in parallel','Many hosts, accounts or targets worked at the same time rather than one after another.'],
+  ['Fast, specific correction','A failed step retried within seconds with exactly the fix the error called for.'],
+  ['Prose where no operator writes it','Scripts and one-line commands carrying explanatory comments or step-by-step reasoning.'],
+  ['Plausible but wrong details','Paths, package names or values that look right and do not exist, or are copied from documentation examples.']];
+let alTool=null, alWhere='host', alRole='unsure', alMore=false, alHits=[], alAct=-1;
+const alRadios=(name,opts,cur,cls)=>`<div class="${cls}">${opts.map(([v,l])=>
+  `<label class="alopt"><input type="radio" name="${name}" value="${v}"${cur===v?' checked':''}><span>${esc(l)}</span></label>`).join('')}</div>`;
+const alHelp=()=>{const l=(AL_ROLE.find(x=>x[0]===alRole)||[])[1];return `<b>${esc(l)}:</b> ${esc(AL_ROLE_HELP[alRole])}`};
+function alertBlockHTML(){
+  return `<div class="alstart" id="alBlock"><h3>Start from the alert</h3>
+    <label class="allab" for="alTool">Which tool did the alert name?</label>
+    <div class="alcombo"><input id="alTool" type="text" role="combobox" autocomplete="off" spellcheck="false"
+      aria-expanded="false" aria-controls="alList" aria-autocomplete="list"
+      placeholder="Cursor, Claude Code, Ollama..." value="${alTool?esc(alTool.tool):''}">
+      <ul id="alList" role="listbox" aria-label="Tools" hidden></ul></div>
+    <fieldset class="alq"><legend class="allab">Where did the AI run?</legend>
+      ${alRadios('alwhere',AL_WHERE,alWhere,'algrid')}</fieldset>
+    <fieldset class="alq"><legend class="allab">What role did it play?</legend>
+      ${alRadios('alrole',AL_ROLE,alRole,'alpills')}</fieldset>
+    <p class="alhelp" id="alHelp">${alHelp()}</p></div>`;
+}
+function alertResultHTML(t){
+  const rows=ROWS.filter(r=>r.entry_id===t.entry_id)
+    .sort((a,b)=>(volRank(a)-volRank(b))||cmpKey('triage',a,b)||cmpKey('entry_id',a,b));
+  const conf={high:0,medium:0,low:0}; rows.forEach(r=>{if(r.confidence in conf)conf[r.confidence]++});
+  const unv=rows.filter(r=>r.unverified).length, volatile=rows.filter(r=>r.vol&&r.vol!=='stable').length;
+  const by={}; rows.forEach(r=>(by[r.vol]=by[r.vol]||[]).push(r));
+  const head=`<div class="alrh"><b>${esc(t.tool)}</b><span class="mono">${esc(t.entry_id)}</span>
+      ${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}</div>
+    <div class="alrmeta"><span>${rows.length} artifacts</span>
+      <span>sourcing: ${['high','medium','low'].filter(k=>conf[k]).map(k=>`${conf[k]} ${k}`).join(' &middot; ')}</span>
+      ${unv?`<span>${unv} unverified</span>`:''}
+      <span>${t.verified?`last verified ${esc(t.verified)}`:'never verified against a host'}</span></div>`;
+  let body;
+  if(alRole==='bystander'){
+    body=`<p class="alnote">${esc(AL_ROLE_HELP.bystander)}</p>`;
+  }else if(alWhere==='infra'){
+    body=`<p class="alnote">No AI artifact at all. The attacker's AI ran on their own infrastructure, so
+      ${esc(t.tool)}'s rows describe a machine you do not have. What reaches you is a conventional
+      intrusion at machine tempo; read your normal IR evidence for these signs:</p>
+      <ul class="alsigns">${AL_SIGNS.map(([k,v])=>`<li><b>${esc(k)}.</b> ${esc(v)}</li>`).join('')}</ul>
+      <a class="lnk" href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a>`;
+  }else if(alWhere==='acct'){
+    body=`<p class="alnote">Nothing on any host. Usage you did not make shows in the provider's audit log;
+      the host rows only say where the key or token sits.</p>
+      <button type="button" class="btn" data-algo="sources">Open Data sources</button>`;
+  }else{
+    body=VOL_TIERS.filter(v=>by[v]).map(v=>{
+      const list=by[v], cut=v==='stable'&&!alMore&&list.length>2?2:list.length;
+      return `<div class="altier t-${v}"><div class="alth">${vgroupLabel(v,list.length)}</div>
+        <ul>${list.slice(0,cut).map(r=>`<li><span class="alcls">${esc(r.cls)}</span>
+          <span class="mono">${pathHTML(r.loc_path||r.artifact)}</span></li>`).join('')}</ul>
+        ${cut<list.length?`<button type="button" class="lnk almore" id="alMore">${list.length-cut} more</button>`:''}</div>`;
+    }).join('')
+    +`<div class="alphone">${VOL_TIERS.filter(v=>by[v]&&v!=='live').map(v=>
+      `<span class="badge vol v-${v}">${v} &middot; ${by[v].length}</span>`).join('')}</div>`
+    +(t.guidance?`<p class="alguid">${esc(t.guidance)}</p>`:'');
+  }
+  const acts=alRole==='bystander'?'':`<div class="alacts">
+      ${volatile?`<button type="button" class="btn primary-phone" id="alVol">Add volatile (${volatile})</button>`:''}
+      <button type="button" class="btn" id="alAll">Add all ${rows.length}</button>
+      <button type="button" class="btn primary" id="alShow">Show all ${rows.length} artifacts &#8594;</button></div>`;
+  return `<div class="alres" aria-live="polite">${head}${body}${acts}</div>`;
+}
+function alMatches(q){
+  q=normQ(q).trim(); if(!q)return [];
+  const hits=TOOLS.filter(t=>qMatch([t.tool,t.entry_id,t.vendor,(t.aliases||[]).join(' ')].join(' '),q));
+  // Names that start with what was typed come first: "curs" is Cursor.
+  return hits.sort((a,b)=>(normQ(b.tool).startsWith(q)-normQ(a.tool).startsWith(q))||a.tool.localeCompare(b.tool)).slice(0,8);
+}
+function alRenderList(){
+  const ul=$('#alList'), inp=$('#alTool');
+  if(!alHits.length){ul.hidden=true;inp.setAttribute('aria-expanded','false');inp.removeAttribute('aria-activedescendant');return}
+  ul.innerHTML=alHits.map((t,i)=>`<li role="option" id="alOpt${i}" data-i="${i}" aria-selected="${i===alAct}">
+    <b>${esc(t.tool)}</b><span class="mono">${esc(t.entry_id)}</span>
+    <span class="alv">${esc(t.vendor||'')} &middot; ${t.n} artifacts</span></li>`).join('');
+  ul.hidden=false; inp.setAttribute('aria-expanded','true');
+  if(alAct>=0)inp.setAttribute('aria-activedescendant','alOpt'+alAct);else inp.removeAttribute('aria-activedescendant');
+  $$('#alList li').forEach(li=>li.onmousedown=e=>{e.preventDefault();alChoose(alHits[+li.dataset.i])});
+}
+function alChoose(t){
+  alTool=t||null; alMore=false; alHits=[]; alAct=-1;
+  if(t)$('#alTool').value=t.tool;
+  alRenderList(); alRenderResult();
+}
+function wireOvis(){
+  $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
+    pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
+}
+function alRenderResult(){
+  const side=$('#alSide'); if(!side)return;
+  side.innerHTML=alTool?alertResultHTML(alTool):orientVisHTML();
+  if(!alTool){wireOvis();return}
+  const t=alTool;
+  const add=(pred,btn)=>{
+    const target=ROWS.filter(r=>r.entry_id===t.entry_id).filter(pred);
+    const added=target.filter(r=>!picks.has(r.anchor)).length;
+    target.forEach(r=>picks.add(r.anchor)); savePicks(); renderTabs(); renderToast();
+    btn.disabled=true; btn.textContent=added?`Added ${added}`:'Already in plan';
+    announce(added?`${added} added to the collection plan`:'Already in the collection plan');
+  };
+  const v=$('#alVol'); if(v)v.onclick=()=>add(r=>r.vol&&r.vol!=='stable',v);
+  const a=$('#alAll'); if(a)a.onclick=()=>add(()=>true,a);
+  const sh=$('#alShow'); if(sh)sh.onclick=()=>{pushNav();resetFilters();filters.tool=[t.tool];
+    view='catalog';update();window.scrollTo(0,0)};
+  const m=$('#alMore'); if(m)m.onclick=()=>{alMore=true;alRenderResult()};
+  $$('#alSide [data-algo]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.algo;update();window.scrollTo(0,0)});
+}
+function wireAlert(){
+  const inp=$('#alTool'); if(!inp)return;
+  inp.oninput=()=>{alHits=alMatches(inp.value);alAct=alHits.length?0:-1;alRenderList();
+    if(!inp.value.trim()&&alTool){alTool=null;alRenderResult()}};
+  inp.onkeydown=e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      if(!alHits.length){alHits=alMatches(inp.value);alAct=-1}
+      if(!alHits.length)return;
+      e.preventDefault();
+      alAct=(alAct+(e.key==='ArrowDown'?1:-1)+alHits.length)%alHits.length;alRenderList();
+    }else if(e.key==='Enter'){
+      if(!alHits.length)alHits=alMatches(inp.value);
+      if(alHits.length){e.preventDefault();alChoose(alHits[Math.max(0,alAct)])}
+    }else if(e.key==='Escape'){if(alHits.length){e.preventDefault();e.stopPropagation();alHits=[];alAct=-1;alRenderList()}}
+  };
+  inp.onblur=()=>setTimeout(()=>{alHits=[];alAct=-1;alRenderList()},120);
+  $$('#alBlock input[name=alwhere]').forEach(r=>r.onchange=()=>{alWhere=r.value;alRenderResult()});
+  $$('#alBlock input[name=alrole]').forEach(r=>r.onchange=()=>{alRole=r.value;$('#alHelp').innerHTML=alHelp();alRenderResult()});
+  if(alTool)alRenderResult();
+}
+
 function guideHTML(){
   const toc=GUIDE.toc.map(p=>
     `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
@@ -3149,6 +3362,7 @@ function guideHTML(){
   ).join('');
   return `<section class="orient"><div class="otext">
     <h2>AI agents leave evidence most IR playbooks never collect</h2>
+    ${alertBlockHTML()}
     <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
       configuration to disk that show what the agent was told and what it did. This site
       says where those traces are, what each one proves, and in what order to collect them.</p>
@@ -3162,7 +3376,7 @@ function guideHTML(){
         <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
     </ol>
     ${orientTrustHTML()}</div>
-    ${orientVisHTML()}
+    <div id="alSide">${alTool?'':orientVisHTML()}</div>
   </section>
   <div class="guidewrap">
     <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
@@ -3328,9 +3542,9 @@ function renderMain(){
     $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.title='Click to enlarge';
       const t=()=>{f.classList.toggle('big');f.title=f.classList.contains('big')?'Click to shrink':'Click to enlarge'};
       f.onclick=t;f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
-    $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
-      pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
+    wireOvis();
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
+    wireAlert();
     wireTimeline();
     renderTabs();renderToast();renderBack();return;
   }

@@ -5,6 +5,17 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Start from the alert.** The landing panel asks which tool the alert
+  named, where the AI ran and what role it played, and answers with that
+  tool's rows grouped live, rotating and stable, its sourcing mix, unverified
+  count and last-verified date, and the same Add volatile, Add all and Show
+  all actions as the tool drawer - without leaving the landing view. The
+  attacker's-infrastructure branch shows the guide's tempo signs instead of
+  rows, the accounts-and-keys branch points to Data sources, and Bystander
+  says this is not the guide's case. The tool box follows the ARIA combobox
+  pattern, both questions are radio groups, and nothing is saved. On one
+  column the result follows the questions directly. From the Claude Design
+  assessment (F03).
 - **Guide 1.2, from Joshua Wright's "Scoping AI Swarms".** Part I says to act
   without proving AI: rotate exposed credentials, invalidate derived sessions,
   check other uses of the access and look for running execution, whoever the
