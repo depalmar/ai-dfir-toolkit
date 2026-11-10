@@ -145,6 +145,18 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **Site UX batch 4, plan export and phone navigation.** The collection
+  plan's header carries the export: an "Export for" picker over the five
+  collectors and one Download button whose label follows the choice, with
+  Copy, the collector's note, the per-tool definitions line and the rows the
+  format cannot carry directly under it. "Copy as triage list" and "Copy
+  permalinks" are secondary, and the by tool / by volatility switch moves to
+  the summary strip. The side panel keeps the options, command and preview,
+  and its sticky offset follows the measured header. Every segmented switch
+  reports aria-pressed. On phones the header stays sticky, collapsed to the
+  title row and the tab strip, the selected tab is scrolled into the strip,
+  and edges fade where tabs are cut off. From the Claude Design assessment
+  (F10, F11).
 - **Site UX batch 2, the catalog working surface.** Rows are grouped by
   volatility - live, rotating, stable - with the column sort applying inside
   each group, because 519 of 622 rows are p1 and the old triage sort could not

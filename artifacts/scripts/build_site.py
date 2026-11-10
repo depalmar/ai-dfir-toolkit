@@ -443,7 +443,11 @@ main.content{min-width:0}
 #themeBtn:hover{color:var(--ink);border-color:var(--accent)}
 /* Scrolls rather than wraps. Ten tabs no longer fit one line at laptop width,
    and a wrapped tab label ("Data / sources") reads as two tabs. */
-.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:thin}
+.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:thin;position:relative}
+/* Edge fades say there are more tabs off to that side. */
+.tabs.fl{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px);mask-image:linear-gradient(90deg,transparent 0,#000 28px)}
+.tabs.fr{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.tabs.fl.fr{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent)}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;flex:none;white-space:nowrap;
   padding:9px 12px;font-size:13.5px;color:var(--muted);display:flex;gap:7px;align-items:center}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
@@ -881,6 +885,20 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   margin:0 0 14px}
 .planhead h2{margin:0 0 4px;font-size:16px}
 .planhead p{margin:0;font-size:12.5px;color:var(--muted)}
+.pidw{flex:1 1 100%}
+.pcard{flex:1 1 100%;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:0}
+.pcrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.pcrow h2{margin:0 6px 0 0;font-size:16px}
+.pexp{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pexplab{font-size:12.5px;color:var(--muted)}
+#pExport{border:1px solid var(--accent);border-radius:8px;min-width:150px;min-height:34px;padding:5px 8px;
+  background:var(--panel);color:var(--ink);font:inherit;font-size:13px}
+.pcright{display:inline-flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.pnote{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.pcard .lnk{background:none;border:0;padding:0;font:inherit;font-size:12.5px;color:var(--accent);text-decoration:underline}
+.pcard details.fwskip{margin-top:6px}
+.pmode{margin-left:auto}
+.pmodenote{margin:-6px 0 12px;font-size:12.5px;color:var(--muted)}
 .planhead .acts{display:flex;gap:8px}
 .pstart{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:12px auto 14px;max-width:760px}
 .plan-empty{border:1px dashed var(--field-line);border-radius:11px;padding:48px 20px;
@@ -1269,7 +1287,8 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;bo
 .palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint)}
 .palfoot kbd{margin-right:3px}
 body.palopen{overflow:hidden}
-@media(max-width:620px){.palbtn .paltx,.palbtn kbd{display:none}}
+@media(max-width:620px){.palbtn .paltx,.palbtn kbd,.ghlink .ghtx,#themeBtn .thtx{display:none}
+  .palbtn,.ghlink,#themeBtn{min-width:36px;min-height:36px;justify-content:center;padding:6px 9px}}
 .scopenote{position:relative;margin:0 0 12px;padding:10px 40px 10px 14px;background:var(--panel);
   border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:12.5px;color:var(--muted)}
 .scopenote p{margin:0 0 4px;max-width:110ch}
@@ -1490,7 +1509,15 @@ footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
 footer p{margin:0}
 
 @media(max-width:900px){
-  .hdr{position:static}
+  /* Sticky on phones too, collapsed to the title row and the tab strip, so a
+     reader deep in a long view can still change tabs. */
+  .hdr .sub,.hdr .pill{display:none}
+  .hdr-top{flex-wrap:nowrap;align-items:center}
+  .hdr-id{flex:1 1 auto;min-width:0}
+  .h1row{flex-wrap:nowrap}
+  h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+  .hdr-right{flex-wrap:nowrap;gap:6px}
+  .tabs{margin-top:4px}
   .shell{grid-template-columns:minmax(0,1fr);padding:16px 14px 90px;gap:14px}
   .hdr-in{padding:12px 14px 0}
   .railscroll{display:none}
@@ -1514,6 +1541,12 @@ footer p{margin:0}
   .tabs .guidelink{margin-right:6px}
 }
 @media(max-width:620px){
+  .pexp{display:flex;width:100%}
+  .pexplab{flex:1 1 100%}
+  #pExport{flex:1 1 100%;min-height:44px}
+  #pDl{flex:1 1 auto;min-height:44px;justify-content:center}
+  #pCopy{min-height:44px}
+  .pcright{margin-left:0}
   .prow{flex-wrap:wrap;align-items:center}
   .prow .rm{min-width:44px;min-height:44px}
   .prow .path{flex:1 1 calc(100% - 56px);word-break:normal;overflow-wrap:anywhere}
@@ -2141,17 +2174,16 @@ function planHTML(){
     <button class="btn" id="pNew">New plan</button>
     ${p.updated?`<span class="pmeta">saved ${esc(p.updated.slice(0,16).replace('T',' '))}</span>`:''}
   </div>`;
-  const head=`<div class="planhead"><div>${idbar}<h2>Collection plan</h2>
-    <p>${planMode==='vol'
-      ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
-      :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p></div>
-    <div class="acts">
-      <div class="seg"><button class="segbtn${planMode==='tool'?' on':''}" data-mode="tool"
-        >by tool</button><button class="segbtn${planMode==='vol'?' on':''}" data-mode="vol"
-        >by volatility</button></div>
-      <button class="btn" id="cpLinks">Copy permalinks</button>
-      <button class="btn primary" id="cpList">Copy as triage list</button>
-      <button class="btn danger" id="cpClear">Clear all</button></div></div>`;
+  // The export is the plan's main action, so it sits in the plan's header at
+  // every width. It used to live in a side column that only appeared from
+  // 1240px and followed every picked row below that.
+  const head=`<div class="planhead"><div class="pidw">${idbar}</div>
+    <div class="pcard"><div class="pcrow"><h2>Collection plan</h2>
+      ${rows.length?planExportControls():''}
+      <span class="pcright"><button class="btn" id="cpList">Copy as triage list</button>
+        <button class="btn" id="cpLinks">Copy permalinks</button>
+        <button class="btn danger" id="cpClear">Clear all</button></span></div>
+      ${rows.length?planExportNotes():''}</div></div>`;
   if(!rows.length){
     const by={};ROWS.forEach(r=>{by[r.tool]=(by[r.tool]||0)+1});
     const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -2168,7 +2200,13 @@ function planHTML(){
     ${VOL_TIERS.filter(v=>vol[v]).map(v=>
       `<span class="badge vol v-${v}"><i>${vol[v]}</i>${v}</span>`).join('')}
     ${creds?`<span class="plancred">${creds} credential location${creds>1?'s':''} -
-      collect, then treat every value as exposed</span>`:''}</div>`;
+      collect, then treat every value as exposed</span>`:''}
+    <div class="seg pmode" role="group" aria-label="Group the plan"><button class="segbtn${planMode==='tool'?' on':''}" data-mode="tool"
+        aria-pressed="${planMode==='tool'}">by tool</button><button class="segbtn${planMode==='vol'?' on':''}" data-mode="vol"
+        aria-pressed="${planMode==='vol'}">by volatility</button></div></div>
+    <p class="pmodenote">${planMode==='vol'
+      ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
+      :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p>`;
   const body=planMode==='vol'
     ? planByVolatility().map(g=>`
       <div class="pgroup"><div class="ghead"><span class="badge vol v-${g.vol}"
@@ -2189,6 +2227,37 @@ function planHTML(){
         ${fvBadge(r.forensic_value)}</div>`).join('')}
       ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
   return head+summary+body;
+}
+const NATIVE_NOTE='Needs nothing installed on the host: PowerShell on Windows, bash on macOS and Linux. Choose the operating system under "Collect it".';
+function planExport(){
+  const k=triageFw, d=FW[k];
+  if(k==='native'){const sc=triageScript(triageOS);return {k,d,name:sc.name,text:sc.text,skip:[],pre:[],
+    eol:triageOS==='win'?'\r\n':'\n',mime:'text/plain'}}
+  const x=d.make();
+  const tools=[...new Set(planRowsOrdered().map(r=>r.entry_id))].map(id=>TOOLMAP[id]).filter(Boolean);
+  const pre=k==='velo'?tools.filter(t=>t.velo).map(t=>t.velo):k==='kape'?tools.filter(t=>t.kape).map(t=>t.kape):[];
+  return {k,d,name:x.name,text:x.text,skip:x.skip,pre,eol:k==='kape'?'\r\n':'\n',mime:x.mime};
+}
+function planExportControls(){
+  const x=planExport(), ext=x.name.slice(x.name.lastIndexOf('.'));
+  return `<span class="pexp"><label class="pexplab" for="pExport">Export for</label>
+    <select id="pExport">${Object.entries(FW).map(([v,f])=>
+      `<option value="${v}"${v===x.k?' selected':''}>${esc(f.label)}</option>`).join('')}</select>
+    <button class="btn primary" id="pDl" type="button" title="${esc(x.name)}">Download ${esc(ext)}</button>
+    <button class="btn" id="pCopy" type="button">Copy</button>
+    ${x.skip.length?`<a class="lnk" href="#pSkip" id="pSkipLnk">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</a>`:''}</span>`;
+}
+function planExportNotes(){
+  const x=planExport();
+  const bySkip={};for(const [r,why] of x.skip)(bySkip[why]=bySkip[why]||[]).push(r);
+  return `<p class="pnote">${x.k==='native'?esc(NATIVE_NOTE):x.d.note}</p>
+    ${x.pre.length?`<p class="pnote">Or use the repository's ${x.d.feedLabel} for the picked tools:
+      <code style="display:inline">${x.pre.map(esc).join(' ')}</code> &middot;
+      <a href="${REPO_URL}/tree/main/artifacts/docs/api/${x.d.feed}" target="_blank" rel="noopener">browse &#8599;</a></p>`:''}
+    ${x.skip.length?`<details class="fwskip" id="pSkip"><summary class="pnote">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</summary>
+      ${Object.entries(bySkip).map(([why,rs])=>`<p class="gnote"><b>${esc(why)}</b></p><ul class="skiplist">${rs.map(r=>
+        `<li><button class="lnk" data-row="${esc(r.anchor)}">${esc(r.tool)} &middot; ${esc(r.artifact)}</button></li>`).join('')}</ul>`).join('')}
+      <p class="gnote">The native script carries every one of these as a manifest line, so nothing is lost by running both.</p></details>`:''}`;
 }
 // Grouped by volatility rather than by tool. This is the ordering a responder
 // actually works in: everything that dies at reboot, across every tool, before
@@ -2898,11 +2967,11 @@ function coverageHTML(){
     </div>
     <div class="covctl">
       <input type="search" id="covQ" value="${esc(covQ)}" placeholder="Filter techniques: id, title, tactic" aria-label="Filter techniques">
-      <div class="seg small" role="group" aria-label="Show"><button class="segbtn${covOnly==='all'?' on':''}" data-only="all">All</button>
-        <button class="segbtn${covOnly==='gap'?' on':''}" data-only="gap">Gaps</button>
-        <button class="segbtn${covOnly==='thin'?' on':''}" data-only="thin">Thin</button>
-        <button class="segbtn${covOnly==='norule'?' on':''}" data-only="norule">No rule</button>
-        <button class="segbtn${covOnly==='observed'?' on':''}" data-only="observed">Observed</button></div>
+      <div class="seg small" role="group" aria-label="Show"><button class="segbtn${covOnly==='all'?' on':''}" data-only="all" aria-pressed="${covOnly==='all'}">All</button>
+        <button class="segbtn${covOnly==='gap'?' on':''}" data-only="gap" aria-pressed="${covOnly==='gap'}">Gaps</button>
+        <button class="segbtn${covOnly==='thin'?' on':''}" data-only="thin" aria-pressed="${covOnly==='thin'}">Thin</button>
+        <button class="segbtn${covOnly==='norule'?' on':''}" data-only="norule" aria-pressed="${covOnly==='norule'}">No rule</button>
+        <button class="segbtn${covOnly==='observed'?' on':''}" data-only="observed" aria-pressed="${covOnly==='observed'}">Observed</button></div>
       <label class="covtog"><input type="checkbox" id="covGroup"${covGroup?' checked':''}> Group by tactic</label>
       <span class="muted">${rows.length} of ${all.length}</span>
     </div>
@@ -3630,6 +3699,13 @@ function renderMain(){
     const sw=$('#pSwitch'); if(sw)sw.onchange=()=>switchPlan(sw.value);
     const nw=$('#pNew'); if(nw)nw.onclick=()=>createPlan('');
     $$('#main .segbtn[data-mode]').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
+    const ex=$('#pExport');
+    if(ex)ex.onchange=()=>{triageFw=ex.value;renderMain();const n=$('#pExport');if(n)n.focus()};
+    const pd=$('#pDl');
+    if(pd)pd.onclick=()=>{const x=planExport();download(x.name,x.text.replace(/\r?\n/g,x.eol),x.mime);flash(pd,'downloaded')};
+    const pc=$('#pCopy');if(pc)pc.onclick=()=>copy(planExport().text,pc);
+    const sl=$('#pSkipLnk');if(sl)sl.onclick=e=>{e.preventDefault();const d=$('#pSkip');if(d){d.open=true;d.querySelector('summary').focus()}};
+    $$('#main .pcard .fwskip [data-row]').forEach(b=>b.onclick=()=>openDrawer(b.dataset.row,b));
     const cl=$('#cpClear');
     // Two-step, because a plan is assembled one tick at a time across the whole
     // catalog and there is no undo for throwing it away.
@@ -3655,7 +3731,25 @@ function renderBack(){
     // straight into a jump there may not be, so fall back to the stack.
     setTimeout(()=>{if(navStack.length&&$('#backbar').firstChild===b)goBack()},60)};
 }
+// The strip scrolls sideways; the selected tab is brought into it by setting
+// scrollLeft. scrollIntoView would also scroll the page.
+function syncTabStrip(){
+  const t=$('.tabs'); if(!t)return;
+  const cur=t.querySelector('[aria-selected=true]');
+  if(cur){
+    const l=cur.offsetLeft, r=l+cur.offsetWidth;
+    if(l<t.scrollLeft)t.scrollLeft=Math.max(0,l-12);
+    else if(r>t.scrollLeft+t.clientWidth)t.scrollLeft=r-t.clientWidth+12;
+  }
+  syncTabFade();
+}
+function syncTabFade(){
+  const t=$('.tabs'); if(!t)return;
+  t.classList.toggle('fl',t.scrollLeft>2);
+  t.classList.toggle('fr',t.scrollLeft+t.clientWidth<t.scrollWidth-2);
+}
 function renderTabs(){
+  setTimeout(syncTabStrip,0);
   $$('.tabs button').forEach(b=>{
     const on=b.dataset.v===view;
     b.setAttribute('aria-selected',String(on));
@@ -3960,7 +4054,7 @@ $('#themeBtn').onclick=()=>{
 };
 function setThemeBtn(){
   const dark=document.documentElement.dataset.theme==='dark';
-  $('#themeBtn').textContent=dark?'☀ Light':'☾ Dark';
+  $('#themeBtn').innerHTML=dark?'<span aria-hidden="true">☀</span><span class="thtx"> Light</span>':'<span aria-hidden="true">☾</span><span class="thtx"> Dark</span>';
   $('#themeBtn').setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
@@ -3981,6 +4075,8 @@ if(window.ResizeObserver)new ResizeObserver(syncHdr).observe($('.hdr'));
 window.addEventListener('scroll',()=>{const c=window.scrollY>0, h=$('.hdr');
   if(h.classList.contains('compact')!==c){h.classList.toggle('compact',c);syncHdr()}},{passive:true});
 window.addEventListener('resize',syncHdr);
+$('.tabs').addEventListener('scroll',syncTabFade,{passive:true});
+window.addEventListener('resize',syncTabFade);
 setThemeBtn();update();applyHash();
 """
 
@@ -4252,7 +4348,7 @@ def main():
       <button id="palBtn" type="button" class="palbtn" aria-haspopup="dialog"
         aria-label="Search everything (press / or Ctrl+K)"><span aria-hidden="true">&#8981;</span><span class="paltx">Search everything</span><kbd>/</kbd></button>
       <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
-         aria-label="View this project on GitHub">GitHub &#8599;</a>
+         aria-label="View this project on GitHub"><span class="ghtx">GitHub </span>&#8599;</a>
       <button id="themeBtn" type="button"></button></div>
   </div>
   <nav class="tabs" role="tablist">

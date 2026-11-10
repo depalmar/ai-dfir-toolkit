@@ -158,7 +158,7 @@ CSS = r"""
 .planwrap{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
 @media (min-width:1240px){
   .planwrap.has-build{grid-template-columns:minmax(0,1fr) 420px}
-  .planwrap.has-build .tbuild{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;margin:0}
+  .planwrap.has-build .tbuild{position:sticky;top:calc(var(--hdrh,150px) + 12px);max-height:calc(100vh - var(--hdrh,150px) - 24px);overflow:auto;margin:0}
 }
 /* graph workbench */
 .gbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);
@@ -529,7 +529,7 @@ function intelHTML(){
     layer; pick a technique for who uses it, what detects it and what is reported alongside it; click a tactic heading to filter.</p>
     <div class="seg small" role="group" aria-label="Matrix layer">${[['actors','Actors'],['cases','Cases'],
       ['rules','Rules'],['gaps','Coverage gaps']].map(([k,l])=>
-      `<button class="segbtn${intelLayer===k?' on':''}" data-layer="${k}">${l}</button>`).join('')}</div>
+      `<button class="segbtn${intelLayer===k?' on':''}" data-layer="${k}" aria-pressed="${intelLayer===k}">${l}</button>`).join('')}</div>
     <label class="gnote" style="margin-left:10px"><input type="checkbox" id="mAll" ${matrixAll?'checked':''}>
       show every technique</label>
     ${matrixHTML(acts,cases)}</div>
@@ -1403,20 +1403,10 @@ function fwPanel(fw){
   const pre=fw==='velo'?tools.filter(t=>t.velo).map(t=>t.velo):fw==='kape'?tools.filter(t=>t.kape).map(t=>t.kape):[];
   const bySkip={};for(const [r,why] of x.skip)(bySkip[why]=bySkip[why]||[]).push(r);
   return `<div class="fw"><div class="fwc">
-    <p class="gnote">${d.note}</p>
     <p class="tcount">${x.n} of ${planRowsOrdered().length} picked rows rendered${x.skip.length?`, <b>${x.skip.length}</b> not expressible in this format (listed below)`:''}.</p>
-    <div class="gbtns"><button class="btn primary" id="fwDl">Download ${esc(x.name)}</button>
-      <button class="btn" id="fwCopy">Copy</button></div>
     ${tformHTML()}
     <p class="gnote" style="margin-top:8px">${x.how}</p>
     <div class="cmdwrap"><button class="btn mini" id="tCmdCopy">Copy</button><pre class="tcmd" id="tCmd">${esc(runCmd())}</pre></div>
-    ${pre.length?`<p class="gnote" style="margin-top:8px">Or use the repository's ${d.feedLabel} for the picked tools:
-      <code style="display:inline">${pre.map(esc).join(' ')}</code> &middot;
-      <a href="${REPO_URL}/tree/main/artifacts/docs/api/${d.feed}" target="_blank" rel="noopener">browse &#8599;</a></p>`:''}
-    ${x.skip.length?`<details class="fwskip"><summary class="gnote">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</summary>
-      ${Object.entries(bySkip).map(([why,rs])=>`<p class="gnote"><b>${esc(why)}</b></p><ul class="skiplist">${rs.map(r=>
-        `<li><button class="lnk" data-row="${esc(r.anchor)}">${esc(r.tool)} &middot; ${esc(r.artifact)}</button></li>`).join('')}</ul>`).join('')}
-      <p class="gnote">The native script carries every one of these as a manifest line, so nothing is lost by running both.</p></details>`:''}
     <details><summary class="gnote">Preview</summary><pre>${esc(x.text)}</pre></details>
   </div></div>`;
 }
@@ -1432,20 +1422,17 @@ function triageHTML(){
     The native script is the default because it needs nothing installed on the host. Nothing typed here leaves your browser.</p>
     ${triageSummaryHTML(prow)}
     <details class="brun"><summary class="gnote">Before you run it</summary><ol>${BEFORE_RUN.map(x=>`<li>${x}</li>`).join('')}</ol></details>
-    <div class="seg small" role="group" aria-label="Collection method">${Object.entries(FW).map(([k,d])=>
-      `<button class="segbtn${triageFw===k?' on':''}" data-fw="${k}">${d.label}</button>`).join('')}</div>
+    <p class="tcount">Exporting for <b>${esc(FW[triageFw].label)}</b>. Change it under the plan's "Export for".</p>
     ${triageFw==='native'?`
       <div class="seg small" role="group" aria-label="Operating system" style="margin-top:8px">${Object.entries(osL).map(([k,l])=>
-        `<button class="segbtn${triageOS===k?' on':''}" data-os="${k}">${l}</button>`).join('')}</div>
+        `<button class="segbtn${triageOS===k?' on':''}" data-os="${k}" aria-pressed="${triageOS===k}">${l}</button>`).join('')}</div>
       <p class="tcount">${sc.t.n} target line${sc.t.n===1?'':'s'} for ${esc(osL[triageOS])}${sc.t.manual?` · ${sc.t.manual} need a person (written to the manifest as manual)`:''}${
         sc.t.skipped?` · ${sc.t.skipped} do not apply to this OS`:''}. Volatile state first; credentials hashed, not copied, unless you pass
         ${triageOS==='win'?'<code>-CollectSecrets</code>':'<code>--collect-secrets</code>'}. Repository-scoped rows need
         ${triageOS==='win'?'<code>-RepoPath</code>':'<code>--repo</code>'}; limit to one user with
         ${triageOS==='win'?'<code>-HomePath</code>':'<code>--home</code>'}.</p>
       ${tformHTML()}
-      <div class="gbtns"><button class="btn primary" id="tDl">Download ${esc(sc.name)}</button>
-        <button class="btn" id="tCopy">Copy script</button></div>
-      <p class="gnote" style="margin-top:8px">Then, on the host:</p>
+      <p class="gnote" style="margin-top:8px">Download it from the plan's header, then, on the host:</p>
       <div class="cmdwrap"><button class="btn mini" id="tCmdCopy">Copy</button><pre class="tcmd" id="tCmd">${esc(runCmd())}</pre></div>
       <details><summary class="gnote">Preview the script</summary><pre>${esc(sc.text)}</pre></details>`
     :fwPanel(triageFw)}
