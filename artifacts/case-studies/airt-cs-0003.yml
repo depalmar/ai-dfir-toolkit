@@ -13,7 +13,7 @@ basis: >-
   analysis from Trend Micro naming the post-exploitation payload.
 atlas:
   - AML.T0011
-summary: Langflow versions before 1.3.0 expose /api/v1/validate/code, which passes user-supplied Python to exec() with no authentication and no sandbox. Payloads hidden in function decorators and default arguments execute in the server context. CVSS 9.8. CISA added it to the Known Exploited Vulnerabilities catalog on 2025-05-05. Trend Micro documented in-the-wild exploitation deploying the Flodrix botnet, with operators first enumerating publicly exposed Langflow servers via Shodan or FOFA. A second flaw, CVE-2026-5027 (CVSS 8.8, path traversal via POST /api/v2/files) affects 1.8.4 and earlier.
+summary: Langflow versions before 1.3.0 expose /api/v1/validate/code, which passes user-supplied Python to exec() with no authentication and no sandbox. Payloads hidden in function decorators and default arguments execute in the server context. CVSS 9.8. CISA added it to the Known Exploited Vulnerabilities catalog on 2025-05-05. Trend Micro documented in-the-wild exploitation deploying the Flodrix botnet, with operators first enumerating publicly exposed Langflow servers via Shodan or FOFA. A second flaw, CVE-2026-5027 (CVSS 8.8, path traversal via POST /api/v2/files) affects 1.8.4 and earlier. Langflow stayed a target afterwards, and CISA added five more Langflow flaws to its Known Exploited Vulnerabilities catalog during 2026, listed on the Langflow entry (AIRT-0044).
 iocs:
   - type: endpoint
     value: POST /api/v1/validate/code

@@ -20,7 +20,7 @@ capabilities:
   mcp_capable: true
 risk: critical
 confidence: high
-abuse_potential: CVE-2025-3248 (CVSS 9.8, unauthenticated RCE via /api/v1/validate/code) is on the CISA KEV catalog and was mass-exploited to deploy the Flodrix botnet; attackers enumerated exposed instances with Shodan/FOFA first. CVE-2026-5027 (CVSS 8.8) adds path traversal to arbitrary file write via POST /api/v2/files.
+abuse_potential: "CVE-2025-3248 (CVSS 9.8, unauthenticated RCE via /api/v1/validate/code) is on the CISA KEV catalog, flagged there for known ransomware use, and was mass-exploited to deploy the Flodrix botnet; attackers enumerated exposed instances with Shodan/FOFA first. CVE-2026-5027 (CVSS 8.8) adds path traversal to arbitrary file write via POST /api/v2/files. CISA added five more Langflow flaws to its Known Exploited Vulnerabilities catalog during 2026: CVE-2026-33017, code injection that lets public flows be built without authentication (March); CVE-2025-34291, permissive CORS with a SameSite=None refresh cookie that lets a malicious page obtain tokens and reach code execution (May); CVE-2026-55255, an authenticated user running another user's flow by supplying its ID (July); CVE-2026-0770, inclusion of functionality from an untrusted control sphere leading to remote code execution (July); and CVE-2026-9198, unauthenticated code execution on default deployments (August). Treat any internet-exposed Langflow older than the current release as a likely compromise to scope, not a patch to schedule."
 artifacts:
   disk:
     - path: ~/.langflow/
@@ -274,5 +274,14 @@ references:
   - title: "Langflow docs - use Langflow as an MCP server"
     url: https://docs.langflow.org/mcp-server
     accessed: "2026-08-13"
+  - title: "CISA - Known Exploited Vulnerabilities Catalog (Langflow entries)"
+    url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=langflow
+    accessed: "2026-11-10"
+  - title: "GHSA-vwmf-pq79-vjvx - CVE-2026-33017, unauthenticated code injection via public flow build"
+    url: https://github.com/langflow-ai/langflow/security/advisories/GHSA-vwmf-pq79-vjvx
+    accessed: "2026-11-10"
+  - title: "GHSA-qrpv-q767-xqq2 - CVE-2026-55255, flow execution by ID across users"
+    url: https://github.com/langflow-ai/langflow/security/advisories/GHSA-qrpv-q767-xqq2
+    accessed: "2026-11-10"
 last_verified: "2026-08-13"
-last_modified: "2026-08-11"
+last_modified: "2026-11-10"

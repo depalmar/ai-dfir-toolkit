@@ -1,6 +1,6 @@
 name: Custom.AIAgents.GoogleGeminiCLI
 description: |
-  Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config.
+  Terminal agent installed via npm @google/gemini-cli. Binary `gemini`. Supports system-wide policy config. On 18 June 2026 Google stopped serving it to free, Goo
 
   Generated from the AI agent artifact catalog (AIRT-0037). Every glob below is
   derived from a location the catalog has already verified.

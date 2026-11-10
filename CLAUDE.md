@@ -344,7 +344,7 @@ Detection content totals 70 rule files / 161 signatures across the nine attack-c
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
-content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.09.29,
+content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.11.09,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
 Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
@@ -489,10 +489,9 @@ resolved by whoever picks this up next without asking.
 **Then, in order of value:**
 
 0. **Threat-intel follow-through.**
-   - The first `intel_watch.py` run offline found five Langflow CVEs added to CISA
-     KEV this year that the catalog and `cve-status.json` do not cite:
-     CVE-2026-0770, -9198, -33017, -55255 and CVE-2025-34291. Research them into
-     AIRT-0044 and AIRT-CS-0003.
+   - Gemini CLI (AIRT-0037) is `legacy`: Google moved consumer tiers to
+     Antigravity CLI on 18 June 2026. Antigravity CLI has no entry yet - add one
+     only from a host or vendor-documented paths, not from the migration post.
    - Set up auto-merge: an `AUTOMATION_TOKEN` secret, branch protection on
      `main`, and "Allow auto-merge". Without them the refresh PR opens but waits.
    - Run the generated PowerShell triage script on a Windows host. The bash
