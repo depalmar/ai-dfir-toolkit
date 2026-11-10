@@ -20,6 +20,6 @@ Targets:
     -
         Name: 'Remote binary download - verify hash'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.codeium\<version>\'
+        Path: 'C:\Users\%user%\.codeium\*\'
         FileMask: 'language_server_*'
         Comment: 'AIRT-0006 | [confidence: medium] Remote binary download - verify hash'

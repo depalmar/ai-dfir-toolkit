@@ -7,7 +7,14 @@ Targets:
     -
         Name: 'data/, models/, logs/'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.config\Jan\  |  ~\jan\'
+        Path: 'C:\Users\%user%\.config\Jan\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0019 | [confidence: medium] data/, models/, logs/'
+    -
+        Name: 'data/, models/, logs/'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\jan\'
         FileMask: '*'
         Recursive: true
         Comment: 'AIRT-0019 | [confidence: medium] data/, models/, logs/'

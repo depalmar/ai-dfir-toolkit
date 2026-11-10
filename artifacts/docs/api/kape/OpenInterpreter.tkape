@@ -7,7 +7,14 @@ Targets:
     -
         Name: 'profiles/, config yaml'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.config\Open Interpreter\  |  %APPDATA%\Open Interpreter\'
+        Path: 'C:\Users\%user%\.config\Open Interpreter\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0015 | [confidence: medium] profiles/, config yaml'
+    -
+        Name: 'profiles/, config yaml'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\Open Interpreter\'
         FileMask: '*'
         Recursive: true
         Comment: 'AIRT-0015 | [confidence: medium] profiles/, config yaml'
