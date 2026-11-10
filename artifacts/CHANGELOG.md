@@ -5,6 +5,17 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Guide 1.1, from the SANS DFIR Summit 2026 keynote.** "The AI System Was
+  the Victim" is folded into the investigation guide and linked under further
+  reading. Part II gains the keynote's reconstruction (EchoLeak and MCPoison
+  chained at an invented company): four logs, three stages, four owners, with
+  the tell of a tool call that has no user turn before it, and a section on
+  reading an MCP config as hearsay and the invocation trace as the evidence.
+  Part I gains the acquisition order by what you lose first, matching the
+  catalog's live, rotating and stable tiers, and what each party can collect
+  for attribution. Section 8 gains agent memory as a persistence mechanism
+  with its own purge and prove-the-purge steps, and how Article 73 collides
+  with containment. A nine-term glossary closes Part V.
 - **Investigation guide is the landing page.** The site now opens on the guide,
   with a three-step orientation (decide, locate, collect) that says what the
   site is for before the reader meets a 622-row table. The guide gains a
@@ -86,6 +97,14 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   copyable canvas links and degree-scaled nodes.
 
 ### Changed
+- **Cloud logging defaults in the guide.** The provider table now separates
+  what is on by default from where prompt and completion text lives and how
+  long it is kept. Azure OpenAI diagnostic logs carry metadata, not the
+  text, which needs API Management's LLM message logging or a gateway.
+  Vertex AI is listed under its April 2026 name, Gemini Enterprise Agent
+  Platform, and Microsoft 365 Copilot is added. Article 73 deadlines now
+  include the 10-day window where someone died, and the Digital Omnibus on
+  AI (Regulation (EU) 2026/1744) deferral is recorded with its status date.
 - Langflow (AIRT-0044) cites the five Langflow flaws CISA added to its Known
   Exploited Vulnerabilities catalog during 2026 - CVE-2026-33017,
   CVE-2025-34291, CVE-2026-55255, CVE-2026-0770 and CVE-2026-9198 - and notes
