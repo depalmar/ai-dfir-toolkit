@@ -44,8 +44,44 @@ ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "artifacts" / "docs" / "api" / "catalog.json"
 TARGETS = Path(__file__).resolve().parent / "targets.yaml"
 
+sys.path.insert(0, str(ROOT / "artifacts" / "scripts"))
+from locators import locator_paths  # noqa: E402  (the one locator rule)
+
 MARKER = "# >>> GENERATED CREDENTIAL TARGETS - do not edit by hand <<<"
 FOOTER = "# <<< END GENERATED CREDENTIAL TARGETS >>>"
+
+# What a checkout placeholder (<repo>, <project>, <gitroot>) becomes before it
+# is made relative. The collector joins a relative path onto each --project-dir,
+# which is how it already reads the hand-authored project targets.
+REPO = "{REPO}"
+ROOTED_HERE = re.compile(r"^(~|/|%|\$|[A-Za-z]:[\\/])")
+
+
+def resolve(raw: list[str]) -> tuple[list[str], list[str]]:
+    """Split raw catalog pieces into paths the collector can open and the rest.
+
+    What a piece means as a path is locators.py's decision, the rule the triage
+    scripts and the KAPE, Velociraptor and ForensicArtifacts exporters share:
+    `<version>`-style segments widen to `*`, a compound splits, a `-> key`
+    suffix goes. A checkout root becomes a path relative to --project-dir, as
+    the site's own collector export does, and a `$VAR` is kept because the
+    collector expands it on the host. Anything the rule drops - `<install>`,
+    `<VS Code User dir>`, prose - comes back as unresolved, so the collector can
+    record in the case manifest what it did not attempt instead of opening a
+    folder literally named `<install>`.
+    """
+    paths, unresolved = [], []
+    for piece in raw:
+        kept = []
+        for p in locator_paths(piece, repo=REPO, env=True):
+            if p.startswith(REPO):
+                p = p[len(REPO):].lstrip("/\\")
+            if p:
+                kept.append(p)
+        if not kept:
+            unresolved.append(piece)
+        paths += [p for p in kept if p not in paths]
+    return paths, unresolved
 
 
 def is_path(location: str) -> bool:
@@ -64,7 +100,12 @@ def is_path(location: str) -> bool:
 
 
 def split_locations(location: str) -> list[str]:
-    """Some rows name two files in one string ('a  |  b'). Emit both."""
+    """Some rows name two files in one string ('a  |  b'). Emit both.
+
+    These raw pieces decide which catalog rows become targets and what each
+    target is called, so ids stay stable. What a piece means as a path is
+    resolve()'s job, through locators.py.
+    """
     parts = [p.strip() for p in re.split(r"\s+\|\s+", location)]
     out = []
     for p in parts:
@@ -126,11 +167,14 @@ def collect_disk(catalog, taken: set, cred_paths: set) -> list[dict]:
             if key in taken:
                 continue
             taken.add(key)
+            resolved, unresolved = resolve(paths)
             out.append({
                 "id": slug(entry["id"], paths[0]).replace("cred_", "art_", 1),
                 "name": f"{entry['name']} artifact ({entry['id']})",
                 "os": a.get("os") or entry.get("supported_os") or ["linux"],
-                "paths": paths,
+                "raw": paths,
+                "paths": resolved,
+                "unresolved": unresolved,
                 "artifact_type": a.get("artifact_type", "unknown"),
                 "confidence": a.get("confidence", "unknown"),
             })
@@ -151,16 +195,45 @@ def collect(catalog) -> list[dict]:
             if key in seen:
                 continue
             seen.add(key)
+            resolved, unresolved = resolve(paths)
             targets.append({
                 "id": slug(entry["id"], paths[0]),
                 "name": f"{entry['name']} credential store ({entry['id']})",
                 "os": cred.get("os") or entry.get("supported_os") or ["linux"],
-                "paths": paths,
+                "raw": paths,
+                "paths": resolved,
+                "unresolved": unresolved,
                 "secret_type": cred.get("secret_type", "unknown"),
                 "storage": cred.get("storage", "unknown"),
                 "confidence": cred.get("confidence", "unknown"),
             })
     return sorted(targets, key=lambda t: t["id"]), seen
+
+
+def _locate(t: dict) -> list[str]:
+    """The scope and type lines of one target, from its resolved paths.
+
+    A target is project-scoped when a path is relative - a checkout root made
+    relative by resolve() - and the collector joins it onto each --project-dir.
+    """
+    scope = "project" if any(not ROOTED_HERE.match(p) for p in t["paths"]) else "user"
+    return [
+        f"    scope: {scope}",
+        f"    type: {'glob' if any('*' in p for p in t['paths']) else 'file'}",
+    ]
+
+
+def _paths(t: dict) -> list[str]:
+    """The path lines of one target. `paths: []` is written out, never a bare
+    `paths:`, which YAML reads as null."""
+    lines = ["    paths:" if t["paths"] else "    paths: []"]
+    lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
+    if t["unresolved"]:
+        # Recorded, not opened: the collector lists these in the case manifest
+        # as not attempted, so the gap is visible in the chain of custody.
+        lines.append("    unresolved:")
+        lines += [f"      - {json.dumps(p)}" for p in t["unresolved"]]
+    return lines
 
 
 def render(targets: list[dict], disk: list[dict]) -> str:
@@ -171,9 +244,12 @@ def render(targets: list[dict], disk: list[dict]) -> str:
         "# filesystem location, plus every disk artifact rated forensic_value: high.",
         "# Credential targets are sensitivity: secret, so they are recorded as",
         "# metadata and a hash and never copied unless --collect-secrets is passed.",
+        "# Placeholders are resolved by artifacts/scripts/locators.py: <repo> becomes",
+        "# a path relative to --project-dir, <version>-style segments become *. A",
+        "# location with no root the collector can supply (<install>/...) is listed",
+        "# under unresolved: and recorded in the case manifest as not attempted.",
     ]
     for t in targets:
-        scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
         os_list = [o for o in t["os"] if o in
                    ("windows", "macos", "linux", "docker", "container")] or ["linux"]
         lines += [
@@ -182,18 +258,15 @@ def render(targets: list[dict], disk: list[dict]) -> str:
             '    repo_cat: "cred"',
             "    cosai: []",
             f"    os: [{', '.join(os_list)}]",
-            f"    scope: {scope}",
-            f"    type: {'glob' if any('*' in p for p in t['paths']) else 'file'}",
+            *_locate(t),
             "    sensitivity: secret",
-            "    paths:",
+            *_paths(t),
         ]
-        lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
         note = (f"{t['storage']}/{t['secret_type']}, catalog confidence "
                 f"{t['confidence']}. Existence and mode are the finding; the body "
                 f"is not copied unless --collect-secrets.")
         lines.append(f"    notes: {json.dumps(note)}")
     for t in disk:
-        scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
         os_list = [o for o in t["os"] if o in
                    ("windows", "macos", "linux", "docker", "container")] or ["linux"]
         lines += [
@@ -202,17 +275,26 @@ def render(targets: list[dict], disk: list[dict]) -> str:
             '    repo_cat: "art"',
             "    cosai: []",
             f"    os: [{', '.join(os_list)}]",
-            f"    scope: {scope}",
-            f"    type: {'glob' if any('*' in p for p in t['paths']) else 'file'}",
+            *_locate(t),
             "    sensitivity: normal",
-            "    paths:",
+            *_paths(t),
         ]
-        lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
         note = (f"{t['artifact_type']}, forensic_value high, catalog confidence "
                 f"{t['confidence']}.")
         lines.append(f"    notes: {json.dumps(note)}")
     lines.append(FOOTER)
     return "\n".join(lines)
+
+
+# Anything here in an emitted path is a catalog locator that was never resolved:
+# a placeholder, an elision, a compound or a "path -> key" suffix. The collector
+# would open it as a literal folder name and match nothing.
+UNRESOLVED = re.compile(r"[<>|→]|\.\.\.|\s;\s")
+
+
+def audit(targets: list[dict]) -> list[str]:
+    """Every emitted path must be one the collector can open as written."""
+    return [f"{t['id']}: {p}" for t in targets for p in t["paths"] if UNRESOLVED.search(p)]
 
 
 def main() -> int:
@@ -224,8 +306,18 @@ def main() -> int:
 
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     creds, taken = collect(catalog)
-    cred_paths = {_norm(p) for t in creds for p in t["paths"]}
-    block = render(creds, collect_disk(catalog, taken, cred_paths))
+    # Raw pieces, not resolved paths: a directory that holds a credential the
+    # collector cannot reach (<install>/docker/.env) still must not be emitted
+    # as a normal-sensitivity target that would copy it whole.
+    cred_paths = {_norm(p) for t in creds for p in t["raw"]}
+    disk = collect_disk(catalog, taken, cred_paths)
+    bad = audit(creds + disk)
+    if bad:
+        print(f"{len(bad)} emitted path(s) still carry an unresolved catalog locator:")
+        for b in bad:
+            print(f"  {b}")
+        return 1
+    block = render(creds, disk)
 
     text = TARGETS.read_text(encoding="utf-8")
     if MARKER in text:

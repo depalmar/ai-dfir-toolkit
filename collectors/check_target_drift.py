@@ -34,6 +34,13 @@ Five findings. Only the first two fail the build:
   CATALOG-GAP    the collector knows a path the catalog does not. Usually a real
                  gap in the catalog, sometimes deliberately out of its scope
                  (vector stores, ML platforms). Informational.
+
+Two more are informational and say why a location is neither covered nor missed.
+UNPINNED is a location that reduces to a bare filename once its placeholder root
+is stripped. UNRESOLVED is one a generated target names under `unresolved:`
+because locators.py cannot give it a root (<install>/docker/.env); the collector
+records it as not attempted on every run instead of opening a folder named
+"<install>".
 """
 from __future__ import annotations
 
@@ -46,6 +53,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "artifacts" / "docs" / "api" / "catalog.json"
 TARGETS = Path(__file__).resolve().parent / "targets.yaml"
+
+sys.path.insert(0, str(ROOT / "artifacts" / "scripts"))
+from locators import WILDCARD_TOKEN, clean, split_paths  # noqa: E402
 
 # Out of the catalog's stated scope (AI coding agents, local runtimes, MCP
 # components), so a collector-only target here is correct rather than drift.
@@ -108,6 +118,10 @@ def norm(path: str) -> str:
     p = path.replace("\\", "/").lower()
     p = re.sub(r"%(\w+)%", r"\1", p)
     p = re.sub(r"\$\{?(\w+)\}?", r"\1", p)
+    # A per-install segment (<version>, <uuid4hex>) is a wildcard - the rule the
+    # generated targets were resolved with - so screenshot_<uuid4hex>.png and the
+    # target's screenshot_*.png compare equal. It has to run before the next line.
+    p = WILDCARD_TOKEN.sub("*", p)
     # The catalog uses <config>, <project>, <install> for roots it will not pin
     # down. Those cannot match a concrete path, so drop the placeholder segment
     # and compare on the part that is actually specified.
@@ -131,20 +145,26 @@ def main() -> int:
 
     catalog, targets = load()
 
+    def pieces_of(value: str) -> set:
+        # One field can name two places ("a  |  b", "a ; b"); compared whole it
+        # equals no target, so the catalog-gap check split nothing and reported
+        # AIRT-0003's .github/mcp.json as undocumented.
+        return {norm(clean(p)) for p in split_paths(value)} | {norm(value)}
+
     creds = []            # (entry_id, location, storage, secret_type)
     catalog_paths = set()
     for entry in catalog:
         for artifact in (entry.get("artifacts") or {}).get("disk", []):
             if artifact.get("path"):
-                catalog_paths.add(norm(artifact["path"]))
+                catalog_paths |= pieces_of(artifact["path"])
         for mcp in entry.get("mcp", []):
             if mcp.get("config_path"):
-                catalog_paths.add(norm(mcp["config_path"]))
+                catalog_paths |= pieces_of(mcp["config_path"])
         for cred in entry.get("credentials", []):
             if cred.get("location"):
                 creds.append((entry["id"], cred["location"],
                               cred.get("storage", ""), cred.get("secret_type", "")))
-                catalog_paths.add(norm(cred["location"]))
+                catalog_paths |= pieces_of(cred["location"])
 
     non_credential_paths: dict[str, set] = {}
     for entry in catalog:
@@ -159,8 +179,13 @@ def main() -> int:
 
     target_paths = []     # (target_id, normalised path, sensitivity)
     for t in targets:
-        for p in t.get("paths", []):
+        for p in t.get("paths") or []:
             target_paths.append((t["id"], norm(p), t.get("sensitivity", "normal")))
+
+    # Catalog locations a generated target names but cannot open - <install>/...,
+    # <VS Code User dir>/..., prose. The collector records each one in the case
+    # manifest as not attempted, so they are neither covered nor silently missed.
+    unresolved = {norm(u) for t in targets for u in t.get("unresolved") or []}
 
     def same_path(a: str, b: str) -> bool:
         """Equal, or one is a path-suffix of the other on a segment boundary.
@@ -169,15 +194,22 @@ def main() -> int:
         leaves a bare "config.json", which is a substring of
         "claude_desktop_config.json" and would report GPT Pilot's config as
         covered by the Claude Desktop target.
+
+        Suffix matching needs a directory on the shorter side for the same
+        reason. A bare ".env" - what the project-scoped `.env` targets reduce to -
+        is a suffix of every .env in the catalog, and used to credit them with
+        ~/.gemini/.env and <install>/docker/.env, neither of which they open.
         """
         if a == b:
             return True
-        return a.endswith("/" + b) or b.endswith("/" + a)
+        short, long_ = sorted((a, b), key=len)
+        return "/" in short and long_.endswith("/" + short)
 
     def covered_by(n: str):
         return [(tid, sens) for tid, tp, sens in target_paths if same_path(tp, n)]
 
     missed, unmarked, uncollectable, mixed_content, unpinnable = [], [], [], [], []
+    needs_root = []
     for entry_id, location, storage, secret_type in creds:
         pieces = [norm(x) for x in split_locations(location)]
         n = pieces[0]
@@ -194,7 +226,15 @@ def main() -> int:
         if not hits:
             if storage != "plaintext":
                 continue
-            if kind == "path":
+            # kind == "path" first: the env var SECRET_KEY normalises to the same
+            # "secret_key" as Langflow's <LANGFLOW_CONFIG_DIR>/secret_key file.
+            if kind == "path" and all(x in unresolved for x in pieces):
+                # Named by a target, recorded as not attempted on every run, and
+                # collectable once the catalog pins the root. Informational, like
+                # UNPINNED: a gate cannot demand a path nobody has specified.
+                needs_root.append({"entry": entry_id, "location": location,
+                                   "secret_type": secret_type})
+            elif kind == "path":
                 missed.append({"entry": entry_id, "location": location,
                                "secret_type": secret_type})
             else:
@@ -220,6 +260,8 @@ def main() -> int:
     for t in targets:
         if t["id"] in OUT_OF_SCOPE or t["id"].startswith("cred_"):
             continue
+        if not t.get("paths"):
+            continue  # names only unresolved catalog locations, so it is in the catalog
         if not any(any(same_path(norm(p), c) for c in catalog_paths)
                    for p in t.get("paths", [])):
             catalog_gaps.append({"target": t["id"], "paths": t.get("paths", [])})
@@ -229,6 +271,7 @@ def main() -> int:
                           "uncollectable": uncollectable,
                           "mixed_content": mixed_content,
                           "unpinnable": unpinnable,
+                          "needs_root": needs_root,
                           "catalog_gap": catalog_gaps}, indent=2))
         return 1 if (missed or unmarked) else 0
 
@@ -264,6 +307,15 @@ def main() -> int:
         print("        the case directory will contain embedded secrets. Handle accordingly.")
         for m in mixed_content:
             print(f"        {m['target']:24} {m['location'][:52]}")
+
+    if needs_root:
+        print(f"\n[UNRESOLVED] {len(needs_root)} plaintext credential location(s) a target "
+              f"names but cannot open (informational).")
+        print("             The root is a placeholder only a person can fill - <install>,")
+        print("             <VS Code User dir> - so the collector records each one in the")
+        print("             case manifest as not attempted. Pin the root in the catalog to gate it.")
+        for u in needs_root:
+            print(f"             {u['entry']}  {u['location'][:58]}")
 
     if unpinnable:
         print(f"\n[UNPINNED] {len(unpinnable)} credential location(s) that resolve to a bare "

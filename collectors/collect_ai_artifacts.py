@@ -32,6 +32,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import socket
 import sys
@@ -77,23 +78,48 @@ def self_hash() -> str:
         return "unavailable"
 
 
+# A catalog placeholder (<install>, <VS Code User dir>) names a location only a
+# person knows. gen_credential_targets.py resolves the ones that have a meaning
+# - through artifacts/scripts/locators.py, the rule every collection output
+# shares - and moves the rest to `unresolved:`. Anything still carrying one is
+# never opened: glob() would search for a folder literally named "<install>".
+PLACEHOLDER = re.compile(r"[<>]")
+# An environment variable that is not set on this host. Opening the literal
+# string would resolve it against the current directory.
+UNEXPANDED_VAR = re.compile(r"\$\{?[A-Za-z_]")
+
+
 def expand_tokens(raw: str, scope: str, home: Path, project_dir: Path | None) -> str:
-    """Expand ~, environment tokens, and choose the base directory for project-scoped globs."""
+    """Expand ~, environment tokens, and choose the base directory for project-scoped globs.
+
+    Returns '' when a variable the path needs is not set on this host - $APPDATA
+    off Windows, an override such as $CLAUDE_CONFIG_DIR that was never exported.
+    """
     p = os.path.expanduser(raw)
     p = os.path.expandvars(p)  # $APPDATA etc. (no-op if unset on this OS)
+    if UNEXPANDED_VAR.search(p):
+        return ""  # checked before the join, so a '$' in --project-dir is not mistaken for one
     if scope == "project" and project_dir is not None and not os.path.isabs(p):
         p = str(project_dir / p)
     return p
+
+
+def unresolved_locators(target: dict[str, Any]) -> list[str]:
+    """Catalog locations this target names but cannot open, for the manifest."""
+    return list(target.get("unresolved") or []) + [
+        p for p in target.get("paths") or [] if PLACEHOLDER.search(p)]
 
 
 def resolve_paths(target: dict[str, Any], home: Path, project_dir: Path | None) -> list[Path]:
     ttype = target.get("type", "file")
     scope = target.get("scope", "user")
     out: list[Path] = []
-    for raw in target.get("paths", []):
+    for raw in target.get("paths") or []:
+        if PLACEHOLDER.search(raw):
+            continue  # recorded once per target by unresolved_locators(), never opened
         expanded = expand_tokens(raw, scope, home, project_dir)
-        if "$" in expanded and any(tok in expanded for tok in ("$APPDATA", "$LOCALAPPDATA", "$USERPROFILE", "$XDG")):
-            continue  # unexpanded env var on this OS -> path not applicable
+        if not expanded:
+            continue  # env var not set on this host -> path not applicable
         if ttype == "glob" or any(ch in expanded for ch in "*?[]"):
             for hit in _glob.glob(expanded, recursive=True):
                 out.append(Path(hit))
@@ -194,6 +220,18 @@ def collect(args: argparse.Namespace) -> int:
         ttype = target.get("type", "file")
         is_secret = target.get("sensitivity") == "secret"
         is_large = bool(target.get("large"))
+
+        # A location with no root this collector can supply - <install>/docker/.env
+        # - is not opened. Record it, so the case shows what was not acquired
+        # rather than reading as if nothing was there.
+        for raw in unresolved_locators(target):
+            manifest["skipped"].append({
+                "target_id": tid,
+                "source_path": raw,
+                "error": "not attempted: the catalog location has no root this collector "
+                         "can resolve - collect it by hand",
+            })
+            n_skipped += 1
 
         if scope == "project" and not project_dirs:
             manifest["skipped"].append({
