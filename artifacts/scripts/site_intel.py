@@ -150,7 +150,7 @@ CSS = r"""
 .cmdwrap{position:relative;margin:4px 0 8px}
 .cmdwrap .mini{position:absolute;right:6px;top:6px;font-size:11px;padding:2px 8px}
 .tcmd{margin:0;white-space:pre-wrap;word-break:break-all;font-size:12px;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:8px;padding:10px 64px 10px 12px;max-height:none}
-.need{font-size:10.5px;border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap;color:var(--muted);border:1px dashed var(--line)}
+.need{font-size:10.5px;border-radius:4px;padding:0 5px;margin-left:6px;white-space:normal;max-width:45%;color:var(--muted);border:1px dashed var(--line)}
 .need.n-secret{color:var(--gap);border-color:var(--gap);border-style:solid}
 .need.n-live{border-style:solid}
 .need.n-skip{opacity:.75}
@@ -476,7 +476,7 @@ function pivotHTML(acts,cases){
   const lab=(k,v)=>k==='actor'?(ACTORMAP[v]||{}).name||v:k==='cluster'?'cluster '+(+v+1):k==='technique'?v+' '+TNAME(v):
     k==='tactic'?ATL.tactics[v]||v:k==='kind'?KIND_LABEL[v]||v:v;
   return `<div class="pivot"><div class="pchips">${keys.map(k=>`<button class="chip" data-f="${k}" data-v="${esc(IF[k])}"
-    >${esc(IF_LABEL[k])}: ${esc(lab(k,IF[k]))} <s>&#10005;</s></button>`).join('')}
+    aria-label="Remove filter ${esc(IF_LABEL[k])}: ${esc(lab(k,IF[k]))}">${esc(IF_LABEL[k])}: ${esc(lab(k,IF[k]))} <span aria-hidden="true">&#10005;</span></button>`).join('')}
     <button class="chip" id="ifClear">clear all</button></div>
     <div class="pacts"><span class="muted">${acts.length} actor${acts.length===1?'':'s'} · ${cases.length} case${cases.length===1?'':'s'} match. Pivot:</span>
       ${cases.length?`<button class="btn" id="pvCases">${cases.length} case studies &#8594;</button>`:''}
@@ -789,7 +789,7 @@ function graphHTML(){
         <li>Drag a node to pin it where you put it; layouts leave it there</li></ul></details>
     </div>
     <div class="gcanvas"><div id="cy" tabindex="0" role="application" aria-label="Entity graph. Use the Find box and the neighbour list to navigate by keyboard."></div>
-      <div class="gzoom" aria-hidden="true"><button id="gzIn" title="Zoom in">+</button><button id="gzOut" title="Zoom out">&minus;</button><button id="gzFit" title="Fit">&#8982;</button></div>
+      <div class="gzoom" role="group" aria-label="Zoom"><button id="gzIn" type="button" title="Zoom in" aria-label="Zoom in">+</button><button id="gzOut" type="button" title="Zoom out" aria-label="Zoom out">&minus;</button><button id="gzFit" type="button" title="Fit to view" aria-label="Fit to view">&#8982;</button></div>
       <div class="ghint" id="ghint" hidden></div></div>
     <div class="gpane" id="ginfo"><p class="gnote">Select a node to see what it connects to.</p></div>
   </div>`;

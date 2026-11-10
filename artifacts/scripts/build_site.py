@@ -449,7 +449,8 @@ main.content{min-width:0}
 /* ---- filter rail ---- */
 aside .railhead{display:flex;justify-content:space-between;align-items:baseline;margin:2px 0 10px}
 aside .railhead b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-aside .railhead a{font-size:12px;cursor:pointer}
+aside .railhead a,aside .railhead button{font-size:12px;cursor:pointer;background:none;border:0;
+  padding:2px 4px;min-height:24px;color:var(--accent);text-decoration:underline}
 .railscroll{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto;
   padding-right:4px}
 .fgroup{margin:0 0 16px}
@@ -494,11 +495,11 @@ details.railfold{display:none}
 .tgl.plain[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
 .meta-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
 .count{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted)}
-.chip{display:inline-flex;gap:6px;align-items:center;background:var(--accent-soft);
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--accent-soft);min-height:24px;
   border:1px solid var(--accent-border);color:var(--accent);border-radius:20px;
   padding:2px 9px;font-size:11.5px;cursor:pointer}
 .chip:hover{background:var(--accent-soft-2)}
-.chip s{text-decoration:none;color:var(--faint)}
+.chip [aria-hidden]{color:var(--muted)}
 
 /* ---- badges ---- */
 .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;
@@ -831,7 +832,8 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   font-size:11px;color:var(--muted)}
 .prow{display:flex;gap:10px;align-items:baseline;padding:6px 14px;
   border-bottom:1px solid var(--line-soft)}
-.prow .rm{border:0;background:none;color:var(--faint);padding:0 2px}
+.prow .rm{border:0;background:none;color:var(--muted);padding:0;flex:none;
+  min-width:24px;min-height:24px;display:inline-flex;align-items:center;justify-content:center}
 .prow .rm:hover{color:var(--crit)}
 .prow .path{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
 .pgroup .gfoot{padding:9px 14px;font-size:12px;color:var(--muted);background:var(--panel-2);
@@ -846,6 +848,17 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .toast button{background:none;border:1px solid var(--toast-muted);border-radius:7px;
   color:var(--toast-ink);padding:5px 10px;font-size:12px}
 .toast a{color:var(--toast-muted);cursor:pointer;font-size:12px}
+.toast button.tlink{border:0;color:var(--toast-muted);padding:4px 6px;min-height:24px;text-decoration:underline}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#main .loading{color:var(--muted);padding:24px 0}
+.deadlink{position:relative;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  border:1px solid var(--line);border-left:3px solid var(--high);border-radius:8px;
+  background:var(--panel);padding:9px 40px 9px 14px;margin:0 0 12px;font-size:13px}
+.deadlink[hidden]{display:none}
+.deadlink .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;min-height:24px}
+.deadlink .x{position:absolute;top:4px;right:6px;background:none;border:0;color:var(--muted);
+  min-width:24px;min-height:24px}
 
 /* ---- detections ---- */
 .rulegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -875,6 +888,7 @@ pre.yaml.grown{max-height:none}
 .codetools{float:right;display:flex;gap:5px;text-transform:none;letter-spacing:0}
 .minibtn{background:var(--panel);border:1px solid var(--line);border-radius:5px;
   padding:1px 8px;font-size:10.5px;color:var(--muted);cursor:pointer;
+  min-height:24px;display:inline-flex;align-items:center;justify-content:center;
   text-transform:none;letter-spacing:0}
 .minibtn:hover{border-color:var(--accent);color:var(--accent)}
 .minibtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);
@@ -1195,7 +1209,8 @@ body.palopen{overflow:hidden}
 .scopenote li{counter-increment:sn}
 .scopenote li::before{content:counter(sn) ". ";color:var(--accent);font-weight:600}
 .scopenote .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline}
-.scopenote .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--faint);font-size:13px}
+.scopenote .x{position:absolute;top:4px;right:6px;background:none;border:0;color:var(--muted);font-size:13px;
+  min-width:24px;min-height:24px}
 .okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
 .okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
   border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
@@ -1368,6 +1383,13 @@ footer p{margin:0}
   .tabs .guidelink{margin-right:6px}
 }
 @media(max-width:620px){
+  .prow{flex-wrap:wrap;align-items:center}
+  .prow .rm{min-width:44px;min-height:44px}
+  .prow .path{flex:1 1 calc(100% - 56px);word-break:normal;overflow-wrap:anywhere}
+  .prow .need{white-space:normal;margin-left:0;max-width:none}
+  .pick{min-width:44px;min-height:44px}
+  .tabs button{min-height:44px}
+  .fbtn{min-height:44px}
   .tablewrap{display:none}
   .cards{display:flex}
   .drawer{width:100vw;max-width:100vw}
@@ -1532,7 +1554,11 @@ let plans=(()=>{
   // One-time migration. The old key is read and kept, not deleted: if this
   // build is ever rolled back, the picks a responder made are still where the
   // previous build looks for them.
-  const raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD);
+  // Guarded like every other storage call: a hardened or private browser
+  // throws on the read itself, and an unguarded read here stopped the script
+  // before the first render and left a blank page.
+  let raw=null;
+  try{raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD)}catch(e){}
   let anchors=[];
   try{anchors=liveAnchors(JSON.parse(raw||'[]'))}catch(e){}
   const id=newPlanId(), t=nowISO();
@@ -1540,7 +1566,8 @@ let plans=(()=>{
                 host:'',created:t,updated:t,anchors}};
 })();
 let activeId=(()=>{
-  const saved=localStorage.getItem(ACTIVE_KEY);
+  let saved=null;
+  try{saved=localStorage.getItem(ACTIVE_KEY)}catch(e){}
   if(saved&&plans[saved])return saved;
   return Object.keys(plans)[0];
 })();
@@ -1709,8 +1736,8 @@ function chipsHTML(){
   const chips=[];
   for(const g of Object.keys(filters))
     for(const v of filters[g])
-      chips.push(`<button class="chip" data-g="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`);
-  if(unvOnly)chips.push('<button class="chip" data-unv="1">unverified only <s>&#10005;</s></button>');
+      chips.push(`<button class="chip" data-g="${g}" data-v="${esc(v)}" aria-label="Remove filter ${esc(v)}">${esc(v)} <span aria-hidden="true">&#10005;</span></button>`);
+  if(unvOnly)chips.push('<button class="chip" data-unv="1" aria-label="Remove filter unverified only">unverified only <span aria-hidden="true">&#10005;</span></button>');
   return chips.join('');
 }
 
@@ -1738,7 +1765,7 @@ function tableHTML(rows){
   }).join('')+`</tr></thead><tbody>`+rows.map(r=>`
     <tr data-a="${esc(r.anchor)}" tabindex="0" class="${sel===r.anchor?'sel':''}">
       <td><button class="pick" data-a="${esc(r.anchor)}" aria-pressed="${picks.has(r.anchor)}"
-        aria-label="Add to collection plan">&#10003;</button></td>
+        aria-label="${esc(pickLabel(r,picks.has(r.anchor)))}">&#10003;</button></td>
       <td><span class="id">${esc(r.entry_id)}</span></td>
       <td>${esc(r.tool)}</td>
       <td><span class="clspill">${esc(r.cls)}</span></td>
@@ -1917,7 +1944,7 @@ function planHTML(){
         ><i>volatility</i>${g.vol}</span>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
-        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove ${esc(r.artifact)}">&#10005;</button>
         <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
       <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
@@ -1925,7 +1952,7 @@ function planHTML(){
       <div class="pgroup"><div class="ghead">${triageBadge(g.t.triage)}<b>${esc(g.t.tool)}</b>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
-        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove ${esc(r.artifact)}">&#10005;</button>
         <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
         ${fvBadge(r.forensic_value)}</div>`).join('')}
@@ -2054,7 +2081,7 @@ function openDrawer(anchor,fromEl){
     if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
   wireTechChips();
-  renderMain();
+  if(!markSel())renderMain();
 }
 function closeDrawer(){
   // Remember what to return focus to before re-rendering detaches it: the row
@@ -2066,7 +2093,7 @@ function closeDrawer(){
   // drill started from inside a drawer - so the jump happened and Back had
   // nothing to go to.
   if(!navStack.length)history.replaceState(null,'',location.pathname+location.search);
-  renderMain();
+  if(!markSel())renderMain();
   const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
   if(el)el.focus();
   else if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
@@ -2116,23 +2143,68 @@ function syncGrip(){
 })();
 
 /* ---------- clipboard ---------- */
+// Status for assistive tech. Cleared first so the same message twice in a row
+// is still announced.
+function announce(msg){
+  const s=$('#sr'); if(!s)return;
+  s.textContent=''; setTimeout(()=>{s.textContent=msg},30);
+}
 function copy(text,btn){
-  const done=()=>{if(!btn)return;const old=btn.textContent;btn.textContent='copied';
+  const done=ok=>{
+    announce(ok?'Copied to clipboard':'Copy failed. Select and copy the text.');
+    if(!btn)return;const old=btn.textContent;btn.textContent=ok?'copied':'copy failed';
     setTimeout(()=>{btn.textContent=old},1600)};
   if(navigator.clipboard&&window.isSecureContext){
-    navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));
+    navigator.clipboard.writeText(text).then(()=>done(true),()=>fallbackCopy(text,done));
   }else fallbackCopy(text,done);
 }
+// execCommand reports whether it copied. This used to ignore that and say
+// 'copied' either way.
 function fallbackCopy(text,done){
   const ta=document.createElement('textarea');
   ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
   document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy')}catch(e){}
-  ta.remove();done();
+  let ok=false;
+  try{ok=document.execCommand('copy')}catch(e){}
+  ta.remove();done(ok);
 }
 
 /* ---------- picks ---------- */
-function togglePick(a){picks.has(a)?picks.delete(a):picks.add(a);savePicks();update()}
+// A pick changes one button, the tab badge and the toast. Rebuilding #main for
+// it threw away the table's scroll position and the focused button, so a
+// responder ticking rows deep in the list was sent back to the top each time.
+function pickLabel(r,on){
+  return `${on?'Remove':'Add'} ${r.tool} ${r.cls} ${r.artifact} ${on?'from':'to'} collection plan`;
+}
+function syncPickAll(){
+  const pa=$('#pickAllCol'); if(!pa)return;
+  const anchors=filteredRows().map(r=>r.anchor);
+  const all=!!anchors.length&&anchors.every(a=>picks.has(a));
+  pa.setAttribute('aria-pressed',String(all));
+  pa.setAttribute('aria-label',`${all?'Remove all shown from':'Add all shown to'} the collection plan`);
+  pa.title=`${all?'Remove':'Pick'} all ${anchors.length} shown`;
+}
+function syncPick(a){
+  const on=picks.has(a), r=ROWMAP[a];
+  $$(`.pick[data-a="${CSS.escape(a)}"]`).forEach(p=>{
+    p.setAttribute('aria-pressed',String(on));
+    if(r)p.setAttribute('aria-label',pickLabel(r,on));
+  });
+  syncPickAll();
+}
+function togglePick(a){
+  picks.has(a)?picks.delete(a):picks.add(a);savePicks();
+  if(view!=='catalog'||!$('#main .tablewrap')){update();return}
+  syncPick(a);renderTabs();renderToast();
+}
+// Mark the open row without rebuilding the table under it.
+function markSel(){
+  if(view!=='catalog'||!$('#main .tablewrap'))return false;
+  $$('#main [data-a].sel').forEach(el=>el.classList.remove('sel'));
+  if(sel)$$(`#main tr[data-a="${CSS.escape(sel)}"],#main .card[data-a="${CSS.escape(sel)}"]`)
+    .forEach(el=>el.classList.add('sel'));
+  return true;
+}
 
 /* ---------- detections ---------- */
 function ruleMatches(r,skip){
@@ -2655,7 +2727,7 @@ function caseStudiesHTML(){
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
     <p class="csconf">Provenance: ${esc(tally)}</p>
-    ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <s>&#10005;</s></button>`:''}</div>
+    ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <span aria-hidden="true">&#10005;</span></button>`:''}</div>
     <button class="btn" id="csAll" data-open="0">Expand all</button></div>
     <div class="csgrid">`+
   LIST.map(c=>{
@@ -2906,9 +2978,9 @@ function renderMain(){
     const rules=filteredRules();
     $('#count').textContent=`${rules.length} of ${RULES.length} shown`;
     $('#chips').innerHTML=(ruleSet?`<button class="chip" data-rset="1"
-      >${ruleSet.size} rule${ruleSet.size>1?'s':''} for one data source <s>&#10005;</s></button>`:'')
+      >${ruleSet.size} rule${ruleSet.size>1?'s':''} for one data source <span aria-hidden="true">&#10005;</span></button>`:'')
       +Object.keys(rfilters).flatMap(g=>rfilters[g].map(v=>
-      `<button class="chip" data-rg="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`)).join('');
+      `<button class="chip" data-rg="${g}" data-v="${esc(v)}" aria-label="Remove filter ${esc(v)}">${esc(v)} <span aria-hidden="true">&#10005;</span></button>`)).join('');
     // One handler for every chip in this bar. The data-source chip is not a
     // facet, so it has no rfilters group - wiring it separately meant this
     // loop reassigned .onclick over the top of it and then threw on the
@@ -3200,38 +3272,58 @@ function resetAll(){resetFilters();resetRuleFilters();update()}
 window.resetAll=resetAll;
 
 /* ---------- hash routing ---------- */
+// A link pasted into a ticket last quarter can name a row that has since been
+// renamed or removed. Landing silently on the guide made that look like the
+// reader's mistake, so say what happened and offer the tool's rows when the
+// link still names a known entry.
+function deadLink(h){
+  const box=$('#deadLink'); if(!box)return;
+  const m=h.match(/^(AIRT-\d{4})/i);
+  const t=m&&TOOLS.find(x=>x.entry_id.toLowerCase()===m[1].toLowerCase());
+  box.innerHTML=`<span>That link points to something that is no longer here.</span>`
+    +(t?` <button type="button" class="lnk" id="deadTool">Show ${esc(t.tool)}'s rows</button>`:'')
+    +`<button type="button" class="x" id="deadX" aria-label="Dismiss">&#10005;</button>`;
+  box.hidden=false;
+  $('#deadX').onclick=()=>{box.hidden=true};
+  const b=$('#deadTool');
+  if(b)b.onclick=()=>{box.hidden=true;resetFilters();filters.tool=[t.tool];view='catalog';update()};
+}
+const VIEW_NAMES=['guide','catalog','tools','rules','mappings','sources','cases','intel','graph','plan'];
 function applyHash(){
   const h=decodeURIComponent(location.hash.slice(1));
   if(!h)return;
+  $('#deadLink').hidden=true;
   if(h.startsWith('actor/')){
     const id=h.slice(6);
-    if(ACTORMAP[id]){view='intel';update();openActorDrawer(id,null)}
+    if(ACTORMAP[id]){view='intel';update();openActorDrawer(id,null)}else deadLink(h);
     return;
   }
   if(h==='intel'){view='intel';update();return}
   if(h==='graph'||h.startsWith('graph/')){view='graph';update();return}
   if(h.startsWith('rule/')){
     const f=h.slice(5);
-    if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
+    if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}else deadLink(h);
     return;
   }
   if(h.startsWith('cs-')){view='cases';update();
     const el=document.getElementById(h);
-    if(el){el.open=true;el.scrollIntoView({block:'start'})}
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}else deadLink(h);
     return}
   if(h==='sources'){view='sources';update();return}
   if(h==='mappings'){view='mappings';update();return}
   if(h==='plan'){view='plan';update();return}
   if(h.startsWith('src-')){view='sources';update();
     const el=document.getElementById(h);
-    if(el){el.open=true;el.scrollIntoView()}
+    if(el){el.open=true;el.scrollIntoView()}else deadLink(h);
     return}
   if(h==='guide'){view='guide';update();return}
   if(h.startsWith('g-')){if(!$('#drawer').hidden)closeDrawer();view='guide';update();
-    const el=document.getElementById(h);if(el)el.scrollIntoView();return}
+    const el=document.getElementById(h);if(el)el.scrollIntoView();else deadLink(h);return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
   const t=TOOLS.find(t=>t.entry_id.toLowerCase()===h.toLowerCase()||t.slug===h.toLowerCase());
-  if(t){resetFilters();filters.tool=[t.tool];view='catalog';update()}
+  if(t){resetFilters();filters.tool=[t.tool];view='catalog';update();return}
+  if(VIEW_NAMES.includes(h)){view=h;update();return}
+  deadLink(h);
 }
 
 /* ---------- search everything ---------- */
@@ -3371,15 +3463,23 @@ function flash(btn,msg){
   setTimeout(()=>{btn.textContent=old},1600);
 }
 function exportRows(){return filteredRows()}
+// Two filtered exports on the same day used to share a name, so the second
+// host's CSV overwrote the first in the downloads folder.
+function exportName(ext){
+  const t=filters.tool;
+  const slug=t.length===1?t[0].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')
+    :(Object.values(filters).some(a=>a.length)||query||unvOnly)?'filtered':'';
+  return `ai-dfir-catalog-${slug?slug+'-':''}${stamp()}.${ext}`;
+}
 $('#csvBtn').onclick=()=>{
   const rows=exportRows();
   const body=rows.map(r=>EXPORT_COLS.map(c=>csvCell(r[c])).join(',')).join('\n');
-  download(`ai-dfir-catalog-${stamp()}.csv`, EXPORT_COLS.join(',')+'\n'+body+'\n','text/csv');
+  download(exportName('csv'), EXPORT_COLS.join(',')+'\n'+body+'\n','text/csv');
   flash($('#csvBtn'), `${rows.length} rows`);
 };
 $('#jsonBtn').onclick=()=>{
   const rows=exportRows();
-  download(`ai-dfir-catalog-${stamp()}.json`, JSON.stringify({
+  download(exportName('json'), JSON.stringify({
     source:REPO_URL, exported:new Date().toISOString(),
     note:'Filtered view export from the catalog site. The published feed is docs/api/artifacts.csv.',
     count:rows.length, rows
@@ -3413,7 +3513,7 @@ $('.tabs').addEventListener('keydown',e=>{
     :(i+keys[e.key]+tabs.length)%tabs.length;
   view=tabs[next].dataset.v;update();tabs[next].focus();
 });
-$('#railReset').onclick=e=>{e.preventDefault();resetAll()};
+$('#railReset').onclick=()=>resetAll();
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
 $('#toastClear').onclick=()=>{clearPicks();};
 $('#toastUndo').onclick=()=>{undoClear()};
@@ -3733,7 +3833,7 @@ def main():
 
 <div class="shell">
 <aside>
-  <div class="railhead"><b>Filters</b><a id="railReset" href="#">reset</a></div>
+  <div class="railhead"><b>Filters</b><button type="button" id="railReset">reset</button></div>
   <div class="railscroll" id="rail"></div>
   <details class="railfold" id="railfold"><summary>Filters</summary>
     <div class="foldbody"></div></details>
@@ -3768,7 +3868,8 @@ def main():
     role="status" aria-live="polite" aria-atomic="true"></span>
     <span id="chips" style="display:contents"></span></div>
   <p class="unvnote" id="unvNote" hidden></p>
-  <div id="main" role="tabpanel" tabindex="0"></div>
+  <div class="deadlink" id="deadLink" hidden role="alert"></div>
+  <div id="main" role="tabpanel" tabindex="0"><p class="loading">Loading the toolkit. This page needs JavaScript.</p></div>
 </main>
 </div>
 
@@ -3782,10 +3883,11 @@ def main():
     <div class="palfoot"><span><kbd>&#8593;</kbd><kbd>&#8595;</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
   </div>
 </div>
-<div class="toast" id="toast" hidden><span id="toastN"></span>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"><span id="toastN"></span>
   <button id="toastOpen" type="button">Open collection plan</button>
-  <a id="toastClear">clear</a>
-  <a id="toastUndo" hidden>undo</a></div>
+  <button id="toastClear" type="button" class="tlink">clear</button>
+  <button id="toastUndo" type="button" class="tlink" hidden>undo</button></div>
+<div id="sr" class="sr" role="status" aria-live="polite"></div>
 
 <footer>
   <p><strong>Confidence reflects provenance, not conviction.</strong>

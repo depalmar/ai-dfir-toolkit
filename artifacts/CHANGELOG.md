@@ -134,6 +134,20 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **Site UX batch 1, from a Claude Design assessment.** The page no longer
+  goes blank when the browser blocks site storage: two reads of saved plans
+  were outside the guard every other storage call had, and #main now carries
+  a loading line until the first render. Ticking a row or opening one keeps
+  the table's scroll position and focus instead of rebuilding the view. Plan
+  rows with a collector note wrap on phones rather than collapsing the path to
+  one character per line. The pick toast is a polite status region with real
+  buttons, copy results are announced, and a failed fallback copy says so.
+  Controls are at least 24px, and 44px on phones for picks, removes, tabs and
+  facets. Pick buttons name their row, chip glyphs are hidden from screen
+  readers, the graph zoom buttons are labelled and no longer inside an
+  aria-hidden group, and reset is a button. A permalink that no longer
+  resolves shows a notice, with a link to the tool's rows when it names a
+  known entry. Filtered exports carry the tool or "filtered" in the file name.
 - Only rows and headers that do something show the pointer cursor. Every table
   row did, including the guide's tables and the incident timeline, which
   promised a click that went nowhere. The hover highlight stays everywhere.
