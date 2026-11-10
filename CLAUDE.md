@@ -344,7 +344,7 @@ Detection content totals 70 rule files / 161 signatures across the nine attack-c
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
-content. Frameworks pinned: ATLAS 2026.09, ATT&CK 19.2, CISA KEV 2026.09.29,
+content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.09.29,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
 Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),

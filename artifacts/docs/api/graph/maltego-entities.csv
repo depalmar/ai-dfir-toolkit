@@ -204,7 +204,7 @@ maltego.Phrase,asi:ASI05,asi,ASI05 Unexpected Code Execution
 maltego.Phrase,asi:ASI06,asi,ASI06 Memory and Context Poisoning
 maltego.Phrase,atlas:AML.T0008,technique,AML.T0008 Acquire Infrastructure
 maltego.Phrase,atlas:AML.T0008.000,technique,AML.T0008.000 AI Development Workspaces
-maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 AI Supply Chain Compromise
+maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 Supply Chain Compromise
 maltego.Phrase,atlas:AML.T0011,technique,AML.T0011 User Execution
 maltego.Phrase,atlas:AML.T0016.002,technique,AML.T0016.002 Generative AI
 maltego.Phrase,atlas:AML.T0016.004,technique,AML.T0016.004 AI Agent Tools

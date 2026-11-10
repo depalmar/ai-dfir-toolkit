@@ -64,7 +64,16 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   focus, zoom controls, keyboard shortcuts, re-tick-to-restore type filters,
   copyable canvas links and degree-scaled nodes.
 
+### Changed
+- Framework pins moved to ATLAS 2026.10 and ATT&CK 20.0. ATLAS dropped the
+  three AML.T0024 subtechniques, AML.T0056 and AML.T0057, none of which the
+  repository cited, and renamed AML.T0010 from AI Supply Chain Compromise to
+  Supply Chain Compromise. MAPPINGS index titles follow.
+
 ### Fixed
+- Only rows and headers that do something show the pointer cursor. Every table
+  row did, including the guide's tables and the incident timeline, which
+  promised a click that went nowhere. The hover highlight stays everywhere.
 - Anchor jumps in the guide no longer land under the sticky header. The offset
   is measured from the header rather than hard-coded, because the header wraps
   to a different height per viewport.
