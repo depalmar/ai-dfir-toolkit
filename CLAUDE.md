@@ -416,6 +416,13 @@ Cytoscape.js is vendored under `scripts/vendor/` with its sha256 in
 `VENDOR.json`, and `--check` fails if the file changes without the record. It is
 inlined as inert text and only evaluated when the Graph tab opens.
 
+The site opens on the Investigation guide, not the catalog: without the "is
+this even an AI incident, and what is this for" framing, the catalog is just a
+table. The guide's incident timeline is injected at the
+`<!-- site:incident-timeline -->` marker from the case studies, so add cases,
+never rows to it. Anchor offsets come from `--hdrh`, measured from the sticky
+header by `syncHdr()`; do not reintroduce a fixed pixel offset.
+
 Four things worth not relearning:
 
 - Every embedded data blob goes through `js_data()`, which escapes `</`. A

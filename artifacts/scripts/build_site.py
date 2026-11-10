@@ -428,7 +428,7 @@ main.content{min-width:0}
   border-radius:20px;padding:1px 7px;color:var(--muted)}
 /* Set apart visually - pushed right, no count - but it is a real tab, because a
    link inside role=tablist breaks arrow-key navigation. */
-.tabs .guidelink{margin-left:auto;font-size:12.5px;border:1px solid var(--accent-border);
+.tabs .guidelink{margin-right:8px;font-size:12.5px;border:1px solid var(--accent-border);
   background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 14px;
   align-self:center;font-weight:600}
 .tabs .guidelink:hover{background:var(--accent-soft-2);border-color:var(--accent)}
@@ -1144,8 +1144,48 @@ button.istat:hover{background:var(--hover)}
 .sechead{margin:26px 0 12px;font-size:15px}
 
 /* ---- guide ---- */
+.orient{margin:0 0 18px;padding:18px 22px;background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid var(--accent);border-radius:11px}
+.orient h2{margin:0 0 6px;font-size:18px}
+.orient p{margin:0 0 14px;font-size:13.5px;color:var(--muted);max-width:84ch}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));counter-reset:st}
+.steps li{counter-increment:st}
+.steps a,.steps button{display:block;width:100%;height:100%;text-align:left;font:inherit;
+  color:var(--ink);text-decoration:none;cursor:pointer;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.steps a:hover,.steps button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.steps b{display:block;font-size:13.5px;color:var(--accent)}
+.steps b::before{content:counter(st) ". "}
+.steps span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.tlfig{margin:10px 0 14px}
+.tlfig figcaption{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:0 0 6px;font-size:13px}
+.tlfig figcaption span{color:var(--muted);font-size:12px}
+.tlplot{position:relative;max-width:680px}
+.tlplot svg{width:100%;height:auto;display:block}
+.tlgrid{stroke:var(--line-soft);stroke-width:1}
+.tlax{fill:var(--muted);font-size:11px}
+.tlline{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.tldot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
+.tlend{fill:var(--ink);font-size:12px;font-weight:600}
+.tlcross{stroke:var(--faint);stroke-width:1;stroke-dasharray:3 3}
+.tlhit{fill:transparent}
+.tltip{position:absolute;top:4px;pointer-events:none;background:var(--panel);border:1px solid var(--line);
+  border-radius:7px;padding:5px 8px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);white-space:nowrap}
+.tlwrap{overflow-x:auto;margin:0 0 14px}
+.gbody .tltable{width:100%;min-width:620px;border-collapse:collapse;font-size:12.5px}
+.gbody .tltable td{overflow-wrap:normal}
+.gbody .tltable th{text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--muted);border-bottom:1px solid var(--line);padding:6px 8px}
+.gbody .tltable td{border-bottom:1px solid var(--line-soft);padding:6px 8px;vertical-align:top}
+.gbody .tltable td.mono{white-space:nowrap;color:var(--muted)}
 .guidewrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:26px;align-items:start}
-.gtoc{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto}
+/* --hdrh is the sticky header's measured height (0 where it stops being sticky),
+   set by syncHdr(). scroll-padding makes anchor jumps and scrollIntoView land
+   below the header instead of under it. */
+html{scroll-padding-top:calc(var(--hdrh,0px) + 12px)}
+.gtoc{position:sticky;top:calc(var(--hdrh,150px) + 12px);
+  max-height:calc(100vh - var(--hdrh,150px) - 30px);overflow:auto}
 .gtoc h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted)}
 .gtoc a{display:block;padding:3px 7px;border-radius:6px;font-size:12.5px;text-decoration:none;
@@ -1233,7 +1273,7 @@ footer p{margin:0}
   .tabs{overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   .tabs button,.tabs .guidelink{flex:none;white-space:nowrap}
-  .tabs .guidelink{margin-left:6px}
+  .tabs .guidelink{margin-right:6px}
 }
 @media(max-width:620px){
   .tablewrap{display:none}
@@ -1362,7 +1402,7 @@ function goBack(){
 window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 
 let codeWrap=false, codeGrow=false, planMode='tool';
-let view='catalog', query='', unvOnly=false, dense=false,
+let view='guide', query='', unvOnly=false, dense=false,
     // Was entry_id, which sorted first paint by the one field a responder never
     // needs. triage_priority is on every row since F09, so the table can open in
     // collection order instead.
@@ -2581,17 +2621,101 @@ function caseStudiesHTML(){
 }
 
 /* ---------- guide ---------- */
+// Disclosure date as a sortable [year, month]; "2025-09" and "2025-09-17" both work.
+function csDate(c){
+  const m=/^(\d{4})(?:-(\d{2}))?/.exec(c.disclosed||'');
+  return m?[+m[1],+(m[2]||1)]:null;
+}
+function csTools(c){
+  const ids=c.affects_ids||[];
+  if(!ids.length)return esc(c.affects||'');
+  return ids.map(id=>{const t=TOOLS.find(t=>t.entry_id===id);return esc(t?t.tool:id)}).join(', ');
+}
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// Cumulative documented incidents by disclosure quarter, and the same cases as a
+// table. Both are derived from the case studies, so neither can drift from them.
+function timelineHTML(){
+  const cs=CASES.map(c=>({c,d:csDate(c)})).filter(x=>x.d)
+    .sort((a,b)=>a.d[0]-b.d[0]||a.d[1]-b.d[1]||a.c.id.localeCompare(b.c.id));
+  if(!cs.length)return '';
+  const q=d=>d[0]*4+Math.floor((d[1]-1)/3);
+  const q0=q(cs[0].d), q1=q(cs[cs.length-1].d);
+  const pts=[]; let run=0;
+  for(let k=q0;k<=q1;k++){
+    const n=cs.filter(x=>q(x.d)===k).length; run+=n;
+    pts.push({k,label:`${Math.floor(k/4)} Q${k%4+1}`,n,total:run});
+  }
+  const W=640,H=200,L=34,R=44,T=14,B=28, iw=W-L-R, ih=H-T-B;
+  const ymax=Math.max(4,Math.ceil(run/10)*10);
+  const x=i=>L+(pts.length<2?iw/2:i*iw/(pts.length-1));
+  const y=v=>T+ih-v/ymax*ih;
+  const grid=[0,ymax/2,ymax].map(v=>`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="tlgrid"/>
+    <text x="${L-6}" y="${y(v)+4}" class="tlax" text-anchor="end">${v}</text>`).join('');
+  const xt=pts.map((p,i)=>(p.k%4===0||i===0)?`<text x="${x(i)}" y="${H-8}" class="tlax" text-anchor="middle">${p.k%4===0?Math.floor(p.k/4):p.label}</text>`:'').join('');
+  const path=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(p.total).toFixed(1)}`).join('');
+  const dots=pts.map((p,i)=>p.n?`<circle cx="${x(i)}" cy="${y(p.total)}" r="4" class="tldot"/>`:'').join('');
+  const last=pts[pts.length-1];
+  const hits=pts.map((p,i)=>{const w=iw/Math.max(1,pts.length-1);
+    return `<rect class="tlhit" x="${x(i)-w/2}" y="${T}" width="${w}" height="${ih}" data-i="${i}"/>`}).join('');
+  const rows=cs.map(({c,d})=>`<tr><td class="mono">${MON[d[1]-1]} ${d[0]}</td>
+    <td><a href="#cs-${esc(c.id)}">${esc(c.title)}</a></td>
+    <td>${csTools(c)}</td><td>${confBadge(c.confidence)}</td></tr>`).join('');
+  return `<figure class="tlfig">
+    <figcaption><b>Documented incidents, cumulative by disclosure quarter</b>
+      <span>${cs.length} cases in this project, ${pts[0].label} to ${last.label}</span></figcaption>
+    <div class="tlplot"><svg viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="Cumulative documented incidents by quarter, rising from ${pts[0].total} in ${pts[0].label} to ${last.total} in ${last.label}. The table below lists every case.">
+      ${grid}${xt}<line class="tlcross" x1="0" x2="0" y1="${T}" y2="${T+ih}" visibility="hidden"/>
+      <path d="${path}" class="tlline"/>${dots}
+      <text x="${x(pts.length-1)+8}" y="${y(last.total)+4}" class="tlend">${last.total}</text>${hits}</svg>
+      <div class="tltip" hidden></div></div>
+  </figure>
+  <div class="tlwrap"><table class="tltable"><thead><tr><th>Disclosed</th><th>Incident</th>
+    <th>Tools involved</th><th>Confidence</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function wireTimeline(){
+  const svg=$('#main .tlplot svg'); if(!svg)return;
+  const tip=$('#main .tltip'), cross=svg.querySelector('.tlcross');
+  const pts=(()=>{ // rebuild the per-quarter series the chart was drawn from
+    const cs=CASES.map(csDate).filter(Boolean), q=d=>d[0]*4+Math.floor((d[1]-1)/3);
+    const ks=cs.map(q), q0=Math.min(...ks), q1=Math.max(...ks), out=[]; let run=0;
+    for(let k=q0;k<=q1;k++){const n=ks.filter(v=>v===k).length;run+=n;
+      out.push({label:`${Math.floor(k/4)} Q${k%4+1}`,n,total:run})}
+    return out})();
+  svg.querySelectorAll('.tlhit').forEach(r=>{
+    const show=()=>{const p=pts[+r.dataset.i], b=r.getBBox(), cx=b.x+b.width/2;
+      cross.setAttribute('x1',cx);cross.setAttribute('x2',cx);cross.setAttribute('visibility','visible');
+      tip.innerHTML=`<b>${p.label}</b><br>${p.n} disclosed &middot; ${p.total} total`;
+      tip.hidden=false;
+      const sw=svg.getBoundingClientRect().width/640;
+      tip.style.left=Math.min(cx*sw+10, svg.getBoundingClientRect().width-140)+'px';};
+    r.addEventListener('mouseenter',show);
+    r.addEventListener('mouseleave',()=>{tip.hidden=true;cross.setAttribute('visibility','hidden')});
+  });
+}
 function guideHTML(){
   const toc=GUIDE.toc.map(p=>
     `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
     p.sections.map(s=>`<a class="sub" href="#g-${esc(s.anchor)}">${esc(s.title)}</a>`).join('')
   ).join('');
-  return `<div class="gtop"><div><h2>AI/ML DFIR Investigation Guide</h2>
-    <p>Rendered from <code>${esc(GUIDE.source)}</code> at build time.</p></div>
-    <a class="btn" href="${REPO_URL}/blob/main/${esc(GUIDE.source)}" target="_blank" rel="noopener">View on GitHub</a></div>
+  const nTools=new Set(ROWS.map(r=>r.entry_id)).size;
+  return `<section class="orient">
+    <h2>AI agents leave evidence most IR playbooks never collect</h2>
+    <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
+      configuration to disk that show what the agent was told and what it did. This site
+      says where those traces are, what each one proves, and in what order to collect them.</p>
+    <ol class="steps">
+      <li><a href="#g-is-this-an-ai-incident-decide-before-you-use-this-guide"><b>Decide</b>
+        <span>Is an AI system the target, the way in, or the attacker's tool? If not, this isn't your guide.</span></a></li>
+      <li><button type="button" data-goto="catalog"><b>Locate</b>
+        <span>${ROWS.length} artifact locations across ${nTools} tools, by OS and evidence type.</span></button></li>
+      <li><button type="button" data-goto="plan"><b>Collect</b>
+        <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
+    </ol>
+  </section>
   <div class="guidewrap">
     <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
-    <div class="gbody">${GUIDE.html}</div>
+    <div class="gbody">${GUIDE.html.replace('<!-- site:incident-timeline -->',timelineHTML())}</div>
   </div>`;
 }
 
@@ -2745,6 +2869,9 @@ function renderMain(){
     $$('#main .gbody h2,#main .gbody h3').forEach(h=>{
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
+    $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
+    $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
+    wireTimeline();
     renderTabs();renderToast();renderBack();return;
   }
   if(view==='catalog'){
@@ -3020,6 +3147,16 @@ function setThemeBtn(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
 window.addEventListener('hashchange',applyHash);
+// The header wraps to a different height per viewport and per tab row, so the
+// anchor offset is measured rather than hard-coded.
+function syncHdr(){
+  const h=$('.hdr');
+  const px=getComputedStyle(h).position==='sticky'?h.offsetHeight:0;
+  document.documentElement.style.setProperty('--hdrh',px+'px');
+}
+syncHdr();
+if(window.ResizeObserver)new ResizeObserver(syncHdr).observe($('.hdr'));
+window.addEventListener('resize',syncHdr);
 setThemeBtn();update();applyHash();
 """
 
@@ -3293,6 +3430,7 @@ def main():
       <button id="themeBtn" type="button"></button></div>
   </div>
   <nav class="tabs" role="tablist">
+    <button role="tab" class="guidelink" data-v="guide">Investigation guide</button>
     <button role="tab" data-v="catalog">Catalog <span class="n">{len(rows)}</span></button>
     <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
     <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
@@ -3302,7 +3440,6 @@ def main():
     <button role="tab" data-v="intel">Threat intel <span class="n">{len(intel["actors"])}</span></button>
     <button role="tab" data-v="graph">Graph <span class="n">{len(intel["graph"]["nodes"])}</span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
-    <button role="tab" class="guidelink" data-v="guide">Investigation guide &#8594;</button>
   </nav>
 </div></div>
 
