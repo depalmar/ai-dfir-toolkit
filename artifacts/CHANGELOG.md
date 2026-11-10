@@ -15,6 +15,13 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   cumulative line chart by disclosure quarter, is generated from the case
   studies at build time so it cannot drift from them. Feedback from Joshua
   Wright.
+- **Search everything.** Press `/` or Ctrl/Cmd-K, or use the header button,
+  to search tools, catalog rows, detections, case studies, actors, data
+  sources and guide sections at once. Results are grouped by kind, five per
+  group, with keyboard navigation and a jump to the full filtered catalog or
+  detection list; the empty state suggests queries. Modelled on
+  edge-dfir-toolkit's palette. Artifact matches use the catalog's own fields so
+  the two counts agree.
 - **Where did the AI run?** A guide section and catalog framing for the case
   the catalog cannot see: an attacker's AI on the attacker's own
   infrastructure. The guide splits incidents by where the AI ran (on your

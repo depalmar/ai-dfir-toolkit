@@ -525,12 +525,12 @@ resolved by whoever picks this up next without asking.
    Row-level `last_verified` now makes that visible in the data rather than only
    in prose, so the gap is auditable - `grep -L last_verified` per row is the
    query. LM Studio has a known macOS discrepancy on record (bug-tracker #1371).
-6. **Port the UI improvements into `build_site.py`.** A `/` search shortcut,
-   active-filter chips, copy-path buttons and a sticky table header are all worth
-   having. The site is generated and **never hand-edited**, so they go in the
-   generator. Do not accept a hand-written `index.html` as a starting point: the
-   one offered carried three catalogue claims that were wrong, including a
-   `medium` MSIX row displayed as `High`.
+6. **UI improvements - done.** Site-wide search (`/` or Ctrl/Cmd-K, grouped
+   results after edge-dfir-toolkit's palette), active-filter chips, copy-path
+   buttons and a sticky table header are all in the generator. The site is
+   **never hand-edited**: do not accept a hand-written `index.html` as a
+   starting point - the one offered carried three catalogue claims that were
+   wrong, including a `medium` MSIX row displayed as `High`.
 7. **Quarterly re-verification.** Paths change between tool releases. A catalog
    nobody re-verifies decays into a liability, which is worse than one that never
    existed, because people trust it.

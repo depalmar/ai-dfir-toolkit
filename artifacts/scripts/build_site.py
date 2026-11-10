@@ -1159,6 +1159,34 @@ button.istat:hover{background:var(--hover)}
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
 @media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+.palbtn{display:inline-flex;align-items:center;gap:10px;min-height:34px;padding:5px 8px 5px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);font-size:12.5px}
+.palbtn:hover{border-color:var(--accent);color:var(--ink)}
+kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:4px;background:var(--panel-2);color:var(--muted)}
+.pal{position:fixed;inset:0;z-index:60;background:rgba(20,18,16,.35);display:flex;justify-content:center;
+  align-items:flex-start;padding:10vh 16px 16px}
+.pal[hidden]{display:none}
+.palbox{width:min(720px,100%);max-height:78vh;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.22);overflow:hidden}
+#palQ{border:0;border-bottom:1px solid var(--line);padding:14px 16px;font-size:15px;background:var(--panel);color:var(--ink);outline:none}
+#palRes{overflow:auto;padding:6px 0}
+.palg{padding:4px 0}
+.palgh{display:flex;justify-content:space-between;padding:6px 16px 4px;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint)}
+.palr{display:flex;flex-direction:column;gap:1px;padding:7px 16px;cursor:pointer}
+.palr[aria-selected=true]{background:var(--accent-soft)}
+.palt{font-size:13.5px;color:var(--ink)}
+.palt.m{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;overflow-wrap:anywhere}
+.palt mark{background:none;color:var(--accent);font-weight:600}
+.pals{font-size:11.5px;color:var(--muted)}
+.palall{font-size:12.5px;color:var(--accent)}
+.palempty{padding:18px 16px;font-size:13px;color:var(--muted)}
+.palsug{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint)}
+.palfoot kbd{margin-right:3px}
+body.palopen{overflow:hidden}
+@media(max-width:620px){.palbtn .paltx,.palbtn kbd{display:none}}
 .scopenote{position:relative;margin:0 0 12px;padding:10px 40px 10px 14px;background:var(--panel);
   border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:12.5px;color:var(--muted)}
 .scopenote p{margin:0 0 4px;max-width:110ch}
@@ -3206,6 +3234,108 @@ function applyHash(){
   if(t){resetFilters();filters.tool=[t.tool];view='catalog';update()}
 }
 
+/* ---------- search everything ---------- */
+// One box over every corpus on the page, after edge-dfir-toolkit's palette:
+// results grouped by kind, five per group, and a jump to the full filtered
+// list where one exists. The index is built on first open, not at load.
+const PAL_GROUPS=['Tools','Artifacts','Detections','Case studies','Actors','Data sources','Investigation guide'];
+const PAL_SUGGEST=['~/.claude','oauth_creds','mcp.json','CVE-2025-3248','AML.T0053','APT28','Sysmon','Langflow'];
+let PAL=null, palFlat=[], palSel=0;
+function palIndex(){
+  const it=[], lc=x=>(x||'').toString().toLowerCase();
+  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:lc([t,hay].join(' ')),go,mono});
+  TOOLS.forEach(t=>add('Tools',t.tool,`${t.entry_id} · ${t.vendor||''}`,
+    [t.entry_id,t.vendor,(t.aliases||[]).join(' '),t.category].join(' '),
+    ()=>{view='tools';update();openToolDrawer(t.entry_id,null)}));
+  ROWS.forEach(r=>add('Artifacts',r.artifact,`${r.tool} · ${r.cls}`,
+    // Same fields as the catalog search, so the counts agree.
+    [r.tool,r.entry_id,r.cls,r.description,r.evidence.join(' '),((TOOLMAP[r.entry_id]||{}).aliases||[]).join(' ')].join(' '),
+    ()=>{view='catalog';update();openDrawer(r.anchor,null)},1));
+  RULES.forEach(r=>add('Detections',r.title,`${r.file} · ${r.format}`,
+    [r.file,r.description,r.format,r.category,(r.atlas||[]).join(' '),(r.attack||[]).join(' '),(r.owasp||[]).join(' ')].join(' '),
+    ()=>{view='rules';update();openRuleDrawer(r.path,null)}));
+  CASES.forEach(c=>add('Case studies',c.title,`${c.id} · disclosed ${c.disclosed}`,
+    [c.id,c.summary,c.affects,(c.iocs||[]).map(i=>i.value).join(' '),JSON.stringify(c.external_ids||{})].join(' '),
+    ()=>{view='cases';update();const el=document.getElementById('cs-'+c.id);if(el){el.open=true;el.scrollIntoView({block:'start'})}}));
+  INTEL.actors.forEach(a=>add('Actors',a.name,a.id,
+    [a.id,(a.aliases||[]).map(x=>typeof x==='string'?x:x.name).join(' '),a.summary].join(' '),
+    ()=>{view='intel';update();openActorDrawer(a.id,null)}));
+  SOURCES.forEach(x=>add('Data sources',x.name,x.kind,[x.id,x.kind,x.enable,x.without_it].join(' '),
+    ()=>{view='sources';update();const el=document.getElementById('src-'+x.id);if(el){el.open=true;el.scrollIntoView({block:'start'})}}));
+  GUIDE.toc.flatMap(q=>[q,...q.sections]).forEach(x=>add('Investigation guide',x.title,'',
+    '',()=>{view='guide';update();const el=document.getElementById('g-'+x.anchor);if(el)el.scrollIntoView()}));
+  return it;
+}
+function palHL(t,toks){
+  if(!toks.length)return esc(t);
+  const re=new RegExp('('+toks.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','ig');
+  return t.split(re).map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join('');
+}
+function palRender(){
+  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=ql.split(/\s+/).filter(Boolean);
+  const res=$('#palRes'); palFlat=[]; palSel=0;
+  if(!toks.length){
+    res.innerHTML=`<div class="palempty">Try a path, a CVE, a technique or an actor from your case:
+      <div class="palsug">${PAL_SUGGEST.map(x=>`<button type="button" class="chip" data-pq="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>`;
+    $$('#palRes [data-pq]').forEach(b=>b.onclick=()=>{$('#palQ').value=b.dataset.pq;palRender();$('#palQ').focus()});
+    return;
+  }
+  const by={};
+  for(const x of PAL){
+    if(!toks.every(k=>x.h.includes(k)))continue;
+    const sc=(x.tl===ql?100:0)+(x.tl.startsWith(ql)?40:0)+(x.tl.includes(ql)?20:0)+toks.filter(k=>x.tl.includes(k)).length*5;
+    (by[x.g]=by[x.g]||[]).push({x,sc});
+  }
+  let h='';
+  for(const g of PAL_GROUPS){
+    const a=(by[g]||[]).sort((m,n)=>n.sc-m.sc); if(!a.length)continue;
+    h+=`<div class="palg" role="group" aria-label="${esc(g)}"><div class="palgh"><span>${esc(g)}</span><span>${a.length}</span></div>`;
+    a.slice(0,5).forEach(({x})=>{const i=palFlat.push(x)-1;
+      h+=`<div class="palr" role="option" id="palr${i}" data-i="${i}" aria-selected="false">
+        <span class="palt${x.mono?' m':''}">${palHL(x.t,toks)}</span>${x.s?`<span class="pals">${esc(x.s)}</span>`:''}</div>`});
+    if(a.length>5&&(g==='Artifacts'||g==='Detections')){const i=palFlat.push({all:g==='Artifacts'?'catalog':'rules'})-1;
+      h+=`<div class="palr palall" role="option" id="palr${i}" data-i="${i}" aria-selected="false">All ${a.length} in ${g==='Artifacts'?'the catalog':'detections'} &#8594;</div>`}
+    h+='</div>';
+  }
+  res.innerHTML=h||`<div class="palempty">Nothing matches every word. Fewer words, or a shorter piece of the path, usually finds it.</div>`;
+  $$('#palRes .palr').forEach(r=>{r.onclick=()=>palGo(+r.dataset.i);r.onmousemove=()=>palMark(+r.dataset.i)});
+  palMark(0);
+}
+function palMark(i){
+  if(!palFlat.length)return;
+  palSel=(i+palFlat.length)%palFlat.length;
+  $$('#palRes .palr').forEach(r=>r.setAttribute('aria-selected',String(+r.dataset.i===palSel)));
+  const el=$('#palr'+palSel); if(el){el.scrollIntoView({block:'nearest'});$('#palQ').setAttribute('aria-activedescendant',el.id)}
+}
+function palGo(i){
+  const x=palFlat[i]; if(!x)return;
+  const q=$('#palQ').value.trim();
+  palClose(); pushNav();
+  if(x.all){resetFilters();if(x.all==='rules')resetRuleFilters();query=q.toLowerCase();$('#q').value=q;view=x.all;update();window.scrollTo(0,0);return}
+  if(!$('#drawer').hidden)closeDrawer();
+  x.go();
+}
+function palOpen(){
+  if(!PAL)PAL=palIndex();
+  $('#pal').hidden=false; document.body.classList.add('palopen');
+  const i=$('#palQ'); i.select(); i.focus(); palRender();
+}
+function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');$('#palBtn').focus()}
+$('#palBtn').onclick=palOpen;
+$('#palQ').addEventListener('input',palRender);
+$('#palQ').addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();palMark(palSel+1)}
+  else if(e.key==='ArrowUp'){e.preventDefault();palMark(palSel-1)}
+  else if(e.key==='Enter'){e.preventDefault();palGo(palSel)}
+  else if(e.key==='Escape'){e.preventDefault();palClose()}
+});
+$('#pal').addEventListener('mousedown',e=>{if(e.target.id==='pal')palClose()});
+document.addEventListener('keydown',e=>{
+  const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)||document.activeElement.isContentEditable;
+  if((e.key==='k'&&(e.ctrlKey||e.metaKey))||(e.key==='/'&&!typing)){e.preventDefault();
+    $('#pal').hidden?palOpen():palClose()}
+});
+
 /* ---------- boot ---------- */
 $('#unvNote').textContent='Showing only unverified rows. '+UNVERIFIED_MEANING;
 $('#unvBtn').title=UNVERIFIED_MEANING;
@@ -3581,6 +3711,8 @@ def main():
       on an endpoint, what each trace proves, and in what order to collect it.</p>
     </div>
     <div class="hdr-right">
+      <button id="palBtn" type="button" class="palbtn" aria-haspopup="dialog"
+        aria-label="Search everything (press / or Ctrl+K)"><span aria-hidden="true">&#8981;</span><span class="paltx">Search everything</span><kbd>/</kbd></button>
       <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
          aria-label="View this project on GitHub">GitHub &#8599;</a>
       <button id="themeBtn" type="button"></button></div>
@@ -3641,6 +3773,15 @@ def main():
 </div>
 
 <div class="drawer" id="drawer" hidden role="dialog" aria-modal="false"></div>
+<div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-label="Search everything">
+  <div class="palbox">
+    <input id="palQ" type="search" autocomplete="off" spellcheck="false"
+      placeholder="A path, a tool, a CVE, a technique, an actor..." aria-label="Search everything"
+      aria-controls="palRes" aria-autocomplete="list">
+    <div id="palRes" role="listbox"></div>
+    <div class="palfoot"><span><kbd>&#8593;</kbd><kbd>&#8595;</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
+  </div>
+</div>
 <div class="toast" id="toast" hidden><span id="toastN"></span>
   <button id="toastOpen" type="button">Open collection plan</button>
   <a id="toastClear">clear</a>
