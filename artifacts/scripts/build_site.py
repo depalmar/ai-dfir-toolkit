@@ -462,7 +462,8 @@ main.content{min-width:0}
 .tabs .guidelink[aria-selected=true]{background:var(--accent);border-color:var(--accent);
   color:var(--on-accent);border-bottom-color:var(--accent)}
 .exportgrp{display:flex;align-items:center;gap:6px;margin-left:auto}
-.exportlbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.meta-row .viewlink{margin-left:auto;font-size:12px}
+.exportlbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .ghlink{font-size:12.5px;text-decoration:none;color:var(--muted);
   border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
 .ghlink:hover{color:var(--ink);border-color:var(--accent)}
@@ -482,7 +483,7 @@ aside .railhead a,aside .railhead button{font-size:12px;cursor:pointer;backgroun
   padding-right:4px}
 .fgroup{margin:0 0 16px}
 .fgroup h3{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);font-weight:600}
+  color:var(--muted);font-weight:600}
 details.fgroup>summary{display:flex;align-items:center;gap:6px;cursor:pointer;
   list-style:none;padding:2px 8px 5px 0;border-radius:6px}
 details.fgroup>summary::-webkit-details-marker{display:none}
@@ -501,7 +502,7 @@ details.fgroup>summary:hover h3{color:var(--muted)}
 .fbtn{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;
   background:none;border:1px solid transparent;border-radius:7px;padding:5px 8px;
   font-size:12.5px;color:var(--ink);text-align:left}
-.fbtn .c{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint)}
+.fbtn .c{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .fbtn:hover{background:var(--accent-soft)}
 .fbtn[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent-border);
   color:var(--accent);font-weight:500}
@@ -511,7 +512,7 @@ details.railfold{display:none}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .controls[hidden],.meta-row[hidden],.tgl[hidden]{display:none!important}
 .search{position:relative;flex:1 1 320px}
-.search .glyph{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.search .glyph{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .search input{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);
   border-radius:8px;padding:9px 12px 9px 30px;font:inherit}
 .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -541,15 +542,18 @@ details.railfold{display:none}
    a bare "medium" cannot say which scale it is on. */
 .badge.str{border-color:var(--str-line);color:var(--str-ink);background:var(--str-bg);
   padding:1px 8px 1px 6px}
-.badge.str i{font-style:normal;color:var(--faint);font-size:10px;letter-spacing:.05em;
+.badge.str i{font-style:normal;color:var(--muted);font-size:10px;letter-spacing:.05em;
   text-transform:uppercase;margin-right:5px}
 .badge.str.sc-value{--str-strong:var(--val-strong);--str-mid:var(--val-mid);
   --str-strong-bg:var(--val-bg)}
 .badge.str.sc-conf{--str-strong:var(--conf-strong);--str-mid:var(--conf-mid);
   --str-strong-bg:var(--conf-bg)}
 .s-high{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:var(--str-strong-bg)}
-.s-med{--str-line:var(--str-mid);--str-ink:var(--str-mid);--str-bg:transparent}
-.s-low{--str-line:var(--line);--str-ink:var(--faint);--str-bg:transparent}
+/* Same strong ink at every level, so the weakest trust level is no harder
+   to read than the strongest: high is filled, medium outlined, low dashed. */
+.s-med{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:transparent}
+.s-low{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:transparent}
+.badge.str.s-low{border-style:dashed}
 .clspill{display:inline-block;border:1px solid var(--line);border-radius:5px;
   background:var(--panel-2);color:var(--muted);font-size:11px;padding:1px 7px;white-space:nowrap}
 .unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;
@@ -576,7 +580,7 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .planid #pName{min-width:190px;font-weight:600}
 .planid #pHost{min-width:150px}
 .planid select{max-width:260px;cursor:pointer}
-.pmeta{color:var(--faint);font-size:11.5px}
+.pmeta{color:var(--muted);font-size:11.5px}
 
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
@@ -735,11 +739,11 @@ th .pick.all{vertical-align:middle}
   padding:13px 18px;display:flex;justify-content:space-between;gap:10px;align-items:center;z-index:2}
 .dhead b{font-size:14px}
 .dhead .x{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);
-  background:none;color:var(--faint);flex:none}
+  background:none;color:var(--muted);flex:none}
 .dhead .x:hover{color:var(--ink);border-color:var(--accent)}
 .dbody{padding:16px 18px;display:flex;flex-direction:column;gap:16px}
 .dsec h4{margin:0 0 7px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);font-weight:600}
+  color:var(--muted);font-weight:600}
 .locator{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;
   background:var(--panel-2);border-radius:8px;padding:10px}
 .badgerow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -804,7 +808,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   gap:18px;max-width:1100px}
 .srcgrid p{max-width:52ch}
 .srcgrid h4{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint);font-weight:600}
+  letter-spacing:.05em;color:var(--muted);font-weight:600}
 .srcgrid p{margin:0;font-size:12.5px;line-height:1.55}
 .srcloss p{color:var(--ink)}
 .srcloss h5{color:var(--med)}
@@ -827,7 +831,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .plansum b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:3px}
 .plansum>span:not(.badge){white-space:nowrap}
 .plancred{color:var(--med)}
-.ptool{font-size:11.5px;color:var(--faint);margin-left:auto;padding-left:10px;
+.ptool{font-size:11.5px;color:var(--muted);margin-left:auto;padding-left:10px;
   white-space:nowrap}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .segbtn{background:var(--panel);border:0;padding:6px 11px;font-size:12px;
@@ -837,7 +841,15 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .segbtn:not(.on):hover{background:var(--hover);color:var(--ink)}
 .btn.danger{color:var(--crit);border-color:var(--alert-line)}
 .btn.danger:hover{background:var(--alert-bg);border-color:var(--crit)}
-.btn.danger[data-armed="1"]{background:var(--crit);color:#fff;border-color:var(--crit)}
+.btn.danger[data-armed="1"]{background:var(--crit);color:var(--on-tone);border-color:var(--crit)}
+/* Diagrams keep their light fills (baked into the SVGs); dimming the card stops
+   it being the brightest surface on a dark page. */
+:root[data-theme=dark] figure.mmd{background:#d9d5ce;border-color:var(--line)}
+:root[data-theme=dark] .pal{background:rgba(0,0,0,.6)}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]) figure.mmd{background:#d9d5ce;border-color:var(--line)}
+  :root:not([data-theme=light]) .pal{background:rgba(0,0,0,.6)}
+}
 #backbar{margin:0 0 12px}
 .backbtn{background:var(--panel);border:1px solid var(--line);border-radius:20px;
   padding:5px 13px;font-size:12.5px;color:var(--muted);cursor:pointer}
@@ -847,7 +859,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   padding:7px 9px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left}
 .clsrow b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:5px}
 .clsrow:hover{border-color:var(--accent);background:var(--accent-soft)}
-.tmeta{margin-top:7px;font-size:12px;color:var(--faint)}
+.tmeta{margin-top:7px;font-size:12px;color:var(--muted)}
 .badge.vol i{font-style:normal;opacity:.6;margin-right:5px;font-size:10px}
 .locrow{display:flex;gap:8px;align-items:stretch}
 .locrow .locator{flex:1;min-width:0}
@@ -945,6 +957,9 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .rule{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px;
   display:flex;flex-direction:column;gap:9px;cursor:pointer;text-align:left}
 .rule:hover{border-color:var(--accent)}
+.cardbtn{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.cardbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.exportgrp[hidden],#pickAllBtn[hidden]{display:none}
 .rule .rtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 
 .rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
@@ -956,6 +971,15 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .fmt{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
   border-radius:5px;padding:1px 7px;background:var(--panel-2);border:1px solid var(--line);
   color:var(--muted)}
+button.tchip{border:1px solid var(--accent-border);cursor:pointer;font-family:inherit;font-size:11.5px;
+  text-align:left;min-height:24px}
+button.tchip:hover{border-color:var(--accent)}
+.tmenu{display:inline-flex;flex-direction:column;gap:2px;margin:2px 0 4px 4px;padding:4px;background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 22px var(--shadow);vertical-align:top}
+.tmenu button{background:none;border:0;border-radius:6px;padding:6px 9px;text-align:left;font-size:12.5px;
+  color:var(--ink);min-height:28px;cursor:pointer}
+.tmenu button:hover,.tmenu button:focus{background:var(--accent-soft)}
+.flash{outline:2px solid var(--accent);outline-offset:2px}
 .tchip{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--accent-soft);
   border:1px solid var(--accent-border);color:var(--accent);border-radius:5px;padding:1px 6px;
   cursor:pointer}
@@ -1040,7 +1064,9 @@ details.csfull[open]>summary::before{top:50%;transform:translateY(-50%) rotate(9
 .csbrief{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--muted);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
   overflow:hidden}
-details.csfull[open] .csbrief{display:none}
+details.csfull[open] .csbrief,details.csfull[open] .csbasis1{display:none}
+.csbasis1{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+.csbasis1 b{color:var(--ink);font-weight:600}
 .csaff{color:var(--accent);margin-top:1px}
 /* One line, always the same order, so the tiles read as a column of facts
    rather than as ragged chip soup: indicators, rules, provenance, dispute. */
@@ -1083,7 +1109,7 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .covdet td{background:var(--panel-2);padding:14px 14px 14px 34px}
 .cdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
 .cdgrid h3{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint);font-weight:600}
+  letter-spacing:.05em;color:var(--muted);font-weight:600}
 .cdgrid .n{font-family:ui-monospace,Menlo,monospace;font-size:10px;
   background:var(--line-soft);border-radius:20px;padding:0 6px;color:var(--muted)}
 .cdchip{display:block;width:100%;text-align:left;background:var(--panel);
@@ -1104,7 +1130,7 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
   margin-right:8px}
 .covrow .ittl{color:var(--muted)}
 .covrow .subs{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-  color:var(--faint);margin-left:7px}
+  color:var(--muted);margin-left:7px}
 .thinflag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;
   color:var(--med);border:1px dashed var(--med);border-radius:4px;
   padding:0 5px;margin-left:8px;opacity:.85}
@@ -1131,7 +1157,7 @@ button.istat:hover{background:var(--hover)}
   font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:2px 4px;
   border-radius:4px;text-decoration:underline;text-underline-offset:2px}
 .covlink:hover{background:var(--accent-soft)}
-.cov .zero{color:var(--faint)}
+.cov .zero{color:var(--muted)}
 .cbar{display:block;position:relative;height:14px;min-width:80px}
 .cbar i{position:absolute;left:0;height:5px;border-radius:3px}
 /* strong, not mid. The mid tokens are tuned for badge fills against a tinted
@@ -1154,7 +1180,7 @@ button.istat:hover{background:var(--hover)}
 
 .cs .csmeta{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .cs p{margin:0;font-size:12.5px;color:var(--muted)}
-.cs h4{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.cs h4{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .iocs{display:flex;flex-wrap:wrap;gap:5px}
 .ioc{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
   border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;color:var(--ink);
@@ -1177,7 +1203,7 @@ button.istat:hover{background:var(--hover)}
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .iocgrp{margin:0 0 11px}
 .iockind{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);margin:0 0 4px}
+  color:var(--muted);margin:0 0 4px}
 .csfull .iocs{flex-direction:column;align-items:flex-start;gap:4px}
 .csfull .ioc{display:block;width:100%;word-break:break-all;padding:5px 9px;line-height:1.35}
 .csfull .ioc em{display:block;font-style:normal;font-family:system-ui,sans-serif;
@@ -1191,7 +1217,7 @@ button.istat:hover{background:var(--hover)}
    is the next move. */
 .csdet{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
 .csdet h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);display:flex;align-items:center;gap:7px}
+  color:var(--muted);display:flex;align-items:center;gap:7px}
 .csdet h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .detrow{display:flex;flex-wrap:wrap;gap:6px}
@@ -1208,9 +1234,9 @@ button.istat:hover{background:var(--hover)}
 .drefs li{margin:0 0 5px;color:var(--muted)}
 .dsec h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
-.tverify{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+.tverify{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);
   margin:0 0 6px}
-.talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+.talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);
   margin:0 0 6px;word-break:break-word}
 .statuspill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
   border:1px solid var(--crit);color:var(--crit);border-radius:20px;padding:1px 8px;
@@ -1218,7 +1244,7 @@ button.istat:hover{background:var(--hover)}
 .casebadge{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
   background:var(--accent);color:var(--on-accent);border-radius:20px;padding:2px 8px;
   white-space:nowrap}
-.csconf{margin:8px 0 0;font-size:12px;color:var(--faint);
+.csconf{margin:8px 0 0;font-size:12px;color:var(--muted);
   font-family:ui-monospace,Menlo,monospace}
 .csjumps{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 /* Provenance sits directly under the summary, so a reader meets the evidence
@@ -1232,7 +1258,7 @@ button.istat:hover{background:var(--hover)}
 .csfoot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;
   margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
 .csfoot h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);display:flex;align-items:center;gap:7px}
+  color:var(--muted);display:flex;align-items:center;gap:7px}
 .csfoot h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .csatlas{display:flex;flex-direction:column;align-items:flex-start}
@@ -1274,7 +1300,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;bo
 #palRes{overflow:auto;padding:6px 0}
 .palg{padding:4px 0}
 .palgh{display:flex;justify-content:space-between;padding:6px 16px 4px;font-size:10.5px;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint)}
+  text-transform:uppercase;color:var(--muted)}
 .palr{display:flex;flex-direction:column;gap:1px;padding:7px 16px;cursor:pointer}
 .palr[aria-selected=true]{background:var(--accent-soft)}
 .palt{font-size:13.5px;color:var(--ink)}
@@ -1284,7 +1310,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;bo
 .palall{font-size:12.5px;color:var(--accent)}
 .palempty{padding:18px 16px;font-size:13px;color:var(--muted)}
 .palsug{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint)}
+.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
 .palfoot kbd{margin-right:3px}
 body.palopen{overflow:hidden}
 @media(max-width:620px){.palbtn .paltx,.palbtn kbd,.ghlink .ghtx,#themeBtn .thtx{display:none}
@@ -1496,11 +1522,17 @@ figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
 /* !important because each pre-rendered SVG carries an inline max-width:100%. */
 figure.mmd svg{width:auto;max-width:min(100%,760px)!important;height:auto;max-height:420px;display:block;margin:0 auto}
 figure.mmd{cursor:zoom-in;position:relative}
-figure.mmd::after{content:'Click to enlarge';position:absolute;right:10px;bottom:8px;font-size:11px;
+figure.mmd .mmdhint{position:absolute;right:10px;bottom:8px;font-size:11px;
   color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
-figure.mmd.big{cursor:zoom-out}
-figure.mmd.big::after{content:'Click to shrink'}
-figure.mmd.big svg{width:100%;max-width:100%!important;max-height:none}
+figure.mmd:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#mmdView{position:fixed;inset:0;z-index:70;background:rgba(20,18,16,.45);display:flex;padding:16px}
+.mmdbox{position:relative;margin:auto;max-width:100%;max-height:100%;display:flex;flex-direction:column;
+  background:#fbfbfa;border:1px solid var(--line);border-radius:11px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.mmdbox .mmdx{align-self:flex-end;margin:8px 8px 0}
+.mmdscroll{overflow:auto;padding:8px 18px 18px}
+.mmdscroll svg{display:block}
+.mmdscroll .nodeLabel,.mmdscroll .edgeLabel,.mmdscroll .label,.mmdscroll text,.mmdscroll tspan,
+.mmdscroll p,.mmdscroll span,.mmdscroll div{fill:#1f2328;color:#1f2328}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -1564,6 +1596,9 @@ footer p{margin:0}
 
 JS = r"""
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+// Phone width. Declared first: the drawer observer and the catalog renderer
+// both read it during boot.
+const PHONE=window.matchMedia('(max-width:620px)');
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RANK={critical:0,p1:0,high:1,p2:1,medium:2,p3:2,low:3};
 // Two scales, deliberately not sharing a palette.
@@ -2062,11 +2097,14 @@ const CASES_BY_TOOL=(()=>{
   return by;
 })();
 function toolsHTML(){
-  return '<div class="toolgrid">'+TOOLS.map(t=>{
+  const list=TOOLS.filter(t=>qMatch([t.tool,t.vendor,(t.aliases||[]).join(' '),t.category,t.entry_id].join(' ')));
+  if(!list.length)return `<div class="empty"><p>No tools match "${esc(query)}".</p><div class="emptyacts">
+    <button class="btn" type="button" data-clear="q">Clear search</button></div></div>`;
+  return '<div class="toolgrid">'+list.map(t=>{
   const cs=CASES_BY_TOOL[t.entry_id]||[];
   return `
-    <button class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
-      <div class="trow"><div><h3 class="tname">${esc(t.tool)}</h3>
+    <article class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
+      <div class="trow"><div><h3 class="tname"><button type="button" class="cardbtn">${esc(t.tool)}</button></h3>
         <div class="tsub">${esc(t.vendor)} &middot; ${esc(t.category)}</div></div>
         <div class="tbadges">${t.status&&t.status!=='active'?
           `<span class="statuspill">${esc(t.status)}</span>`:''}${cs.length?`<span class="casebadge"
@@ -2078,7 +2116,7 @@ function toolsHTML(){
       ${t.caps.length?`<div class="capchips">${t.caps.map(c=>`<i>${esc(c)}</i>`).join('')}</div>`:''}
       <div class="tfoot"><span>${t.n} artifacts</span>${t.triage?`<span>triage ${esc(t.triage)}</span>`:''}
         <span>${esc(t.os.join(' · '))}</span></div>
-    </button>`}).join('')+'</div>';
+    </article>`}).join('')+'</div>';
 }
 
 /* ---------- data sources ---------- */
@@ -2343,9 +2381,7 @@ function drawerHTML(r){
       ${CASES_BY_TOOL[r.entry_id].map(c=>
         `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${t.techniques&&t.techniques.length?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${t.techniques.map(x=>
-        /^AML\./.test(x)?`<span class="tchip" data-tech="${esc(x)}">${esc(x)}</span>`
-                        :`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
+      <div class="tech">${t.techniques.map(techChip).join('')}</div></div>`:''}
     <div class="dsec"><h4>Sources for ${esc(r.tool)} <span class="n">&middot; ${(t.refs||[]).length}</span></h4>
       <div class="tverify">${t.verified?`Tool last verified ${esc(t.verified)}`
         :'Tool never verified against a host or a current release'}</div>
@@ -2407,8 +2443,11 @@ function closeDrawer(){
   if(!navStack.length)history.replaceState(null,'',location.pathname+location.search);
   if(!markSel())renderMain();
   const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
-  if(el)el.focus();
-  else if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
+  // Cards are articles now; focus lands on the button inside them.
+  const tgt=x=>x&&(x.matches('button,[tabindex],a[href],input,select')?x:(x.querySelector('.cardbtn')||x));
+  if(el)tgt(el).focus();
+  else if(lastFocus&&document.contains(lastFocus))tgt(lastFocus).focus();
+  writeHash();
 }
 
 /* ---------- drawer width ----------
@@ -2449,8 +2488,9 @@ function syncGrip(){
       b.onclick=()=>setDrawerW(drawerW()>=DW_WIDE()-4?DW_DEFAULT:DW_WIDE(),true);
       h.insertBefore(b,h.querySelector('.x'));
     }
-    syncGrip();
+    syncGrip(); syncDrawerModal();
   }).observe($('#drawer'),{childList:true,attributes:true,attributeFilter:['hidden']});
+  PHONE.addEventListener&&PHONE.addEventListener('change',syncDrawerModal);
   window.addEventListener('resize',syncGrip);
 })();
 
@@ -2511,7 +2551,6 @@ function togglePick(a){
   if(view!=='catalog'||!$('#main .pick[data-a]')){update();return}
   syncPick(a);renderTabs();renderToast();
 }
-const PHONE=window.matchMedia('(max-width:620px)');
 PHONE.addEventListener&&PHONE.addEventListener('change',()=>{if(view==='catalog')renderMain()});
 // Arrows move the current row, Space ticks it, Enter opens it. Escape is the
 // global drawer close, which returns focus to the row.
@@ -2573,7 +2612,8 @@ const filteredRules=()=>RULES.filter(r=>
   (!ruleSet||ruleSet.has(r.file))&&ruleMatches(r,null));
 
 function ruleRailHTML(){
-  return Object.keys(RGROUPS).map(g=>{
+  // A facet with one value is not a choice. Format is Sigma on every rule.
+  return Object.keys(RGROUPS).filter(g=>ROPTIONS[g].length>1||rfilters[g].length).map(g=>{
     const counts={};
     for(const r of RULES){
       if(!ruleMatches(r,g))continue;
@@ -2591,16 +2631,17 @@ function ruleRailHTML(){
 }
 function rulesHTML(rules){
   if(!rules.length)return emptyHTML(true);
+  const oneFmt=ROPTIONS.fmt.length<2;
   return '<div class="rulegrid">'+rules.map(r=>`
-    <button class="rule" data-f="${esc(r.path)}">
-      <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
+    <article class="rule" data-f="${esc(r.path)}">
+      <div class="rtop"><div><h3 class="rname"><button type="button" class="cardbtn">${esc(r.title)}</button></h3>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
       ${r.description?`<p class="rdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
-      <div class="rfoot"><span class="fmt">${esc(r.format)}</span>
-        ${r.atlas.map(a=>`<span class="tchip">${esc(a)}</span>`).join('')}
-        ${r.owasp.map(o=>`<span class="tchip">${esc(o)}</span>`).join('')}</div>
-    </button>`).join('')+'</div>';
+      <div class="rfoot">${oneFmt?'':`<span class="fmt">${esc(r.format)}</span>`}
+        ${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(x=>
+          `<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('')}</div>
+    </article>`).join('')+'</div>';
 }
 function ruleDrawerHTML(r){
   const base=location.origin==='null'?'':location.origin+location.pathname;
@@ -2613,12 +2654,11 @@ function ruleDrawerHTML(r){
           aria-label="Copy rule path">copy</button></div>
       <div class="badgerow"><span class="fmt">${esc(r.format)}</span>
         ${r.level?badge(r.level,r.level==='critical','level'):''}
-        ${r.status?badge(r.status,false):''}</div></div>
+        ${r.status?`<span class="statuspill" title="Rule status">${esc(r.status)}</span>`:''}</div></div>
     ${r.description?`<div class="dsec"><h4>What it detects</h4><p>${esc(r.description)}</p></div>`:''}
     ${r.logsource?`<div class="dsec"><h4>Telemetry</h4><p>${esc(r.logsource)}</p></div>`:''}
-    ${(r.atlas.length||r.owasp.length)?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${r.atlas.map(a=>`<span class="tchip" data-tech="${esc(a)}">${esc(a)}</span>`).join('')}
-      ${r.owasp.map(o=>`<span class="tchip" data-owasp="${esc(o)}">${esc(o)}</span>`).join('')}</div></div>`:''}
+    ${(r.atlas.length||r.owasp.length||(r.asi||[]).length||(r.attack||[]).length)?`<div class="dsec"><h4>Mapped techniques</h4>
+      <div class="tech">${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(techChip).join('')}</div></div>`:''}
     ${(()=>{const cs=CASES.filter(c=>(c.detections||[]).includes(r.file));
       const ac=INTEL.actors.filter(a=>a.derived.detections_by_technique.includes(r.file)||a.derived.detections_cited.includes(r.file));
       return (cs.length||ac.length)?`<div class="dsec"><h4>Cited by</h4>
@@ -2660,7 +2700,7 @@ function toolDrawerHTML(t){
   const unv=rows.filter(r=>r.unverified).length;
   const cs=CASES_BY_TOOL[t.entry_id]||[];
   return `<div class="dhead"><b>${esc(t.tool)} <span class="mono"
-      style="color:var(--faint);font-size:11px">${esc(t.entry_id)}</span></b>
+      style="color:var(--muted);font-size:11px">${esc(t.entry_id)}</span></b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
     <div class="dsec">
@@ -2695,7 +2735,7 @@ function toolDrawerHTML(t){
     ${cs.length?`<div class="dsec"><h4>Documented incidents <span class="n">${cs.length}</span></h4>
       ${cs.map(c=>`<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${(t.techniques||[]).length?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${t.techniques.map(x=>`<span class="tchip">${esc(x)}</span>`).join('')}</div></div>`:''}
+      <div class="tech">${t.techniques.map(techChip).join('')}</div></div>`:''}
     ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
       <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
         rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
@@ -2721,6 +2761,7 @@ function openToolDrawer(id,fromEl){
     filters.tool=[t.tool];if(cls)filters.cls=[cls];
     view='catalog';update()};
   $('#dAllRows').onclick=()=>drill(null);
+  wireTechChips();
   // Tools -> a populated plan without going through the table. Reuses picks and
   // savePicks rather than introducing a second path into the plan, so anything
   // added here behaves exactly like a row ticked by hand. Add-only on purpose:
@@ -2775,14 +2816,51 @@ function openRuleDrawer(key,fromEl){
   wireTechChips();
   wireIntelLinks('#drawer');
 }
-function wireTechChips(){
-  $$('#drawer .tchip[data-tech],#drawer .tchip[data-owasp]').forEach(c=>c.onclick=()=>{
-    const t=c.dataset.tech,o=c.dataset.owasp;
-    closeDrawer();
-    resetRuleFilters();
-    if(t)rfilters.ratlas=[t]; else rfilters.rowasp=[o];
-    view='rules'; update();
+// Technique chips say which technique, not just its id, and are buttons. One
+// press opens two choices: filter Detections to it, or open it in Mappings.
+const TECH_KIND=id=>/^AML\./.test(id)?'ratlas':/^LLM\d/.test(id)?'rowasp':/^ASI\d/.test(id)?'rasi':/^T\d{4}/.test(id)?'rattack':'';
+let TECH_NAMES=null;
+function techName(id){
+  if(!TECH_NAMES){TECH_NAMES={};
+    ATLAS_INDEX.forEach(i=>{TECH_NAMES[i.id]=i.title});OWASP_INDEX.forEach(i=>{TECH_NAMES[i.id]=i.title});
+    Object.assign(TECH_NAMES,INTEL.asi||{},INTEL.attack_names||{})}
+  return TECH_NAMES[id]||(typeof TNAME==='function'?TNAME(id):'')||'';
+}
+function techChip(id){
+  const k=TECH_KIND(id), n=techName(id);
+  return k?`<button type="button" class="tchip" data-tk="${k}" data-tid="${esc(id)}" aria-haspopup="menu"
+    aria-expanded="false">${esc(id)}${n?` &middot; ${esc(n)}`:''}</button>`:`<i>${esc(id)}</i>`;
+}
+function closeTechMenu(){
+  const m=$('#drawer .tmenu'); if(!m)return;
+  const c=m.previousElementSibling; if(c)c.setAttribute('aria-expanded','false'); m.remove();
+}
+function techMenu(c){
+  const open=$('#drawer .tmenu');
+  if(open){const same=open.previousElementSibling===c;closeTechMenu();if(same)return}
+  const m=document.createElement('span'); m.className='tmenu'; m.setAttribute('role','menu');
+  m.innerHTML='<button type="button" role="menuitem" data-act="filter">Filter detections to this technique</button>'
+    +'<button type="button" role="menuitem" data-act="map">Open in Mappings</button>';
+  c.after(m); c.setAttribute('aria-expanded','true');
+  const items=[...m.querySelectorAll('button')]; items[0].focus();
+  m.onkeydown=e=>{const i=items.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();
+      items[(i+(e.key==='ArrowDown'?1:-1)+items.length)%items.length].focus()}
+    else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeTechMenu();c.focus()}};
+  items.forEach(b=>b.onclick=()=>{
+    const id=c.dataset.tid, k=c.dataset.tk;
+    closeTechMenu(); pushNav(); closeDrawer();
+    if(b.dataset.act==='filter'){resetRuleFilters();rfilters[k]=[id];view='rules';update();window.scrollTo(0,0)}
+    else{view='mappings';update();
+      // Index rows carry data-x; the ATLAS coverage table keys by data-t and
+      // counts subtechniques against their parent.
+      const sel=x=>$(`#main [data-x="${CSS.escape(x)}"],#main [data-t="${CSS.escape(x)}"]`);
+      const row=sel(id)||sel(id.replace(/\.\d{3}$/,''));
+      if(row){row.scrollIntoView({block:'center'});row.classList.add('flash')}else window.scrollTo(0,0)}
   });
+}
+function wireTechChips(){
+  $$('#drawer .tchip[data-tid]').forEach(c=>c.onclick=e=>{e.stopPropagation();techMenu(c)});
 }
 function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
   ruleSet=null;query='';$('#q').value=''}
@@ -3055,6 +3133,7 @@ function iocGroups(iocs){
       return (x<0?99:x)-(y<0?99:y)||a.localeCompare(b)})
     .map(k=>({kind:k,items:by[k]}));
 }
+const firstSentence=t=>{const m=String(t||'').match(/^.*?[.!?](?=\s|$)/);return m?m[0]:String(t||'')};
 function caseStudiesHTML(){
   // Newest disclosure first: the case a responder is most likely chasing.
   const LIST=(caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES.slice())
@@ -3069,7 +3148,7 @@ function caseStudiesHTML(){
     catalog, with the indicators each left behind and what responders did about it.
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
-    <p class="csconf">Provenance: ${esc(tally)}</p>
+    <p class="csconf">Sourcing: ${esc(tally)}</p>
     ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <span aria-hidden="true">&#10005;</span></button>`:''}</div>
     <button class="btn" id="csAll" data-open="0">Expand all</button></div>
     <div class="csgrid">`+
@@ -3093,7 +3172,8 @@ function caseStudiesHTML(){
             c.disclosed?' · disclosed '+esc(c.disclosed):''}</div>
           <div class="csmeta csaff">${known.length?esc(known.map(k=>k.tool).join(', ')):
             c.affects?esc(c.affects):''}</div>
-          <p class="csbrief">${esc(c.summary)}</p></div>
+          <p class="csbrief">${esc(c.summary)}</p>
+          ${c.basis?`<p class="csbasis1"><b>Why ${esc(c.confidence||'')}:</b> ${esc(firstSentence(c.basis))}</p>`:''}</div>
         <div class="cstally">
           ${n?`<span class="csn" title="published indicators">${n} IOC${n>1?'s':''}</span>`:''}
           ${(c.detections||[]).length?`<span class="csn" title="detection rules in this repo"
@@ -3107,6 +3187,7 @@ function caseStudiesHTML(){
         ${known.length?known.map(k=>`<button class="btn csjump" data-t="${esc(k.tool)}"
           data-id="${esc(k.entry_id)}">${esc(k.tool)} artifacts &#8594;</button>`).join('')
         :''}
+        <button type="button" class="btn cscopy" data-cs="${esc(c.id)}">copy link</button>
       </div>
       <p class="cssum">${esc(c.summary)}</p>
       ${c.confidence?`<div class="csprov">
@@ -3114,6 +3195,7 @@ function caseStudiesHTML(){
         ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
       </div>`:''}
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
+      ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
       ${(c.actors||[]).length?`<div class="csprov"><b>Attributed to</b> ${c.actors.map(l=>
         `<button class="lchip csactor" data-actor="${esc(l.ref)}">${esc((ACTORMAP[l.ref]||{}).name||l.ref)}</button>
          ${confBadge(l.link_confidence)} <span class="csbasis">${esc(l.attributed_by)}${
@@ -3138,7 +3220,6 @@ function caseStudiesHTML(){
               esc(a.action)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
         </div>
       </div>
-      ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
       ${(c.detections||[]).length?`<div class="csdet">
         <h4>Detections in this repo <span class="n">${c.detections.length}</span></h4>
         <div class="detrow">${c.detections.map(d=>
@@ -3259,7 +3340,7 @@ function timelineHTML(){
       <div class="tltip" hidden></div></div>
   </figure>
   <div class="tlwrap"><table class="tltable"><thead><tr><th>Disclosed</th><th>Incident</th>
-    <th>Tools involved</th><th>Confidence</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <th>Tools involved</th><th>Sourcing</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function wireTimeline(){
   const svg=$('#main .tlplot svg'); if(!svg)return;
@@ -3453,18 +3534,45 @@ function guideHTML(){
   </div>`;
 }
 
+/* ---------- diagram overlay ----------
+   The inline diagram is capped so it does not take over the page, which leaves
+   a tall flowchart's labels too small to read. Enlarging opens it at natural
+   size in an overlay sized to the viewport, so the text below never moves. */
+function openDiagram(f){
+  const svg=f.querySelector('svg'); if(!svg)return;
+  const vb=svg.viewBox&&svg.viewBox.baseVal;
+  const ov=document.createElement('div'); ov.id='mmdView'; ov.setAttribute('role','dialog');
+  ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','Diagram');
+  ov.innerHTML='<div class="mmdbox"><button type="button" class="btn mmdx">Close</button><div class="mmdscroll"></div></div>';
+  const c=svg.cloneNode(true);
+  c.removeAttribute('style'); c.style.maxWidth='none'; c.style.height='auto';
+  c.style.width=vb&&vb.width?`min(${Math.round(vb.width)}px,100%)`:'100%';
+  ov.querySelector('.mmdscroll').appendChild(c);
+  document.body.appendChild(ov); f.setAttribute('aria-expanded','true');
+  setInert('.skip,.hdr,.shell,footer,#toast,#drawer',true);
+  const close=()=>{ov.remove();f.setAttribute('aria-expanded','false');
+    setInert('.skip,.hdr,.shell,footer,#toast,#drawer',false);syncDrawerModal();f.focus()};
+  ov.querySelector('.mmdx').onclick=close;
+  ov.onclick=e=>{if(e.target===ov)close()};
+  ov.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close()}
+    else if(e.key==='Tab'){e.preventDefault();ov.querySelector('.mmdx').focus()}};
+  ov.querySelector('.mmdx').focus();
+}
+
 /* ---------- render ---------- */
 function renderMain(){
   const shell=$('.shell');
   const railed=(view==='catalog'||view==='rules');
   shell.classList.toggle('nocol',!railed);
-  $('#controls').hidden=!railed;
+  $('#controls').hidden=!(railed||view==='tools');
+  $('#pickAllBtn').hidden=view!=='catalog';
+  $('.exportgrp').hidden=view!=='catalog';
   $('#scopeNote').hidden=view!=='catalog';syncScope();
   $('#unvBtn').hidden=view!=='catalog';
   $('#denseBtn').hidden=view!=='catalog';
   $('#metaRow').hidden=!railed;
   $('#q').placeholder=view==='rules'?'Search rules, techniques, telemetry...'
-                                    :'Search paths, tools, descriptions...';
+    :view==='tools'?'Search tools, vendors, aliases...':'Search paths, tools, descriptions...';
   const main=$('#main');
   if(view==='rules'){
     const rules=filteredRules();
@@ -3608,9 +3716,11 @@ function renderMain(){
     $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
     $$('#main [data-unv]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();unvOnly=true;
       $('#unvBtn').setAttribute('aria-pressed','true');view='catalog';update();window.scrollTo(0,0)});
-    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.title='Click to enlarge';
-      const t=()=>{f.classList.toggle('big');f.title=f.classList.contains('big')?'Click to shrink':'Click to enlarge'};
-      f.onclick=t;f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
+    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.setAttribute('role','button');
+      f.setAttribute('aria-label','Enlarge diagram');f.setAttribute('aria-expanded','false');
+      if(!f.querySelector('.mmdhint'))f.insertAdjacentHTML('beforeend','<span class="mmdhint" aria-hidden="true">Click to enlarge</span>');
+      f.onclick=()=>openDiagram(f);
+      f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDiagram(f)}}});
     wireOvis();
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
     wireAlert();
@@ -3656,6 +3766,9 @@ function renderMain(){
     main.innerHTML=caseStudiesHTML();
     $$('#main .csactor').forEach(b=>b.onclick=e=>{e.preventDefault();openActorDrawer(b.dataset.actor,b)});
     const co=$('#csOnly');if(co)co.onclick=()=>{caseOnly=null;renderMain()};
+    $$('#main .cscopy').forEach(b=>b.onclick=()=>{
+      const base=location.origin==='null'?'':location.origin+location.pathname;
+      copy(base+'#cs-'+b.dataset.cs,b)});
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.tool=[b.dataset.t];view='catalog';
       history.replaceState(null,'','#'+b.dataset.id);
@@ -3682,6 +3795,7 @@ function renderMain(){
     // drill-down is still one click, from inside the drawer, where it is a
     // deliberate move rather than the only thing a click can do.
     $$('#main .tool').forEach(c=>c.onclick=()=>openToolDrawer(c.dataset.id,c));
+    wireEmpty();
   }else{
     main.innerHTML=`<div class="planwrap${picks.size?' has-build':''}"><div class="planmain">${planHTML()}</div>${triageHTML()}</div>`;
     wireTriage();
@@ -3764,7 +3878,7 @@ function renderTabs(){
     // this one counts their own work, so it appears once there is some. The tab
     // itself stays, and the empty state inside it carries the instruction.
     if(b.dataset.v==='plan'&&n){
-      n.textContent=picks.size;
+      n.innerHTML=`${picks.size}<span class="sr"> picked rows</span>`;n.title=`${picks.size} picked rows`;
       n.hidden=!picks.size;
       b.title=picks.size?'':'Tick artifacts in the catalog to build a collection plan';
     }
@@ -3789,7 +3903,7 @@ function renderToast(){
   $('#toastClear').hidden=showUndo;
   $('#toastUndo').hidden=!showUndo;
 }
-function update(){renderRail();renderMain()}
+function update(){renderRail();renderMain();writeHash()}
 
 function resetFilters(){
   for(const g of Object.keys(filters))filters[g]=[];
@@ -3817,8 +3931,49 @@ function deadLink(h){
   if(b)b.onclick=()=>{box.hidden=true;resetFilters();filters.tool=[t.tool];view='catalog';update()};
 }
 const VIEW_NAMES=['guide','catalog','tools','rules','mappings','sources','cases','intel','graph','plan'];
-function applyHash(){
-  const h=decodeURIComponent(location.hash.slice(1));
+// '#catalog?tool=Cursor&os=windows&q=...' - the same keys as `filters`, values
+// comma-separated, plus q and unv=1; '#rules?...' likewise. A view with
+// filters is something a responder sends to a colleague.
+let routing=false;
+function viewHash(){
+  if(view==='catalog'||view==='rules'){
+    const F=view==='catalog'?filters:rfilters, p=new URLSearchParams();
+    for(const k of Object.keys(F))if(F[k].length)p.set(k,F[k].join(','));
+    if(query)p.set('q',query);
+    if(view==='catalog'&&unvOnly)p.set('unv','1');
+    const qs=p.toString(); return '#'+view+(qs?'?'+qs:'');
+  }
+  return view==='guide'?'':'#'+view;
+}
+// In-page anchors that belong to the current view are left alone. Rule and
+// actor links are drawer links: once the drawer closes they are replaced.
+const DEEP={'g-':'guide','cs-':'cases','src-':'sources','graph':'graph'};
+function writeHash(){
+  if(routing||!$('#drawer').hidden)return;
+  const cur=location.hash.slice(1);
+  const pre=Object.keys(DEEP).find(p=>cur.startsWith(p));
+  if(pre&&DEEP[pre]===view)return;
+  const h=viewHash();
+  if(h==='#'+cur||(!h&&!cur))return;
+  history.replaceState(history.state,'',h||location.pathname+location.search);
+}
+function applyHash(){routing=true;try{applyHash0()}finally{routing=false}}
+function applyHash0(){
+  const raw=location.hash.slice(1), qi=raw.indexOf('?');
+  if(qi>0){
+    const base=decodeURIComponent(raw.slice(0,qi)), p=new URLSearchParams(raw.slice(qi+1));
+    if(base==='catalog'||base==='rules'){
+      $('#deadLink').hidden=true;
+      resetFilters(); resetRuleFilters();
+      const F=base==='catalog'?filters:rfilters, O=base==='catalog'?OPTIONS:ROPTIONS;
+      for(const k of Object.keys(F)){const v=p.get(k);
+        if(v)F[k]=v.split(',').filter(x=>!O[k]||O[k].includes(x))}
+      const q=p.get('q')||''; query=q.toLowerCase(); $('#q').value=q;
+      if(base==='catalog'){unvOnly=p.get('unv')==='1';$('#unvBtn').setAttribute('aria-pressed',String(unvOnly))}
+      view=base; update(); return;
+    }
+  }
+  const h=decodeURIComponent(qi>0?raw.slice(0,qi):raw);
   if(!h)return;
   $('#deadLink').hidden=true;
   if(h.startsWith('actor/')){
@@ -3935,12 +4090,32 @@ function palGo(i){
   if(!$('#drawer').hidden)closeDrawer();
   x.go();
 }
+const BEHIND='.skip,.hdr,.shell,footer,#drawer,#toast,#dgrip';
+function setInert(sel,on){$$(sel).forEach(x=>on?x.setAttribute('inert',''):x.removeAttribute('inert'))}
+// Under 620px the drawer is full width, so it is modal: the page behind it is
+// not reachable. Wider, it is a side panel and the page stays live.
+function syncDrawerModal(){
+  const d=$('#drawer'), on=!d.hidden&&PHONE.matches;
+  d.setAttribute('aria-modal',String(on));
+  if($('#pal').hidden)setInert('.skip,.hdr,.shell,footer,#toast',on);
+}
 function palOpen(){
   if(!PAL)PAL=palIndex();
   $('#pal').hidden=false; document.body.classList.add('palopen');
+  setInert(BEHIND,true);
   const i=$('#palQ'); i.select(); i.focus(); palRender();
 }
-function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');$('#palBtn').focus()}
+function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');
+  setInert(BEHIND,false);syncDrawerModal();$('#palBtn').focus()}
+// Tab stays inside the palette while it is open.
+$('#pal').addEventListener('keydown',e=>{
+  if(e.key!=='Tab')return;
+  const f=$$('#pal input,#pal button,#pal [tabindex="0"],#pal a[href]').filter(x=>x.offsetParent!==null);
+  if(!f.length)return;
+  const i=f.indexOf(document.activeElement);
+  if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}
+  else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}
+});
 $('#palBtn').onclick=palOpen;
 $('#palQ').addEventListener('input',palRender);
 $('#palQ').addEventListener('keydown',e=>{
@@ -4029,7 +4204,8 @@ function togglePickAll(btn){
 }
 $('#pickAllBtn').onclick=e=>togglePickAll(e.currentTarget);
 
-$$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
+// A tab change is a history entry, so Back returns to the previous tab.
+$$('.tabs button').forEach(b=>b.onclick=()=>{if(b.dataset.v===view)return;pushNav();view=b.dataset.v;update()});
 // Arrow-key navigation, which role=tablist promises and a plain button row
 // does not provide on its own. Wrapping, plus Home/End, per the ARIA pattern.
 $('.tabs').addEventListener('keydown',e=>{
@@ -4043,6 +4219,7 @@ $('.tabs').addEventListener('keydown',e=>{
   view=tabs[next].dataset.v;update();tabs[next].focus();
 });
 $('#railReset').onclick=()=>resetAll();
+$('#copyView').onclick=e=>{writeHash();copy(location.href,e.currentTarget)};
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
 $('#toastClear').onclick=()=>{clearPicks();};
 $('#toastUndo').onclick=()=>{undoClear()};
@@ -4087,7 +4264,8 @@ THEME_BOOT = (
     # 'aiart-' is the dropped AIRTIFACTS working name; fall back to it once so a
     # returning visitor's stored theme survives the rename.
     "(function(){try{var t=localStorage.getItem('aidfir-theme')"
-    "||localStorage.getItem('aiart-theme')||'light';"
+    "||localStorage.getItem('aiart-theme')"
+    "||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');"
     "document.documentElement.dataset.theme=t}catch(e){}})();"
 )
 
@@ -4318,13 +4496,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Agent Artifact Catalog</title>
+<title>AI DFIR Toolkit</title>
 <meta name="description" content="{html.escape(og_desc)}">
 <link rel="canonical" href="{SITE}">
 <link rel="icon" href="{FAVICON}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ai-dfir-toolkit">
-<meta property="og:title" content="AI Agent Artifact Catalog">
+<meta property="og:title" content="AI DFIR Toolkit">
 <meta property="og:description" content="{html.escape(og_desc)}">
 <meta property="og:url" content="{SITE}">
 <meta property="og:image" content="{SITE}card.png">
@@ -4335,14 +4513,14 @@ def main():
 <style>{CSS}{site_intel.CSS}</style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to results</a>
+<a class="skip" href="#main">Skip to content</a>
 <div class="hdr"><div class="hdr-in">
   <div class="hdr-top">
     <div class="hdr-id">
-      <div class="h1row"><span class="dot"></span><h1>AI Agent Artifact Catalog</h1>
+      <div class="h1row"><span class="dot"></span><h1>AI DFIR Toolkit</h1>
         <span class="pill">generated &middot; CC BY 4.0</span></div>
-      <p class="sub">What AI coding agents, local model runtimes and MCP components leave
-      on an endpoint, what each trace proves, and in what order to collect it.</p>
+      <p class="sub">Is this an AI incident, what did the AI tool leave on the host and what
+      does it prove, and in what order to collect it.</p>
     </div>
     <div class="hdr-right">
       <button id="palBtn" type="button" class="palbtn" aria-haspopup="dialog"
@@ -4353,14 +4531,14 @@ def main():
   </div>
   <nav class="tabs" role="tablist">
     <button role="tab" class="guidelink" data-v="guide">Investigation guide</button>
-    <button role="tab" data-v="catalog">Catalog <span class="n">{len(rows)}</span></button>
-    <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
-    <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
-    <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
-    <button role="tab" data-v="sources">Data sources <span class="n">{len(sources)}</span></button>
-    <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
-    <button role="tab" data-v="intel">Threat intel <span class="n">{len(intel["actors"])}</span></button>
-    <button role="tab" data-v="graph">Graph <span class="n">{len(intel["graph"]["nodes"])}</span></button>
+    <button role="tab" data-v="catalog">Catalog <span class="n" title="{len(rows)} artifact rows">{len(rows)}<span class="sr"> artifact rows</span></span></button>
+    <button role="tab" data-v="tools">Tools <span class="n" title="{len(tools)} tools">{len(tools)}<span class="sr"> tools</span></span></button>
+    <button role="tab" data-v="rules">Detections <span class="n" title="{len(rules)} detection rules">{len(rules)}<span class="sr"> detection rules</span></span></button>
+    <button role="tab" data-v="mappings">Mappings <span class="n" title="{len(atlas_index) + len(owasp_index)} framework entries">{len(atlas_index) + len(owasp_index)}<span class="sr"> framework entries</span></span></button>
+    <button role="tab" data-v="sources">Data sources <span class="n" title="{len(sources)} telemetry sources">{len(sources)}<span class="sr"> telemetry sources</span></span></button>
+    <button role="tab" data-v="cases">Case studies <span class="n" title="{len(cases)} case studies">{len(cases)}<span class="sr"> case studies</span></span></button>
+    <button role="tab" data-v="intel">Threat intel <span class="n" title="{len(intel["actors"])} actors">{len(intel["actors"])}<span class="sr"> actors</span></span></button>
+    <button role="tab" data-v="graph">Graph <span class="n" title="{len(intel["graph"]["nodes"])} graph nodes">{len(intel["graph"]["nodes"])}<span class="sr"> graph nodes</span></span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
   </nav>
 </div></div>
@@ -4404,7 +4582,8 @@ def main():
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"
     role="status" aria-live="polite" aria-atomic="true"></span>
-    <span id="chips" style="display:contents"></span></div>
+    <span id="chips" style="display:contents"></span>
+    <button class="tgl plain viewlink" id="copyView" type="button">Copy link to this view</button></div>
   <p class="unvnote" id="unvNote" hidden></p>
   <div class="deadlink" id="deadLink" hidden role="alert"></div>
   <div id="main" role="tabpanel" tabindex="0"><p class="loading">Loading the toolkit. This page needs JavaScript.</p></div>
@@ -4428,7 +4607,7 @@ def main():
 <div id="sr" class="sr" role="status" aria-live="polite"></div>
 
 <footer>
-  <p><strong>Confidence reflects provenance, not conviction.</strong>
+  <p><strong>Sourcing confidence reflects provenance, not conviction.</strong>
   <em>high</em> means verified on a live host or documented by the vendor,
   <em>medium</em> means multiple independent sources agree, and <em>low</em> means
   single-source or inferred. Anything single-sourced is flagged

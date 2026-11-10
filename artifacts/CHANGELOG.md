@@ -145,6 +145,26 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **Site UX batch 5, trust signals, semantics, dark mode and URL state.**
+  No text uses the faint grey any more (facet counts 2.67:1 → 5.36:1, drawer
+  headings 2.77:1 → 5.55:1), and medium and low sourcing badges use the same
+  strong ink as high, told apart by fill and a dashed border. The scale is
+  "Sourcing confidence" everywhere, a collapsed case card shows the first
+  sentence of its basis, the lesson follows the sourcing, and each case has a
+  copy-link button. Technique chips are buttons reading "ID · name" and offer
+  "Filter detections" or "Open in Mappings"; rule drawers show OWASP Agentic
+  and ATT&CK alongside ATLAS and OWASP LLM. Dark mode follows the system on
+  first visit, the armed "Clear all" is legible (2.37:1 → 7.87:1), diagrams
+  sit on a dimmed card and the palette scrim is darker. Rule and tool cards are
+  articles with a heading button, a one-value facet is hidden, rule status is a
+  neutral pill, and the Tools view has a search box. The drawer is modal on
+  phones and the palette traps focus. Diagrams enlarge into a viewport-sized
+  overlay instead of growing in place. Tab counts name their unit. The view
+  and its filters live in the URL (`#catalog?tool=Cursor&os=windows`), a tab
+  change is a history entry, and the meta row has "Copy link to this view".
+  The site is titled "AI DFIR Toolkit". From the Claude Design assessment;
+  `docs/HANDOFF_REVIEW.md` records the outcome and where the assessment was
+  wrong.
 - **Site UX batch 4, plan export and phone navigation.** The collection
   plan's header carries the export: an "Export for" picker over the five
   collectors and one Download button whose label follows the choice, with

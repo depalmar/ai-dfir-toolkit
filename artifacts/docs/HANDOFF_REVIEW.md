@@ -279,3 +279,46 @@ proving persistence. The implemented version matches on the leading word.
 Worth remembering the next time a derivation is written against a free-text
 field: the enum-shaped values are the ones that will be tested, and the prose
 ones are the ones that will be wrong.
+
+## Round 3 - Claude Design UX assessment, November 2026
+
+A task-based assessment of the live site (31 findings, five batches, measured
+with two harness pages that drive the built site in iframes) was applied in
+the generator, one commit per batch. The outcome, so a later reader does not
+re-open these:
+
+| Batch | Findings | Outcome |
+|---|---|---|
+| 1 | F01 F02 F31 F19 F20 F25 F28 F29 F30 | **Applied.** Blocked storage no longer blanks the page; a pick or a row open keeps the table's scroll and focus (measured 3000 → 3000, was 3000 → 0); plan rows wrap on phones (row 358px → 131px); toast is a status region with real buttons; 24px targets (44px on phones); per-row pick names; dead-permalink notice; filtered export names. |
+| 2 | F04 F05 F06 F07 F12 F13 F14 F15 F16 | **Applied.** Volatility group rows, "tool:" for inherited OS, copy path returns the path only, Tool facet first with type-ahead, scope note collapses but never hides, compact header, one search matcher, drawer reordered with a sticky add button, one tab stop for the table body. Display-only row fields (`loc_path`, `loc_key`, `loc_label`, `os_inherited`) stay out of every feed and the JSON view export. |
+| 3 | F03 | **Applied** as drawn: "Start from the alert" on the landing panel. Nothing persisted. Deviation: at 390px the two questions are stacked full-width radio cards (44px) rather than selects, so there is one control per question at every width. |
+| 4 | F10 F11 | **Applied.** Export picker and Download in the plan header; phone header sticky as title row plus tabs; selected tab scrolled into the strip with `scrollLeft`. |
+| 5 | F09 F17 F08 F21 F22 F23 F24 F26 F27 F18 | **Applied**, with F23 (site name "AI DFIR Toolkit") flagged for the owner to confirm. |
+
+### Corrections to the assessment
+
+**F22 "Format has a single value, Sigma" was wrong.** The Detections view also
+holds the YARA and Suricata rules; Format has three values. The assessment
+warned that view was read from source only. The fix that shipped is the
+general one - a facet with one value is hidden - so Format correctly stays.
+
+**The focusable-count acceptance could not be met as written.** The harness
+counts every `#main button`, including the pick and copy buttons the F07
+ticket itself takes out of the tab order with `tabindex=-1`. Counting true tab
+stops (tabindex >= 0, rendered) gives 10, which is the ticket's intent.
+
+**The F14 "9 rows at scroll 0" and "page scroll under 100" targets are not
+reachable** while the header, the scope note and the controls row sit above
+the table and the footer below it. What shipped: once the page scrolls, the
+header compacts and the table fills the viewport below it (10 rows at
+1280x720).
+
+**F26's suspicion was right and worse than stated.** Inside the 760x420 cap
+the triage flowchart's labels render at 3.5px. Raising the cap would undo the
+"diagrams are too big" fix, so enlarging now opens the diagram at natural size
+in an overlay (16px labels) and the inline preview stays small. Redrawing that
+flowchart left-to-right is the content fix if it is ever wanted inline.
+
+The harness selectors were adapted where a ticket changed the markup they read
+(volatility group rows are `<tr>` without `data-a`; the plan header's `.acts`
+box became `.pcrow`), as the handoff's README asked.
