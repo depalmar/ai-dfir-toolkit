@@ -326,7 +326,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 ## Current state
 
 51 entries, 622 artifacts, 164 credential locations, 66 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 25 telemetry sources.
+locations, 12 endpoint Sigma rules, 14 case studies, 26 telemetry sources.
 Validation clean.
 
 Volatility across the 622 site rows: live 114 · rotating 53 · stable 455

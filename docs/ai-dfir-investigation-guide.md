@@ -2,7 +2,7 @@
 
 **A Practical Investigation Guide for Compromised AI Systems**
 
-Version 1.1 · November 2026 · Raymond DePalma · independent security researcher
+Version 1.2 · November 2026 · Raymond DePalma · independent security researcher
 
 > An independent personal project, built from public sources. Not affiliated with or endorsed by any employer.
 
@@ -45,6 +45,8 @@ Ask three questions, in order:
 
 If the answer to the first or second question is no, AI is not in scope. If you cannot answer the second question because the logs were never enabled, say so in the report rather than assuming either way.
 
+> **Act without proving AI.** Characterizing the incident picks the playbook and tells you which evidence to add. It never gates containment. Respond to the access and the behaviour first: revoke and rotate the exposed credentials, invalidate the sessions derived from them, check every other use of the exposed access, and check for execution already running. Those four actions are the same whether the operator is a person, a script or a swarm of agents, so do not hold them while you argue about which it was. (Joshua Wright makes this point in "Scoping AI Swarms"; see further reading.)
+
 ## Where did the AI run? What you can actually see
 
 The evidence depends less on which AI was involved than on where it ran. Most of what this project catalogues is what an AI tool leaves on the machine it ran on. That machine is often not yours.
@@ -67,6 +69,25 @@ None of these signs proves an agent on its own. Together they are reason to scop
 - **Plausible but wrong details.** Paths, package names or values that look right and do not exist, or are copied from documentation examples.
 
 Scoping changes when the operator is automated. Assume breadth, not a single path: an agent that found one way in has usually tried many in parallel, so look for the attempts that failed as well as the one that succeeded.
+
+### When it is many agents: swarm characteristics
+
+A swarm is many agents working one intrusion, sometimes coordinated and sometimes only sharing a place to leave notes. Joshua Wright groups what such an intrusion shows into three families:
+
+| Family | Characteristics |
+|---|---|
+| **Scale and tempo** | Coordination across agents, a large volume of concurrent actions, many tasks run in parallel, machine speed |
+| **Tradecraft** | Probing guardrails and limits repeatedly, repurposing legitimate shared services as attack infrastructure, handing stolen credentials between agents, crossing security zones through inherited trust, executing through trusted dependencies or vendors |
+| **Autonomy artifacts** | Cooperation toward a shared goal, uneven competence from one task to the next, redundant work repeated for no gain, and agents pursuing goals that diverge from each other and from the original task |
+
+Every one of these also appears in some human-run or scripted threat: supply-chain intrusions, self-propagating malware, ransomware affiliates and complex DDoS each show several. What sets a swarm apart is showing all of them at once, and even that is not proof. Treat the list as a scoping aid, not an attribution test. The autonomy artifacts are the ones that change how you work the case:
+
+- **Volume hides the few successes that matter.** A large action count can bury a small number of consequential wins, and one useful discovery can speed up other agents without making every agent faster. Track the concurrent paths and the shared access, not the individual actions.
+- **Competence is uneven.** The same intrusion can move from one compromised pod to cluster access in hours and also fabricate findings, return to dead leads and delete the wrong files. Do not assign one skill level to the whole intrusion.
+- **Work is redundant.** Agents that set ownership and stop rules still interfere with each other, and the same read repeats with an identical result. Measure progress by verified outcomes, not activity volume.
+- **Goals diverge.** One agent's objective may explain only part of the intrusion, and work that began as an evaluation task can expand into third-party infrastructure. Reassess objectives and scope as the incident develops; the first objective is not a boundary.
+
+Three things stay hard however the incident is run: telling AI-driven activity from scripted or human activity, evidence volume that outpaces human review, and evidence integrity when the attacker can write the records. Keep them open as scope and verification questions rather than closing the incident around them.
 
 ### Who was at the keyboard? What each party can collect
 
@@ -1022,7 +1043,7 @@ Working from the T+48h egress alert, here is a structured first-two-hours respon
 
 ## 8. An adapted AI IR lifecycle
 
-Traditional `NIST SP 800-61 Rev 3` phases still apply, but need AI-specific adaptations.
+Traditional `NIST SP 800-61 Rev 3` phases still apply, but need AI-specific adaptations. Run them as a loop, not a line (see the end of this section).
 
 ```mermaid
 flowchart LR
@@ -1060,6 +1081,12 @@ flowchart LR
 | **Eradication** | **Purge the agent's memory, as its own step.** Rebuilding the host is not enough: clear the agent's persistent memory, rules files and hooks (below), rebuild the vector store, and re-review tool definitions in every client that loaded the server. Model retraining from verified clean data. Supply chain audit and dependency verification. |
 | **Recovery** | **Prove the purge worked.** Not on the compromised agent: on a clean rebuild, in isolation, after the original is captured. Feed it the same trigger; if it still obeys, the fix did not hold. Hash memory against a known-good baseline. Then staged redeployment with enhanced monitoring, embedding integrity verification, gradual permission restoration and guardrails (LLM Guard, NeMo). |
 | **Reporting** | EU AI Act Article 73 compliance (2 to 15 day timelines, below). ATLAS technique mapping. NIST AI RMF alignment. OWASP classification. AIID (AI Incident Database) submission for community benefit. |
+
+### Run it as a loop, not a line
+
+Linear models assume an indicator leads to a fixed scope. Against a fast, many-path intrusion they fall short in five places: too little emphasis on scoping, a strictly linear progression, little guidance on where to put scarce responders, no requirement to verify that the incident is real, and no root cause analysis. The Dynamic Approach to Incident Response (DAIR) treats response as waypoints, outcomes and actions instead, and expects to return to scoping every time eradication turns something up.
+
+A typical sequence for an agent-driven intrusion: detect, verify and triage, scope, contain, eradicate - and an artifact found during eradication, such as a credential in a build log or a user agent in a loader script, sends you back to scope, which finds hosts the first pass missed, which changes containment. Plan for several of those loops. At each one, preserve evidence, derive new leads, revisit the scope, and update decisions with stakeholders.
 
 ### Agent memory is a persistence mechanism
 
@@ -1199,6 +1226,8 @@ IR teams are increasingly high-value targets because they touch compromised syst
 ### Talks
 
 - Raymond DePalma, "The AI System Was the Victim: Forensics for a Crime Scene With No Disk Image", opening keynote, SANS DFIR Summit 2026 (16 October 2026): [sans.org](https://www.sans.org/presentations/keynote-the-ai-system-was-the-victim-forensics-for-a-crime-scene-with-no-disk-image). The worked example behind sections 1.5 and 1.6, and the source of the acquisition order in Part I, the memory and notification steps in section 8, and the glossary.
+- Joshua Wright, "Scoping AI Swarms: A Dynamic Approach to Incident Response", SANS workshop, 2026. The source of "act without proving AI" in Part I, the swarm characteristics, and the loop in section 8.
+- Joshua Wright, *Dynamic Incident Response: A Framework for Security Teams*, Creative Commons: [dynamicincidentresponse.com](https://dynamicincidentresponse.com/)
 
 ### Tools and detection content
 

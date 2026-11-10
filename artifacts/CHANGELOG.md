@@ -5,6 +5,20 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Guide 1.2, from Joshua Wright's "Scoping AI Swarms".** Part I says to act
+  without proving AI: rotate exposed credentials, invalidate derived sessions,
+  check other uses of the access and look for running execution, whoever the
+  operator is. A new subsection groups swarm characteristics into scale and
+  tempo, tradecraft and autonomy artifacts, says none of them is an
+  attribution test, and gives the four scoping lessons. Section 8 runs the
+  lifecycle as a loop rather than a line, after the DAIR model, and further
+  reading links the workshop and the book.
+- **AI gateway logs data source.** The gateway in front of a model API is
+  often the only record of the turn sequence when provider prompt logging is
+  off: how clients are pointed at one, what API Management records by
+  default and with LLM message logging on, and its retention. Tied to the
+  catalog through the Anthropic, OpenAI and Gemini API hosts the network
+  rows name.
 - **Guide 1.1, from the SANS DFIR Summit 2026 keynote.** "The AI System Was
   the Victim" is folded into the investigation guide and linked under further
   reading. Part II gains the keynote's reconstruction (EchoLeak and MCPoison
