@@ -134,6 +134,26 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **Site UX batch 2, the catalog working surface.** Rows are grouped by
+  volatility - live, rotating, stable - with the column sort applying inside
+  each group, because 519 of 622 rows are p1 and the old triage sort could not
+  answer "what first". A row whose OS is inherited from its tool says
+  "tool:" in the OS column and the drawer, so a Windows filter returning a
+  ~/Library path explains itself; the filter itself is unchanged. "Copy path"
+  copies the path alone, on hover in the table, on every phone card and as the
+  drawer's primary action; the key, value or port sits on its own line with
+  its own copy. Filters start with Tool, which has a type-ahead box, class
+  options show a plain name beside the token, and zero-match options are
+  disabled. The off-host note collapses to one line instead of disappearing.
+  The header compacts on scroll and the rail and table size from the measured
+  header. The view search and the palette share one matcher (every word, any
+  order, hyphen and underscore equal to space), and empty states name what is
+  active with separate Clear search and Clear filters. The drawer leads with
+  the path and collection order, groups tool material under "Sources for
+  <tool>" and a collapsed "About", and keeps "Add to collection plan" pinned
+  at the bottom. The table body is one tab stop: arrows move the current row,
+  Space ticks, Enter opens, Escape returns to the row. Only the layout in use
+  is rendered. The scale is labelled "Sourcing" in the table and filters.
 - **Site UX batch 1, from a Claude Design assessment.** The page no longer
   goes blank when the browser blocks site storage: two reads of saved plans
   were outside the guard every other storage call had, and #main now carries

@@ -182,26 +182,39 @@ def build_rows(entries):
         entry_triage = (e.get("collection") or {}).get("triage_priority", "")
         for kind, items in (e.get("artifacts") or {}).items():
             for a in items:
+                # loc_path / loc_key are the two halves of the merged locator,
+                # kept apart for display and for "copy path": the merged string
+                # with its arrow pasted into a shell or a collector fails.
+                # `artifact` stays merged for search, anchors and export.
+                loc_key, loc_label = "", ""
                 if kind == "registry":
-                    loc = a.get("key", "")
+                    loc = loc_path = a.get("key", "")
                     if a.get("value"):
                         loc += " → " + str(a["value"])
+                        loc_key, loc_label = str(a["value"]), "value"
                 elif kind == "network":
-                    loc = a.get("indicator", "")
+                    loc = loc_path = a.get("indicator", "")
                     if a.get("port"):
                         loc += " :" + str(a["port"])
+                        loc_key, loc_label = str(a["port"]), "port"
                 elif kind == "eventlog":
                     # Channel plus ID is the locator a responder types into a
                     # query bar, and it is unique per row within an entry.
-                    loc = a.get("channel", "")
+                    loc = loc_path = a.get("channel", "")
                     if a.get("event_id"):
                         loc += " EID " + str(a["event_id"])
+                        loc_key, loc_label = str(a["event_id"]), "event ID"
                 else:
-                    loc = a.get("path") or a.get("name") or ""
+                    loc = loc_path = a.get("path") or a.get("name") or ""
                 rows.append({
                     "entry_id": eid, "tool": e["name"], "cls": kind,
                     "artifact": loc,
+                    "loc_path": loc_path, "loc_key": loc_key, "loc_label": loc_label,
                     "os": aslist(a.get("os")) or entry_os,
+                    # Display only: the row declares no OS of its own, so the
+                    # filter matches it on the tool's list. Shown as "tool:" so a
+                    # Windows filter returning a ~/Library path explains itself.
+                    "os_inherited": not aslist(a.get("os")),
                     "forensic_value": a.get("forensic_value", ""),
                     "confidence": a.get("confidence", ""),
                     "evidence": evidence_for(kind, a),
@@ -223,7 +236,9 @@ def build_rows(entries):
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "credential",
                 "artifact": c.get("location", ""),
+                "loc_path": c.get("location", ""), "loc_key": "", "loc_label": "",
                 "os": aslist(c.get("os")) or entry_os,
+                "os_inherited": not aslist(c.get("os")),
                 "forensic_value": "high",
                 "confidence": c.get("confidence", ""),
                 # secret_type answers "what is it", not "what does it prove",
@@ -246,13 +261,17 @@ def build_rows(entries):
             # cloud row carries an indicator instead - what to grep for or ask
             # for - and reading config_path alone gave those rows a locator of
             # " -> mcpServers", which is an arrow pointing at nothing.
-            loc = m.get("config_path") or m.get("indicator") or ""
+            loc = loc_path = m.get("config_path") or m.get("indicator") or ""
+            loc_key = ""
             if m.get("config_key") and m.get("config_path"):
                 loc += " → " + str(m["config_key"])
+                loc_key = str(m["config_key"])
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "mcp-config",
                 "artifact": loc,
+                "loc_path": loc_path, "loc_key": loc_key, "loc_label": "key" if loc_key else "",
                 "os": entry_os,
+                "os_inherited": True,
                 "forensic_value": "high",
                 "confidence": m.get("confidence", "high"),
                 "evidence": ["execution", "persistence"],
@@ -402,6 +421,10 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .pill{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--muted);
   background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .sub{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
+/* Once the page scrolls the header keeps the title row and the tabs only, so
+   the table gets the height the subtitle was taking. */
+.hdr.compact .sub,.hdr.compact .pill{display:none}
+.hdr.compact .hdr-in{padding-top:8px}
 .hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 /* Visible only once focused: the filter rail has six facet groups, one listing
    45 tools, and a keyboard user otherwise tabs through all of it to reach a row. */
@@ -451,7 +474,7 @@ aside .railhead{display:flex;justify-content:space-between;align-items:baseline;
 aside .railhead b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 aside .railhead a,aside .railhead button{font-size:12px;cursor:pointer;background:none;border:0;
   padding:2px 4px;min-height:24px;color:var(--accent);text-decoration:underline}
-.railscroll{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto;
+.railscroll{position:sticky;top:calc(var(--hdrh,150px) + 12px);max-height:calc(100vh - var(--hdrh,150px) - 24px);overflow:auto;
   padding-right:4px}
 .fgroup{margin:0 0 16px}
 .fgroup h3{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
@@ -561,7 +584,7 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
    11px, which is also why the bare-badge decision further down is safe again
    once this is capped: that comment's premise is "the column header already
    names the scale there", and the header has to be on screen for it to hold. */
-.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 190px);min-height:320px}
+.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - var(--hdrh,150px) - 24px);min-height:320px}
 table{border-collapse:collapse;width:100%;min-width:940px}
 th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
 th{position:sticky;top:0;z-index:2;background:var(--panel-2);
@@ -576,6 +599,44 @@ td{padding:10px 11px;font-size:13px}
 .tablescroll tbody tr,th[data-k]{cursor:pointer}
 tbody tr:hover{background:var(--hover)}
 tbody tr.sel{background:var(--accent-soft)}
+tr.vgroup{cursor:default}
+tbody tr.vgroup:hover{background:none}
+tr.vgroup th{position:static;z-index:auto;background:var(--panel-2);border-bottom:1px solid var(--line-soft);
+  padding:6px 11px;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0}
+tr.vgroup .badge{margin-right:8px}
+.vmean{font-size:12px;color:var(--muted)}
+.cgroup{display:flex;gap:8px;align-items:center;margin:6px 0 -2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lockey{font-size:11px;color:var(--muted);margin-top:2px}
+.lockey i{font-style:normal}
+.dkey{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:12px}
+td.artcell{position:relative}
+.cpath{position:absolute;right:8px;bottom:6px;border:1px solid var(--accent);color:var(--accent);
+  background:var(--panel);border-radius:6px;padding:1px 7px;font-size:11px;min-height:24px;visibility:hidden}
+tbody tr:hover .cpath,tbody tr:focus .cpath,tbody tr:focus-within .cpath{visibility:visible}
+.oscell.inh{color:var(--muted);font-size:11.5px}
+.oscell.inh i{font-style:normal}
+.dos{margin-top:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.fbtn .tok{font-size:10.5px;color:var(--muted);margin-left:4px}
+.fbtn[disabled]{opacity:.5;cursor:default}
+.fbtn[disabled]:hover{background:none}
+.fbtn[hidden]{display:none}
+.toolq{width:100%;margin:2px 0 6px;padding:6px 9px;border:1px solid var(--field-line);border-radius:7px;
+  background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px}
+.empty p{margin:0 0 6px}
+.emptyacts{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.empty .emptyacts button{display:inline-flex;margin:0}
+.cacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.cacts .btn{min-height:44px;justify-content:center}
+.cacts .cpath{position:static;visibility:visible;margin:0;font-size:13px;border-radius:8px}
+.cacts .pick{width:auto;height:auto;min-width:0;min-height:44px;border-radius:8px;font-size:13px}
+.cacts .pick[aria-pressed=true]{background:none;border-color:var(--accent);color:var(--accent)}
+details.dabout>summary{cursor:pointer;list-style:none}
+details.dabout>summary::-webkit-details-marker{display:none}
+details.dabout>summary h4{display:inline}
+details.dabout>summary::before{content:"+ ";color:var(--muted)}
+details.dabout[open]>summary::before{content:"- "}
 tr:last-child td{border-bottom:0}
 /* Column widths, so the two prose-ish columns are not left fighting over the
    slack. Artifact holds paths that break anywhere, and with no widths at all it
@@ -812,7 +873,8 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{background:var(--accent-hover)}
 .btn.outline-accent{background:none;border-color:var(--accent);color:var(--accent)}
-.dfoot{display:flex;gap:8px;padding:0 18px 18px}
+.dfoot{display:flex;gap:8px;padding:12px 18px;position:sticky;bottom:0;margin-top:auto;
+  background:var(--panel);border-top:1px solid var(--line);z-index:2}
 
 /* ---- plan ---- */
 .planhead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-end;
@@ -1209,8 +1271,12 @@ body.palopen{overflow:hidden}
 .scopenote li{counter-increment:sn}
 .scopenote li::before{content:counter(sn) ". ";color:var(--accent);font-weight:600}
 .scopenote .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline}
-.scopenote .x{position:absolute;top:4px;right:6px;background:none;border:0;color:var(--muted);font-size:13px;
-  min-width:24px;min-height:24px}
+.scopenote .stoggle{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--accent);
+  font-size:12px;text-decoration:underline;min-height:24px;padding:0 4px}
+.scopenote .sline{display:none;margin:0}
+.scopenote.collapsed{border-left-width:1px;padding-top:7px;padding-bottom:7px}
+.scopenote.collapsed .sline{display:block;padding-right:70px}
+.scopenote.collapsed .sfull{display:none}
 .okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
 .okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
   border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
@@ -1440,7 +1506,9 @@ const SOURCES_FOR=(()=>{const m={};
 // before this host reboots" - the question the whole catalog is ordered around.
 // It sat only in the collection plan, which a reader reaches after picking rows
 // rather than before.
-const GROUPS={triage:'Triage priority',cls:'Artifact class',mech:'MCP mechanism',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
+// Tool first: the catalog's own instruction is "filter to the tool you found
+// on the host", and that was the furthest control from the top of the rail.
+const GROUPS={tool:'Tool',os:'Operating system',cls:'Artifact class',vol:'Volatility',triage:'Triage priority',fv:'Forensic value',conf:'Sourcing confidence',mech:'MCP mechanism'};
 const FIELD={triage:r=>[r.triage],cls:r=>[r.cls],mech:r=>[r.mechanism],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
 const OPTIONS={
   // Priority order, not alphabetical - p1 first is the point of the facet.
@@ -1518,7 +1586,15 @@ window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 let codeWrap=false, codeGrow=false, planMode='tool';
 // Per-viewer convenience only: storage may be unavailable, and the note
 // simply shows again.
+// Collapsed to one line, never hidden: a second analyst on the same browser
+// still sees that the rows are what a tool leaves on the machine it ran on.
+// The old value '1' (hidden for good) reads as collapsed.
 let scopeHidden=(()=>{try{return localStorage.getItem('aidfir-scope-hidden')==='1'}catch(e){return false}})();
+function syncScope(){
+  const n=$('#scopeNote'); n.classList.toggle('collapsed',scopeHidden);
+  $('#scopeX').textContent=scopeHidden?'expand':'collapse';
+  $('#scopeX').setAttribute('aria-expanded',String(!scopeHidden));
+}
 let view='guide', query='', unvOnly=false, dense=false,
     // Was entry_id, which sorted first paint by the one field a responder never
     // needs. triage_priority is on every row since F09, so the table can open in
@@ -1638,7 +1714,11 @@ function sBadge(v,label,bare,scale){
 const fvBadge=(v,bare)=>sBadge(v,'value',bare,'sc-value');
 const OS_SHORT={windows:'Win',macos:'macOS',linux:'Linux',docker:'Docker',container:'Container',cloud:'Cloud'};
 // One line for the common three-OS row; longer lists wrap between names, never inside one.
-const osCell=os=>`<span class="oscell">${os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ')}</span>`;
+const OS_INH='Listed for the tool. This row does not declare its own operating system.';
+const osList=os=>os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ');
+const osCell=(os,inh)=>inh
+  ?`<span class="oscell inh" title="${esc(OS_INH)}"><i>tool:</i> ${osList(os)}</span>`
+  :`<span class="oscell">${osList(os)}</span>`;
 // Paths and hostnames wrap at their separators, never mid-name.
 const pathHTML=p=>esc(p).replace(/([\/\\.:_\-])/g,'$1<wbr>');
 const confBadge=(v,bare)=>sBadge(v,'sourcing',bare,'sc-conf');
@@ -1655,19 +1735,55 @@ function rowMatches(r,skip){
     if(!have.length)return false;
     if(!have.some(v=>want.includes(v)))return false;
   }
-  if(!query)return true;
+  return rowQuery(r);
+}
+// One matcher for the view search and the palette: every word must appear, in
+// any order, and hyphen, underscore and space are the same character. The view
+// box used to need one exact substring, so "claude desktop mcp" found rows in
+// the palette and nothing in the catalog, and "markdown-image" found nothing.
+const normQ=s=>String(s??'').toLowerCase().replace(/[-_\s]+/g,' ');
+function qMatch(hay,q){
+  const toks=normQ(q===undefined?query:q).split(' ').filter(Boolean);
+  if(!toks.length)return true;
+  const h=normQ(hay);
+  return toks.every(k=>h.includes(k));
+}
+function rowQuery(r,q){
   // Aliases come from the tool, so searching "oobabooga" or "OpenDevin" finds
   // the rows for the entry that is now filed under a different name.
   const t=TOOLMAP[r.entry_id];
-  const hay=(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+
-    r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):'')).toLowerCase();
-  return hay.includes(query);
+  return qMatch(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+
+    r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):''),q);
 }
-// Collection order, not ID order. Ties on the sort key fall through to
-// volatility and then to entry id, so the default view reads triage first and
-// then what stops existing soonest - which is the order the catalog is for.
-// Without the tiebreak, sorting by triage left 513 p1 rows in whatever order
-// they happened to be flattened in.
+// Names what is active and offers to undo each part separately. The old empty
+// state blamed "those filters" and its one button threw away the right
+// filters along with the wrong search.
+function emptyHTML(rules){
+  const G=rules?RGROUPS:GROUPS, F=rules?rfilters:filters, noun=rules?'rule':'row';
+  const act=Object.keys(G).filter(g=>F[g].length).map(g=>`${G[g]}: ${F[g].join(', ')}`);
+  if(!rules&&unvOnly)act.push('unverified only');
+  if(rules&&ruleSet)act.push('one data source');
+  const qn=query?(rules?RULES.filter(r=>ruleQuery(r)):ROWS.filter(r=>rowQuery(r))).length:0;
+  const what=query?`No ${noun}s match "${esc(query)}"${act.length?` with ${esc(act.join('; '))}`:''}.`
+    :`No ${noun}s match ${esc(act.join('; '))}.`;
+  return `<div class="empty"><p>${what}</p>${query&&act.length&&qn?
+    `<p>The search alone matches ${qn} ${noun}${qn>1?'s':''}.</p>`:''}<div class="emptyacts">${
+    query?'<button class="btn" type="button" data-clear="q">Clear search</button>':''}${
+    act.length?'<button class="btn" type="button" data-clear="f">Clear filters</button>':''}</div></div>`;
+}
+function wireEmpty(){
+  $$('#main [data-clear]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.clear==='q'){query='';$('#q').value=''}
+    else if(view==='rules')resetRuleFilters();
+    else{for(const g of Object.keys(filters))filters[g]=[];
+      unvOnly=false;$('#unvBtn').setAttribute('aria-pressed','false')}
+    update();
+  });
+}
+// Collection order first. 519 of 622 rows are triage p1, so sorting by triage
+// barely separated anything and the table could not answer "what first". Rows
+// are grouped by volatility tier - live, rotating, stable - and the column
+// sort applies inside each group, falling through to entry id.
 const volRank=r=>{const i=VOL_TIERS.indexOf(r.vol);return i<0?VOL_TIERS.length:i};
 function cmpKey(k,a,b){
   const x=a[k],y=b[k];
@@ -1676,11 +1792,7 @@ function cmpKey(k,a,b){
 }
 function filteredRows(){
   const out=ROWS.filter(r=>rowMatches(r,null));
-  out.sort((a,b)=>{
-    const primary=cmpKey(sortKey,a,b)*sortDir;
-    if(primary)return primary;
-    return (volRank(a)-volRank(b))||cmpKey('entry_id',a,b);
-  });
+  out.sort((a,b)=>(volRank(a)-volRank(b))||(cmpKey(sortKey,a,b)*sortDir)||cmpKey('entry_id',a,b));
   return out;
 }
 
@@ -1698,6 +1810,7 @@ function fgroup(key,title,body,picked){
     <summary><h3>${esc(title)}</h3>${picked?`<span class="fon">${picked}</span>`:''}</summary>
     ${body}</details>`;
 }
+let toolQ='';
 function railHTML(){
   return Object.keys(GROUPS).map(g=>{
     const counts={};
@@ -1706,12 +1819,29 @@ function railHTML(){
       for(const v of FIELD[g](r).filter(Boolean))counts[v]=(counts[v]||0)+1;
     }
     const body=OPTIONS[g].map(v=>{
-      const on=filters[g].includes(v);
-      return `<button class="fbtn" data-g="${g}" data-v="${esc(v)}" aria-pressed="${on}">
-        <span>${esc(v)}</span><span class="c">${counts[v]||0}</span></button>`;
+      const on=filters[g].includes(v), n=counts[v]||0;
+      // A plain name where one exists, with the token after it in mono so the
+      // value in an export or a chip is still recognisable.
+      const lab=g==='cls'&&CLS_NAME[v]?`${esc(CLS_NAME[v])} <code class="tok">${esc(v)}</code>`:esc(v);
+      // Zero matches and not selected: offered, but not clickable into an
+      // empty table. A selected one stays live so it can be undone.
+      return `<button class="fbtn" data-g="${g}" data-v="${esc(v)}" aria-pressed="${on}"
+        ${!n&&!on?'disabled':''}><span>${lab}</span><span class="c">${n}</span></button>`;
     }).join('');
-    return fgroup(g,GROUPS[g],body,filters[g].length);
+    const pre=g==='tool'?`<input class="toolq" type="search" placeholder="Type a tool name"
+      aria-label="Filter the tool list" value="${esc(toolQ)}">`:'';
+    return fgroup(g,GROUPS[g],pre+body,filters[g].length);
   }).join('');
+}
+// Narrows the Tool buttons in place, without re-rendering the rail, so the
+// caret and the typed text survive and multi-select keeps working.
+function applyToolQ(){
+  const q=normQ(toolQ).trim();
+  $$('.fbtn[data-g="tool"]').forEach(b=>{
+    const t=TOOLS.find(x=>x.tool===b.dataset.v)||{};
+    const hay=normQ([b.dataset.v,t.entry_id,t.vendor,(t.aliases||[]).join(' ')].join(' '));
+    b.hidden=!!q&&!q.split(' ').every(k=>hay.includes(k));
+  });
 }
 function renderRail(){
   const h=view==='rules'?ruleRailHTML():railHTML();
@@ -1722,6 +1852,9 @@ function renderRail(){
     d.open?folded.delete(d.dataset.f):folded.add(d.dataset.f);
     saveFolds();
   }));
+  $$('.toolq').forEach(i=>i.oninput=()=>{toolQ=i.value;
+    $$('.toolq').forEach(o=>{if(o!==i)o.value=toolQ});applyToolQ()});
+  applyToolQ();
   $$('.fbtn').forEach(b=>b.onclick=()=>{
     const g=b.dataset.g||b.dataset.rg;
     const set=b.dataset.rg?rfilters:filters;
@@ -1743,10 +1876,47 @@ function chipsHTML(){
 
 /* ---------- table & cards ---------- */
 const COLS=[['','pick'],['ID','entry_id'],['Tool','tool'],['Class','cls'],['Artifact','artifact'],
-  ['OS','os'],['Value','forensic_value'],['Conf','confidence'],['Notes','description']];
+  ['OS','os'],['Value','forensic_value'],['Sourcing','confidence'],['Notes','description']];
+let curRow=null;
+// One tool filtered: ID and Tool say the same thing on every row.
+const catCols=()=>filters.tool.length===1?COLS.filter(([,k])=>k!=='entry_id'&&k!=='tool'):COLS;
+function artHTML(r){
+  const p=r.loc_path||r.artifact;
+  return `<span class="path">${pathHTML(p)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}`
+    +(r.loc_key?`<div class="lockey"><i>${esc(r.loc_label)}</i> ${esc(r.loc_key)}</div>`:'')
+    +`<button class="cpath" type="button" tabindex="-1" data-v="${esc(p)}" aria-label="Copy path ${esc(p)}">copy path</button>`;
+}
+const CELL={
+  pick:r=>`<td><button class="pick" tabindex="-1" data-a="${esc(r.anchor)}" aria-pressed="${picks.has(r.anchor)}"
+        aria-label="${esc(pickLabel(r,picks.has(r.anchor)))}">&#10003;</button></td>`,
+  entry_id:r=>`<td><span class="id">${esc(r.entry_id)}</span></td>`,
+  tool:r=>`<td>${esc(r.tool)}</td>`,
+  cls:r=>`<td><span class="clspill">${esc(r.cls)}</span></td>`,
+  artifact:r=>`<td class="artcell">${artHTML(r)}</td>`,
+  os:r=>`<td>${osCell(r.os,r.os_inherited)}</td>`,
+  forensic_value:r=>`<td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>`,
+  confidence:r=>`<td>${confBadge(r.confidence,true)}</td>`,
+  description:r=>`<td><span class="note">${esc(r.description)}</span></td>`,
+};
+const volCounts=rows=>rows.reduce((n,r)=>(n[r.vol]=(n[r.vol]||0)+1,n),{});
+const vgroupLabel=(v,n)=>`<span class="badge vol v-${esc(v)}">${esc(v)} &middot; ${n}</span>
+  <span class="vmean">${esc(VOL_MEANING[v]||'')}</span>`;
 function tableHTML(rows){
-  if(!rows.length)return `<div class="empty">Nothing matches those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  if(!rows.length)return emptyHTML();
+  const cols=catCols();
+  const n=volCounts(rows);
+  // One tab stop for the whole body (F07): only the current row is in the tab
+  // order, arrows move it. 622 rows each with a row stop and a pick stop made
+  // leaving the table hundreds of key presses.
+  const cur=sel&&ROWMAP[sel]&&rows.some(r=>r.anchor===sel)?sel
+    :curRow&&rows.some(r=>r.anchor===curRow)?curRow:rows[0].anchor;
+  let last=null, body='';
+  for(const r of rows){
+    if(r.vol!==last){last=r.vol;
+      body+=`<tr class="vgroup"><th colspan="${cols.length}" scope="rowgroup">${vgroupLabel(r.vol,n[r.vol])}</th></tr>`}
+    body+=`<tr data-a="${esc(r.anchor)}" tabindex="${r.anchor===cur?0:-1}" class="${sel===r.anchor?'sel':''}"
+      aria-label="${esc(r.tool+', '+r.cls+', '+r.artifact)}">${cols.map(([,k])=>CELL[k](r)).join('')}</tr>`;
+  }
   // Select-all sits at the head of the column it acts on, which is where a
   // reader looks for it - not stranded at the right edge of the toolbar.
   const anchors=rows.map(r=>r.anchor);
@@ -1754,38 +1924,34 @@ function tableHTML(rows){
   const KEYCOL={pick:'k-pick',entry_id:'k-id',tool:'k-tool',cls:'k-cls',
     artifact:'k-art',os:'k-os',forensic_value:'k-fv',confidence:'k-conf'};
   return `<div class="tablescroll"><table><colgroup>`
-    +COLS.map(([,k])=>`<col class="${KEYCOL[k]||''}">`).join('')
-    +`</colgroup><thead><tr>`+COLS.map(([l,k])=>{
+    +cols.map(([,k])=>`<col class="${KEYCOL[k]||''}">`).join('')
+    +`</colgroup><thead><tr>`+cols.map(([l,k])=>{
     if(k==='pick')return `<th><button class="pick all" id="pickAllCol"
       aria-pressed="${allPicked}"
       aria-label="${allPicked?'Remove all shown from':'Add all shown to'} the collection plan"
       title="${allPicked?'Remove':'Pick'} all ${anchors.length} shown">&#10003;</button></th>`;
     const sorted=sortKey===k, dir=sorted?(sortDir>0?'ascending':'descending'):'none';
     return `<th data-k="${k}" tabindex="0" aria-sort="${dir}">${l}${sorted?`<span class="dir"> ${sortDir>0?'↑':'↓'}</span>`:''}</th>`;
-  }).join('')+`</tr></thead><tbody>`+rows.map(r=>`
-    <tr data-a="${esc(r.anchor)}" tabindex="0" class="${sel===r.anchor?'sel':''}">
-      <td><button class="pick" data-a="${esc(r.anchor)}" aria-pressed="${picks.has(r.anchor)}"
-        aria-label="${esc(pickLabel(r,picks.has(r.anchor)))}">&#10003;</button></td>
-      <td><span class="id">${esc(r.entry_id)}</span></td>
-      <td>${esc(r.tool)}</td>
-      <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td class="artcell"><span class="path">${pathHTML(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
-      <td>${osCell(r.os)}</td>
-      <td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>
-      <td>${confBadge(r.confidence,true)}</td>
-      <td><span class="note">${esc(r.description)}</span></td>
-    </tr>`).join('')+'</tbody></table></div>';
+  }).join('')+`</tr></thead><tbody>`+body+'</tbody></table></div>';
 }
 function cardsHTML(rows){
-  if(!rows.length)return `<div class="empty">Nothing matches those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
-  return rows.map(r=>`
+  if(!rows.length)return emptyHTML();
+  const n=volCounts(rows); let last=null;
+  return rows.map(r=>{
+    const p=r.loc_path||r.artifact, on=picks.has(r.anchor);
+    const head=r.vol!==last?(last=r.vol,`<div class="cgroup">${vgroupLabel(r.vol,n[r.vol])}</div>`):'';
+    return head+`
     <div class="card" data-a="${esc(r.anchor)}" tabindex="0">
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
         ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
-      <span class="path">${pathHTML(r.artifact)}</span>
-      <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
-    </div>`).join('');
+      <span class="path">${pathHTML(p)}</span>
+      <div class="meta">${r.loc_key?`<i>${esc(r.loc_label)}</i> ${esc(r.loc_key)} &middot; `:''}${esc(r.entry_id)}${
+        r.os.length?' &middot; '+(r.os_inherited?`<span title="${esc(OS_INH)}">tool: ${esc(r.os.map(o=>OS_SHORT[o]||o).join(' '))}</span>`
+          :esc(r.os.map(o=>OS_SHORT[o]||o).join(' '))):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
+      <div class="cacts"><button class="btn outline-accent cpath" type="button" data-v="${esc(p)}">copy path</button>
+        <button class="btn ${on?'outline-accent':'primary'} pick cardpick" type="button" data-a="${esc(r.anchor)}"
+          aria-pressed="${on}" aria-label="${esc(pickLabel(r,on))}">${on?'In plan':'Add to plan'}</button></div>
+    </div>`}).join('');
 }
 
 /* ---------- tools ---------- */
@@ -2000,13 +2166,24 @@ const SEEN_WHERE={
 function drawerHTML(r){
   const t=TOOLMAP[r.entry_id]||{};
   const base=location.origin==='null'?'':location.origin+location.pathname;
-  return `<div class="dhead"><b>${esc(r.tool)} <span class="mono" style="color:var(--faint);font-size:11px">${esc(r.entry_id)}</span></b>
+  const p=r.loc_path||r.artifact;
+  // The same file can be catalogued under several classes (an MCP config is
+  // also a file on disk and a credential store). Say so, so a reader filtering
+  // by one class knows the others exist.
+  const also=[...new Set(ROWS.filter(x=>x.entry_id===r.entry_id&&x.anchor!==r.anchor
+    &&(x.loc_path||x.artifact)===p&&x.cls!==r.cls).map(x=>x.cls))];
+  return `<div class="dhead"><b>${esc(r.tool)} <span class="mono" style="color:var(--muted);font-size:11px">${esc(r.entry_id)}</span></b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
-    <div class="dsec"><h4>Locator</h4>
-      <div class="locrow"><div class="locator">${esc(r.artifact)}</div>
-        <button class="btn copybtn" id="dCopyLoc" data-v="${esc(r.artifact)}"
-          aria-label="Copy locator">copy</button></div>
+    <div class="dsec"><h4>Path</h4>
+      <div class="locrow"><div class="locator">${esc(p)}</div>
+        <button class="btn primary copybtn" id="dCopyLoc" data-v="${esc(p)}"
+          aria-label="Copy path">copy path</button></div>
+      ${r.loc_key?`<div class="lockey dkey"><i>${esc(r.loc_label)}</i> <span class="mono">${esc(r.loc_key)}</span>
+        <button class="minibtn" id="dCopyKey" data-v="${esc(r.loc_key)}" aria-label="Copy ${esc(r.loc_label)}">copy</button></div>`:''}
+      <div class="dos">${r.os_inherited?`<span class="oscell inh"><i>tool:</i> ${osList(r.os)}</span>
+        <span class="hint">${esc(OS_INH)}</span>`:osCell(r.os)}</div>
+      ${also.length?`<div class="hint">Also listed as: ${also.map(esc).join(', ')}</div>`:''}
       <div class="badgerow">${fvBadge(r.forensic_value)}
       ${confBadge(r.confidence)}
       ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div>
@@ -2017,19 +2194,6 @@ function drawerHTML(r){
       ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}
       ${r.mechanism?`<div class="requires"><b>How it is defined.</b> ${
         esc(MECH_MEANING[r.mechanism]||r.mechanism)}</div>`:''}</div>
-    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
-      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
-    <div class="dsec"><h4>Tool context</h4>
-      <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
-        :'never verified against a host or a current release'}</div>
-      ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
-        ><span class="statuspill">${esc(t.status)}</span></div>`:''}
-      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
-      <p>${esc(t.description||'')}</p>
-      ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</div>
-    ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
-      ${CASES_BY_TOOL[r.entry_id].map(c=>
-        `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     <div class="dsec"><h4>Collection order</h4>
       <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}
         <span class="badge vol v-${esc(r.vol)}" title="Volatility: ${esc(VOL_MEANING[r.vol]||'')}"
@@ -2039,13 +2203,26 @@ function drawerHTML(r){
       ${(SOURCES_FOR[r.cls]||[]).length?`<div class="dsrc"><b>Depends on</b>
         ${(SOURCES_FOR[r.cls]).map(id=>`<button class="srcjump" data-src="${esc(id)}">${esc(SRCMAP[id].name)}</button>`).join('')}</div>`:''}
       ${t.guidance?`<p>${esc(t.guidance)}</p>`:''}</div>
+    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
+    ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
+      ${CASES_BY_TOOL[r.entry_id].map(c=>
+        `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${t.techniques&&t.techniques.length?`<div class="dsec"><h4>Mapped techniques</h4>
       <div class="tech">${t.techniques.map(x=>
         /^AML\./.test(x)?`<span class="tchip" data-tech="${esc(x)}">${esc(x)}</span>`
                         :`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
-    ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
-      <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
-        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
+    <div class="dsec"><h4>Sources for ${esc(r.tool)} <span class="n">&middot; ${(t.refs||[]).length}</span></h4>
+      <div class="tverify">${t.verified?`Tool last verified ${esc(t.verified)}`
+        :'Tool never verified against a host or a current release'}</div>
+      ${(t.refs||[]).length?`<ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
+        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul>`:''}</div>
+    <details class="dsec dabout"><summary><h4>About ${esc(r.tool)}</h4></summary>
+      ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
+        ><span class="statuspill">${esc(t.status)}</span></div>`:''}
+      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
+      <p>${esc(t.description||'')}</p>
+      ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</details>
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
       <input readonly value="#${esc(r.anchor)}" aria-label="Permalink">
       <button class="btn" id="dCopyLink" data-v="${esc(base+'#'+r.anchor)}">copy link</button></div></div>
@@ -2067,6 +2244,7 @@ function openDrawer(anchor,fromEl){
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
+  const ck=$('#dCopyKey'); if(ck)ck.onclick=()=>copy(ck.dataset.v,ck);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     pushNav();closeDrawer();view='cases';update();
@@ -2189,17 +2367,48 @@ function syncPick(a){
   $$(`.pick[data-a="${CSS.escape(a)}"]`).forEach(p=>{
     p.setAttribute('aria-pressed',String(on));
     if(r)p.setAttribute('aria-label',pickLabel(r,on));
+    if(p.classList.contains('cardpick')){p.textContent=on?'In plan':'Add to plan';
+      p.classList.toggle('primary',!on);p.classList.toggle('outline-accent',on)}
   });
   syncPickAll();
 }
 function togglePick(a){
   picks.has(a)?picks.delete(a):picks.add(a);savePicks();
-  if(view!=='catalog'||!$('#main .tablewrap')){update();return}
+  if(view!=='catalog'||!$('#main .pick[data-a]')){update();return}
   syncPick(a);renderTabs();renderToast();
+}
+const PHONE=window.matchMedia('(max-width:620px)');
+PHONE.addEventListener&&PHONE.addEventListener('change',()=>{if(view==='catalog')renderMain()});
+// Arrows move the current row, Space ticks it, Enter opens it. Escape is the
+// global drawer close, which returns focus to the row.
+function rowKeys(e){
+  const tr=e.target.closest&&e.target.closest('tr[data-a]');
+  if(!tr||e.target!==tr)return;
+  const rows=$$('#main tbody tr[data-a]'), i=rows.indexOf(tr), sc=$('#main .tablescroll');
+  const page=Math.max(1,Math.floor((sc?sc.clientHeight:400)/(tr.offsetHeight||40))-1);
+  let j;
+  switch(e.key){
+    case 'ArrowDown':j=i+1;break; case 'ArrowUp':j=i-1;break;
+    case 'Home':j=0;break; case 'End':j=rows.length-1;break;
+    case 'PageDown':j=i+page;break; case 'PageUp':j=i-page;break;
+    case ' ':e.preventDefault();togglePick(tr.dataset.a);return;
+    case 'Enter':e.preventDefault();openDrawer(tr.dataset.a,tr);return;
+    default:return;
+  }
+  e.preventDefault();
+  j=Math.max(0,Math.min(rows.length-1,j));
+  if(j===i)return;
+  rows[i].tabIndex=-1; rows[j].tabIndex=0; curRow=rows[j].dataset.a;
+  rows[j].focus({preventScroll:true});
+  if(sc){
+    const th=sc.querySelector('thead').offsetHeight, top=rows[j].offsetTop, bot=top+rows[j].offsetHeight;
+    if(top-th<sc.scrollTop)sc.scrollTop=top-th;
+    else if(bot>sc.scrollTop+sc.clientHeight)sc.scrollTop=bot-sc.clientHeight;
+  }
 }
 // Mark the open row without rebuilding the table under it.
 function markSel(){
-  if(view!=='catalog'||!$('#main .tablewrap'))return false;
+  if(view!=='catalog'||!$('#main [data-a]'))return false;
   $$('#main [data-a].sel').forEach(el=>el.classList.remove('sel'));
   if(sel)$$(`#main tr[data-a="${CSS.escape(sel)}"],#main .card[data-a="${CSS.escape(sel)}"]`)
     .forEach(el=>el.classList.add('sel'));
@@ -2216,10 +2425,11 @@ function ruleMatches(r,skip){
     if(!have.length)return false;
     if(!have.some(v=>want.includes(v)))return false;
   }
-  if(!query)return true;
-  const hay=(r.title+' '+r.file+' '+r.description+' '+r.category+' '+r.format+' '+
-    r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+r.logsource).toLowerCase();
-  return hay.includes(query);
+  return ruleQuery(r);
+}
+function ruleQuery(r){
+  return qMatch(r.title+' '+r.file+' '+r.description+' '+r.category+' '+r.format+' '+
+    r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+(r.asi||[]).join(' ')+' '+(r.attack||[]).join(' ')+' '+r.logsource);
 }
 // A data source covers a named set of rule files, which is not a facet and not
 // a substring - the search box could only ever match one of the five. This is
@@ -2246,8 +2456,7 @@ function ruleRailHTML(){
   }).join('');
 }
 function rulesHTML(rules){
-  if(!rules.length)return `<div class="empty">No rules match those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  if(!rules.length)return emptyHTML(true);
   return '<div class="rulegrid">'+rules.map(r=>`
     <button class="rule" data-f="${esc(r.path)}">
       <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
@@ -2967,7 +3176,7 @@ function renderMain(){
   const railed=(view==='catalog'||view==='rules');
   shell.classList.toggle('nocol',!railed);
   $('#controls').hidden=!railed;
-  $('#scopeNote').hidden=!(view==='catalog'&&!scopeHidden);
+  $('#scopeNote').hidden=view!=='catalog';syncScope();
   $('#unvBtn').hidden=view!=='catalog';
   $('#denseBtn').hidden=view!=='catalog';
   $('#metaRow').hidden=!railed;
@@ -2992,6 +3201,7 @@ function renderMain(){
       update();
     });
     main.innerHTML=rulesHTML(rules);
+    wireEmpty();
     $$('#main .rule').forEach(el=>el.onclick=()=>openRuleDrawer(el.dataset.f,el));
     renderTabs();renderToast();renderBack();return;
   }
@@ -3134,19 +3344,29 @@ function renderMain(){
       else{const a=filters[c.dataset.g],i=a.indexOf(c.dataset.v);if(i>=0)a.splice(i,1)}
       update();
     });
-    main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${tableHTML(rows)}</div>
-      <div class="cards">${cardsHTML(rows)}</div>`;
+    // Only the layout in use is rendered: the phone cards and the desktop
+    // table together doubled the DOM and every control in it.
+    const phone=PHONE.matches;
+    main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${phone?'':tableHTML(rows)}</div>
+      <div class="cards">${phone?cardsHTML(rows):''}</div>`;
+    wireEmpty();
     const sortBy=k=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1}renderMain()};
     $$('#main th[data-k]').forEach(th=>{
       th.onclick=()=>sortBy(th.dataset.k);
       th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sortBy(th.dataset.k)}};
     });
-    $$('#main tbody tr,#main .card').forEach(el=>{
+    $$('#main .card').forEach(el=>{
       const open=()=>openDrawer(el.dataset.a,el);
       el.onclick=open;
-      el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
+      el.onkeydown=e=>{if(e.target!==el)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
     });
+    $$('#main tbody tr[data-a]').forEach(tr=>{
+      tr.onclick=()=>openDrawer(tr.dataset.a,tr);
+      tr.onfocus=()=>{curRow=tr.dataset.a};
+    });
+    const tb=$('#main tbody'); if(tb)tb.onkeydown=rowKeys;
     $$('#main .pick:not(.all)').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
+    $$('#main .cpath').forEach(b=>b.onclick=e=>{e.stopPropagation();copy(b.dataset.v,b)});
     const pa=$('#pickAllCol');
     if(pa)pa.onclick=e=>{e.stopPropagation();togglePickAll(e.currentTarget)};
   }else if(view==='cases'){
@@ -3335,7 +3555,7 @@ const PAL_SUGGEST=['~/.claude','oauth_creds','mcp.json','CVE-2025-3248','AML.T00
 let PAL=null, palFlat=[], palSel=0;
 function palIndex(){
   const it=[], lc=x=>(x||'').toString().toLowerCase();
-  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:lc([t,hay].join(' ')),go,mono});
+  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:normQ([t,hay].join(' ')),go,mono});
   TOOLS.forEach(t=>add('Tools',t.tool,`${t.entry_id} · ${t.vendor||''}`,
     [t.entry_id,t.vendor,(t.aliases||[]).join(' '),t.category].join(' '),
     ()=>{view='tools';update();openToolDrawer(t.entry_id,null)}));
@@ -3364,7 +3584,7 @@ function palHL(t,toks){
   return t.split(re).map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join('');
 }
 function palRender(){
-  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=ql.split(/\s+/).filter(Boolean);
+  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=normQ(ql).split(' ').filter(Boolean);
   const res=$('#palRes'); palFlat=[]; palSel=0;
   if(!toks.length){
     res.innerHTML=`<div class="palempty">Try a path, a CVE, a technique or an actor from your case:
@@ -3482,7 +3702,8 @@ $('#jsonBtn').onclick=()=>{
   download(exportName('json'), JSON.stringify({
     source:REPO_URL, exported:new Date().toISOString(),
     note:'Filtered view export from the catalog site. The published feed is docs/api/artifacts.csv.',
-    count:rows.length, rows
+    count:rows.length,
+    rows:rows.map(({loc_path,loc_key,loc_label,os_inherited,...r})=>r)
   },null,2),'application/json');
   flash($('#jsonBtn'), `${rows.length} rows`);
 };
@@ -3530,8 +3751,9 @@ function setThemeBtn(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
 window.addEventListener('hashchange',applyHash);
-$('#scopeX').onclick=()=>{scopeHidden=true;try{localStorage.setItem('aidfir-scope-hidden','1')}catch(e){}
-  $('#scopeNote').hidden=true};
+$('#scopeX').onclick=()=>{scopeHidden=!scopeHidden;
+  try{localStorage.setItem('aidfir-scope-hidden',scopeHidden?'1':'0')}catch(e){}
+  syncScope()};
 $('#scopeNote [data-goplan]').onclick=()=>{pushNav();view='plan';update()};
 // The header wraps to a different height per viewport and per tab row, so the
 // anchor offset is measured rather than hard-coded.
@@ -3542,6 +3764,8 @@ function syncHdr(){
 }
 syncHdr();
 if(window.ResizeObserver)new ResizeObserver(syncHdr).observe($('.hdr'));
+window.addEventListener('scroll',()=>{const c=window.scrollY>0, h=$('.hdr');
+  if(h.classList.contains('compact')!==c){h.classList.toggle('compact',c);syncHdr()}},{passive:true});
 window.addEventListener('resize',syncHdr);
 setThemeBtn();update();applyHash();
 """
@@ -3841,13 +4065,17 @@ def main():
 <main class="content">
   <div id="backbar" hidden></div>
   <div class="scopenote" id="scopeNote" hidden>
+    <p class="sline">Rows are what a tool leaves on the machine it ran on.
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
+    <div class="sfull">
     <p><b>What these rows are.</b> What an AI tool leaves on the machine it ran on. They apply when the
       AI ran on your systems: your own agents, an insider's, or an attacker driving them. An attacker's
       AI on their own infrastructure leaves none of this in your telemetry; read your evidence for tempo
       instead. <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
     <ol><li>Filter to the tool you found on the host.</li><li>Open a row to see what it proves and where you would see it.</li>
       <li>Tick the rows you need, then build the <button type="button" class="lnk" data-goplan="1">collection plan</button>.</li></ol>
-    <button type="button" class="x" id="scopeX" aria-label="Hide this note">&#10005;</button>
+    </div>
+    <button type="button" class="stoggle" id="scopeX" aria-expanded="true" aria-controls="scopeNote">collapse</button>
   </div>
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
