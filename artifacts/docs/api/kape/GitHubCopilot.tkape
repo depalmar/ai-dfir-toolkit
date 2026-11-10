@@ -20,7 +20,7 @@ Targets:
     -
         Name: 'Custom autonomous agent definitions - review on clone'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.copilot\agents\*.agent.md  |  <repo>\.github\agents\'
+        Path: 'C:\Users\%user%\.copilot\agents\'
         FileMask: '*.agent.md'
         Comment: 'AIRT-0003 | Custom autonomous agent definitions - review on clone'
     -

@@ -13,6 +13,6 @@ Targets:
     -
         Name: 'Records which tools were authorized - consent evidence'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.config\goose\permission.yaml ; permissions\'
-        FileMask: 'tool_permissions.json'
+        Path: 'C:\Users\%user%\.config\goose\'
+        FileMask: 'permission.yaml'
         Comment: 'AIRT-0038 | Records which tools were authorized - consent evidence'

@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.openhands/config.toml', '/home/*/.openhands-state/**', '/.openhands-state', '/home/*/.openhands/**', '/.openhands', '/home/*/.openhands/skills/ ; ~/.agents/skills/**', '/home/*/.openhands/agent_settings.json', '/home/*/.openhands/settings.json', '/.openhands/settings.json', '/home/*/.openhands/secrets.json', '/.openhands/secrets.json']
+      LET Globs = ['/home/*/.openhands/config.toml', '/home/*/.openhands-state/**', '/.openhands-state', '/home/*/.openhands/**', '/.openhands', '/home/*/.openhands/skills/**', '/home/*/.agents/skills/**', '/home/*/.openhands/agent_settings.json', '/home/*/.openhands/settings.json', '/.openhands/settings.json', '/home/*/.openhands/secrets.json', '/.openhands/secrets.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

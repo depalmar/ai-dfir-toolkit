@@ -5,43 +5,6 @@
 # Only high-forensic-value file artifacts are exported; registry, network, and
 # process artifacts have no clean equivalent in the FILE source type.
 ---
-name: AgentFrameworkLibrariesArtifacts
-doc: Agent framework libraries (AIRT-0049) - One entry for the class of agent frameworks
-  that are imported libraries rather than installed applications - Semantic Kernel,
-  PydanticAI, Smolagents, the OpenAI Agents SDK, Strands and their peers. They leave
-  no dot-directory, no listener and no credential store of their own, so they are
-  inventoried by pattern rather than by path.
-sources:
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
-    separator: /
-  supported_os:
-  - Linux
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
-    separator: /
-  supported_os:
-  - Darwin
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
-    separator: \
-  supported_os:
-  - Windows
-supported_os:
-- Darwin
-- Linux
-- Windows
-urls:
-- https://github.com/microsoft/semantic-kernel
-- https://github.com/pydantic/pydantic-ai
-- https://github.com/huggingface/smolagents
----
 name: AiderArtifacts
 doc: Aider (AIRT-0004) - Python pair-programming agent operating directly on git repos.
   Auto-commits changes.
@@ -86,7 +49,6 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - $XDG_RUNTIME_DIR/qlog/cli.log
     - '%%users.homedir%%/.aws/amazonq/cli-agents/*.json'
     - '%%users.homedir%%/.aws/amazonq/default.json'
     - '%%users.homedir%%/.aws/amazonq/mcp.json'
@@ -137,7 +99,6 @@ sources:
     paths:
     - '%%users.homedir%%/.autogenstudio/.env'
     - '%%users.homedir%%/.autogenstudio/database.sqlite'
-    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: /
   supported_os:
   - Linux
@@ -146,7 +107,6 @@ sources:
     paths:
     - '%%users.homedir%%/.autogenstudio/.env'
     - '%%users.homedir%%/.autogenstudio/database.sqlite'
-    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: /
   supported_os:
   - Darwin
@@ -155,7 +115,6 @@ sources:
     paths:
     - '%%users.homedir%%/.autogenstudio/.env'
     - '%%users.homedir%%/.autogenstudio/database.sqlite'
-    - OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -176,11 +135,9 @@ sources:
     paths:
     - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
     - '%%users.homedir%%/.config/browseruse/config.json'
-    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_token.json'
     - '%%users.homedir%%/.config/browseruse/profiles/default'
-    - BROWSER_USE_API_KEY
-    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
-      / NOVITA_API_KEY / AZURE_OPENAI_KEY
     separator: /
   supported_os:
   - Linux
@@ -189,11 +146,9 @@ sources:
     paths:
     - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
     - '%%users.homedir%%/.config/browseruse/config.json'
-    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_token.json'
     - '%%users.homedir%%/.config/browseruse/profiles/default'
-    - BROWSER_USE_API_KEY
-    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
-      / NOVITA_API_KEY / AZURE_OPENAI_KEY
     separator: /
   supported_os:
   - Darwin
@@ -202,11 +157,9 @@ sources:
     paths:
     - '%%users.homedir%%/.config/browseruse/cloud_auth.json'
     - '%%users.homedir%%/.config/browseruse/config.json'
-    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_credentials.json'
+    - '%%users.homedir%%/.config/browseruse/gmail_token.json'
     - '%%users.homedir%%/.config/browseruse/profiles/default'
-    - BROWSER_USE_API_KEY
-    - OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
-      / NOVITA_API_KEY / AZURE_OPENAI_KEY
     separator: \
   supported_os:
   - Windows
@@ -225,13 +178,9 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - $CLAUDE_CONFIG_DIR/.credentials.json
     - '%%users.homedir%%/.claude.json'
     - '%%users.homedir%%/.claude/.credentials.json'
     - '%%users.homedir%%/.config/anthropic/configs/'
-    - ANTHROPIC_API_KEY
-    - ANTHROPIC_AUTH_TOKEN
-    - CLAUDE_CODE_OAUTH_TOKEN
     separator: /
   supported_os:
   - Linux
@@ -240,21 +189,14 @@ sources:
     paths:
     - '%%users.homedir%%/.claude.json'
     - '%%users.homedir%%/.config/anthropic/configs/'
-    - ANTHROPIC_API_KEY
-    - ANTHROPIC_AUTH_TOKEN
-    - CLAUDE_CODE_OAUTH_TOKEN
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
-    - $CLAUDE_CONFIG_DIR/.credentials.json
     - '%%users.homedir%%/.claude.json'
     - '%%users.homedir%%/.claude/.credentials.json'
-    - ANTHROPIC_API_KEY
-    - ANTHROPIC_AUTH_TOKEN
-    - CLAUDE_CODE_OAUTH_TOKEN
     separator: \
   supported_os:
   - Windows
@@ -305,26 +247,19 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/logs/mcp*.log'
-    - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
-    - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
-    - '*.mcpb / *.dxt bundle files'
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
-    - '%%users.appdata%%\Claude\claude_desktop_config.json'
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Application Support/Claude/'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Logs/Claude/mcp*.log'
-    - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
-    - '*.mcpb / *.dxt bundle files'
     separator: /
   supported_os:
   - Darwin
@@ -337,7 +272,6 @@ sources:
     - '%%users.homedir%%/.config/Claude/claude_desktop_config.json'
     - '%%users.homedir%%/Library/Application Support/Claude/claude_desktop_config.json'
     - '%%users.localappdata%%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json'
-    - '*.mcpb / *.dxt bundle files'
     separator: \
   supported_os:
   - Windows
@@ -358,7 +292,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: /
   supported_os:
   - Linux
@@ -366,7 +299,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: /
   supported_os:
   - Darwin
@@ -374,7 +306,6 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json'
-    - "\u2026/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
     separator: \
   supported_os:
   - Windows
@@ -442,7 +373,6 @@ sources:
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
     - '%%users.homedir%%/.continue/mcpServers/'
-    - CONTINUE_API_KEY
     separator: /
   supported_os:
   - Linux
@@ -455,7 +385,6 @@ sources:
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
     - '%%users.homedir%%/.continue/mcpServers/'
-    - CONTINUE_API_KEY
     separator: /
   supported_os:
   - Darwin
@@ -468,7 +397,6 @@ sources:
     - '%%users.homedir%%/.continue/config.ts'
     - '%%users.homedir%%/.continue/config.yaml'
     - '%%users.homedir%%/.continue/mcpServers/'
-    - CONTINUE_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -498,10 +426,6 @@ sources:
     paths:
     - '%%users.homedir%%/.cursor/mcp.json'
     - '%%users.homedir%%/Library/Application Support/Cursor/User/globalStorage/state.vscdb'
-    - 'macOS login Keychain: generic-password service ''Cursor Safe Storage'', account
-      ''Cursor Key'''
-    - 'macOS login Keychain: generic-password services cursor-access-token / cursor-refresh-token
-      / cursor-api-key, account cursor-user'
     separator: /
   supported_os:
   - Darwin
@@ -520,25 +444,6 @@ supported_os:
 urls:
 - https://cursor.com/docs
 ---
-name: DifyArtifacts
-doc: Dify (AIRT-0029) - Self-hosted LLM application builder with agent and workflow
-  modes.
-sources:
-- type: FILE
-  attributes:
-    paths:
-    - INIT_PASSWORD
-    - SECRET_KEY
-    separator: /
-  supported_os:
-  - Linux
-supported_os:
-- Linux
-urls:
-- https://github.com/langgenius/dify
-- https://github.com/langgenius/dify-docs
-- https://docs.dify.ai/en/cloud/use-dify/build/mcp
----
 name: FlowiseArtifacts
 doc: Flowise (AIRT-0030) - Drag-and-drop LangChain flow builder. Default port 3000,
   flows persisted to local DB.
@@ -548,8 +453,6 @@ sources:
     paths:
     - '%%users.homedir%%/.flowise/database.sqlite'
     - '%%users.homedir%%/.flowise/encryption.key'
-    - FLOWISE_SECRETKEY_OVERWRITE
-    - JWT_AUTH_TOKEN_SECRET
     separator: /
   supported_os:
   - Linux
@@ -558,8 +461,6 @@ sources:
     paths:
     - '%%users.homedir%%/.flowise/database.sqlite'
     - '%%users.homedir%%/.flowise/encryption.key'
-    - FLOWISE_SECRETKEY_OVERWRITE
-    - JWT_AUTH_TOKEN_SECRET
     separator: /
   supported_os:
   - Darwin
@@ -568,8 +469,6 @@ sources:
     paths:
     - '%%users.homedir%%/.flowise/database.sqlite'
     - '%%users.homedir%%/.flowise/encryption.key'
-    - FLOWISE_SECRETKEY_OVERWRITE
-    - JWT_AUTH_TOKEN_SECRET
     separator: \
   supported_os:
   - Windows
@@ -596,8 +495,6 @@ sources:
     - '%%users.homedir%%/.copilot/mcp-config.json'
     - '%%users.homedir%%/.copilot/mcp-oauth-config/'
     - '%%users.homedir%%/.copilot/mcp-secrets/'
-    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
-    - COPILOT_PROVIDER_API_KEY
     separator: /
   supported_os:
   - Linux
@@ -610,8 +507,6 @@ sources:
     - '%%users.homedir%%/.copilot/mcp-config.json'
     - '%%users.homedir%%/.copilot/mcp-oauth-config/'
     - '%%users.homedir%%/.copilot/mcp-secrets/'
-    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
-    - COPILOT_PROVIDER_API_KEY
     separator: /
   supported_os:
   - Darwin
@@ -623,8 +518,6 @@ sources:
     - '%%users.homedir%%/.copilot/mcp-oauth-config/'
     - '%%users.homedir%%/.copilot/mcp-secrets/'
     - '%%users.localappdata%%\github-copilot\apps.json'
-    - COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
-    - COPILOT_PROVIDER_API_KEY
     separator: \
   supported_os:
   - Windows
@@ -691,9 +584,8 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
-    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/permission.yaml'
     - '%%users.homedir%%/.config/goose/secrets.yaml'
-    - Goose session logs
     separator: /
   supported_os:
   - Linux
@@ -701,9 +593,8 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/goose/config.yaml'
-    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/permission.yaml'
     - '%%users.homedir%%/.config/goose/secrets.yaml'
-    - Goose session logs
     separator: /
   supported_os:
   - Darwin
@@ -712,9 +603,8 @@ sources:
     paths:
     - '%%users.appdata%%\goose\config.yaml'
     - '%%users.homedir%%/.config/goose/config.yaml'
-    - '%%users.homedir%%/.config/goose/permission.yaml ; permissions/tool_permissions.json'
+    - '%%users.homedir%%/.config/goose/permission.yaml'
     - '%%users.homedir%%/.config/goose/secrets.yaml'
-    - Goose session logs
     separator: \
   supported_os:
   - Windows
@@ -724,38 +614,6 @@ supported_os:
 - Windows
 urls:
 - https://github.com/aaif-goose/goose
----
-name: GptPilotArtifacts
-doc: GPT Pilot (AIRT-0016) - Python agent that scaffolds and runs full applications,
-  executing generated code.
-sources:
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
-    separator: /
-  supported_os:
-  - Linux
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
-    separator: /
-  supported_os:
-  - Darwin
-- type: FILE
-  attributes:
-    paths:
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  GROQ_API_KEY
-    separator: \
-  supported_os:
-  - Windows
-supported_os:
-- Darwin
-- Linux
-- Windows
-urls:
-- https://github.com/Pythagora-io/gpt-pilot
 ---
 name: KiloCodeArtifacts
 doc: Kilo Code (AIRT-0051) - VS Code extension ID kilocode.kilo-code, in the Cline
@@ -804,8 +662,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.kiro/settings/mcp.json'
-    - AWS Builder ID / IAM Identity Center token cache
-    - POWER.md / plugin.json / dev.kiro/
     separator: /
   supported_os:
   - Linux
@@ -813,8 +669,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.kiro/settings/mcp.json'
-    - AWS Builder ID / IAM Identity Center token cache
-    - POWER.md / plugin.json / dev.kiro/
     separator: /
   supported_os:
   - Darwin
@@ -822,8 +676,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.kiro/settings/mcp.json'
-    - AWS Builder ID / IAM Identity Center token cache
-    - POWER.md / plugin.json / dev.kiro/
     separator: \
   supported_os:
   - Windows
@@ -836,40 +688,6 @@ urls:
 - https://kiro.dev/docs/mcp/
 - https://kiro.dev/docs/getting-started/first-project/
 ---
-name: LangchainLanggraphArtifacts
-doc: LangChain / LangGraph (AIRT-0026) - Dominant agent-building library. Deployed
-  as bespoke services - no fixed install path.
-sources:
-- type: FILE
-  attributes:
-    paths:
-    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
-    separator: /
-  supported_os:
-  - Linux
-- type: FILE
-  attributes:
-    paths:
-    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
-    separator: /
-  supported_os:
-  - Darwin
-- type: FILE
-  attributes:
-    paths:
-    - LANGSMITH_API_KEY  |  LANGCHAIN_API_KEY
-    separator: \
-  supported_os:
-  - Windows
-supported_os:
-- Darwin
-- Linux
-- Windows
-urls:
-- https://github.com/langchain-ai/langgraph
-- https://github.com/langchain-ai/langchain
-- https://github.com/langchain-ai/langchain-mcp-adapters
----
 name: LangflowArtifacts
 doc: Langflow (AIRT-0044) - Low-code visual builder for LLM agents and workflows,
   Python-based. Installable as a pip package, a desktop app, or a hosted service.
@@ -877,19 +695,7 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - LANGFLOW_DATABASE_URL
-    - LANGFLOW_SECRET_KEY
-    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
-    separator: /
-  supported_os:
-  - Linux
-- type: FILE
-  attributes:
-    paths:
     - '%%users.homedir%%/.langflow/data/database.db'
-    - LANGFLOW_DATABASE_URL
-    - LANGFLOW_SECRET_KEY
-    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
     separator: /
   supported_os:
   - Darwin
@@ -897,15 +703,11 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\com.LangflowDesktop\data\database.db'
-    - LANGFLOW_DATABASE_URL
-    - LANGFLOW_SECRET_KEY
-    - LANGFLOW_SUPERUSER / LANGFLOW_SUPERUSER_PASSWORD
     separator: \
   supported_os:
   - Windows
 supported_os:
 - Darwin
-- Linux
 - Windows
 urls:
 - https://github.com/langflow-ai/langflow
@@ -923,7 +725,6 @@ sources:
     paths:
     - '%%users.homedir%%/.letta/'
     - '%%users.homedir%%/.letta/.persist/pgdata'
-    - LETTA_PG_URI
     separator: /
   supported_os:
   - Linux
@@ -932,21 +733,12 @@ sources:
     paths:
     - '%%users.homedir%%/.letta/'
     - '%%users.homedir%%/.letta/.persist/pgdata'
-    - LETTA_PG_URI
     separator: /
   supported_os:
   - Darwin
-- type: FILE
-  attributes:
-    paths:
-    - LETTA_PG_URI
-    separator: \
-  supported_os:
-  - Windows
 supported_os:
 - Darwin
 - Linux
-- Windows
 urls:
 - https://docs.letta.com/server/pip
 - https://docs.letta.com/v1-sdk/docker
@@ -1003,8 +795,8 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Cache\MSI\Account  |  %%users.localappdata%%\Microsoft\Power
-      Automate Desktop\Cache\MSIX\Account'
+    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Cache\MSIX\Account'
+    - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Cache\MSI\Account'
     - '%%users.localappdata%%\Microsoft\Power Automate Desktop\DesktopFlowModules'
     - '%%users.localappdata%%\Microsoft\Power Automate Desktop\Scripts'
     - '%programdata%\Microsoft\Power Automate\Logs'
@@ -1025,7 +817,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.n8n/database.sqlite'
-    - N8N_ENCRYPTION_KEY
     separator: /
   supported_os:
   - Linux
@@ -1033,7 +824,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.n8n/database.sqlite'
-    - N8N_ENCRYPTION_KEY
     separator: /
   supported_os:
   - Darwin
@@ -1041,7 +831,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.n8n/database.sqlite'
-    - N8N_ENCRYPTION_KEY
     separator: \
   supported_os:
   - Windows
@@ -1061,22 +850,21 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
-    - journalctl -u ollama
+    - '%%users.homedir%%/.ollama/id_ed25519'
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
+    - '%%users.homedir%%/.ollama/id_ed25519'
     separator: /
   supported_os:
   - Darwin
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.ollama/id_ed25519  |  id_ed25519.pub'
+    - '%%users.homedir%%/.ollama/id_ed25519'
     separator: \
   supported_os:
   - Windows
@@ -1099,30 +887,27 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application
-      Support/open-interpreter/profiles/default.yaml'
+    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml'
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
     - '%%users.homedir%%/.openinterpreter/config.toml'
-    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
-    - INTERPRETER_API_KEY
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
-      / AWS_SECRET_ACCESS_KEY
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/local.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/mcp_oauth.age'
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
-    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml  |  ~/Library/Application
-      Support/open-interpreter/profiles/default.yaml'
+    - '%%users.homedir%%/.config/open-interpreter/profiles/default.yaml'
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
     - '%%users.homedir%%/.openinterpreter/config.toml'
-    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
-    - INTERPRETER_API_KEY
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
-      / AWS_SECRET_ACCESS_KEY
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/local.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/mcp_oauth.age'
+    - '%%users.homedir%%/Library/Application Support/open-interpreter/profiles/default.yaml'
     separator: /
   supported_os:
   - Darwin
@@ -1132,11 +917,10 @@ sources:
     - '%%users.homedir%%/.openinterpreter/.credentials.json'
     - '%%users.homedir%%/.openinterpreter/auth.json'
     - '%%users.homedir%%/.openinterpreter/config.toml'
-    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age  |  ~/.openinterpreter/secrets/mcp_oauth.age  |  ~/.openinterpreter/secrets/local.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/codex_auth.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/local.age'
+    - '%%users.homedir%%/.openinterpreter/secrets/mcp_oauth.age'
     - '%%users.localappdata%%\open-interpreter\open-interpreter\profiles\default.yaml'
-    - INTERPRETER_API_KEY
-    - OPENAI_API_KEY  |  ANTHROPIC_API_KEY  |  CEREBRAS_API_KEY  |  AWS_ACCESS_KEY_ID
-      / AWS_SECRET_ACCESS_KEY
     separator: \
   supported_os:
   - Windows
@@ -1161,9 +945,6 @@ sources:
     - /app/backend/data/config.json
     - /app/backend/data/uploads/ and vector store directory
     - /app/backend/data/webui.db
-    - Tools and Functions Python source stored in webui.db
-    - WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
-    - docker-compose.yml / docker run invocation
     separator: /
   supported_os:
   - Linux
@@ -1174,7 +955,8 @@ sources:
     - '%%users.appdata%%\open-webui\config.json'
     - '%%users.appdata%%\open-webui\data\'
     - '%%users.appdata%%\open-webui\data\.key'
-    - '%%users.appdata%%\open-webui\data\uploads\  |  %%users.appdata%%\open-webui\data\vector_db\'
+    - '%%users.appdata%%\open-webui\data\uploads\'
+    - '%%users.appdata%%\open-webui\data\vector_db\'
     - '%%users.appdata%%\open-webui\data\webui.db'
     separator: \
   supported_os:
@@ -1223,7 +1005,6 @@ sources:
     - '%%users.homedir%%/.codex/history.jsonl'
     - '%%users.homedir%%/.codex/logs/codex-tui.log'
     - '%%users.homedir%%/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl'
-    - /etc/codex/config.toml
     separator: \
   supported_os:
   - Windows
@@ -1245,12 +1026,10 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
-    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
-    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
-    - JWT_SECRET
-    - LLM_API_KEY
-    - docker-compose.yml / docker run invocation
-    - ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands
+    - '%%users.homedir%%/.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json'
+    - /.openhands/secrets.json
+    - /.openhands/settings.json
     separator: /
   supported_os:
   - Linux
@@ -1266,10 +1045,8 @@ sources:
     paths:
     - '%%users.homedir%%/.openhands/agent_settings.json'
     - '%%users.homedir%%/.openhands/config.toml'
-    - '%%users.homedir%%/.openhands/secrets.json  |  /.openhands/secrets.json'
-    - '%%users.homedir%%/.openhands/settings.json  |  /.openhands/settings.json'
-    - JWT_SECRET
-    - LLM_API_KEY
+    - '%%users.homedir%%/.openhands/secrets.json'
+    - '%%users.homedir%%/.openhands/settings.json'
     separator: \
   supported_os:
   - Windows
@@ -1290,15 +1067,7 @@ sources:
 - type: FILE
   attributes:
     paths:
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
-    separator: /
-  supported_os:
-  - Linux
-- type: FILE
-  attributes:
-    paths:
     - '%%users.homedir%%/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json'
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
     separator: /
   supported_os:
   - Darwin
@@ -1306,13 +1075,11 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json'
-    - "\u2026/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
     separator: \
   supported_os:
   - Windows
 supported_os:
 - Darwin
-- Linux
 - Windows
 urls:
 - https://github.com/RooCodeInc/Roo-Code
@@ -1329,9 +1096,6 @@ sources:
     - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
     - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
     - '%%users.homedir%%/.skyvern/data.db'
-    - LOCAL_CREDENTIAL_VAULT_KEY
-    - OP_SERVICE_ACCOUNT_TOKEN
-    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
     separator: /
   supported_os:
   - Linux
@@ -1342,9 +1106,6 @@ sources:
     - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
     - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
     - '%%users.homedir%%/.skyvern/data.db'
-    - LOCAL_CREDENTIAL_VAULT_KEY
-    - OP_SERVICE_ACCOUNT_TOKEN
-    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
     separator: /
   supported_os:
   - Darwin
@@ -1355,9 +1116,6 @@ sources:
     - '%%users.homedir%%/.skyvern/credential_vault/.fernet_key'
     - '%%users.homedir%%/.skyvern/credential_vault/creditem_*.bin'
     - '%%users.homedir%%/.skyvern/data.db'
-    - LOCAL_CREDENTIAL_VAULT_KEY
-    - OP_SERVICE_ACCOUNT_TOKEN
-    - SKYVERN_AUTH_BITWARDEN_MASTER_PASSWORD
     separator: \
   supported_os:
   - Windows
@@ -1448,8 +1206,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/vllm/usage_stats.json'
-    - HF_TOKEN
-    - VLLM_API_KEY
     separator: /
   supported_os:
   - Linux
@@ -1510,7 +1266,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/zed/settings.json'
-    - OS keychain, via the editor's own credential storage
     separator: /
   supported_os:
   - Linux
@@ -1518,7 +1273,6 @@ sources:
   attributes:
     paths:
     - '%%users.homedir%%/.config/zed/settings.json'
-    - OS keychain, via the editor's own credential storage
     separator: /
   supported_os:
   - Darwin
@@ -1527,7 +1281,6 @@ sources:
     paths:
     - '%%users.appdata%%\Zed\settings.json'
     - '%%users.homedir%%/.config/zed/settings.json'
-    - OS keychain, via the editor's own credential storage
     separator: \
   supported_os:
   - Windows

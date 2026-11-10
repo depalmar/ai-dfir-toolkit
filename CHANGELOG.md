@@ -47,6 +47,32 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **KAPE targets carried catalog placeholders as literal folder names.**
+  `CodeiumWindsurf.tkape` shipped `Path: 'C:\Users\%user%\.codeium\<version>\'`,
+  and KAPE searches for a folder literally named `<version>`, so the target matched
+  nothing. `export_kape.py` only rejected a value that *started* with `<`, while the
+  triage scripts already widened `<version>`, `<uuid…>`, `<name>` and similar to
+  `*`, refused `<repo>`, and dropped any other `<…>`, `...` or `$VAR`. That rule now
+  lives in `scripts/locators.py`, and `triage_spec.py` and all three path exporters
+  import it; the triage spec for every one of the 622 site rows is byte-identical
+  before and after. KAPE matches `*` in a Path directory segment - KapeFiles'
+  `TargetGuide.guide` documents it and its Chrome `User Data\*\` targets rely on it -
+  so the row is now `.codeium\*\` with FileMask `language_server_*`, and the site's
+  in-browser KAPE plan, which assumed the opposite and recursed from the parent, emits
+  the same row.
+- **Compound locators and non-paths reached all three path feeds.** Moving the rule
+  turned up more of the same failure: KAPE wrote ten `a  |  b` or `a ; b` fields as
+  a single Path or FileMask - one rendered `/home/node/` as `\home\node\` - and its
+  `--check` passed 11 broken rows across 10 files. Velociraptor globbed `a ; b` as
+  one string and globbed two macOS `~/Library/` paths under `/home/*` in four Linux
+  sources. ForensicArtifacts shipped 112 environment variable names, `$VAR` paths,
+  commands and prose as FILE paths, plus 20 unsplit compounds; four definitions held
+  nothing but environment variable names and are gone (38 to 34). Each locator is
+  now split, required to start at a path root, and sent only to the OS it can exist
+  on. Both `--check` audits fail on `<`, `>`, `|` or a spaced ` ; ` in an emitted
+  path. One deliberate loss: a bare sibling after a separator (`id_ed25519  |
+  id_ed25519.pub`) has no root, so the `.pub` half is dropped, as the triage script
+  already did.
 - **Both collection exporters could pass an entry that pointed at nothing.** The
   declared-vs-emitted check only ran for entries that produced output, so an
   entry could declare `kape_target` while emitting no target — a catalog entry
