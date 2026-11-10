@@ -527,7 +527,12 @@ resolved by whoever picks this up next without asking.
    query. LM Studio has a known macOS discrepancy on record (bug-tracker #1371).
 6. **UI improvements - done.** Site-wide search (`/` or Ctrl/Cmd-K, grouped
    results after edge-dfir-toolkit's palette), active-filter chips, copy-path
-   buttons and a sticky table header are all in the generator. The site is
+   buttons and a sticky table header are all in the generator. The round-3
+   Claude Design assessment (31 findings) is applied too: volatility-grouped
+   catalog, "start from the alert" on the landing panel, plan export in the
+   plan header, filters in the URL. `docs/HANDOFF_REVIEW.md` records what
+   shipped and where that assessment was wrong; read it before re-opening any
+   of it. The site is
    **never hand-edited**: do not accept a hand-written `index.html` as a
    starting point - the one offered carried three catalogue claims that were
    wrong, including a `medium` MSIX row displayed as `High`.
