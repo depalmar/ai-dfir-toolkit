@@ -182,26 +182,39 @@ def build_rows(entries):
         entry_triage = (e.get("collection") or {}).get("triage_priority", "")
         for kind, items in (e.get("artifacts") or {}).items():
             for a in items:
+                # loc_path / loc_key are the two halves of the merged locator,
+                # kept apart for display and for "copy path": the merged string
+                # with its arrow pasted into a shell or a collector fails.
+                # `artifact` stays merged for search, anchors and export.
+                loc_key, loc_label = "", ""
                 if kind == "registry":
-                    loc = a.get("key", "")
+                    loc = loc_path = a.get("key", "")
                     if a.get("value"):
                         loc += " → " + str(a["value"])
+                        loc_key, loc_label = str(a["value"]), "value"
                 elif kind == "network":
-                    loc = a.get("indicator", "")
+                    loc = loc_path = a.get("indicator", "")
                     if a.get("port"):
                         loc += " :" + str(a["port"])
+                        loc_key, loc_label = str(a["port"]), "port"
                 elif kind == "eventlog":
                     # Channel plus ID is the locator a responder types into a
                     # query bar, and it is unique per row within an entry.
-                    loc = a.get("channel", "")
+                    loc = loc_path = a.get("channel", "")
                     if a.get("event_id"):
                         loc += " EID " + str(a["event_id"])
+                        loc_key, loc_label = str(a["event_id"]), "event ID"
                 else:
-                    loc = a.get("path") or a.get("name") or ""
+                    loc = loc_path = a.get("path") or a.get("name") or ""
                 rows.append({
                     "entry_id": eid, "tool": e["name"], "cls": kind,
                     "artifact": loc,
+                    "loc_path": loc_path, "loc_key": loc_key, "loc_label": loc_label,
                     "os": aslist(a.get("os")) or entry_os,
+                    # Display only: the row declares no OS of its own, so the
+                    # filter matches it on the tool's list. Shown as "tool:" so a
+                    # Windows filter returning a ~/Library path explains itself.
+                    "os_inherited": not aslist(a.get("os")),
                     "forensic_value": a.get("forensic_value", ""),
                     "confidence": a.get("confidence", ""),
                     "evidence": evidence_for(kind, a),
@@ -223,7 +236,9 @@ def build_rows(entries):
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "credential",
                 "artifact": c.get("location", ""),
+                "loc_path": c.get("location", ""), "loc_key": "", "loc_label": "",
                 "os": aslist(c.get("os")) or entry_os,
+                "os_inherited": not aslist(c.get("os")),
                 "forensic_value": "high",
                 "confidence": c.get("confidence", ""),
                 # secret_type answers "what is it", not "what does it prove",
@@ -246,13 +261,17 @@ def build_rows(entries):
             # cloud row carries an indicator instead - what to grep for or ask
             # for - and reading config_path alone gave those rows a locator of
             # " -> mcpServers", which is an arrow pointing at nothing.
-            loc = m.get("config_path") or m.get("indicator") or ""
+            loc = loc_path = m.get("config_path") or m.get("indicator") or ""
+            loc_key = ""
             if m.get("config_key") and m.get("config_path"):
                 loc += " → " + str(m["config_key"])
+                loc_key = str(m["config_key"])
             rows.append({
                 "entry_id": eid, "tool": e["name"], "cls": "mcp-config",
                 "artifact": loc,
+                "loc_path": loc_path, "loc_key": loc_key, "loc_label": "key" if loc_key else "",
                 "os": entry_os,
+                "os_inherited": True,
                 "forensic_value": "high",
                 "confidence": m.get("confidence", "high"),
                 "evidence": ["execution", "persistence"],
@@ -402,6 +421,10 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 .pill{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--muted);
   background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .sub{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
+/* Once the page scrolls the header keeps the title row and the tabs only, so
+   the table gets the height the subtitle was taking. */
+.hdr.compact .sub,.hdr.compact .pill{display:none}
+.hdr.compact .hdr-in{padding-top:8px}
 .hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 /* Visible only once focused: the filter rail has six facet groups, one listing
    45 tools, and a keyboard user otherwise tabs through all of it to reach a row. */
@@ -420,7 +443,11 @@ main.content{min-width:0}
 #themeBtn:hover{color:var(--ink);border-color:var(--accent)}
 /* Scrolls rather than wraps. Ten tabs no longer fit one line at laptop width,
    and a wrapped tab label ("Data / sources") reads as two tabs. */
-.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:thin}
+.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:thin;position:relative}
+/* Edge fades say there are more tabs off to that side. */
+.tabs.fl{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px);mask-image:linear-gradient(90deg,transparent 0,#000 28px)}
+.tabs.fr{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.tabs.fl.fr{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent)}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;flex:none;white-space:nowrap;
   padding:9px 12px;font-size:13.5px;color:var(--muted);display:flex;gap:7px;align-items:center}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
@@ -435,7 +462,8 @@ main.content{min-width:0}
 .tabs .guidelink[aria-selected=true]{background:var(--accent);border-color:var(--accent);
   color:var(--on-accent);border-bottom-color:var(--accent)}
 .exportgrp{display:flex;align-items:center;gap:6px;margin-left:auto}
-.exportlbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.meta-row .viewlink{margin-left:auto;font-size:12px}
+.exportlbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .ghlink{font-size:12.5px;text-decoration:none;color:var(--muted);
   border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 11px}
 .ghlink:hover{color:var(--ink);border-color:var(--accent)}
@@ -449,12 +477,13 @@ main.content{min-width:0}
 /* ---- filter rail ---- */
 aside .railhead{display:flex;justify-content:space-between;align-items:baseline;margin:2px 0 10px}
 aside .railhead b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-aside .railhead a{font-size:12px;cursor:pointer}
-.railscroll{position:sticky;top:150px;max-height:calc(100vh - 180px);overflow:auto;
+aside .railhead a,aside .railhead button{font-size:12px;cursor:pointer;background:none;border:0;
+  padding:2px 4px;min-height:24px;color:var(--accent);text-decoration:underline}
+.railscroll{position:sticky;top:calc(var(--hdrh,150px) + 12px);max-height:calc(100vh - var(--hdrh,150px) - 24px);overflow:auto;
   padding-right:4px}
 .fgroup{margin:0 0 16px}
 .fgroup h3{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);font-weight:600}
+  color:var(--muted);font-weight:600}
 details.fgroup>summary{display:flex;align-items:center;gap:6px;cursor:pointer;
   list-style:none;padding:2px 8px 5px 0;border-radius:6px}
 details.fgroup>summary::-webkit-details-marker{display:none}
@@ -473,7 +502,7 @@ details.fgroup>summary:hover h3{color:var(--muted)}
 .fbtn{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;
   background:none;border:1px solid transparent;border-radius:7px;padding:5px 8px;
   font-size:12.5px;color:var(--ink);text-align:left}
-.fbtn .c{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint)}
+.fbtn .c{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .fbtn:hover{background:var(--accent-soft)}
 .fbtn[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent-border);
   color:var(--accent);font-weight:500}
@@ -483,7 +512,7 @@ details.railfold{display:none}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .controls[hidden],.meta-row[hidden],.tgl[hidden]{display:none!important}
 .search{position:relative;flex:1 1 320px}
-.search .glyph{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.search .glyph{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .search input{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);
   border-radius:8px;padding:9px 12px 9px 30px;font:inherit}
 .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -494,11 +523,11 @@ details.railfold{display:none}
 .tgl.plain[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
 .meta-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
 .count{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted)}
-.chip{display:inline-flex;gap:6px;align-items:center;background:var(--accent-soft);
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--accent-soft);min-height:24px;
   border:1px solid var(--accent-border);color:var(--accent);border-radius:20px;
   padding:2px 9px;font-size:11.5px;cursor:pointer}
 .chip:hover{background:var(--accent-soft-2)}
-.chip s{text-decoration:none;color:var(--faint)}
+.chip [aria-hidden]{color:var(--muted)}
 
 /* ---- badges ---- */
 .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;
@@ -513,15 +542,18 @@ details.railfold{display:none}
    a bare "medium" cannot say which scale it is on. */
 .badge.str{border-color:var(--str-line);color:var(--str-ink);background:var(--str-bg);
   padding:1px 8px 1px 6px}
-.badge.str i{font-style:normal;color:var(--faint);font-size:10px;letter-spacing:.05em;
+.badge.str i{font-style:normal;color:var(--muted);font-size:10px;letter-spacing:.05em;
   text-transform:uppercase;margin-right:5px}
 .badge.str.sc-value{--str-strong:var(--val-strong);--str-mid:var(--val-mid);
   --str-strong-bg:var(--val-bg)}
 .badge.str.sc-conf{--str-strong:var(--conf-strong);--str-mid:var(--conf-mid);
   --str-strong-bg:var(--conf-bg)}
 .s-high{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:var(--str-strong-bg)}
-.s-med{--str-line:var(--str-mid);--str-ink:var(--str-mid);--str-bg:transparent}
-.s-low{--str-line:var(--line);--str-ink:var(--faint);--str-bg:transparent}
+/* Same strong ink at every level, so the weakest trust level is no harder
+   to read than the strongest: high is filled, medium outlined, low dashed. */
+.s-med{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:transparent}
+.s-low{--str-line:var(--str-strong);--str-ink:var(--str-strong);--str-bg:transparent}
+.badge.str.s-low{border-style:dashed}
 .clspill{display:inline-block;border:1px solid var(--line);border-radius:5px;
   background:var(--panel-2);color:var(--muted);font-size:11px;padding:1px 7px;white-space:nowrap}
 .unv{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;
@@ -548,7 +580,7 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .planid #pName{min-width:190px;font-weight:600}
 .planid #pHost{min-width:150px}
 .planid select{max-width:260px;cursor:pointer}
-.pmeta{color:var(--faint);font-size:11.5px}
+.pmeta{color:var(--muted);font-size:11.5px}
 
 /* ---- table ---- */
 .tablewrap{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
@@ -560,7 +592,7 @@ tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
    11px, which is also why the bare-badge decision further down is safe again
    once this is capped: that comment's premise is "the column header already
    names the scale there", and the header has to be on screen for it to hold. */
-.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 190px);min-height:320px}
+.tablescroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - var(--hdrh,150px) - 24px);min-height:320px}
 table{border-collapse:collapse;width:100%;min-width:940px}
 th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
 th{position:sticky;top:0;z-index:2;background:var(--panel-2);
@@ -575,6 +607,44 @@ td{padding:10px 11px;font-size:13px}
 .tablescroll tbody tr,th[data-k]{cursor:pointer}
 tbody tr:hover{background:var(--hover)}
 tbody tr.sel{background:var(--accent-soft)}
+tr.vgroup{cursor:default}
+tbody tr.vgroup:hover{background:none}
+tr.vgroup th{position:static;z-index:auto;background:var(--panel-2);border-bottom:1px solid var(--line-soft);
+  padding:6px 11px;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0}
+tr.vgroup .badge{margin-right:8px}
+.vmean{font-size:12px;color:var(--muted)}
+.cgroup{display:flex;gap:8px;align-items:center;margin:6px 0 -2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lockey{font-size:11px;color:var(--muted);margin-top:2px}
+.lockey i{font-style:normal}
+.dkey{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:12px}
+td.artcell{position:relative}
+.cpath{position:absolute;right:8px;bottom:6px;border:1px solid var(--accent);color:var(--accent);
+  background:var(--panel);border-radius:6px;padding:1px 7px;font-size:11px;min-height:24px;visibility:hidden}
+tbody tr:hover .cpath,tbody tr:focus .cpath,tbody tr:focus-within .cpath{visibility:visible}
+.oscell.inh{color:var(--muted);font-size:11.5px}
+.oscell.inh i{font-style:normal}
+.dos{margin-top:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.fbtn .tok{font-size:10.5px;color:var(--muted);margin-left:4px}
+.fbtn[disabled]{opacity:.5;cursor:default}
+.fbtn[disabled]:hover{background:none}
+.fbtn[hidden]{display:none}
+.toolq{width:100%;margin:2px 0 6px;padding:6px 9px;border:1px solid var(--field-line);border-radius:7px;
+  background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px}
+.empty p{margin:0 0 6px}
+.emptyacts{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.empty .emptyacts button{display:inline-flex;margin:0}
+.cacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.cacts .btn{min-height:44px;justify-content:center}
+.cacts .cpath{position:static;visibility:visible;margin:0;font-size:13px;border-radius:8px}
+.cacts .pick{width:auto;height:auto;min-width:0;min-height:44px;border-radius:8px;font-size:13px}
+.cacts .pick[aria-pressed=true]{background:none;border-color:var(--accent);color:var(--accent)}
+details.dabout>summary{cursor:pointer;list-style:none}
+details.dabout>summary::-webkit-details-marker{display:none}
+details.dabout>summary h4{display:inline}
+details.dabout>summary::before{content:"+ ";color:var(--muted)}
+details.dabout[open]>summary::before{content:"- "}
 tr:last-child td{border-bottom:0}
 /* Column widths, so the two prose-ish columns are not left fighting over the
    slack. Artifact holds paths that break anywhere, and with no widths at all it
@@ -669,11 +739,11 @@ th .pick.all{vertical-align:middle}
   padding:13px 18px;display:flex;justify-content:space-between;gap:10px;align-items:center;z-index:2}
 .dhead b{font-size:14px}
 .dhead .x{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);
-  background:none;color:var(--faint);flex:none}
+  background:none;color:var(--muted);flex:none}
 .dhead .x:hover{color:var(--ink);border-color:var(--accent)}
 .dbody{padding:16px 18px;display:flex;flex-direction:column;gap:16px}
 .dsec h4{margin:0 0 7px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);font-weight:600}
+  color:var(--muted);font-weight:600}
 .locator{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;
   background:var(--panel-2);border-radius:8px;padding:10px}
 .badgerow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -738,7 +808,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   gap:18px;max-width:1100px}
 .srcgrid p{max-width:52ch}
 .srcgrid h4{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint);font-weight:600}
+  letter-spacing:.05em;color:var(--muted);font-weight:600}
 .srcgrid p{margin:0;font-size:12.5px;line-height:1.55}
 .srcloss p{color:var(--ink)}
 .srcloss h5{color:var(--med)}
@@ -761,7 +831,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .plansum b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:3px}
 .plansum>span:not(.badge){white-space:nowrap}
 .plancred{color:var(--med)}
-.ptool{font-size:11.5px;color:var(--faint);margin-left:auto;padding-left:10px;
+.ptool{font-size:11.5px;color:var(--muted);margin-left:auto;padding-left:10px;
   white-space:nowrap}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .segbtn{background:var(--panel);border:0;padding:6px 11px;font-size:12px;
@@ -771,7 +841,15 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .segbtn:not(.on):hover{background:var(--hover);color:var(--ink)}
 .btn.danger{color:var(--crit);border-color:var(--alert-line)}
 .btn.danger:hover{background:var(--alert-bg);border-color:var(--crit)}
-.btn.danger[data-armed="1"]{background:var(--crit);color:#fff;border-color:var(--crit)}
+.btn.danger[data-armed="1"]{background:var(--crit);color:var(--on-tone);border-color:var(--crit)}
+/* Diagrams keep their light fills (baked into the SVGs); dimming the card stops
+   it being the brightest surface on a dark page. */
+:root[data-theme=dark] figure.mmd{background:#d9d5ce;border-color:var(--line)}
+:root[data-theme=dark] .pal{background:rgba(0,0,0,.6)}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]) figure.mmd{background:#d9d5ce;border-color:var(--line)}
+  :root:not([data-theme=light]) .pal{background:rgba(0,0,0,.6)}
+}
 #backbar{margin:0 0 12px}
 .backbtn{background:var(--panel);border:1px solid var(--line);border-radius:20px;
   padding:5px 13px;font-size:12.5px;color:var(--muted);cursor:pointer}
@@ -781,7 +859,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   padding:7px 9px;font-size:12px;color:var(--muted);cursor:pointer;text-align:left}
 .clsrow b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;margin-right:5px}
 .clsrow:hover{border-color:var(--accent);background:var(--accent-soft)}
-.tmeta{margin-top:7px;font-size:12px;color:var(--faint)}
+.tmeta{margin-top:7px;font-size:12px;color:var(--muted)}
 .badge.vol i{font-style:normal;opacity:.6;margin-right:5px;font-size:10px}
 .locrow{display:flex;gap:8px;align-items:stretch}
 .locrow .locator{flex:1;min-width:0}
@@ -811,13 +889,28 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{background:var(--accent-hover)}
 .btn.outline-accent{background:none;border-color:var(--accent);color:var(--accent)}
-.dfoot{display:flex;gap:8px;padding:0 18px 18px}
+.dfoot{display:flex;gap:8px;padding:12px 18px;position:sticky;bottom:0;margin-top:auto;
+  background:var(--panel);border-top:1px solid var(--line);z-index:2}
 
 /* ---- plan ---- */
 .planhead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-end;
   margin:0 0 14px}
 .planhead h2{margin:0 0 4px;font-size:16px}
 .planhead p{margin:0;font-size:12.5px;color:var(--muted)}
+.pidw{flex:1 1 100%}
+.pcard{flex:1 1 100%;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:0}
+.pcrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.pcrow h2{margin:0 6px 0 0;font-size:16px}
+.pexp{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pexplab{font-size:12.5px;color:var(--muted)}
+#pExport{border:1px solid var(--accent);border-radius:8px;min-width:150px;min-height:34px;padding:5px 8px;
+  background:var(--panel);color:var(--ink);font:inherit;font-size:13px}
+.pcright{display:inline-flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.pnote{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.pcard .lnk{background:none;border:0;padding:0;font:inherit;font-size:12.5px;color:var(--accent);text-decoration:underline}
+.pcard details.fwskip{margin-top:6px}
+.pmode{margin-left:auto}
+.pmodenote{margin:-6px 0 12px;font-size:12.5px;color:var(--muted)}
 .planhead .acts{display:flex;gap:8px}
 .pstart{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:12px auto 14px;max-width:760px}
 .plan-empty{border:1px dashed var(--field-line);border-radius:11px;padding:48px 20px;
@@ -831,7 +924,8 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
   font-size:11px;color:var(--muted)}
 .prow{display:flex;gap:10px;align-items:baseline;padding:6px 14px;
   border-bottom:1px solid var(--line-soft)}
-.prow .rm{border:0;background:none;color:var(--faint);padding:0 2px}
+.prow .rm{border:0;background:none;color:var(--muted);padding:0;flex:none;
+  min-width:24px;min-height:24px;display:inline-flex;align-items:center;justify-content:center}
 .prow .rm:hover{color:var(--crit)}
 .prow .path{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
 .pgroup .gfoot{padding:9px 14px;font-size:12px;color:var(--muted);background:var(--panel-2);
@@ -846,12 +940,26 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .toast button{background:none;border:1px solid var(--toast-muted);border-radius:7px;
   color:var(--toast-ink);padding:5px 10px;font-size:12px}
 .toast a{color:var(--toast-muted);cursor:pointer;font-size:12px}
+.toast button.tlink{border:0;color:var(--toast-muted);padding:4px 6px;min-height:24px;text-decoration:underline}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#main .loading{color:var(--muted);padding:24px 0}
+.deadlink{position:relative;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  border:1px solid var(--line);border-left:3px solid var(--high);border-radius:8px;
+  background:var(--panel);padding:9px 40px 9px 14px;margin:0 0 12px;font-size:13px}
+.deadlink[hidden]{display:none}
+.deadlink .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;min-height:24px}
+.deadlink .x{position:absolute;top:4px;right:6px;background:none;border:0;color:var(--muted);
+  min-width:24px;min-height:24px}
 
 /* ---- detections ---- */
 .rulegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
 .rule{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px;
   display:flex;flex-direction:column;gap:9px;cursor:pointer;text-align:left}
 .rule:hover{border-color:var(--accent)}
+.cardbtn{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.cardbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.exportgrp[hidden],#pickAllBtn[hidden]{display:none}
 .rule .rtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 
 .rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
@@ -863,6 +971,15 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .fmt{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
   border-radius:5px;padding:1px 7px;background:var(--panel-2);border:1px solid var(--line);
   color:var(--muted)}
+button.tchip{border:1px solid var(--accent-border);cursor:pointer;font-family:inherit;font-size:11.5px;
+  text-align:left;min-height:24px}
+button.tchip:hover{border-color:var(--accent)}
+.tmenu{display:inline-flex;flex-direction:column;gap:2px;margin:2px 0 4px 4px;padding:4px;background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 22px var(--shadow);vertical-align:top}
+.tmenu button{background:none;border:0;border-radius:6px;padding:6px 9px;text-align:left;font-size:12.5px;
+  color:var(--ink);min-height:28px;cursor:pointer}
+.tmenu button:hover,.tmenu button:focus{background:var(--accent-soft)}
+.flash{outline:2px solid var(--accent);outline-offset:2px}
 .tchip{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--accent-soft);
   border:1px solid var(--accent-border);color:var(--accent);border-radius:5px;padding:1px 6px;
   cursor:pointer}
@@ -875,6 +992,7 @@ pre.yaml.grown{max-height:none}
 .codetools{float:right;display:flex;gap:5px;text-transform:none;letter-spacing:0}
 .minibtn{background:var(--panel);border:1px solid var(--line);border-radius:5px;
   padding:1px 8px;font-size:10.5px;color:var(--muted);cursor:pointer;
+  min-height:24px;display:inline-flex;align-items:center;justify-content:center;
   text-transform:none;letter-spacing:0}
 .minibtn:hover{border-color:var(--accent);color:var(--accent)}
 .minibtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);
@@ -946,7 +1064,9 @@ details.csfull[open]>summary::before{top:50%;transform:translateY(-50%) rotate(9
 .csbrief{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--muted);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
   overflow:hidden}
-details.csfull[open] .csbrief{display:none}
+details.csfull[open] .csbrief,details.csfull[open] .csbasis1{display:none}
+.csbasis1{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+.csbasis1 b{color:var(--ink);font-weight:600}
 .csaff{color:var(--accent);margin-top:1px}
 /* One line, always the same order, so the tiles read as a column of facts
    rather than as ragged chip soup: indicators, rules, provenance, dispute. */
@@ -989,7 +1109,7 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
 .covdet td{background:var(--panel-2);padding:14px 14px 14px 34px}
 .cdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
 .cdgrid h3{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--faint);font-weight:600}
+  letter-spacing:.05em;color:var(--muted);font-weight:600}
 .cdgrid .n{font-family:ui-monospace,Menlo,monospace;font-size:10px;
   background:var(--line-soft);border-radius:20px;padding:0 6px;color:var(--muted)}
 .cdchip{display:block;width:100%;text-align:left;background:var(--panel);
@@ -1010,7 +1130,7 @@ table.cov tr.covrow td:first-child{overflow:hidden;text-overflow:ellipsis;white-
   margin-right:8px}
 .covrow .ittl{color:var(--muted)}
 .covrow .subs{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-  color:var(--faint);margin-left:7px}
+  color:var(--muted);margin-left:7px}
 .thinflag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;
   color:var(--med);border:1px dashed var(--med);border-radius:4px;
   padding:0 5px;margin-left:8px;opacity:.85}
@@ -1037,7 +1157,7 @@ button.istat:hover{background:var(--hover)}
   font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:2px 4px;
   border-radius:4px;text-decoration:underline;text-underline-offset:2px}
 .covlink:hover{background:var(--accent-soft)}
-.cov .zero{color:var(--faint)}
+.cov .zero{color:var(--muted)}
 .cbar{display:block;position:relative;height:14px;min-width:80px}
 .cbar i{position:absolute;left:0;height:5px;border-radius:3px}
 /* strong, not mid. The mid tokens are tuned for badge fills against a tinted
@@ -1060,7 +1180,7 @@ button.istat:hover{background:var(--hover)}
 
 .cs .csmeta{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .cs p{margin:0;font-size:12.5px;color:var(--muted)}
-.cs h4{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.cs h4{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .iocs{display:flex;flex-wrap:wrap;gap:5px}
 .ioc{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
   border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;color:var(--ink);
@@ -1083,7 +1203,7 @@ button.istat:hover{background:var(--hover)}
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .iocgrp{margin:0 0 11px}
 .iockind{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);margin:0 0 4px}
+  color:var(--muted);margin:0 0 4px}
 .csfull .iocs{flex-direction:column;align-items:flex-start;gap:4px}
 .csfull .ioc{display:block;width:100%;word-break:break-all;padding:5px 9px;line-height:1.35}
 .csfull .ioc em{display:block;font-style:normal;font-family:system-ui,sans-serif;
@@ -1097,7 +1217,7 @@ button.istat:hover{background:var(--hover)}
    is the next move. */
 .csdet{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
 .csdet h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);display:flex;align-items:center;gap:7px}
+  color:var(--muted);display:flex;align-items:center;gap:7px}
 .csdet h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .detrow{display:flex;flex-wrap:wrap;gap:6px}
@@ -1114,9 +1234,9 @@ button.istat:hover{background:var(--hover)}
 .drefs li{margin:0 0 5px;color:var(--muted)}
 .dsec h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
-.tverify{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+.tverify{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);
   margin:0 0 6px}
-.talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);
+.talias{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);
   margin:0 0 6px;word-break:break-word}
 .statuspill{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
   border:1px solid var(--crit);color:var(--crit);border-radius:20px;padding:1px 8px;
@@ -1124,7 +1244,7 @@ button.istat:hover{background:var(--hover)}
 .casebadge{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;
   background:var(--accent);color:var(--on-accent);border-radius:20px;padding:2px 8px;
   white-space:nowrap}
-.csconf{margin:8px 0 0;font-size:12px;color:var(--faint);
+.csconf{margin:8px 0 0;font-size:12px;color:var(--muted);
   font-family:ui-monospace,Menlo,monospace}
 .csjumps{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 /* Provenance sits directly under the summary, so a reader meets the evidence
@@ -1138,7 +1258,7 @@ button.istat:hover{background:var(--hover)}
 .csfoot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;
   margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line-soft)}
 .csfoot h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);display:flex;align-items:center;gap:7px}
+  color:var(--muted);display:flex;align-items:center;gap:7px}
 .csfoot h4 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
 .csatlas{display:flex;flex-direction:column;align-items:flex-start}
@@ -1158,7 +1278,14 @@ button.istat:hover{background:var(--hover)}
 .orient{margin:0 0 18px;padding:18px 22px;background:var(--panel);border:1px solid var(--line);
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
-@media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}
+  /* One column: the result follows the questions that produced it, rather than
+     landing below the lede, the counts and the three steps. */
+  .orient{row-gap:0}
+  .orient>.otext{display:contents}
+  .orient>.otext>h2{order:-3}
+  .orient>.otext>.alstart{order:-2}
+  .orient>#alSide{order:-1;margin:0 0 16px}}
 .palbtn{display:inline-flex;align-items:center;gap:10px;min-height:34px;padding:5px 8px 5px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);font-size:12.5px}
 .palbtn:hover{border-color:var(--accent);color:var(--ink)}
@@ -1173,7 +1300,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;bo
 #palRes{overflow:auto;padding:6px 0}
 .palg{padding:4px 0}
 .palgh{display:flex;justify-content:space-between;padding:6px 16px 4px;font-size:10.5px;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint)}
+  text-transform:uppercase;color:var(--muted)}
 .palr{display:flex;flex-direction:column;gap:1px;padding:7px 16px;cursor:pointer}
 .palr[aria-selected=true]{background:var(--accent-soft)}
 .palt{font-size:13.5px;color:var(--ink)}
@@ -1183,10 +1310,11 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;bo
 .palall{font-size:12.5px;color:var(--accent)}
 .palempty{padding:18px 16px;font-size:13px;color:var(--muted)}
 .palsug{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint)}
+.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
 .palfoot kbd{margin-right:3px}
 body.palopen{overflow:hidden}
-@media(max-width:620px){.palbtn .paltx,.palbtn kbd{display:none}}
+@media(max-width:620px){.palbtn .paltx,.palbtn kbd,.ghlink .ghtx,#themeBtn .thtx{display:none}
+  .palbtn,.ghlink,#themeBtn{min-width:36px;min-height:36px;justify-content:center;padding:6px 9px}}
 .scopenote{position:relative;margin:0 0 12px;padding:10px 40px 10px 14px;background:var(--panel);
   border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:12.5px;color:var(--muted)}
 .scopenote p{margin:0 0 4px;max-width:110ch}
@@ -1195,7 +1323,12 @@ body.palopen{overflow:hidden}
 .scopenote li{counter-increment:sn}
 .scopenote li::before{content:counter(sn) ". ";color:var(--accent);font-weight:600}
 .scopenote .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline}
-.scopenote .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--faint);font-size:13px}
+.scopenote .stoggle{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--accent);
+  font-size:12px;text-decoration:underline;min-height:24px;padding:0 4px}
+.scopenote .sline{display:none;margin:0}
+.scopenote.collapsed{border-left-width:1px;padding-top:7px;padding-bottom:7px}
+.scopenote.collapsed .sline{display:block;padding-right:70px}
+.scopenote.collapsed .sfull{display:none}
 .okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
 .okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
   border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
@@ -1212,6 +1345,64 @@ body.palopen{overflow:hidden}
 .otkey .lnk{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent);text-decoration:underline}
 .tc-high{background:var(--conf-strong)}.tc-med{background:var(--series-3)}.tc-low{background:var(--gap)}
 .ovis{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+/* ---- start from the alert ---- */
+.alstart{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin:12px 0 14px}
+.alstart h3{margin:0 0 10px;font-size:15px;font-weight:600}
+.allab{display:block;font-size:12.5px;color:var(--muted);margin:0 0 5px;padding:0}
+.alcombo{position:relative;margin:0 0 12px}
+#alTool{width:100%;padding:8px 10px;border:1px solid var(--field-line);border-radius:8px;background:var(--panel);
+  color:var(--ink);font:inherit;font-size:13.5px;min-height:38px}
+#alList{position:absolute;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 24px var(--shadow);z-index:5;max-height:280px;overflow:auto}
+#alList[hidden]{display:none}
+#alList li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;padding:7px 9px;border-radius:6px;cursor:pointer;font-size:13px}
+#alList li[aria-selected=true],#alList li:hover{background:var(--accent-soft)}
+#alList .mono{font-size:12px;color:var(--muted)}
+#alList .alv{font-size:12.5px;color:var(--muted);margin-left:auto}
+fieldset.alq{border:0;padding:0;margin:0 0 12px;min-width:0}
+.algrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.alopt{position:relative;display:block;cursor:pointer}
+.alopt input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.alopt span{display:block;height:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+  font-size:12.5px;color:var(--ink);background:var(--panel)}
+.alopt:hover span{border-color:var(--accent-border)}
+.alopt input:checked+span{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.alopt input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.alpills{display:flex;flex-wrap:wrap;gap:6px}
+.alpills .alopt span{border-radius:999px;padding:6px 12px}
+.alhelp{margin:0;font-size:12.5px;color:var(--muted)}
+.alhelp b{color:var(--ink);font-weight:600}
+.alres{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
+.alrh{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.alrh b{font-size:16px;font-weight:600;margin-right:2px}
+.alrh .mono{font-size:12px;color:var(--muted);margin-right:4px}
+.alrmeta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+.altier{margin:0 0 8px;border:1px solid var(--line-soft);border-radius:7px;overflow:hidden}
+.alth{background:var(--panel-2);border-bottom:1px solid var(--line-soft);padding:6px 11px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alth .badge{margin-right:8px}
+.altier ul{list-style:none;margin:0;padding:4px 0}
+.altier li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;padding:3px 11px;font-size:12px}
+.alcls{font-size:11px;color:var(--muted)}
+.altier .mono{font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.alres .lnk{background:none;border:0;padding:2px 11px 6px;font:inherit;font-size:12px;color:var(--accent);
+  text-decoration:underline;min-height:24px;cursor:pointer}
+.alnote{font-size:13px;margin:0 0 8px}
+.alsigns{margin:0 0 8px;padding-left:18px;font-size:12.5px}
+.alsigns li{margin:0 0 3px}
+.alguid{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.alacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.alphone{display:none;gap:6px;flex-wrap:wrap;margin:6px 0}
+@media(max-width:620px){
+  .algrid{grid-template-columns:1fr}
+  .alopt span{min-height:44px;display:flex;align-items:center}
+  .altier.t-rotating,.altier.t-stable{display:none}
+  .alphone{display:flex}
+  .alacts .btn{flex:1 1 100%;min-height:44px;justify-content:center}
+  #alAll{display:none}
+  .alacts .primary-phone{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .alacts #alShow{background:var(--panel);color:var(--ink);border-color:var(--line)}
+}
 .ovis h3{margin:0;font-size:13.5px}
 .orient .ovsub{margin:2px 0 10px;font-size:12px}
 .ovbars{display:grid;gap:3px}
@@ -1331,11 +1522,17 @@ figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
 /* !important because each pre-rendered SVG carries an inline max-width:100%. */
 figure.mmd svg{width:auto;max-width:min(100%,760px)!important;height:auto;max-height:420px;display:block;margin:0 auto}
 figure.mmd{cursor:zoom-in;position:relative}
-figure.mmd::after{content:'Click to enlarge';position:absolute;right:10px;bottom:8px;font-size:11px;
+figure.mmd .mmdhint{position:absolute;right:10px;bottom:8px;font-size:11px;
   color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
-figure.mmd.big{cursor:zoom-out}
-figure.mmd.big::after{content:'Click to shrink'}
-figure.mmd.big svg{width:100%;max-width:100%!important;max-height:none}
+figure.mmd:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#mmdView{position:fixed;inset:0;z-index:70;background:rgba(20,18,16,.45);display:flex;padding:16px}
+.mmdbox{position:relative;margin:auto;max-width:100%;max-height:100%;display:flex;flex-direction:column;
+  background:#fbfbfa;border:1px solid var(--line);border-radius:11px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.mmdbox .mmdx{align-self:flex-end;margin:8px 8px 0}
+.mmdscroll{overflow:auto;padding:8px 18px 18px}
+.mmdscroll svg{display:block}
+.mmdscroll .nodeLabel,.mmdscroll .edgeLabel,.mmdscroll .label,.mmdscroll text,.mmdscroll tspan,
+.mmdscroll p,.mmdscroll span,.mmdscroll div{fill:#1f2328;color:#1f2328}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -1344,7 +1541,15 @@ footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
 footer p{margin:0}
 
 @media(max-width:900px){
-  .hdr{position:static}
+  /* Sticky on phones too, collapsed to the title row and the tab strip, so a
+     reader deep in a long view can still change tabs. */
+  .hdr .sub,.hdr .pill{display:none}
+  .hdr-top{flex-wrap:nowrap;align-items:center}
+  .hdr-id{flex:1 1 auto;min-width:0}
+  .h1row{flex-wrap:nowrap}
+  h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+  .hdr-right{flex-wrap:nowrap;gap:6px}
+  .tabs{margin-top:4px}
   .shell{grid-template-columns:minmax(0,1fr);padding:16px 14px 90px;gap:14px}
   .hdr-in{padding:12px 14px 0}
   .railscroll{display:none}
@@ -1368,6 +1573,19 @@ footer p{margin:0}
   .tabs .guidelink{margin-right:6px}
 }
 @media(max-width:620px){
+  .pexp{display:flex;width:100%}
+  .pexplab{flex:1 1 100%}
+  #pExport{flex:1 1 100%;min-height:44px}
+  #pDl{flex:1 1 auto;min-height:44px;justify-content:center}
+  #pCopy{min-height:44px}
+  .pcright{margin-left:0}
+  .prow{flex-wrap:wrap;align-items:center}
+  .prow .rm{min-width:44px;min-height:44px}
+  .prow .path{flex:1 1 calc(100% - 56px);word-break:normal;overflow-wrap:anywhere}
+  .prow .need{white-space:normal;margin-left:0;max-width:none}
+  .pick{min-width:44px;min-height:44px}
+  .tabs button{min-height:44px}
+  .fbtn{min-height:44px}
   .tablewrap{display:none}
   .cards{display:flex}
   .drawer{width:100vw;max-width:100vw}
@@ -1378,6 +1596,9 @@ footer p{margin:0}
 
 JS = r"""
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+// Phone width. Declared first: the drawer observer and the catalog renderer
+// both read it during boot.
+const PHONE=window.matchMedia('(max-width:620px)');
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RANK={critical:0,p1:0,high:1,p2:1,medium:2,p3:2,low:3};
 // Two scales, deliberately not sharing a palette.
@@ -1418,7 +1639,9 @@ const SOURCES_FOR=(()=>{const m={};
 // before this host reboots" - the question the whole catalog is ordered around.
 // It sat only in the collection plan, which a reader reaches after picking rows
 // rather than before.
-const GROUPS={triage:'Triage priority',cls:'Artifact class',mech:'MCP mechanism',vol:'Volatility',os:'Operating system',fv:'Forensic value',conf:'Confidence',tool:'Tool'};
+// Tool first: the catalog's own instruction is "filter to the tool you found
+// on the host", and that was the furthest control from the top of the rail.
+const GROUPS={tool:'Tool',os:'Operating system',cls:'Artifact class',vol:'Volatility',triage:'Triage priority',fv:'Forensic value',conf:'Sourcing confidence',mech:'MCP mechanism'};
 const FIELD={triage:r=>[r.triage],cls:r=>[r.cls],mech:r=>[r.mechanism],vol:r=>[r.vol],os:r=>r.os,fv:r=>[r.forensic_value],conf:r=>[r.confidence],tool:r=>[r.tool]};
 const OPTIONS={
   // Priority order, not alphabetical - p1 first is the point of the facet.
@@ -1496,7 +1719,15 @@ window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 let codeWrap=false, codeGrow=false, planMode='tool';
 // Per-viewer convenience only: storage may be unavailable, and the note
 // simply shows again.
+// Collapsed to one line, never hidden: a second analyst on the same browser
+// still sees that the rows are what a tool leaves on the machine it ran on.
+// The old value '1' (hidden for good) reads as collapsed.
 let scopeHidden=(()=>{try{return localStorage.getItem('aidfir-scope-hidden')==='1'}catch(e){return false}})();
+function syncScope(){
+  const n=$('#scopeNote'); n.classList.toggle('collapsed',scopeHidden);
+  $('#scopeX').textContent=scopeHidden?'expand':'collapse';
+  $('#scopeX').setAttribute('aria-expanded',String(!scopeHidden));
+}
 let view='guide', query='', unvOnly=false, dense=false,
     // Was entry_id, which sorted first paint by the one field a responder never
     // needs. triage_priority is on every row since F09, so the table can open in
@@ -1532,7 +1763,11 @@ let plans=(()=>{
   // One-time migration. The old key is read and kept, not deleted: if this
   // build is ever rolled back, the picks a responder made are still where the
   // previous build looks for them.
-  const raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD);
+  // Guarded like every other storage call: a hardened or private browser
+  // throws on the read itself, and an unguarded read here stopped the script
+  // before the first render and left a blank page.
+  let raw=null;
+  try{raw=localStorage.getItem(PICKS_KEY)??localStorage.getItem(PICKS_KEY_OLD)}catch(e){}
   let anchors=[];
   try{anchors=liveAnchors(JSON.parse(raw||'[]'))}catch(e){}
   const id=newPlanId(), t=nowISO();
@@ -1540,7 +1775,8 @@ let plans=(()=>{
                 host:'',created:t,updated:t,anchors}};
 })();
 let activeId=(()=>{
-  const saved=localStorage.getItem(ACTIVE_KEY);
+  let saved=null;
+  try{saved=localStorage.getItem(ACTIVE_KEY)}catch(e){}
   if(saved&&plans[saved])return saved;
   return Object.keys(plans)[0];
 })();
@@ -1611,7 +1847,11 @@ function sBadge(v,label,bare,scale){
 const fvBadge=(v,bare)=>sBadge(v,'value',bare,'sc-value');
 const OS_SHORT={windows:'Win',macos:'macOS',linux:'Linux',docker:'Docker',container:'Container',cloud:'Cloud'};
 // One line for the common three-OS row; longer lists wrap between names, never inside one.
-const osCell=os=>`<span class="oscell">${os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ')}</span>`;
+const OS_INH='Listed for the tool. This row does not declare its own operating system.';
+const osList=os=>os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ');
+const osCell=(os,inh)=>inh
+  ?`<span class="oscell inh" title="${esc(OS_INH)}"><i>tool:</i> ${osList(os)}</span>`
+  :`<span class="oscell">${osList(os)}</span>`;
 // Paths and hostnames wrap at their separators, never mid-name.
 const pathHTML=p=>esc(p).replace(/([\/\\.:_\-])/g,'$1<wbr>');
 const confBadge=(v,bare)=>sBadge(v,'sourcing',bare,'sc-conf');
@@ -1628,19 +1868,55 @@ function rowMatches(r,skip){
     if(!have.length)return false;
     if(!have.some(v=>want.includes(v)))return false;
   }
-  if(!query)return true;
+  return rowQuery(r);
+}
+// One matcher for the view search and the palette: every word must appear, in
+// any order, and hyphen, underscore and space are the same character. The view
+// box used to need one exact substring, so "claude desktop mcp" found rows in
+// the palette and nothing in the catalog, and "markdown-image" found nothing.
+const normQ=s=>String(s??'').toLowerCase().replace(/[-_\s]+/g,' ');
+function qMatch(hay,q){
+  const toks=normQ(q===undefined?query:q).split(' ').filter(Boolean);
+  if(!toks.length)return true;
+  const h=normQ(hay);
+  return toks.every(k=>h.includes(k));
+}
+function rowQuery(r,q){
   // Aliases come from the tool, so searching "oobabooga" or "OpenDevin" finds
   // the rows for the entry that is now filed under a different name.
   const t=TOOLMAP[r.entry_id];
-  const hay=(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+
-    r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):'')).toLowerCase();
-  return hay.includes(query);
+  return qMatch(r.artifact+' '+r.tool+' '+r.description+' '+r.cls+' '+r.entry_id+' '+
+    r.evidence.join(' ')+' '+(t&&t.aliases?t.aliases.join(' '):''),q);
 }
-// Collection order, not ID order. Ties on the sort key fall through to
-// volatility and then to entry id, so the default view reads triage first and
-// then what stops existing soonest - which is the order the catalog is for.
-// Without the tiebreak, sorting by triage left 513 p1 rows in whatever order
-// they happened to be flattened in.
+// Names what is active and offers to undo each part separately. The old empty
+// state blamed "those filters" and its one button threw away the right
+// filters along with the wrong search.
+function emptyHTML(rules){
+  const G=rules?RGROUPS:GROUPS, F=rules?rfilters:filters, noun=rules?'rule':'row';
+  const act=Object.keys(G).filter(g=>F[g].length).map(g=>`${G[g]}: ${F[g].join(', ')}`);
+  if(!rules&&unvOnly)act.push('unverified only');
+  if(rules&&ruleSet)act.push('one data source');
+  const qn=query?(rules?RULES.filter(r=>ruleQuery(r)):ROWS.filter(r=>rowQuery(r))).length:0;
+  const what=query?`No ${noun}s match "${esc(query)}"${act.length?` with ${esc(act.join('; '))}`:''}.`
+    :`No ${noun}s match ${esc(act.join('; '))}.`;
+  return `<div class="empty"><p>${what}</p>${query&&act.length&&qn?
+    `<p>The search alone matches ${qn} ${noun}${qn>1?'s':''}.</p>`:''}<div class="emptyacts">${
+    query?'<button class="btn" type="button" data-clear="q">Clear search</button>':''}${
+    act.length?'<button class="btn" type="button" data-clear="f">Clear filters</button>':''}</div></div>`;
+}
+function wireEmpty(){
+  $$('#main [data-clear]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.clear==='q'){query='';$('#q').value=''}
+    else if(view==='rules')resetRuleFilters();
+    else{for(const g of Object.keys(filters))filters[g]=[];
+      unvOnly=false;$('#unvBtn').setAttribute('aria-pressed','false')}
+    update();
+  });
+}
+// Collection order first. 519 of 622 rows are triage p1, so sorting by triage
+// barely separated anything and the table could not answer "what first". Rows
+// are grouped by volatility tier - live, rotating, stable - and the column
+// sort applies inside each group, falling through to entry id.
 const volRank=r=>{const i=VOL_TIERS.indexOf(r.vol);return i<0?VOL_TIERS.length:i};
 function cmpKey(k,a,b){
   const x=a[k],y=b[k];
@@ -1649,11 +1925,7 @@ function cmpKey(k,a,b){
 }
 function filteredRows(){
   const out=ROWS.filter(r=>rowMatches(r,null));
-  out.sort((a,b)=>{
-    const primary=cmpKey(sortKey,a,b)*sortDir;
-    if(primary)return primary;
-    return (volRank(a)-volRank(b))||cmpKey('entry_id',a,b);
-  });
+  out.sort((a,b)=>(volRank(a)-volRank(b))||(cmpKey(sortKey,a,b)*sortDir)||cmpKey('entry_id',a,b));
   return out;
 }
 
@@ -1671,6 +1943,7 @@ function fgroup(key,title,body,picked){
     <summary><h3>${esc(title)}</h3>${picked?`<span class="fon">${picked}</span>`:''}</summary>
     ${body}</details>`;
 }
+let toolQ='';
 function railHTML(){
   return Object.keys(GROUPS).map(g=>{
     const counts={};
@@ -1679,12 +1952,29 @@ function railHTML(){
       for(const v of FIELD[g](r).filter(Boolean))counts[v]=(counts[v]||0)+1;
     }
     const body=OPTIONS[g].map(v=>{
-      const on=filters[g].includes(v);
-      return `<button class="fbtn" data-g="${g}" data-v="${esc(v)}" aria-pressed="${on}">
-        <span>${esc(v)}</span><span class="c">${counts[v]||0}</span></button>`;
+      const on=filters[g].includes(v), n=counts[v]||0;
+      // A plain name where one exists, with the token after it in mono so the
+      // value in an export or a chip is still recognisable.
+      const lab=g==='cls'&&CLS_NAME[v]?`${esc(CLS_NAME[v])} <code class="tok">${esc(v)}</code>`:esc(v);
+      // Zero matches and not selected: offered, but not clickable into an
+      // empty table. A selected one stays live so it can be undone.
+      return `<button class="fbtn" data-g="${g}" data-v="${esc(v)}" aria-pressed="${on}"
+        ${!n&&!on?'disabled':''}><span>${lab}</span><span class="c">${n}</span></button>`;
     }).join('');
-    return fgroup(g,GROUPS[g],body,filters[g].length);
+    const pre=g==='tool'?`<input class="toolq" type="search" placeholder="Type a tool name"
+      aria-label="Filter the tool list" value="${esc(toolQ)}">`:'';
+    return fgroup(g,GROUPS[g],pre+body,filters[g].length);
   }).join('');
+}
+// Narrows the Tool buttons in place, without re-rendering the rail, so the
+// caret and the typed text survive and multi-select keeps working.
+function applyToolQ(){
+  const q=normQ(toolQ).trim();
+  $$('.fbtn[data-g="tool"]').forEach(b=>{
+    const t=TOOLS.find(x=>x.tool===b.dataset.v)||{};
+    const hay=normQ([b.dataset.v,t.entry_id,t.vendor,(t.aliases||[]).join(' ')].join(' '));
+    b.hidden=!!q&&!q.split(' ').every(k=>hay.includes(k));
+  });
 }
 function renderRail(){
   const h=view==='rules'?ruleRailHTML():railHTML();
@@ -1695,6 +1985,9 @@ function renderRail(){
     d.open?folded.delete(d.dataset.f):folded.add(d.dataset.f);
     saveFolds();
   }));
+  $$('.toolq').forEach(i=>i.oninput=()=>{toolQ=i.value;
+    $$('.toolq').forEach(o=>{if(o!==i)o.value=toolQ});applyToolQ()});
+  applyToolQ();
   $$('.fbtn').forEach(b=>b.onclick=()=>{
     const g=b.dataset.g||b.dataset.rg;
     const set=b.dataset.rg?rfilters:filters;
@@ -1709,17 +2002,54 @@ function chipsHTML(){
   const chips=[];
   for(const g of Object.keys(filters))
     for(const v of filters[g])
-      chips.push(`<button class="chip" data-g="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`);
-  if(unvOnly)chips.push('<button class="chip" data-unv="1">unverified only <s>&#10005;</s></button>');
+      chips.push(`<button class="chip" data-g="${g}" data-v="${esc(v)}" aria-label="Remove filter ${esc(v)}">${esc(v)} <span aria-hidden="true">&#10005;</span></button>`);
+  if(unvOnly)chips.push('<button class="chip" data-unv="1" aria-label="Remove filter unverified only">unverified only <span aria-hidden="true">&#10005;</span></button>');
   return chips.join('');
 }
 
 /* ---------- table & cards ---------- */
 const COLS=[['','pick'],['ID','entry_id'],['Tool','tool'],['Class','cls'],['Artifact','artifact'],
-  ['OS','os'],['Value','forensic_value'],['Conf','confidence'],['Notes','description']];
+  ['OS','os'],['Value','forensic_value'],['Sourcing','confidence'],['Notes','description']];
+let curRow=null;
+// One tool filtered: ID and Tool say the same thing on every row.
+const catCols=()=>filters.tool.length===1?COLS.filter(([,k])=>k!=='entry_id'&&k!=='tool'):COLS;
+function artHTML(r){
+  const p=r.loc_path||r.artifact;
+  return `<span class="path">${pathHTML(p)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}`
+    +(r.loc_key?`<div class="lockey"><i>${esc(r.loc_label)}</i> ${esc(r.loc_key)}</div>`:'')
+    +`<button class="cpath" type="button" tabindex="-1" data-v="${esc(p)}" aria-label="Copy path ${esc(p)}">copy path</button>`;
+}
+const CELL={
+  pick:r=>`<td><button class="pick" tabindex="-1" data-a="${esc(r.anchor)}" aria-pressed="${picks.has(r.anchor)}"
+        aria-label="${esc(pickLabel(r,picks.has(r.anchor)))}">&#10003;</button></td>`,
+  entry_id:r=>`<td><span class="id">${esc(r.entry_id)}</span></td>`,
+  tool:r=>`<td>${esc(r.tool)}</td>`,
+  cls:r=>`<td><span class="clspill">${esc(r.cls)}</span></td>`,
+  artifact:r=>`<td class="artcell">${artHTML(r)}</td>`,
+  os:r=>`<td>${osCell(r.os,r.os_inherited)}</td>`,
+  forensic_value:r=>`<td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>`,
+  confidence:r=>`<td>${confBadge(r.confidence,true)}</td>`,
+  description:r=>`<td><span class="note">${esc(r.description)}</span></td>`,
+};
+const volCounts=rows=>rows.reduce((n,r)=>(n[r.vol]=(n[r.vol]||0)+1,n),{});
+const vgroupLabel=(v,n)=>`<span class="badge vol v-${esc(v)}">${esc(v)} &middot; ${n}</span>
+  <span class="vmean">${esc(VOL_MEANING[v]||'')}</span>`;
 function tableHTML(rows){
-  if(!rows.length)return `<div class="empty">Nothing matches those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  if(!rows.length)return emptyHTML();
+  const cols=catCols();
+  const n=volCounts(rows);
+  // One tab stop for the whole body (F07): only the current row is in the tab
+  // order, arrows move it. 622 rows each with a row stop and a pick stop made
+  // leaving the table hundreds of key presses.
+  const cur=sel&&ROWMAP[sel]&&rows.some(r=>r.anchor===sel)?sel
+    :curRow&&rows.some(r=>r.anchor===curRow)?curRow:rows[0].anchor;
+  let last=null, body='';
+  for(const r of rows){
+    if(r.vol!==last){last=r.vol;
+      body+=`<tr class="vgroup"><th colspan="${cols.length}" scope="rowgroup">${vgroupLabel(r.vol,n[r.vol])}</th></tr>`}
+    body+=`<tr data-a="${esc(r.anchor)}" tabindex="${r.anchor===cur?0:-1}" class="${sel===r.anchor?'sel':''}"
+      aria-label="${esc(r.tool+', '+r.cls+', '+r.artifact)}">${cols.map(([,k])=>CELL[k](r)).join('')}</tr>`;
+  }
   // Select-all sits at the head of the column it acts on, which is where a
   // reader looks for it - not stranded at the right edge of the toolbar.
   const anchors=rows.map(r=>r.anchor);
@@ -1727,38 +2057,34 @@ function tableHTML(rows){
   const KEYCOL={pick:'k-pick',entry_id:'k-id',tool:'k-tool',cls:'k-cls',
     artifact:'k-art',os:'k-os',forensic_value:'k-fv',confidence:'k-conf'};
   return `<div class="tablescroll"><table><colgroup>`
-    +COLS.map(([,k])=>`<col class="${KEYCOL[k]||''}">`).join('')
-    +`</colgroup><thead><tr>`+COLS.map(([l,k])=>{
+    +cols.map(([,k])=>`<col class="${KEYCOL[k]||''}">`).join('')
+    +`</colgroup><thead><tr>`+cols.map(([l,k])=>{
     if(k==='pick')return `<th><button class="pick all" id="pickAllCol"
       aria-pressed="${allPicked}"
       aria-label="${allPicked?'Remove all shown from':'Add all shown to'} the collection plan"
       title="${allPicked?'Remove':'Pick'} all ${anchors.length} shown">&#10003;</button></th>`;
     const sorted=sortKey===k, dir=sorted?(sortDir>0?'ascending':'descending'):'none';
     return `<th data-k="${k}" tabindex="0" aria-sort="${dir}">${l}${sorted?`<span class="dir"> ${sortDir>0?'↑':'↓'}</span>`:''}</th>`;
-  }).join('')+`</tr></thead><tbody>`+rows.map(r=>`
-    <tr data-a="${esc(r.anchor)}" tabindex="0" class="${sel===r.anchor?'sel':''}">
-      <td><button class="pick" data-a="${esc(r.anchor)}" aria-pressed="${picks.has(r.anchor)}"
-        aria-label="Add to collection plan">&#10003;</button></td>
-      <td><span class="id">${esc(r.entry_id)}</span></td>
-      <td>${esc(r.tool)}</td>
-      <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td class="artcell"><span class="path">${pathHTML(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
-      <td>${osCell(r.os)}</td>
-      <td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>
-      <td>${confBadge(r.confidence,true)}</td>
-      <td><span class="note">${esc(r.description)}</span></td>
-    </tr>`).join('')+'</tbody></table></div>';
+  }).join('')+`</tr></thead><tbody>`+body+'</tbody></table></div>';
 }
 function cardsHTML(rows){
-  if(!rows.length)return `<div class="empty">Nothing matches those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
-  return rows.map(r=>`
+  if(!rows.length)return emptyHTML();
+  const n=volCounts(rows); let last=null;
+  return rows.map(r=>{
+    const p=r.loc_path||r.artifact, on=picks.has(r.anchor);
+    const head=r.vol!==last?(last=r.vol,`<div class="cgroup">${vgroupLabel(r.vol,n[r.vol])}</div>`):'';
+    return head+`
     <div class="card" data-a="${esc(r.anchor)}" tabindex="0">
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
         ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
-      <span class="path">${pathHTML(r.artifact)}</span>
-      <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
-    </div>`).join('');
+      <span class="path">${pathHTML(p)}</span>
+      <div class="meta">${r.loc_key?`<i>${esc(r.loc_label)}</i> ${esc(r.loc_key)} &middot; `:''}${esc(r.entry_id)}${
+        r.os.length?' &middot; '+(r.os_inherited?`<span title="${esc(OS_INH)}">tool: ${esc(r.os.map(o=>OS_SHORT[o]||o).join(' '))}</span>`
+          :esc(r.os.map(o=>OS_SHORT[o]||o).join(' '))):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
+      <div class="cacts"><button class="btn outline-accent cpath" type="button" data-v="${esc(p)}">copy path</button>
+        <button class="btn ${on?'outline-accent':'primary'} pick cardpick" type="button" data-a="${esc(r.anchor)}"
+          aria-pressed="${on}" aria-label="${esc(pickLabel(r,on))}">${on?'In plan':'Add to plan'}</button></div>
+    </div>`}).join('');
 }
 
 /* ---------- tools ---------- */
@@ -1771,11 +2097,14 @@ const CASES_BY_TOOL=(()=>{
   return by;
 })();
 function toolsHTML(){
-  return '<div class="toolgrid">'+TOOLS.map(t=>{
+  const list=TOOLS.filter(t=>qMatch([t.tool,t.vendor,(t.aliases||[]).join(' '),t.category,t.entry_id].join(' ')));
+  if(!list.length)return `<div class="empty"><p>No tools match "${esc(query)}".</p><div class="emptyacts">
+    <button class="btn" type="button" data-clear="q">Clear search</button></div></div>`;
+  return '<div class="toolgrid">'+list.map(t=>{
   const cs=CASES_BY_TOOL[t.entry_id]||[];
   return `
-    <button class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
-      <div class="trow"><div><h3 class="tname">${esc(t.tool)}</h3>
+    <article class="tool" data-t="${esc(t.tool)}" data-id="${esc(t.entry_id)}">
+      <div class="trow"><div><h3 class="tname"><button type="button" class="cardbtn">${esc(t.tool)}</button></h3>
         <div class="tsub">${esc(t.vendor)} &middot; ${esc(t.category)}</div></div>
         <div class="tbadges">${t.status&&t.status!=='active'?
           `<span class="statuspill">${esc(t.status)}</span>`:''}${cs.length?`<span class="casebadge"
@@ -1787,7 +2116,7 @@ function toolsHTML(){
       ${t.caps.length?`<div class="capchips">${t.caps.map(c=>`<i>${esc(c)}</i>`).join('')}</div>`:''}
       <div class="tfoot"><span>${t.n} artifacts</span>${t.triage?`<span>triage ${esc(t.triage)}</span>`:''}
         <span>${esc(t.os.join(' · '))}</span></div>
-    </button>`}).join('')+'</div>';
+    </article>`}).join('')+'</div>';
 }
 
 /* ---------- data sources ---------- */
@@ -1883,17 +2212,16 @@ function planHTML(){
     <button class="btn" id="pNew">New plan</button>
     ${p.updated?`<span class="pmeta">saved ${esc(p.updated.slice(0,16).replace('T',' '))}</span>`:''}
   </div>`;
-  const head=`<div class="planhead"><div>${idbar}<h2>Collection plan</h2>
-    <p>${planMode==='vol'
-      ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
-      :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p></div>
-    <div class="acts">
-      <div class="seg"><button class="segbtn${planMode==='tool'?' on':''}" data-mode="tool"
-        >by tool</button><button class="segbtn${planMode==='vol'?' on':''}" data-mode="vol"
-        >by volatility</button></div>
-      <button class="btn" id="cpLinks">Copy permalinks</button>
-      <button class="btn primary" id="cpList">Copy as triage list</button>
-      <button class="btn danger" id="cpClear">Clear all</button></div></div>`;
+  // The export is the plan's main action, so it sits in the plan's header at
+  // every width. It used to live in a side column that only appeared from
+  // 1240px and followed every picked row below that.
+  const head=`<div class="planhead"><div class="pidw">${idbar}</div>
+    <div class="pcard"><div class="pcrow"><h2>Collection plan</h2>
+      ${rows.length?planExportControls():''}
+      <span class="pcright"><button class="btn" id="cpList">Copy as triage list</button>
+        <button class="btn" id="cpLinks">Copy permalinks</button>
+        <button class="btn danger" id="cpClear">Clear all</button></span></div>
+      ${rows.length?planExportNotes():''}</div></div>`;
   if(!rows.length){
     const by={};ROWS.forEach(r=>{by[r.tool]=(by[r.tool]||0)+1});
     const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -1910,14 +2238,20 @@ function planHTML(){
     ${VOL_TIERS.filter(v=>vol[v]).map(v=>
       `<span class="badge vol v-${v}"><i>${vol[v]}</i>${v}</span>`).join('')}
     ${creds?`<span class="plancred">${creds} credential location${creds>1?'s':''} -
-      collect, then treat every value as exposed</span>`:''}</div>`;
+      collect, then treat every value as exposed</span>`:''}
+    <div class="seg pmode" role="group" aria-label="Group the plan"><button class="segbtn${planMode==='tool'?' on':''}" data-mode="tool"
+        aria-pressed="${planMode==='tool'}">by tool</button><button class="segbtn${planMode==='vol'?' on':''}" data-mode="vol"
+        aria-pressed="${planMode==='vol'}">by volatility</button></div></div>
+    <p class="pmodenote">${planMode==='vol'
+      ?'Grouped by how fast each artifact disappears, across every tool. This is the order to work in: everything in <b>live</b> is gone at the next reboot.'
+      :'Grouped by tool, tools ordered by triage priority and rows within each tool by how fast they disappear.'}</p>`;
   const body=planMode==='vol'
     ? planByVolatility().map(g=>`
       <div class="pgroup"><div class="ghead"><span class="badge vol v-${g.vol}"
         ><i>volatility</i>${g.vol}</span>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
-        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove ${esc(r.artifact)}">&#10005;</button>
         <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
       <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
@@ -1925,12 +2259,43 @@ function planHTML(){
       <div class="pgroup"><div class="ghead">${triageBadge(g.t.triage)}<b>${esc(g.t.tool)}</b>
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
-        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
+        <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove ${esc(r.artifact)}">&#10005;</button>
         <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
         ${fvBadge(r.forensic_value)}</div>`).join('')}
       ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
   return head+summary+body;
+}
+const NATIVE_NOTE='Needs nothing installed on the host: PowerShell on Windows, bash on macOS and Linux. Choose the operating system under "Collect it".';
+function planExport(){
+  const k=triageFw, d=FW[k];
+  if(k==='native'){const sc=triageScript(triageOS);return {k,d,name:sc.name,text:sc.text,skip:[],pre:[],
+    eol:triageOS==='win'?'\r\n':'\n',mime:'text/plain'}}
+  const x=d.make();
+  const tools=[...new Set(planRowsOrdered().map(r=>r.entry_id))].map(id=>TOOLMAP[id]).filter(Boolean);
+  const pre=k==='velo'?tools.filter(t=>t.velo).map(t=>t.velo):k==='kape'?tools.filter(t=>t.kape).map(t=>t.kape):[];
+  return {k,d,name:x.name,text:x.text,skip:x.skip,pre,eol:k==='kape'?'\r\n':'\n',mime:x.mime};
+}
+function planExportControls(){
+  const x=planExport(), ext=x.name.slice(x.name.lastIndexOf('.'));
+  return `<span class="pexp"><label class="pexplab" for="pExport">Export for</label>
+    <select id="pExport">${Object.entries(FW).map(([v,f])=>
+      `<option value="${v}"${v===x.k?' selected':''}>${esc(f.label)}</option>`).join('')}</select>
+    <button class="btn primary" id="pDl" type="button" title="${esc(x.name)}">Download ${esc(ext)}</button>
+    <button class="btn" id="pCopy" type="button">Copy</button>
+    ${x.skip.length?`<a class="lnk" href="#pSkip" id="pSkipLnk">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</a>`:''}</span>`;
+}
+function planExportNotes(){
+  const x=planExport();
+  const bySkip={};for(const [r,why] of x.skip)(bySkip[why]=bySkip[why]||[]).push(r);
+  return `<p class="pnote">${x.k==='native'?esc(NATIVE_NOTE):x.d.note}</p>
+    ${x.pre.length?`<p class="pnote">Or use the repository's ${x.d.feedLabel} for the picked tools:
+      <code style="display:inline">${x.pre.map(esc).join(' ')}</code> &middot;
+      <a href="${REPO_URL}/tree/main/artifacts/docs/api/${x.d.feed}" target="_blank" rel="noopener">browse &#8599;</a></p>`:''}
+    ${x.skip.length?`<details class="fwskip" id="pSkip"><summary class="pnote">${x.skip.length} row${x.skip.length===1?'':'s'} this format cannot carry</summary>
+      ${Object.entries(bySkip).map(([why,rs])=>`<p class="gnote"><b>${esc(why)}</b></p><ul class="skiplist">${rs.map(r=>
+        `<li><button class="lnk" data-row="${esc(r.anchor)}">${esc(r.tool)} &middot; ${esc(r.artifact)}</button></li>`).join('')}</ul>`).join('')}
+      <p class="gnote">The native script carries every one of these as a manifest line, so nothing is lost by running both.</p></details>`:''}`;
 }
 // Grouped by volatility rather than by tool. This is the ordering a responder
 // actually works in: everything that dies at reboot, across every tool, before
@@ -1973,13 +2338,24 @@ const SEEN_WHERE={
 function drawerHTML(r){
   const t=TOOLMAP[r.entry_id]||{};
   const base=location.origin==='null'?'':location.origin+location.pathname;
-  return `<div class="dhead"><b>${esc(r.tool)} <span class="mono" style="color:var(--faint);font-size:11px">${esc(r.entry_id)}</span></b>
+  const p=r.loc_path||r.artifact;
+  // The same file can be catalogued under several classes (an MCP config is
+  // also a file on disk and a credential store). Say so, so a reader filtering
+  // by one class knows the others exist.
+  const also=[...new Set(ROWS.filter(x=>x.entry_id===r.entry_id&&x.anchor!==r.anchor
+    &&(x.loc_path||x.artifact)===p&&x.cls!==r.cls).map(x=>x.cls))];
+  return `<div class="dhead"><b>${esc(r.tool)} <span class="mono" style="color:var(--muted);font-size:11px">${esc(r.entry_id)}</span></b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
-    <div class="dsec"><h4>Locator</h4>
-      <div class="locrow"><div class="locator">${esc(r.artifact)}</div>
-        <button class="btn copybtn" id="dCopyLoc" data-v="${esc(r.artifact)}"
-          aria-label="Copy locator">copy</button></div>
+    <div class="dsec"><h4>Path</h4>
+      <div class="locrow"><div class="locator">${esc(p)}</div>
+        <button class="btn primary copybtn" id="dCopyLoc" data-v="${esc(p)}"
+          aria-label="Copy path">copy path</button></div>
+      ${r.loc_key?`<div class="lockey dkey"><i>${esc(r.loc_label)}</i> <span class="mono">${esc(r.loc_key)}</span>
+        <button class="minibtn" id="dCopyKey" data-v="${esc(r.loc_key)}" aria-label="Copy ${esc(r.loc_label)}">copy</button></div>`:''}
+      <div class="dos">${r.os_inherited?`<span class="oscell inh"><i>tool:</i> ${osList(r.os)}</span>
+        <span class="hint">${esc(OS_INH)}</span>`:osCell(r.os)}</div>
+      ${also.length?`<div class="hint">Also listed as: ${also.map(esc).join(', ')}</div>`:''}
       <div class="badgerow">${fvBadge(r.forensic_value)}
       ${confBadge(r.confidence)}
       ${r.unverified?'<span class="badge dashed b-crit">unverified</span>':''}</div>
@@ -1990,19 +2366,6 @@ function drawerHTML(r){
       ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}
       ${r.mechanism?`<div class="requires"><b>How it is defined.</b> ${
         esc(MECH_MEANING[r.mechanism]||r.mechanism)}</div>`:''}</div>
-    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
-      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
-    <div class="dsec"><h4>Tool context</h4>
-      <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
-        :'never verified against a host or a current release'}</div>
-      ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
-        ><span class="statuspill">${esc(t.status)}</span></div>`:''}
-      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
-      <p>${esc(t.description||'')}</p>
-      ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</div>
-    ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
-      ${CASES_BY_TOOL[r.entry_id].map(c=>
-        `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     <div class="dsec"><h4>Collection order</h4>
       <div class="badgerow" style="margin:0 0 8px">${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}
         <span class="badge vol v-${esc(r.vol)}" title="Volatility: ${esc(VOL_MEANING[r.vol]||'')}"
@@ -2012,13 +2375,24 @@ function drawerHTML(r){
       ${(SOURCES_FOR[r.cls]||[]).length?`<div class="dsrc"><b>Depends on</b>
         ${(SOURCES_FOR[r.cls]).map(id=>`<button class="srcjump" data-src="${esc(id)}">${esc(SRCMAP[id].name)}</button>`).join('')}</div>`:''}
       ${t.guidance?`<p>${esc(t.guidance)}</p>`:''}</div>
+    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
+    ${(CASES_BY_TOOL[r.entry_id]||[]).length?`<div class="dsec"><h4>Documented incidents</h4>
+      ${CASES_BY_TOOL[r.entry_id].map(c=>
+        `<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${t.techniques&&t.techniques.length?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${t.techniques.map(x=>
-        /^AML\./.test(x)?`<span class="tchip" data-tech="${esc(x)}">${esc(x)}</span>`
-                        :`<i>${esc(x)}</i>`).join('')}</div></div>`:''}
-    ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
-      <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
-        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
+      <div class="tech">${t.techniques.map(techChip).join('')}</div></div>`:''}
+    <div class="dsec"><h4>Sources for ${esc(r.tool)} <span class="n">&middot; ${(t.refs||[]).length}</span></h4>
+      <div class="tverify">${t.verified?`Tool last verified ${esc(t.verified)}`
+        :'Tool never verified against a host or a current release'}</div>
+      ${(t.refs||[]).length?`<ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
+        rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul>`:''}</div>
+    <details class="dsec dabout"><summary><h4>About ${esc(r.tool)}</h4></summary>
+      ${t.status&&t.status!=='active'?`<div class="badgerow" style="margin:0 0 8px"
+        ><span class="statuspill">${esc(t.status)}</span></div>`:''}
+      ${t.aliases&&t.aliases.length?`<p class="talias">also ${esc(t.aliases.join(' · '))}</p>`:''}
+      <p>${esc(t.description||'')}</p>
+      ${t.abuse?`<div class="alert"><b>Abuse potential.</b> ${esc(t.abuse)}</div>`:''}</details>
     <div class="dsec"><h4>Permalink</h4><div class="linkrow">
       <input readonly value="#${esc(r.anchor)}" aria-label="Permalink">
       <button class="btn" id="dCopyLink" data-v="${esc(base+'#'+r.anchor)}">copy link</button></div></div>
@@ -2040,6 +2414,7 @@ function openDrawer(anchor,fromEl){
   $('#dClose').focus();
   $('#dCopyLink').onclick=e=>copy(e.target.dataset.v,e.target);
   $('#dCopyLoc').onclick=e=>copy(e.target.dataset.v,e.target);
+  const ck=$('#dCopyKey'); if(ck)ck.onclick=()=>copy(ck.dataset.v,ck);
   $('#dPick').onclick=()=>{togglePick(anchor);openDrawer(anchor,lastFocus)};
   $$('#drawer .caselink').forEach(b=>b.onclick=()=>{
     pushNav();closeDrawer();view='cases';update();
@@ -2054,7 +2429,7 @@ function openDrawer(anchor,fromEl){
     if(el){el.open=true;el.scrollIntoView({block:'start'})}
   });
   wireTechChips();
-  renderMain();
+  if(!markSel())renderMain();
 }
 function closeDrawer(){
   // Remember what to return focus to before re-rendering detaches it: the row
@@ -2066,10 +2441,13 @@ function closeDrawer(){
   // drill started from inside a drawer - so the jump happened and Back had
   // nothing to go to.
   if(!navStack.length)history.replaceState(null,'',location.pathname+location.search);
-  renderMain();
+  if(!markSel())renderMain();
   const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
-  if(el)el.focus();
-  else if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
+  // Cards are articles now; focus lands on the button inside them.
+  const tgt=x=>x&&(x.matches('button,[tabindex],a[href],input,select')?x:(x.querySelector('.cardbtn')||x));
+  if(el)tgt(el).focus();
+  else if(lastFocus&&document.contains(lastFocus))tgt(lastFocus).focus();
+  writeHash();
 }
 
 /* ---------- drawer width ----------
@@ -2110,29 +2488,105 @@ function syncGrip(){
       b.onclick=()=>setDrawerW(drawerW()>=DW_WIDE()-4?DW_DEFAULT:DW_WIDE(),true);
       h.insertBefore(b,h.querySelector('.x'));
     }
-    syncGrip();
+    syncGrip(); syncDrawerModal();
   }).observe($('#drawer'),{childList:true,attributes:true,attributeFilter:['hidden']});
+  PHONE.addEventListener&&PHONE.addEventListener('change',syncDrawerModal);
   window.addEventListener('resize',syncGrip);
 })();
 
 /* ---------- clipboard ---------- */
+// Status for assistive tech. Cleared first so the same message twice in a row
+// is still announced.
+function announce(msg){
+  const s=$('#sr'); if(!s)return;
+  s.textContent=''; setTimeout(()=>{s.textContent=msg},30);
+}
 function copy(text,btn){
-  const done=()=>{if(!btn)return;const old=btn.textContent;btn.textContent='copied';
+  const done=ok=>{
+    announce(ok?'Copied to clipboard':'Copy failed. Select and copy the text.');
+    if(!btn)return;const old=btn.textContent;btn.textContent=ok?'copied':'copy failed';
     setTimeout(()=>{btn.textContent=old},1600)};
   if(navigator.clipboard&&window.isSecureContext){
-    navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));
+    navigator.clipboard.writeText(text).then(()=>done(true),()=>fallbackCopy(text,done));
   }else fallbackCopy(text,done);
 }
+// execCommand reports whether it copied. This used to ignore that and say
+// 'copied' either way.
 function fallbackCopy(text,done){
   const ta=document.createElement('textarea');
   ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
   document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy')}catch(e){}
-  ta.remove();done();
+  let ok=false;
+  try{ok=document.execCommand('copy')}catch(e){}
+  ta.remove();done(ok);
 }
 
 /* ---------- picks ---------- */
-function togglePick(a){picks.has(a)?picks.delete(a):picks.add(a);savePicks();update()}
+// A pick changes one button, the tab badge and the toast. Rebuilding #main for
+// it threw away the table's scroll position and the focused button, so a
+// responder ticking rows deep in the list was sent back to the top each time.
+function pickLabel(r,on){
+  return `${on?'Remove':'Add'} ${r.tool} ${r.cls} ${r.artifact} ${on?'from':'to'} collection plan`;
+}
+function syncPickAll(){
+  const pa=$('#pickAllCol'); if(!pa)return;
+  const anchors=filteredRows().map(r=>r.anchor);
+  const all=!!anchors.length&&anchors.every(a=>picks.has(a));
+  pa.setAttribute('aria-pressed',String(all));
+  pa.setAttribute('aria-label',`${all?'Remove all shown from':'Add all shown to'} the collection plan`);
+  pa.title=`${all?'Remove':'Pick'} all ${anchors.length} shown`;
+}
+function syncPick(a){
+  const on=picks.has(a), r=ROWMAP[a];
+  $$(`.pick[data-a="${CSS.escape(a)}"]`).forEach(p=>{
+    p.setAttribute('aria-pressed',String(on));
+    if(r)p.setAttribute('aria-label',pickLabel(r,on));
+    if(p.classList.contains('cardpick')){p.textContent=on?'In plan':'Add to plan';
+      p.classList.toggle('primary',!on);p.classList.toggle('outline-accent',on)}
+  });
+  syncPickAll();
+}
+function togglePick(a){
+  picks.has(a)?picks.delete(a):picks.add(a);savePicks();
+  if(view!=='catalog'||!$('#main .pick[data-a]')){update();return}
+  syncPick(a);renderTabs();renderToast();
+}
+PHONE.addEventListener&&PHONE.addEventListener('change',()=>{if(view==='catalog')renderMain()});
+// Arrows move the current row, Space ticks it, Enter opens it. Escape is the
+// global drawer close, which returns focus to the row.
+function rowKeys(e){
+  const tr=e.target.closest&&e.target.closest('tr[data-a]');
+  if(!tr||e.target!==tr)return;
+  const rows=$$('#main tbody tr[data-a]'), i=rows.indexOf(tr), sc=$('#main .tablescroll');
+  const page=Math.max(1,Math.floor((sc?sc.clientHeight:400)/(tr.offsetHeight||40))-1);
+  let j;
+  switch(e.key){
+    case 'ArrowDown':j=i+1;break; case 'ArrowUp':j=i-1;break;
+    case 'Home':j=0;break; case 'End':j=rows.length-1;break;
+    case 'PageDown':j=i+page;break; case 'PageUp':j=i-page;break;
+    case ' ':e.preventDefault();togglePick(tr.dataset.a);return;
+    case 'Enter':e.preventDefault();openDrawer(tr.dataset.a,tr);return;
+    default:return;
+  }
+  e.preventDefault();
+  j=Math.max(0,Math.min(rows.length-1,j));
+  if(j===i)return;
+  rows[i].tabIndex=-1; rows[j].tabIndex=0; curRow=rows[j].dataset.a;
+  rows[j].focus({preventScroll:true});
+  if(sc){
+    const th=sc.querySelector('thead').offsetHeight, top=rows[j].offsetTop, bot=top+rows[j].offsetHeight;
+    if(top-th<sc.scrollTop)sc.scrollTop=top-th;
+    else if(bot>sc.scrollTop+sc.clientHeight)sc.scrollTop=bot-sc.clientHeight;
+  }
+}
+// Mark the open row without rebuilding the table under it.
+function markSel(){
+  if(view!=='catalog'||!$('#main [data-a]'))return false;
+  $$('#main [data-a].sel').forEach(el=>el.classList.remove('sel'));
+  if(sel)$$(`#main tr[data-a="${CSS.escape(sel)}"],#main .card[data-a="${CSS.escape(sel)}"]`)
+    .forEach(el=>el.classList.add('sel'));
+  return true;
+}
 
 /* ---------- detections ---------- */
 function ruleMatches(r,skip){
@@ -2144,10 +2598,11 @@ function ruleMatches(r,skip){
     if(!have.length)return false;
     if(!have.some(v=>want.includes(v)))return false;
   }
-  if(!query)return true;
-  const hay=(r.title+' '+r.file+' '+r.description+' '+r.category+' '+r.format+' '+
-    r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+r.logsource).toLowerCase();
-  return hay.includes(query);
+  return ruleQuery(r);
+}
+function ruleQuery(r){
+  return qMatch(r.title+' '+r.file+' '+r.description+' '+r.category+' '+r.format+' '+
+    r.atlas.join(' ')+' '+r.owasp.join(' ')+' '+(r.asi||[]).join(' ')+' '+(r.attack||[]).join(' ')+' '+r.logsource);
 }
 // A data source covers a named set of rule files, which is not a facet and not
 // a substring - the search box could only ever match one of the five. This is
@@ -2157,7 +2612,8 @@ const filteredRules=()=>RULES.filter(r=>
   (!ruleSet||ruleSet.has(r.file))&&ruleMatches(r,null));
 
 function ruleRailHTML(){
-  return Object.keys(RGROUPS).map(g=>{
+  // A facet with one value is not a choice. Format is Sigma on every rule.
+  return Object.keys(RGROUPS).filter(g=>ROPTIONS[g].length>1||rfilters[g].length).map(g=>{
     const counts={};
     for(const r of RULES){
       if(!ruleMatches(r,g))continue;
@@ -2174,18 +2630,18 @@ function ruleRailHTML(){
   }).join('');
 }
 function rulesHTML(rules){
-  if(!rules.length)return `<div class="empty">No rules match those filters.
-    <button class="btn" onclick="resetAll()">Reset filters</button></div>`;
+  if(!rules.length)return emptyHTML(true);
+  const oneFmt=ROPTIONS.fmt.length<2;
   return '<div class="rulegrid">'+rules.map(r=>`
-    <button class="rule" data-f="${esc(r.path)}">
-      <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
+    <article class="rule" data-f="${esc(r.path)}">
+      <div class="rtop"><div><h3 class="rname"><button type="button" class="cardbtn">${esc(r.title)}</button></h3>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
       ${r.description?`<p class="rdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
-      <div class="rfoot"><span class="fmt">${esc(r.format)}</span>
-        ${r.atlas.map(a=>`<span class="tchip">${esc(a)}</span>`).join('')}
-        ${r.owasp.map(o=>`<span class="tchip">${esc(o)}</span>`).join('')}</div>
-    </button>`).join('')+'</div>';
+      <div class="rfoot">${oneFmt?'':`<span class="fmt">${esc(r.format)}</span>`}
+        ${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(x=>
+          `<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('')}</div>
+    </article>`).join('')+'</div>';
 }
 function ruleDrawerHTML(r){
   const base=location.origin==='null'?'':location.origin+location.pathname;
@@ -2198,12 +2654,11 @@ function ruleDrawerHTML(r){
           aria-label="Copy rule path">copy</button></div>
       <div class="badgerow"><span class="fmt">${esc(r.format)}</span>
         ${r.level?badge(r.level,r.level==='critical','level'):''}
-        ${r.status?badge(r.status,false):''}</div></div>
+        ${r.status?`<span class="statuspill" title="Rule status">${esc(r.status)}</span>`:''}</div></div>
     ${r.description?`<div class="dsec"><h4>What it detects</h4><p>${esc(r.description)}</p></div>`:''}
     ${r.logsource?`<div class="dsec"><h4>Telemetry</h4><p>${esc(r.logsource)}</p></div>`:''}
-    ${(r.atlas.length||r.owasp.length)?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${r.atlas.map(a=>`<span class="tchip" data-tech="${esc(a)}">${esc(a)}</span>`).join('')}
-      ${r.owasp.map(o=>`<span class="tchip" data-owasp="${esc(o)}">${esc(o)}</span>`).join('')}</div></div>`:''}
+    ${(r.atlas.length||r.owasp.length||(r.asi||[]).length||(r.attack||[]).length)?`<div class="dsec"><h4>Mapped techniques</h4>
+      <div class="tech">${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(techChip).join('')}</div></div>`:''}
     ${(()=>{const cs=CASES.filter(c=>(c.detections||[]).includes(r.file));
       const ac=INTEL.actors.filter(a=>a.derived.detections_by_technique.includes(r.file)||a.derived.detections_cited.includes(r.file));
       return (cs.length||ac.length)?`<div class="dsec"><h4>Cited by</h4>
@@ -2245,7 +2700,7 @@ function toolDrawerHTML(t){
   const unv=rows.filter(r=>r.unverified).length;
   const cs=CASES_BY_TOOL[t.entry_id]||[];
   return `<div class="dhead"><b>${esc(t.tool)} <span class="mono"
-      style="color:var(--faint);font-size:11px">${esc(t.entry_id)}</span></b>
+      style="color:var(--muted);font-size:11px">${esc(t.entry_id)}</span></b>
     <button class="x" id="dClose" aria-label="Close">&#10005;</button></div>
   <div class="dbody">
     <div class="dsec">
@@ -2280,7 +2735,7 @@ function toolDrawerHTML(t){
     ${cs.length?`<div class="dsec"><h4>Documented incidents <span class="n">${cs.length}</span></h4>
       ${cs.map(c=>`<button class="caselink" data-cs="${esc(c.id)}">${esc(c.title)}</button>`).join('')}</div>`:''}
     ${(t.techniques||[]).length?`<div class="dsec"><h4>Mapped techniques</h4>
-      <div class="tech">${t.techniques.map(x=>`<span class="tchip">${esc(x)}</span>`).join('')}</div></div>`:''}
+      <div class="tech">${t.techniques.map(techChip).join('')}</div></div>`:''}
     ${(t.refs||[]).length?`<div class="dsec"><h4>Sources <span class="n">${t.refs.length}</span></h4>
       <ul class="drefs">${t.refs.map(r=>`<li><a href="${esc(r.url)}" target="_blank"
         rel="noopener">${esc(r.title||r.url)}</a></li>`).join('')}</ul></div>`:''}
@@ -2306,6 +2761,7 @@ function openToolDrawer(id,fromEl){
     filters.tool=[t.tool];if(cls)filters.cls=[cls];
     view='catalog';update()};
   $('#dAllRows').onclick=()=>drill(null);
+  wireTechChips();
   // Tools -> a populated plan without going through the table. Reuses picks and
   // savePicks rather than introducing a second path into the plan, so anything
   // added here behaves exactly like a row ticked by hand. Add-only on purpose:
@@ -2360,14 +2816,51 @@ function openRuleDrawer(key,fromEl){
   wireTechChips();
   wireIntelLinks('#drawer');
 }
-function wireTechChips(){
-  $$('#drawer .tchip[data-tech],#drawer .tchip[data-owasp]').forEach(c=>c.onclick=()=>{
-    const t=c.dataset.tech,o=c.dataset.owasp;
-    closeDrawer();
-    resetRuleFilters();
-    if(t)rfilters.ratlas=[t]; else rfilters.rowasp=[o];
-    view='rules'; update();
+// Technique chips say which technique, not just its id, and are buttons. One
+// press opens two choices: filter Detections to it, or open it in Mappings.
+const TECH_KIND=id=>/^AML\./.test(id)?'ratlas':/^LLM\d/.test(id)?'rowasp':/^ASI\d/.test(id)?'rasi':/^T\d{4}/.test(id)?'rattack':'';
+let TECH_NAMES=null;
+function techName(id){
+  if(!TECH_NAMES){TECH_NAMES={};
+    ATLAS_INDEX.forEach(i=>{TECH_NAMES[i.id]=i.title});OWASP_INDEX.forEach(i=>{TECH_NAMES[i.id]=i.title});
+    Object.assign(TECH_NAMES,INTEL.asi||{},INTEL.attack_names||{})}
+  return TECH_NAMES[id]||(typeof TNAME==='function'?TNAME(id):'')||'';
+}
+function techChip(id){
+  const k=TECH_KIND(id), n=techName(id);
+  return k?`<button type="button" class="tchip" data-tk="${k}" data-tid="${esc(id)}" aria-haspopup="menu"
+    aria-expanded="false">${esc(id)}${n?` &middot; ${esc(n)}`:''}</button>`:`<i>${esc(id)}</i>`;
+}
+function closeTechMenu(){
+  const m=$('#drawer .tmenu'); if(!m)return;
+  const c=m.previousElementSibling; if(c)c.setAttribute('aria-expanded','false'); m.remove();
+}
+function techMenu(c){
+  const open=$('#drawer .tmenu');
+  if(open){const same=open.previousElementSibling===c;closeTechMenu();if(same)return}
+  const m=document.createElement('span'); m.className='tmenu'; m.setAttribute('role','menu');
+  m.innerHTML='<button type="button" role="menuitem" data-act="filter">Filter detections to this technique</button>'
+    +'<button type="button" role="menuitem" data-act="map">Open in Mappings</button>';
+  c.after(m); c.setAttribute('aria-expanded','true');
+  const items=[...m.querySelectorAll('button')]; items[0].focus();
+  m.onkeydown=e=>{const i=items.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();
+      items[(i+(e.key==='ArrowDown'?1:-1)+items.length)%items.length].focus()}
+    else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeTechMenu();c.focus()}};
+  items.forEach(b=>b.onclick=()=>{
+    const id=c.dataset.tid, k=c.dataset.tk;
+    closeTechMenu(); pushNav(); closeDrawer();
+    if(b.dataset.act==='filter'){resetRuleFilters();rfilters[k]=[id];view='rules';update();window.scrollTo(0,0)}
+    else{view='mappings';update();
+      // Index rows carry data-x; the ATLAS coverage table keys by data-t and
+      // counts subtechniques against their parent.
+      const sel=x=>$(`#main [data-x="${CSS.escape(x)}"],#main [data-t="${CSS.escape(x)}"]`);
+      const row=sel(id)||sel(id.replace(/\.\d{3}$/,''));
+      if(row){row.scrollIntoView({block:'center'});row.classList.add('flash')}else window.scrollTo(0,0)}
   });
+}
+function wireTechChips(){
+  $$('#drawer .tchip[data-tid]').forEach(c=>c.onclick=e=>{e.stopPropagation();techMenu(c)});
 }
 function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
   ruleSet=null;query='';$('#q').value=''}
@@ -2552,11 +3045,11 @@ function coverageHTML(){
     </div>
     <div class="covctl">
       <input type="search" id="covQ" value="${esc(covQ)}" placeholder="Filter techniques: id, title, tactic" aria-label="Filter techniques">
-      <div class="seg small" role="group" aria-label="Show"><button class="segbtn${covOnly==='all'?' on':''}" data-only="all">All</button>
-        <button class="segbtn${covOnly==='gap'?' on':''}" data-only="gap">Gaps</button>
-        <button class="segbtn${covOnly==='thin'?' on':''}" data-only="thin">Thin</button>
-        <button class="segbtn${covOnly==='norule'?' on':''}" data-only="norule">No rule</button>
-        <button class="segbtn${covOnly==='observed'?' on':''}" data-only="observed">Observed</button></div>
+      <div class="seg small" role="group" aria-label="Show"><button class="segbtn${covOnly==='all'?' on':''}" data-only="all" aria-pressed="${covOnly==='all'}">All</button>
+        <button class="segbtn${covOnly==='gap'?' on':''}" data-only="gap" aria-pressed="${covOnly==='gap'}">Gaps</button>
+        <button class="segbtn${covOnly==='thin'?' on':''}" data-only="thin" aria-pressed="${covOnly==='thin'}">Thin</button>
+        <button class="segbtn${covOnly==='norule'?' on':''}" data-only="norule" aria-pressed="${covOnly==='norule'}">No rule</button>
+        <button class="segbtn${covOnly==='observed'?' on':''}" data-only="observed" aria-pressed="${covOnly==='observed'}">Observed</button></div>
       <label class="covtog"><input type="checkbox" id="covGroup"${covGroup?' checked':''}> Group by tactic</label>
       <span class="muted">${rows.length} of ${all.length}</span>
     </div>
@@ -2640,6 +3133,7 @@ function iocGroups(iocs){
       return (x<0?99:x)-(y<0?99:y)||a.localeCompare(b)})
     .map(k=>({kind:k,items:by[k]}));
 }
+const firstSentence=t=>{const m=String(t||'').match(/^.*?[.!?](?=\s|$)/);return m?m[0]:String(t||'')};
 function caseStudiesHTML(){
   // Newest disclosure first: the case a responder is most likely chasing.
   const LIST=(caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES.slice())
@@ -2654,8 +3148,8 @@ function caseStudiesHTML(){
     catalog, with the indicators each left behind and what responders did about it.
     Every case records where its claims came from, because several of these rest on
     a single reporting party.</p>
-    <p class="csconf">Provenance: ${esc(tally)}</p>
-    ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <s>&#10005;</s></button>`:''}</div>
+    <p class="csconf">Sourcing: ${esc(tally)}</p>
+    ${caseOnly?`<button class="chip" id="csOnly">${LIST.length} of ${CASES.length} from a Threat intel pivot <span aria-hidden="true">&#10005;</span></button>`:''}</div>
     <button class="btn" id="csAll" data-open="0">Expand all</button></div>
     <div class="csgrid">`+
   LIST.map(c=>{
@@ -2678,7 +3172,8 @@ function caseStudiesHTML(){
             c.disclosed?' · disclosed '+esc(c.disclosed):''}</div>
           <div class="csmeta csaff">${known.length?esc(known.map(k=>k.tool).join(', ')):
             c.affects?esc(c.affects):''}</div>
-          <p class="csbrief">${esc(c.summary)}</p></div>
+          <p class="csbrief">${esc(c.summary)}</p>
+          ${c.basis?`<p class="csbasis1"><b>Why ${esc(c.confidence||'')}:</b> ${esc(firstSentence(c.basis))}</p>`:''}</div>
         <div class="cstally">
           ${n?`<span class="csn" title="published indicators">${n} IOC${n>1?'s':''}</span>`:''}
           ${(c.detections||[]).length?`<span class="csn" title="detection rules in this repo"
@@ -2692,6 +3187,7 @@ function caseStudiesHTML(){
         ${known.length?known.map(k=>`<button class="btn csjump" data-t="${esc(k.tool)}"
           data-id="${esc(k.entry_id)}">${esc(k.tool)} artifacts &#8594;</button>`).join('')
         :''}
+        <button type="button" class="btn cscopy" data-cs="${esc(c.id)}">copy link</button>
       </div>
       <p class="cssum">${esc(c.summary)}</p>
       ${c.confidence?`<div class="csprov">
@@ -2699,6 +3195,7 @@ function caseStudiesHTML(){
         ${c.basis?`<span class="csbasis">${esc(c.basis)}</span>`:''}
       </div>`:''}
       ${c.contested?`<div class="csdispute"><b>Disputed.</b> ${esc(c.contested)}</div>`:''}
+      ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
       ${(c.actors||[]).length?`<div class="csprov"><b>Attributed to</b> ${c.actors.map(l=>
         `<button class="lchip csactor" data-actor="${esc(l.ref)}">${esc((ACTORMAP[l.ref]||{}).name||l.ref)}</button>
          ${confBadge(l.link_confidence)} <span class="csbasis">${esc(l.attributed_by)}${
@@ -2723,7 +3220,6 @@ function caseStudiesHTML(){
               esc(a.action)}</li>`).join('')}</ol>`:`<p class="muted">None recorded.</p>`}
         </div>
       </div>
-      ${c.lesson?`<div class="lesson"><b>Lesson.</b> ${esc(c.lesson)}</div>`:''}
       ${(c.detections||[]).length?`<div class="csdet">
         <h4>Detections in this repo <span class="n">${c.detections.length}</span></h4>
         <div class="detrow">${c.detections.map(d=>
@@ -2844,7 +3340,7 @@ function timelineHTML(){
       <div class="tltip" hidden></div></div>
   </figure>
   <div class="tlwrap"><table class="tltable"><thead><tr><th>Disclosed</th><th>Incident</th>
-    <th>Tools involved</th><th>Confidence</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <th>Tools involved</th><th>Sourcing</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function wireTimeline(){
   const svg=$('#main .tlplot svg'); if(!svg)return;
@@ -2861,6 +3357,154 @@ function wireTimeline(){
     r.addEventListener('mouseleave',()=>{tip.hidden=true;cross.setAttribute('visibility','hidden')});
   });
 }
+/* ---------- landing: start from the alert ----------
+   A responder arrives with a tool name, not a question about the catalog.
+   Three answers - which tool, where the AI ran, what role it played - route to
+   that tool's rows in collection order without leaving the landing view. The
+   choices are held in memory only: nothing about a case is written to storage. */
+const AL_WHERE=[['host','On your hosts'],['api','Attacker code on your host calls a model API'],
+  ['acct','Your AI accounts or keys, used from elsewhere'],['infra',"On the attacker's own infrastructure"]];
+const AL_ROLE=[['target','Target'],['wayin','Way in'],['tool',"Attacker's tool"],['bystander','Bystander'],['unsure','Not sure yet']];
+// The guide's own words for each role ("Is this an AI incident?" table).
+const AL_ROLE_HELP={
+  target:'The AI system itself is what was compromised. The guide picks this up in Part II, sections 2 and 3.',
+  wayin:'Content the AI read made it act for the attacker. The guide picks this up in Part II, section 1.',
+  tool:'The adversary used AI to run the operation. The guide picks this up in Part II, sections 1 and 4.',
+  bystander:'Not this guide. Run your normal investigation and note the tool in the report.',
+  unsure:'You do not have to prove AI to act. Collect what disappears first and settle the role as the evidence comes in.'};
+// The tempo signs from "Where did the AI run?", for the branch where the AI
+// ran on the attacker's side and no row in the catalog applies.
+const AL_SIGNS=[
+  ['Tempo','Actions seconds apart, sustained for hours, faster than a person can read the output of the last step.'],
+  ['Breadth in parallel','Many hosts, accounts or targets worked at the same time rather than one after another.'],
+  ['Fast, specific correction','A failed step retried within seconds with exactly the fix the error called for.'],
+  ['Prose where no operator writes it','Scripts and one-line commands carrying explanatory comments or step-by-step reasoning.'],
+  ['Plausible but wrong details','Paths, package names or values that look right and do not exist, or are copied from documentation examples.']];
+let alTool=null, alWhere='host', alRole='unsure', alMore=false, alHits=[], alAct=-1;
+const alRadios=(name,opts,cur,cls)=>`<div class="${cls}">${opts.map(([v,l])=>
+  `<label class="alopt"><input type="radio" name="${name}" value="${v}"${cur===v?' checked':''}><span>${esc(l)}</span></label>`).join('')}</div>`;
+const alHelp=()=>{const l=(AL_ROLE.find(x=>x[0]===alRole)||[])[1];return `<b>${esc(l)}:</b> ${esc(AL_ROLE_HELP[alRole])}`};
+function alertBlockHTML(){
+  return `<div class="alstart" id="alBlock"><h3>Start from the alert</h3>
+    <label class="allab" for="alTool">Which tool did the alert name?</label>
+    <div class="alcombo"><input id="alTool" type="text" role="combobox" autocomplete="off" spellcheck="false"
+      aria-expanded="false" aria-controls="alList" aria-autocomplete="list"
+      placeholder="Cursor, Claude Code, Ollama..." value="${alTool?esc(alTool.tool):''}">
+      <ul id="alList" role="listbox" aria-label="Tools" hidden></ul></div>
+    <fieldset class="alq"><legend class="allab">Where did the AI run?</legend>
+      ${alRadios('alwhere',AL_WHERE,alWhere,'algrid')}</fieldset>
+    <fieldset class="alq"><legend class="allab">What role did it play?</legend>
+      ${alRadios('alrole',AL_ROLE,alRole,'alpills')}</fieldset>
+    <p class="alhelp" id="alHelp">${alHelp()}</p></div>`;
+}
+function alertResultHTML(t){
+  const rows=ROWS.filter(r=>r.entry_id===t.entry_id)
+    .sort((a,b)=>(volRank(a)-volRank(b))||cmpKey('triage',a,b)||cmpKey('entry_id',a,b));
+  const conf={high:0,medium:0,low:0}; rows.forEach(r=>{if(r.confidence in conf)conf[r.confidence]++});
+  const unv=rows.filter(r=>r.unverified).length, volatile=rows.filter(r=>r.vol&&r.vol!=='stable').length;
+  const by={}; rows.forEach(r=>(by[r.vol]=by[r.vol]||[]).push(r));
+  const head=`<div class="alrh"><b>${esc(t.tool)}</b><span class="mono">${esc(t.entry_id)}</span>
+      ${triageBadge(t.triage)}${riskBadge(t.risk,'risk')}</div>
+    <div class="alrmeta"><span>${rows.length} artifacts</span>
+      <span>sourcing: ${['high','medium','low'].filter(k=>conf[k]).map(k=>`${conf[k]} ${k}`).join(' &middot; ')}</span>
+      ${unv?`<span>${unv} unverified</span>`:''}
+      <span>${t.verified?`last verified ${esc(t.verified)}`:'never verified against a host'}</span></div>`;
+  let body;
+  if(alRole==='bystander'){
+    body=`<p class="alnote">${esc(AL_ROLE_HELP.bystander)}</p>`;
+  }else if(alWhere==='infra'){
+    body=`<p class="alnote">No AI artifact at all. The attacker's AI ran on their own infrastructure, so
+      ${esc(t.tool)}'s rows describe a machine you do not have. What reaches you is a conventional
+      intrusion at machine tempo; read your normal IR evidence for these signs:</p>
+      <ul class="alsigns">${AL_SIGNS.map(([k,v])=>`<li><b>${esc(k)}.</b> ${esc(v)}</li>`).join('')}</ul>
+      <a class="lnk" href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a>`;
+  }else if(alWhere==='acct'){
+    body=`<p class="alnote">Nothing on any host. Usage you did not make shows in the provider's audit log;
+      the host rows only say where the key or token sits.</p>
+      <button type="button" class="btn" data-algo="sources">Open Data sources</button>`;
+  }else{
+    body=VOL_TIERS.filter(v=>by[v]).map(v=>{
+      const list=by[v], cut=v==='stable'&&!alMore&&list.length>2?2:list.length;
+      return `<div class="altier t-${v}"><div class="alth">${vgroupLabel(v,list.length)}</div>
+        <ul>${list.slice(0,cut).map(r=>`<li><span class="alcls">${esc(r.cls)}</span>
+          <span class="mono">${pathHTML(r.loc_path||r.artifact)}</span></li>`).join('')}</ul>
+        ${cut<list.length?`<button type="button" class="lnk almore" id="alMore">${list.length-cut} more</button>`:''}</div>`;
+    }).join('')
+    +`<div class="alphone">${VOL_TIERS.filter(v=>by[v]&&v!=='live').map(v=>
+      `<span class="badge vol v-${v}">${v} &middot; ${by[v].length}</span>`).join('')}</div>`
+    +(t.guidance?`<p class="alguid">${esc(t.guidance)}</p>`:'');
+  }
+  const acts=alRole==='bystander'?'':`<div class="alacts">
+      ${volatile?`<button type="button" class="btn primary-phone" id="alVol">Add volatile (${volatile})</button>`:''}
+      <button type="button" class="btn" id="alAll">Add all ${rows.length}</button>
+      <button type="button" class="btn primary" id="alShow">Show all ${rows.length} artifacts &#8594;</button></div>`;
+  return `<div class="alres" aria-live="polite">${head}${body}${acts}</div>`;
+}
+function alMatches(q){
+  q=normQ(q).trim(); if(!q)return [];
+  const hits=TOOLS.filter(t=>qMatch([t.tool,t.entry_id,t.vendor,(t.aliases||[]).join(' ')].join(' '),q));
+  // Names that start with what was typed come first: "curs" is Cursor.
+  return hits.sort((a,b)=>(normQ(b.tool).startsWith(q)-normQ(a.tool).startsWith(q))||a.tool.localeCompare(b.tool)).slice(0,8);
+}
+function alRenderList(){
+  const ul=$('#alList'), inp=$('#alTool');
+  if(!alHits.length){ul.hidden=true;inp.setAttribute('aria-expanded','false');inp.removeAttribute('aria-activedescendant');return}
+  ul.innerHTML=alHits.map((t,i)=>`<li role="option" id="alOpt${i}" data-i="${i}" aria-selected="${i===alAct}">
+    <b>${esc(t.tool)}</b><span class="mono">${esc(t.entry_id)}</span>
+    <span class="alv">${esc(t.vendor||'')} &middot; ${t.n} artifacts</span></li>`).join('');
+  ul.hidden=false; inp.setAttribute('aria-expanded','true');
+  if(alAct>=0)inp.setAttribute('aria-activedescendant','alOpt'+alAct);else inp.removeAttribute('aria-activedescendant');
+  $$('#alList li').forEach(li=>li.onmousedown=e=>{e.preventDefault();alChoose(alHits[+li.dataset.i])});
+}
+function alChoose(t){
+  alTool=t||null; alMore=false; alHits=[]; alAct=-1;
+  if(t)$('#alTool').value=t.tool;
+  alRenderList(); alRenderResult();
+}
+function wireOvis(){
+  $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
+    pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
+}
+function alRenderResult(){
+  const side=$('#alSide'); if(!side)return;
+  side.innerHTML=alTool?alertResultHTML(alTool):orientVisHTML();
+  if(!alTool){wireOvis();return}
+  const t=alTool;
+  const add=(pred,btn)=>{
+    const target=ROWS.filter(r=>r.entry_id===t.entry_id).filter(pred);
+    const added=target.filter(r=>!picks.has(r.anchor)).length;
+    target.forEach(r=>picks.add(r.anchor)); savePicks(); renderTabs(); renderToast();
+    btn.disabled=true; btn.textContent=added?`Added ${added}`:'Already in plan';
+    announce(added?`${added} added to the collection plan`:'Already in the collection plan');
+  };
+  const v=$('#alVol'); if(v)v.onclick=()=>add(r=>r.vol&&r.vol!=='stable',v);
+  const a=$('#alAll'); if(a)a.onclick=()=>add(()=>true,a);
+  const sh=$('#alShow'); if(sh)sh.onclick=()=>{pushNav();resetFilters();filters.tool=[t.tool];
+    view='catalog';update();window.scrollTo(0,0)};
+  const m=$('#alMore'); if(m)m.onclick=()=>{alMore=true;alRenderResult()};
+  $$('#alSide [data-algo]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.algo;update();window.scrollTo(0,0)});
+}
+function wireAlert(){
+  const inp=$('#alTool'); if(!inp)return;
+  inp.oninput=()=>{alHits=alMatches(inp.value);alAct=alHits.length?0:-1;alRenderList();
+    if(!inp.value.trim()&&alTool){alTool=null;alRenderResult()}};
+  inp.onkeydown=e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      if(!alHits.length){alHits=alMatches(inp.value);alAct=-1}
+      if(!alHits.length)return;
+      e.preventDefault();
+      alAct=(alAct+(e.key==='ArrowDown'?1:-1)+alHits.length)%alHits.length;alRenderList();
+    }else if(e.key==='Enter'){
+      if(!alHits.length)alHits=alMatches(inp.value);
+      if(alHits.length){e.preventDefault();alChoose(alHits[Math.max(0,alAct)])}
+    }else if(e.key==='Escape'){if(alHits.length){e.preventDefault();e.stopPropagation();alHits=[];alAct=-1;alRenderList()}}
+  };
+  inp.onblur=()=>setTimeout(()=>{alHits=[];alAct=-1;alRenderList()},120);
+  $$('#alBlock input[name=alwhere]').forEach(r=>r.onchange=()=>{alWhere=r.value;alRenderResult()});
+  $$('#alBlock input[name=alrole]').forEach(r=>r.onchange=()=>{alRole=r.value;$('#alHelp').innerHTML=alHelp();alRenderResult()});
+  if(alTool)alRenderResult();
+}
+
 function guideHTML(){
   const toc=GUIDE.toc.map(p=>
     `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
@@ -2868,6 +3512,7 @@ function guideHTML(){
   ).join('');
   return `<section class="orient"><div class="otext">
     <h2>AI agents leave evidence most IR playbooks never collect</h2>
+    ${alertBlockHTML()}
     <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
       configuration to disk that show what the agent was told and what it did. This site
       says where those traces are, what each one proves, and in what order to collect them.</p>
@@ -2881,7 +3526,7 @@ function guideHTML(){
         <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
     </ol>
     ${orientTrustHTML()}</div>
-    ${orientVisHTML()}
+    <div id="alSide">${alTool?'':orientVisHTML()}</div>
   </section>
   <div class="guidewrap">
     <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
@@ -2889,26 +3534,53 @@ function guideHTML(){
   </div>`;
 }
 
+/* ---------- diagram overlay ----------
+   The inline diagram is capped so it does not take over the page, which leaves
+   a tall flowchart's labels too small to read. Enlarging opens it at natural
+   size in an overlay sized to the viewport, so the text below never moves. */
+function openDiagram(f){
+  const svg=f.querySelector('svg'); if(!svg)return;
+  const vb=svg.viewBox&&svg.viewBox.baseVal;
+  const ov=document.createElement('div'); ov.id='mmdView'; ov.setAttribute('role','dialog');
+  ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','Diagram');
+  ov.innerHTML='<div class="mmdbox"><button type="button" class="btn mmdx">Close</button><div class="mmdscroll"></div></div>';
+  const c=svg.cloneNode(true);
+  c.removeAttribute('style'); c.style.maxWidth='none'; c.style.height='auto';
+  c.style.width=vb&&vb.width?`min(${Math.round(vb.width)}px,100%)`:'100%';
+  ov.querySelector('.mmdscroll').appendChild(c);
+  document.body.appendChild(ov); f.setAttribute('aria-expanded','true');
+  setInert('.skip,.hdr,.shell,footer,#toast,#drawer',true);
+  const close=()=>{ov.remove();f.setAttribute('aria-expanded','false');
+    setInert('.skip,.hdr,.shell,footer,#toast,#drawer',false);syncDrawerModal();f.focus()};
+  ov.querySelector('.mmdx').onclick=close;
+  ov.onclick=e=>{if(e.target===ov)close()};
+  ov.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close()}
+    else if(e.key==='Tab'){e.preventDefault();ov.querySelector('.mmdx').focus()}};
+  ov.querySelector('.mmdx').focus();
+}
+
 /* ---------- render ---------- */
 function renderMain(){
   const shell=$('.shell');
   const railed=(view==='catalog'||view==='rules');
   shell.classList.toggle('nocol',!railed);
-  $('#controls').hidden=!railed;
-  $('#scopeNote').hidden=!(view==='catalog'&&!scopeHidden);
+  $('#controls').hidden=!(railed||view==='tools');
+  $('#pickAllBtn').hidden=view!=='catalog';
+  $('.exportgrp').hidden=view!=='catalog';
+  $('#scopeNote').hidden=view!=='catalog';syncScope();
   $('#unvBtn').hidden=view!=='catalog';
   $('#denseBtn').hidden=view!=='catalog';
   $('#metaRow').hidden=!railed;
   $('#q').placeholder=view==='rules'?'Search rules, techniques, telemetry...'
-                                    :'Search paths, tools, descriptions...';
+    :view==='tools'?'Search tools, vendors, aliases...':'Search paths, tools, descriptions...';
   const main=$('#main');
   if(view==='rules'){
     const rules=filteredRules();
     $('#count').textContent=`${rules.length} of ${RULES.length} shown`;
     $('#chips').innerHTML=(ruleSet?`<button class="chip" data-rset="1"
-      >${ruleSet.size} rule${ruleSet.size>1?'s':''} for one data source <s>&#10005;</s></button>`:'')
+      >${ruleSet.size} rule${ruleSet.size>1?'s':''} for one data source <span aria-hidden="true">&#10005;</span></button>`:'')
       +Object.keys(rfilters).flatMap(g=>rfilters[g].map(v=>
-      `<button class="chip" data-rg="${g}" data-v="${esc(v)}">${esc(v)} <s>&#10005;</s></button>`)).join('');
+      `<button class="chip" data-rg="${g}" data-v="${esc(v)}" aria-label="Remove filter ${esc(v)}">${esc(v)} <span aria-hidden="true">&#10005;</span></button>`)).join('');
     // One handler for every chip in this bar. The data-source chip is not a
     // facet, so it has no rfilters group - wiring it separately meant this
     // loop reassigned .onclick over the top of it and then threw on the
@@ -2920,6 +3592,7 @@ function renderMain(){
       update();
     });
     main.innerHTML=rulesHTML(rules);
+    wireEmpty();
     $$('#main .rule').forEach(el=>el.onclick=()=>openRuleDrawer(el.dataset.f,el));
     renderTabs();renderToast();renderBack();return;
   }
@@ -3043,12 +3716,14 @@ function renderMain(){
     $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
     $$('#main [data-unv]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();unvOnly=true;
       $('#unvBtn').setAttribute('aria-pressed','true');view='catalog';update();window.scrollTo(0,0)});
-    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.title='Click to enlarge';
-      const t=()=>{f.classList.toggle('big');f.title=f.classList.contains('big')?'Click to shrink':'Click to enlarge'};
-      f.onclick=t;f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
-    $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
-      pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
+    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.setAttribute('role','button');
+      f.setAttribute('aria-label','Enlarge diagram');f.setAttribute('aria-expanded','false');
+      if(!f.querySelector('.mmdhint'))f.insertAdjacentHTML('beforeend','<span class="mmdhint" aria-hidden="true">Click to enlarge</span>');
+      f.onclick=()=>openDiagram(f);
+      f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDiagram(f)}}});
+    wireOvis();
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
+    wireAlert();
     wireTimeline();
     renderTabs();renderToast();renderBack();return;
   }
@@ -3062,25 +3737,38 @@ function renderMain(){
       else{const a=filters[c.dataset.g],i=a.indexOf(c.dataset.v);if(i>=0)a.splice(i,1)}
       update();
     });
-    main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${tableHTML(rows)}</div>
-      <div class="cards">${cardsHTML(rows)}</div>`;
+    // Only the layout in use is rendered: the phone cards and the desktop
+    // table together doubled the DOM and every control in it.
+    const phone=PHONE.matches;
+    main.innerHTML=`<div class="tablewrap ${dense?'dense':''}">${phone?'':tableHTML(rows)}</div>
+      <div class="cards">${phone?cardsHTML(rows):''}</div>`;
+    wireEmpty();
     const sortBy=k=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1}renderMain()};
     $$('#main th[data-k]').forEach(th=>{
       th.onclick=()=>sortBy(th.dataset.k);
       th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sortBy(th.dataset.k)}};
     });
-    $$('#main tbody tr,#main .card').forEach(el=>{
+    $$('#main .card').forEach(el=>{
       const open=()=>openDrawer(el.dataset.a,el);
       el.onclick=open;
-      el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
+      el.onkeydown=e=>{if(e.target!==el)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
     });
+    $$('#main tbody tr[data-a]').forEach(tr=>{
+      tr.onclick=()=>openDrawer(tr.dataset.a,tr);
+      tr.onfocus=()=>{curRow=tr.dataset.a};
+    });
+    const tb=$('#main tbody'); if(tb)tb.onkeydown=rowKeys;
     $$('#main .pick:not(.all)').forEach(p=>p.onclick=e=>{e.stopPropagation();togglePick(p.dataset.a)});
+    $$('#main .cpath').forEach(b=>b.onclick=e=>{e.stopPropagation();copy(b.dataset.v,b)});
     const pa=$('#pickAllCol');
     if(pa)pa.onclick=e=>{e.stopPropagation();togglePickAll(e.currentTarget)};
   }else if(view==='cases'){
     main.innerHTML=caseStudiesHTML();
     $$('#main .csactor').forEach(b=>b.onclick=e=>{e.preventDefault();openActorDrawer(b.dataset.actor,b)});
     const co=$('#csOnly');if(co)co.onclick=()=>{caseOnly=null;renderMain()};
+    $$('#main .cscopy').forEach(b=>b.onclick=()=>{
+      const base=location.origin==='null'?'':location.origin+location.pathname;
+      copy(base+'#cs-'+b.dataset.cs,b)});
     $$('#main .csjump').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.tool=[b.dataset.t];view='catalog';
       history.replaceState(null,'','#'+b.dataset.id);
@@ -3107,6 +3795,7 @@ function renderMain(){
     // drill-down is still one click, from inside the drawer, where it is a
     // deliberate move rather than the only thing a click can do.
     $$('#main .tool').forEach(c=>c.onclick=()=>openToolDrawer(c.dataset.id,c));
+    wireEmpty();
   }else{
     main.innerHTML=`<div class="planwrap${picks.size?' has-build':''}"><div class="planmain">${planHTML()}</div>${triageHTML()}</div>`;
     wireTriage();
@@ -3124,6 +3813,13 @@ function renderMain(){
     const sw=$('#pSwitch'); if(sw)sw.onchange=()=>switchPlan(sw.value);
     const nw=$('#pNew'); if(nw)nw.onclick=()=>createPlan('');
     $$('#main .segbtn[data-mode]').forEach(b=>b.onclick=()=>{planMode=b.dataset.mode;renderMain()});
+    const ex=$('#pExport');
+    if(ex)ex.onchange=()=>{triageFw=ex.value;renderMain();const n=$('#pExport');if(n)n.focus()};
+    const pd=$('#pDl');
+    if(pd)pd.onclick=()=>{const x=planExport();download(x.name,x.text.replace(/\r?\n/g,x.eol),x.mime);flash(pd,'downloaded')};
+    const pc=$('#pCopy');if(pc)pc.onclick=()=>copy(planExport().text,pc);
+    const sl=$('#pSkipLnk');if(sl)sl.onclick=e=>{e.preventDefault();const d=$('#pSkip');if(d){d.open=true;d.querySelector('summary').focus()}};
+    $$('#main .pcard .fwskip [data-row]').forEach(b=>b.onclick=()=>openDrawer(b.dataset.row,b));
     const cl=$('#cpClear');
     // Two-step, because a plan is assembled one tick at a time across the whole
     // catalog and there is no undo for throwing it away.
@@ -3149,7 +3845,25 @@ function renderBack(){
     // straight into a jump there may not be, so fall back to the stack.
     setTimeout(()=>{if(navStack.length&&$('#backbar').firstChild===b)goBack()},60)};
 }
+// The strip scrolls sideways; the selected tab is brought into it by setting
+// scrollLeft. scrollIntoView would also scroll the page.
+function syncTabStrip(){
+  const t=$('.tabs'); if(!t)return;
+  const cur=t.querySelector('[aria-selected=true]');
+  if(cur){
+    const l=cur.offsetLeft, r=l+cur.offsetWidth;
+    if(l<t.scrollLeft)t.scrollLeft=Math.max(0,l-12);
+    else if(r>t.scrollLeft+t.clientWidth)t.scrollLeft=r-t.clientWidth+12;
+  }
+  syncTabFade();
+}
+function syncTabFade(){
+  const t=$('.tabs'); if(!t)return;
+  t.classList.toggle('fl',t.scrollLeft>2);
+  t.classList.toggle('fr',t.scrollLeft+t.clientWidth<t.scrollWidth-2);
+}
 function renderTabs(){
+  setTimeout(syncTabStrip,0);
   $$('.tabs button').forEach(b=>{
     const on=b.dataset.v===view;
     b.setAttribute('aria-selected',String(on));
@@ -3164,7 +3878,7 @@ function renderTabs(){
     // this one counts their own work, so it appears once there is some. The tab
     // itself stays, and the empty state inside it carries the instruction.
     if(b.dataset.v==='plan'&&n){
-      n.textContent=picks.size;
+      n.innerHTML=`${picks.size}<span class="sr"> picked rows</span>`;n.title=`${picks.size} picked rows`;
       n.hidden=!picks.size;
       b.title=picks.size?'':'Tick artifacts in the catalog to build a collection plan';
     }
@@ -3189,7 +3903,7 @@ function renderToast(){
   $('#toastClear').hidden=showUndo;
   $('#toastUndo').hidden=!showUndo;
 }
-function update(){renderRail();renderMain()}
+function update(){renderRail();renderMain();writeHash()}
 
 function resetFilters(){
   for(const g of Object.keys(filters))filters[g]=[];
@@ -3200,38 +3914,99 @@ function resetAll(){resetFilters();resetRuleFilters();update()}
 window.resetAll=resetAll;
 
 /* ---------- hash routing ---------- */
-function applyHash(){
-  const h=decodeURIComponent(location.hash.slice(1));
+// A link pasted into a ticket last quarter can name a row that has since been
+// renamed or removed. Landing silently on the guide made that look like the
+// reader's mistake, so say what happened and offer the tool's rows when the
+// link still names a known entry.
+function deadLink(h){
+  const box=$('#deadLink'); if(!box)return;
+  const m=h.match(/^(AIRT-\d{4})/i);
+  const t=m&&TOOLS.find(x=>x.entry_id.toLowerCase()===m[1].toLowerCase());
+  box.innerHTML=`<span>That link points to something that is no longer here.</span>`
+    +(t?` <button type="button" class="lnk" id="deadTool">Show ${esc(t.tool)}'s rows</button>`:'')
+    +`<button type="button" class="x" id="deadX" aria-label="Dismiss">&#10005;</button>`;
+  box.hidden=false;
+  $('#deadX').onclick=()=>{box.hidden=true};
+  const b=$('#deadTool');
+  if(b)b.onclick=()=>{box.hidden=true;resetFilters();filters.tool=[t.tool];view='catalog';update()};
+}
+const VIEW_NAMES=['guide','catalog','tools','rules','mappings','sources','cases','intel','graph','plan'];
+// '#catalog?tool=Cursor&os=windows&q=...' - the same keys as `filters`, values
+// comma-separated, plus q and unv=1; '#rules?...' likewise. A view with
+// filters is something a responder sends to a colleague.
+let routing=false;
+function viewHash(){
+  if(view==='catalog'||view==='rules'){
+    const F=view==='catalog'?filters:rfilters, p=new URLSearchParams();
+    for(const k of Object.keys(F))if(F[k].length)p.set(k,F[k].join(','));
+    if(query)p.set('q',query);
+    if(view==='catalog'&&unvOnly)p.set('unv','1');
+    const qs=p.toString(); return '#'+view+(qs?'?'+qs:'');
+  }
+  return view==='guide'?'':'#'+view;
+}
+// In-page anchors that belong to the current view are left alone. Rule and
+// actor links are drawer links: once the drawer closes they are replaced.
+const DEEP={'g-':'guide','cs-':'cases','src-':'sources','graph':'graph'};
+function writeHash(){
+  if(routing||!$('#drawer').hidden)return;
+  const cur=location.hash.slice(1);
+  const pre=Object.keys(DEEP).find(p=>cur.startsWith(p));
+  if(pre&&DEEP[pre]===view)return;
+  const h=viewHash();
+  if(h==='#'+cur||(!h&&!cur))return;
+  history.replaceState(history.state,'',h||location.pathname+location.search);
+}
+function applyHash(){routing=true;try{applyHash0()}finally{routing=false}}
+function applyHash0(){
+  const raw=location.hash.slice(1), qi=raw.indexOf('?');
+  if(qi>0){
+    const base=decodeURIComponent(raw.slice(0,qi)), p=new URLSearchParams(raw.slice(qi+1));
+    if(base==='catalog'||base==='rules'){
+      $('#deadLink').hidden=true;
+      resetFilters(); resetRuleFilters();
+      const F=base==='catalog'?filters:rfilters, O=base==='catalog'?OPTIONS:ROPTIONS;
+      for(const k of Object.keys(F)){const v=p.get(k);
+        if(v)F[k]=v.split(',').filter(x=>!O[k]||O[k].includes(x))}
+      const q=p.get('q')||''; query=q.toLowerCase(); $('#q').value=q;
+      if(base==='catalog'){unvOnly=p.get('unv')==='1';$('#unvBtn').setAttribute('aria-pressed',String(unvOnly))}
+      view=base; update(); return;
+    }
+  }
+  const h=decodeURIComponent(qi>0?raw.slice(0,qi):raw);
   if(!h)return;
+  $('#deadLink').hidden=true;
   if(h.startsWith('actor/')){
     const id=h.slice(6);
-    if(ACTORMAP[id]){view='intel';update();openActorDrawer(id,null)}
+    if(ACTORMAP[id]){view='intel';update();openActorDrawer(id,null)}else deadLink(h);
     return;
   }
   if(h==='intel'){view='intel';update();return}
   if(h==='graph'||h.startsWith('graph/')){view='graph';update();return}
   if(h.startsWith('rule/')){
     const f=h.slice(5);
-    if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}
+    if(RULEMAP[f]||RULEFILE[f]){view='rules';update();openRuleDrawer(f,null)}else deadLink(h);
     return;
   }
   if(h.startsWith('cs-')){view='cases';update();
     const el=document.getElementById(h);
-    if(el){el.open=true;el.scrollIntoView({block:'start'})}
+    if(el){el.open=true;el.scrollIntoView({block:'start'})}else deadLink(h);
     return}
   if(h==='sources'){view='sources';update();return}
   if(h==='mappings'){view='mappings';update();return}
   if(h==='plan'){view='plan';update();return}
   if(h.startsWith('src-')){view='sources';update();
     const el=document.getElementById(h);
-    if(el){el.open=true;el.scrollIntoView()}
+    if(el){el.open=true;el.scrollIntoView()}else deadLink(h);
     return}
   if(h==='guide'){view='guide';update();return}
   if(h.startsWith('g-')){if(!$('#drawer').hidden)closeDrawer();view='guide';update();
-    const el=document.getElementById(h);if(el)el.scrollIntoView();return}
+    const el=document.getElementById(h);if(el)el.scrollIntoView();else deadLink(h);return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
   const t=TOOLS.find(t=>t.entry_id.toLowerCase()===h.toLowerCase()||t.slug===h.toLowerCase());
-  if(t){resetFilters();filters.tool=[t.tool];view='catalog';update()}
+  if(t){resetFilters();filters.tool=[t.tool];view='catalog';update();return}
+  if(VIEW_NAMES.includes(h)){view=h;update();return}
+  deadLink(h);
 }
 
 /* ---------- search everything ---------- */
@@ -3243,7 +4018,7 @@ const PAL_SUGGEST=['~/.claude','oauth_creds','mcp.json','CVE-2025-3248','AML.T00
 let PAL=null, palFlat=[], palSel=0;
 function palIndex(){
   const it=[], lc=x=>(x||'').toString().toLowerCase();
-  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:lc([t,hay].join(' ')),go,mono});
+  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:normQ([t,hay].join(' ')),go,mono});
   TOOLS.forEach(t=>add('Tools',t.tool,`${t.entry_id} · ${t.vendor||''}`,
     [t.entry_id,t.vendor,(t.aliases||[]).join(' '),t.category].join(' '),
     ()=>{view='tools';update();openToolDrawer(t.entry_id,null)}));
@@ -3272,7 +4047,7 @@ function palHL(t,toks){
   return t.split(re).map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join('');
 }
 function palRender(){
-  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=ql.split(/\s+/).filter(Boolean);
+  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=normQ(ql).split(' ').filter(Boolean);
   const res=$('#palRes'); palFlat=[]; palSel=0;
   if(!toks.length){
     res.innerHTML=`<div class="palempty">Try a path, a CVE, a technique or an actor from your case:
@@ -3315,12 +4090,32 @@ function palGo(i){
   if(!$('#drawer').hidden)closeDrawer();
   x.go();
 }
+const BEHIND='.skip,.hdr,.shell,footer,#drawer,#toast,#dgrip';
+function setInert(sel,on){$$(sel).forEach(x=>on?x.setAttribute('inert',''):x.removeAttribute('inert'))}
+// Under 620px the drawer is full width, so it is modal: the page behind it is
+// not reachable. Wider, it is a side panel and the page stays live.
+function syncDrawerModal(){
+  const d=$('#drawer'), on=!d.hidden&&PHONE.matches;
+  d.setAttribute('aria-modal',String(on));
+  if($('#pal').hidden)setInert('.skip,.hdr,.shell,footer,#toast',on);
+}
 function palOpen(){
   if(!PAL)PAL=palIndex();
   $('#pal').hidden=false; document.body.classList.add('palopen');
+  setInert(BEHIND,true);
   const i=$('#palQ'); i.select(); i.focus(); palRender();
 }
-function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');$('#palBtn').focus()}
+function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');
+  setInert(BEHIND,false);syncDrawerModal();$('#palBtn').focus()}
+// Tab stays inside the palette while it is open.
+$('#pal').addEventListener('keydown',e=>{
+  if(e.key!=='Tab')return;
+  const f=$$('#pal input,#pal button,#pal [tabindex="0"],#pal a[href]').filter(x=>x.offsetParent!==null);
+  if(!f.length)return;
+  const i=f.indexOf(document.activeElement);
+  if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}
+  else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}
+});
 $('#palBtn').onclick=palOpen;
 $('#palQ').addEventListener('input',palRender);
 $('#palQ').addEventListener('keydown',e=>{
@@ -3371,18 +4166,27 @@ function flash(btn,msg){
   setTimeout(()=>{btn.textContent=old},1600);
 }
 function exportRows(){return filteredRows()}
+// Two filtered exports on the same day used to share a name, so the second
+// host's CSV overwrote the first in the downloads folder.
+function exportName(ext){
+  const t=filters.tool;
+  const slug=t.length===1?t[0].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')
+    :(Object.values(filters).some(a=>a.length)||query||unvOnly)?'filtered':'';
+  return `ai-dfir-catalog-${slug?slug+'-':''}${stamp()}.${ext}`;
+}
 $('#csvBtn').onclick=()=>{
   const rows=exportRows();
   const body=rows.map(r=>EXPORT_COLS.map(c=>csvCell(r[c])).join(',')).join('\n');
-  download(`ai-dfir-catalog-${stamp()}.csv`, EXPORT_COLS.join(',')+'\n'+body+'\n','text/csv');
+  download(exportName('csv'), EXPORT_COLS.join(',')+'\n'+body+'\n','text/csv');
   flash($('#csvBtn'), `${rows.length} rows`);
 };
 $('#jsonBtn').onclick=()=>{
   const rows=exportRows();
-  download(`ai-dfir-catalog-${stamp()}.json`, JSON.stringify({
+  download(exportName('json'), JSON.stringify({
     source:REPO_URL, exported:new Date().toISOString(),
     note:'Filtered view export from the catalog site. The published feed is docs/api/artifacts.csv.',
-    count:rows.length, rows
+    count:rows.length,
+    rows:rows.map(({loc_path,loc_key,loc_label,os_inherited,...r})=>r)
   },null,2),'application/json');
   flash($('#jsonBtn'), `${rows.length} rows`);
 };
@@ -3400,7 +4204,8 @@ function togglePickAll(btn){
 }
 $('#pickAllBtn').onclick=e=>togglePickAll(e.currentTarget);
 
-$$('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;update()});
+// A tab change is a history entry, so Back returns to the previous tab.
+$$('.tabs button').forEach(b=>b.onclick=()=>{if(b.dataset.v===view)return;pushNav();view=b.dataset.v;update()});
 // Arrow-key navigation, which role=tablist promises and a plain button row
 // does not provide on its own. Wrapping, plus Home/End, per the ARIA pattern.
 $('.tabs').addEventListener('keydown',e=>{
@@ -3413,7 +4218,8 @@ $('.tabs').addEventListener('keydown',e=>{
     :(i+keys[e.key]+tabs.length)%tabs.length;
   view=tabs[next].dataset.v;update();tabs[next].focus();
 });
-$('#railReset').onclick=e=>{e.preventDefault();resetAll()};
+$('#railReset').onclick=()=>resetAll();
+$('#copyView').onclick=e=>{writeHash();copy(location.href,e.currentTarget)};
 $('#toastOpen').onclick=()=>{view='plan';renderMain()};
 $('#toastClear').onclick=()=>{clearPicks();};
 $('#toastUndo').onclick=()=>{undoClear()};
@@ -3425,13 +4231,14 @@ $('#themeBtn').onclick=()=>{
 };
 function setThemeBtn(){
   const dark=document.documentElement.dataset.theme==='dark';
-  $('#themeBtn').textContent=dark?'☀ Light':'☾ Dark';
+  $('#themeBtn').innerHTML=dark?'<span aria-hidden="true">☀</span><span class="thtx"> Light</span>':'<span aria-hidden="true">☾</span><span class="thtx"> Dark</span>';
   $('#themeBtn').setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
 window.addEventListener('hashchange',applyHash);
-$('#scopeX').onclick=()=>{scopeHidden=true;try{localStorage.setItem('aidfir-scope-hidden','1')}catch(e){}
-  $('#scopeNote').hidden=true};
+$('#scopeX').onclick=()=>{scopeHidden=!scopeHidden;
+  try{localStorage.setItem('aidfir-scope-hidden',scopeHidden?'1':'0')}catch(e){}
+  syncScope()};
 $('#scopeNote [data-goplan]').onclick=()=>{pushNav();view='plan';update()};
 // The header wraps to a different height per viewport and per tab row, so the
 // anchor offset is measured rather than hard-coded.
@@ -3442,7 +4249,11 @@ function syncHdr(){
 }
 syncHdr();
 if(window.ResizeObserver)new ResizeObserver(syncHdr).observe($('.hdr'));
+window.addEventListener('scroll',()=>{const c=window.scrollY>0, h=$('.hdr');
+  if(h.classList.contains('compact')!==c){h.classList.toggle('compact',c);syncHdr()}},{passive:true});
 window.addEventListener('resize',syncHdr);
+$('.tabs').addEventListener('scroll',syncTabFade,{passive:true});
+window.addEventListener('resize',syncTabFade);
 setThemeBtn();update();applyHash();
 """
 
@@ -3453,7 +4264,8 @@ THEME_BOOT = (
     # 'aiart-' is the dropped AIRTIFACTS working name; fall back to it once so a
     # returning visitor's stored theme survives the rename.
     "(function(){try{var t=localStorage.getItem('aidfir-theme')"
-    "||localStorage.getItem('aiart-theme')||'light';"
+    "||localStorage.getItem('aiart-theme')"
+    "||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');"
     "document.documentElement.dataset.theme=t}catch(e){}})();"
 )
 
@@ -3684,13 +4496,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Agent Artifact Catalog</title>
+<title>AI DFIR Toolkit</title>
 <meta name="description" content="{html.escape(og_desc)}">
 <link rel="canonical" href="{SITE}">
 <link rel="icon" href="{FAVICON}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ai-dfir-toolkit">
-<meta property="og:title" content="AI Agent Artifact Catalog">
+<meta property="og:title" content="AI DFIR Toolkit">
 <meta property="og:description" content="{html.escape(og_desc)}">
 <meta property="og:url" content="{SITE}">
 <meta property="og:image" content="{SITE}card.png">
@@ -3701,39 +4513,39 @@ def main():
 <style>{CSS}{site_intel.CSS}</style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to results</a>
+<a class="skip" href="#main">Skip to content</a>
 <div class="hdr"><div class="hdr-in">
   <div class="hdr-top">
     <div class="hdr-id">
-      <div class="h1row"><span class="dot"></span><h1>AI Agent Artifact Catalog</h1>
+      <div class="h1row"><span class="dot"></span><h1>AI DFIR Toolkit</h1>
         <span class="pill">generated &middot; CC BY 4.0</span></div>
-      <p class="sub">What AI coding agents, local model runtimes and MCP components leave
-      on an endpoint, what each trace proves, and in what order to collect it.</p>
+      <p class="sub">Is this an AI incident, what did the AI tool leave on the host and what
+      does it prove, and in what order to collect it.</p>
     </div>
     <div class="hdr-right">
       <button id="palBtn" type="button" class="palbtn" aria-haspopup="dialog"
         aria-label="Search everything (press / or Ctrl+K)"><span aria-hidden="true">&#8981;</span><span class="paltx">Search everything</span><kbd>/</kbd></button>
       <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
-         aria-label="View this project on GitHub">GitHub &#8599;</a>
+         aria-label="View this project on GitHub"><span class="ghtx">GitHub </span>&#8599;</a>
       <button id="themeBtn" type="button"></button></div>
   </div>
   <nav class="tabs" role="tablist">
     <button role="tab" class="guidelink" data-v="guide">Investigation guide</button>
-    <button role="tab" data-v="catalog">Catalog <span class="n">{len(rows)}</span></button>
-    <button role="tab" data-v="tools">Tools <span class="n">{len(tools)}</span></button>
-    <button role="tab" data-v="rules">Detections <span class="n">{len(rules)}</span></button>
-    <button role="tab" data-v="mappings">Mappings <span class="n">{len(atlas_index) + len(owasp_index)}</span></button>
-    <button role="tab" data-v="sources">Data sources <span class="n">{len(sources)}</span></button>
-    <button role="tab" data-v="cases">Case studies <span class="n">{len(cases)}</span></button>
-    <button role="tab" data-v="intel">Threat intel <span class="n">{len(intel["actors"])}</span></button>
-    <button role="tab" data-v="graph">Graph <span class="n">{len(intel["graph"]["nodes"])}</span></button>
+    <button role="tab" data-v="catalog">Catalog <span class="n" title="{len(rows)} artifact rows">{len(rows)}<span class="sr"> artifact rows</span></span></button>
+    <button role="tab" data-v="tools">Tools <span class="n" title="{len(tools)} tools">{len(tools)}<span class="sr"> tools</span></span></button>
+    <button role="tab" data-v="rules">Detections <span class="n" title="{len(rules)} detection rules">{len(rules)}<span class="sr"> detection rules</span></span></button>
+    <button role="tab" data-v="mappings">Mappings <span class="n" title="{len(atlas_index) + len(owasp_index)} framework entries">{len(atlas_index) + len(owasp_index)}<span class="sr"> framework entries</span></span></button>
+    <button role="tab" data-v="sources">Data sources <span class="n" title="{len(sources)} telemetry sources">{len(sources)}<span class="sr"> telemetry sources</span></span></button>
+    <button role="tab" data-v="cases">Case studies <span class="n" title="{len(cases)} case studies">{len(cases)}<span class="sr"> case studies</span></span></button>
+    <button role="tab" data-v="intel">Threat intel <span class="n" title="{len(intel["actors"])} actors">{len(intel["actors"])}<span class="sr"> actors</span></span></button>
+    <button role="tab" data-v="graph">Graph <span class="n" title="{len(intel["graph"]["nodes"])} graph nodes">{len(intel["graph"]["nodes"])}<span class="sr"> graph nodes</span></span></button>
     <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
   </nav>
 </div></div>
 
 <div class="shell">
 <aside>
-  <div class="railhead"><b>Filters</b><a id="railReset" href="#">reset</a></div>
+  <div class="railhead"><b>Filters</b><button type="button" id="railReset">reset</button></div>
   <div class="railscroll" id="rail"></div>
   <details class="railfold" id="railfold"><summary>Filters</summary>
     <div class="foldbody"></div></details>
@@ -3741,13 +4553,17 @@ def main():
 <main class="content">
   <div id="backbar" hidden></div>
   <div class="scopenote" id="scopeNote" hidden>
+    <p class="sline">Rows are what a tool leaves on the machine it ran on.
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
+    <div class="sfull">
     <p><b>What these rows are.</b> What an AI tool leaves on the machine it ran on. They apply when the
       AI ran on your systems: your own agents, an insider's, or an attacker driving them. An attacker's
       AI on their own infrastructure leaves none of this in your telemetry; read your evidence for tempo
       instead. <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
     <ol><li>Filter to the tool you found on the host.</li><li>Open a row to see what it proves and where you would see it.</li>
       <li>Tick the rows you need, then build the <button type="button" class="lnk" data-goplan="1">collection plan</button>.</li></ol>
-    <button type="button" class="x" id="scopeX" aria-label="Hide this note">&#10005;</button>
+    </div>
+    <button type="button" class="stoggle" id="scopeX" aria-expanded="true" aria-controls="scopeNote">collapse</button>
   </div>
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
@@ -3766,9 +4582,11 @@ def main():
   </div>
   <div class="meta-row" id="metaRow"><span class="count" id="count"
     role="status" aria-live="polite" aria-atomic="true"></span>
-    <span id="chips" style="display:contents"></span></div>
+    <span id="chips" style="display:contents"></span>
+    <button class="tgl plain viewlink" id="copyView" type="button">Copy link to this view</button></div>
   <p class="unvnote" id="unvNote" hidden></p>
-  <div id="main" role="tabpanel" tabindex="0"></div>
+  <div class="deadlink" id="deadLink" hidden role="alert"></div>
+  <div id="main" role="tabpanel" tabindex="0"><p class="loading">Loading the toolkit. This page needs JavaScript.</p></div>
 </main>
 </div>
 
@@ -3782,13 +4600,14 @@ def main():
     <div class="palfoot"><span><kbd>&#8593;</kbd><kbd>&#8595;</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
   </div>
 </div>
-<div class="toast" id="toast" hidden><span id="toastN"></span>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"><span id="toastN"></span>
   <button id="toastOpen" type="button">Open collection plan</button>
-  <a id="toastClear">clear</a>
-  <a id="toastUndo" hidden>undo</a></div>
+  <button id="toastClear" type="button" class="tlink">clear</button>
+  <button id="toastUndo" type="button" class="tlink" hidden>undo</button></div>
+<div id="sr" class="sr" role="status" aria-live="polite"></div>
 
 <footer>
-  <p><strong>Confidence reflects provenance, not conviction.</strong>
+  <p><strong>Sourcing confidence reflects provenance, not conviction.</strong>
   <em>high</em> means verified on a live host or documented by the vendor,
   <em>medium</em> means multiple independent sources agree, and <em>low</em> means
   single-source or inferred. Anything single-sourced is flagged

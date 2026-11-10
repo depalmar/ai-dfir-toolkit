@@ -5,6 +5,17 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Start from the alert.** The landing panel asks which tool the alert
+  named, where the AI ran and what role it played, and answers with that
+  tool's rows grouped live, rotating and stable, its sourcing mix, unverified
+  count and last-verified date, and the same Add volatile, Add all and Show
+  all actions as the tool drawer - without leaving the landing view. The
+  attacker's-infrastructure branch shows the guide's tempo signs instead of
+  rows, the accounts-and-keys branch points to Data sources, and Bystander
+  says this is not the guide's case. The tool box follows the ARIA combobox
+  pattern, both questions are radio groups, and nothing is saved. On one
+  column the result follows the questions directly. From the Claude Design
+  assessment (F03).
 - **Guide 1.2, from Joshua Wright's "Scoping AI Swarms".** Part I says to act
   without proving AI: rotate exposed credentials, invalidate derived sessions,
   check other uses of the access and look for running execution, whoever the
@@ -134,6 +145,72 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **Site UX batch 5, trust signals, semantics, dark mode and URL state.**
+  No text uses the faint grey any more (facet counts 2.67:1 → 5.36:1, drawer
+  headings 2.77:1 → 5.55:1), and medium and low sourcing badges use the same
+  strong ink as high, told apart by fill and a dashed border. The scale is
+  "Sourcing confidence" everywhere, a collapsed case card shows the first
+  sentence of its basis, the lesson follows the sourcing, and each case has a
+  copy-link button. Technique chips are buttons reading "ID · name" and offer
+  "Filter detections" or "Open in Mappings"; rule drawers show OWASP Agentic
+  and ATT&CK alongside ATLAS and OWASP LLM. Dark mode follows the system on
+  first visit, the armed "Clear all" is legible (2.37:1 → 7.87:1), diagrams
+  sit on a dimmed card and the palette scrim is darker. Rule and tool cards are
+  articles with a heading button, a one-value facet is hidden, rule status is a
+  neutral pill, and the Tools view has a search box. The drawer is modal on
+  phones and the palette traps focus. Diagrams enlarge into a viewport-sized
+  overlay instead of growing in place. Tab counts name their unit. The view
+  and its filters live in the URL (`#catalog?tool=Cursor&os=windows`), a tab
+  change is a history entry, and the meta row has "Copy link to this view".
+  The site is titled "AI DFIR Toolkit". From the Claude Design assessment;
+  `docs/HANDOFF_REVIEW.md` records the outcome and where the assessment was
+  wrong.
+- **Site UX batch 4, plan export and phone navigation.** The collection
+  plan's header carries the export: an "Export for" picker over the five
+  collectors and one Download button whose label follows the choice, with
+  Copy, the collector's note, the per-tool definitions line and the rows the
+  format cannot carry directly under it. "Copy as triage list" and "Copy
+  permalinks" are secondary, and the by tool / by volatility switch moves to
+  the summary strip. The side panel keeps the options, command and preview,
+  and its sticky offset follows the measured header. Every segmented switch
+  reports aria-pressed. On phones the header stays sticky, collapsed to the
+  title row and the tab strip, the selected tab is scrolled into the strip,
+  and edges fade where tabs are cut off. From the Claude Design assessment
+  (F10, F11).
+- **Site UX batch 2, the catalog working surface.** Rows are grouped by
+  volatility - live, rotating, stable - with the column sort applying inside
+  each group, because 519 of 622 rows are p1 and the old triage sort could not
+  answer "what first". A row whose OS is inherited from its tool says
+  "tool:" in the OS column and the drawer, so a Windows filter returning a
+  ~/Library path explains itself; the filter itself is unchanged. "Copy path"
+  copies the path alone, on hover in the table, on every phone card and as the
+  drawer's primary action; the key, value or port sits on its own line with
+  its own copy. Filters start with Tool, which has a type-ahead box, class
+  options show a plain name beside the token, and zero-match options are
+  disabled. The off-host note collapses to one line instead of disappearing.
+  The header compacts on scroll and the rail and table size from the measured
+  header. The view search and the palette share one matcher (every word, any
+  order, hyphen and underscore equal to space), and empty states name what is
+  active with separate Clear search and Clear filters. The drawer leads with
+  the path and collection order, groups tool material under "Sources for
+  <tool>" and a collapsed "About", and keeps "Add to collection plan" pinned
+  at the bottom. The table body is one tab stop: arrows move the current row,
+  Space ticks, Enter opens, Escape returns to the row. Only the layout in use
+  is rendered. The scale is labelled "Sourcing" in the table and filters.
+- **Site UX batch 1, from a Claude Design assessment.** The page no longer
+  goes blank when the browser blocks site storage: two reads of saved plans
+  were outside the guard every other storage call had, and #main now carries
+  a loading line until the first render. Ticking a row or opening one keeps
+  the table's scroll position and focus instead of rebuilding the view. Plan
+  rows with a collector note wrap on phones rather than collapsing the path to
+  one character per line. The pick toast is a polite status region with real
+  buttons, copy results are announced, and a failed fallback copy says so.
+  Controls are at least 24px, and 44px on phones for picks, removes, tabs and
+  facets. Pick buttons name their row, chip glyphs are hidden from screen
+  readers, the graph zoom buttons are labelled and no longer inside an
+  aria-hidden group, and reset is a button. A permalink that no longer
+  resolves shows a notice, with a link to the tool's rows when it names a
+  known entry. Filtered exports carry the tool or "filtered" in the file name.
 - Only rows and headers that do something show the pointer cursor. Every table
   row did, including the guide's tables and the incident timeline, which
   promised a click that went nowhere. The hover highlight stays everywhere.
