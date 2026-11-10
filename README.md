@@ -148,7 +148,7 @@ On top of the catalog sits a threat-intel layer:
 - **Actor profiles:** 20 profiles, covering attributed groups and
   reporter-named clusters.
 - **Case studies:** 22, with 221 indicators.
-- **Pinned frameworks:** ATLAS 2026.09, ATT&CK 19.2, CISA KEV, and the OWASP
+- **Pinned frameworks:** ATLAS 2026.10, ATT&CK 20.0, CISA KEV, and the OWASP
   LLM and Agentic 2026 lists.
 
 Each profile is derived from the cases and reported sightings that cite it. It

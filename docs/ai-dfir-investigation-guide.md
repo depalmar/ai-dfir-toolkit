@@ -4,17 +4,17 @@
 
 Version 1.0 · April 2026 · Raymond DePalma · independent security researcher
 
-Detection content ships in this repository: [github.com/depalmar/ai-dfir-toolkit](https://github.com/depalmar/ai-dfir-toolkit)
-
-> **Independence disclaimer.** This is an independent personal project by the author. It is not affiliated with, endorsed by, or produced on behalf of any employer. All content is based on public sources: published CVEs, vendor advisories, academic papers, and vendor-neutral security research. The detection pack uses only open formats (Sigma, YARA, Suricata) so rules deploy in any modern detection stack, and deliberately ships no vendor query dialect.
+> An independent personal project, built from public sources. Not affiliated with or endorsed by any employer.
 
 ---
 
 ## Contents
 
-This guide walks you through investigating AI/ML compromises end-to-end. Each section includes attack background, forensic artifacts, hands-on investigation procedures, and detection opportunities. Sections are independent, so jump to the threat you are chasing.
+Use this guide once you have reason to believe an AI system is part of the incident: as the target, the way in, or the attacker's tool. It does not assume every incident is AI-driven. Part I starts with how to make that call, and if the answer is no, run your normal investigation.
 
-- **Part I, Foundations:** how this guide is organized, who it is for, and the first-hour triage flow
+Once an AI system is in scope, each section gives the attack background, the forensic artifacts, an investigation procedure and the detections. Sections stand alone, so jump to the threat you are chasing.
+
+- **Part I, Foundations:** deciding whether AI is in scope, the first-hour triage flow, and how AI cases differ
 - **Part II, Threat Categories:** LLM apps, model supply chain, AI infrastructure, AI-assisted insider threats
 - **Part III, Frameworks and Tools:** ATLAS, OWASP, NIST mappings, plus an opinionated tool comparison
 - **Part IV, Playbooks:** case-study walkthroughs and an adapted IR lifecycle
@@ -23,6 +23,31 @@ This guide walks you through investigating AI/ML compromises end-to-end. Each se
 ---
 
 # Part I: Foundations
+
+## Is this an AI incident? Decide before you use this guide
+
+Most incidents on a host that runs an AI tool are ordinary incidents. A coding agent installed on a phished laptop is a bystander, and treating it as the cause sends the investigation down the wrong path. Characterize first, then pick a playbook.
+
+Ask three questions, in order:
+
+1. **Is an AI system present?** Look for agent binaries, model runtimes, MCP configuration and AI provider credentials on the affected hosts and accounts. The Catalog lists where each tool leaves them, and the Collection plan turns that into a triage script.
+2. **Was it active in the incident window?** An installed tool proves nothing on its own. You need an agent session transcript, a process the agent spawned, a model API call or a config change with a timestamp inside the window. The Data sources tab says which logs can answer this and what had to be switched on beforehand.
+3. **What role did it play?** The answer picks the section of Part II.
+
+| Role | What it looks like | Documented examples | Open |
+|---|---|---|---|
+| **Target** | The AI system itself is what was compromised: an inference server, a workflow engine, a model file | ShadowRay, Langflow CVE-2025-3248 | Part II §2, §3 |
+| **Way in** | Content the AI read made it act for the attacker: prompt injection, a poisoned MCP server, a backdoored repository config | EchoLeak, postmark-mcp, MIDNIGHT NEPTUNE | Part II §1 |
+| **Attacker's tool** | The adversary used AI to run the operation, on their side or through the victim's own agent | GTG-1002, PROMPTSTEAL, s1ngularity | Part II §1, §4 |
+| **Bystander** | Present, but nothing ties it to the activity | - | Not this guide. Run your normal investigation and note the tool in the report. |
+
+If the answer to the first or second question is no, AI is not in scope. If you cannot answer the second question because the logs were never enabled, say so in the report rather than assuming either way.
+
+## What AI incidents have looked like so far
+
+Every case below is documented in this project with sources, indicators and a confidence rating. The count is what this project has catalogued, not a measure of all AI incidents, but the trend and the mix of roles are the point: most are recent, and most involve a tool you can find on an endpoint.
+
+<!-- site:incident-timeline -->
 
 ## Who this guide is for
 

@@ -344,7 +344,7 @@ Detection content totals 70 rule files / 161 signatures across the nine attack-c
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
-content. Frameworks pinned: ATLAS 2026.09, ATT&CK 19.2, CISA KEV 2026.09.29,
+content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.09.29,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
 Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
@@ -415,6 +415,13 @@ is collected, beside the KAPE and Velociraptor exporters so the three agree.
 Cytoscape.js is vendored under `scripts/vendor/` with its sha256 in
 `VENDOR.json`, and `--check` fails if the file changes without the record. It is
 inlined as inert text and only evaluated when the Graph tab opens.
+
+The site opens on the Investigation guide, not the catalog: without the "is
+this even an AI incident, and what is this for" framing, the catalog is just a
+table. The guide's incident timeline is injected at the
+`<!-- site:incident-timeline -->` marker from the case studies, so add cases,
+never rows to it. Anchor offsets come from `--hdrh`, measured from the sticky
+header by `syncHdr()`; do not reintroduce a fixed pixel offset.
 
 Four things worth not relearning:
 

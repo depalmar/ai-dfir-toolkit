@@ -5,6 +5,20 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Investigation guide is the landing page.** The site now opens on the guide,
+  with a three-step orientation (decide, locate, collect) that says what the
+  site is for before the reader meets a 622-row table. The guide gains a
+  characterize-first section: is an AI system present, was it active in the
+  incident window, and was it the target, the way in, the attacker's tool or a
+  bystander. It states plainly that the guide does not assume every incident
+  is AI-driven. A timeline of every documented case study, as a table and a
+  cumulative line chart by disclosure quarter, is generated from the case
+  studies at build time so it cannot drift from them. Feedback from Joshua
+  Wright.
+- **Landing graphic.** Beside the orientation, a chart of where the evidence
+  lives: the catalog's locations by type, each bar opening the catalog
+  filtered to it, and a sparkline of documented incidents that links to the
+  timeline. Both are computed from the data at build time.
 - **Collection plan exports.** The plan now renders for the collectors people
   already run, from the same per-row spec the native scripts use: a KAPE
   `.tkape` target, a Velociraptor artifact (file globs per OS, registry,
@@ -54,7 +68,19 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   focus, zoom controls, keyboard shortcuts, re-tick-to-restore type filters,
   copyable canvas links and degree-scaled nodes.
 
+### Changed
+- Framework pins moved to ATLAS 2026.10 and ATT&CK 20.0. ATLAS dropped the
+  three AML.T0024 subtechniques, AML.T0056 and AML.T0057, none of which the
+  repository cited, and renamed AML.T0010 from AI Supply Chain Compromise to
+  Supply Chain Compromise. MAPPINGS index titles follow.
+
 ### Fixed
+- Only rows and headers that do something show the pointer cursor. Every table
+  row did, including the guide's tables and the incident timeline, which
+  promised a click that went nowhere. The hover highlight stays everywhere.
+- Anchor jumps in the guide no longer land under the sticky header. The offset
+  is measured from the header rather than hard-coded, because the header wraps
+  to a different height per viewport.
 - The Mappings coverage table showed 0 rules for every ATLAS technique. The
   index parser read the count by column position and the ATLAS index had
   gained a Tactic column; it now reads by header.

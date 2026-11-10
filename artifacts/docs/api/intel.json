@@ -1,5 +1,5 @@
 {
- "atlas_release": "2026.09",
+ "atlas_release": "2026.10",
  "stats": {
   "actors": 20,
   "cases": 22,
@@ -4569,7 +4569,7 @@
     "hunt": [
      {
       "technique": "AML.T0010",
-      "name": "AI Supply Chain Compromise",
+      "name": "Supply Chain Compromise",
       "tactics": [
        "AML.TA0004"
       ],
@@ -12551,7 +12551,7 @@
    {
     "id": "atlas:AML.T0010",
     "type": "technique",
-    "label": "AML.T0010 AI Supply Chain Compromise",
+    "label": "AML.T0010 Supply Chain Compromise",
     "framework": "ATLAS"
    },
    {
