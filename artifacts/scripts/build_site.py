@@ -580,19 +580,26 @@ tr:last-child td{border-bottom:0}
    slack. Artifact holds paths that break anywhere, and with no widths at all it
    took whatever it wanted and squeezed Notes into a 38ch ribbon. */
 col.k-pick{width:40px}
-col.k-id{width:96px}
-col.k-tool{width:132px}
+col.k-id{width:90px}
+col.k-tool{width:112px}
 col.k-cls{width:92px}
-col.k-os{width:108px}
+col.k-os{width:134px}
 col.k-fv{width:74px}
 col.k-conf{width:74px}
-col.k-art{width:34%}
+col.k-art{width:32%}
+/* Fixed layout so the catalog fits its box instead of sizing Notes to its
+   longest sentence and pushing it off-screen; Notes takes what is left and
+   stays clamped, with the full text one click away in the drawer. */
+.tablescroll table{table-layout:fixed}
 /* word-break:break-all lets a path shrink to a single character, so in auto
    layout the Artifact column surrendered everything to Notes and ended up
    narrower than the OS column. A floor on the cell stops the giveaway; the two
    prose columns then split what is left. */
 td.artcell{min-width:300px}
-td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
+td .path{font-family:ui-monospace,Menlo,monospace;font-size:12px;overflow-wrap:anywhere}
+.oscell{font-size:12px;display:inline-flex;flex-wrap:wrap;gap:0 6px}
+.oscell span{white-space:nowrap}
+.nil{color:var(--faint)}
 td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap}
 /* Clamped to two lines. Measured over all 615 rows this takes the total table
    from 55353px to 46212px, the p90 row from 133px to 99px and the tallest row
@@ -604,7 +611,7 @@ td .id{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted
    r.description unclamped. The Notes column carries the operational caveats,
    and a responder who never opens the row must still be able to reach the
    sentence that changes what they collect. */
-td .note{font-size:12.5px;color:var(--muted);display:-webkit-box;
+td .note{font-size:12.5px;color:var(--muted);display:-webkit-box;overflow-wrap:anywhere;
   -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pick{width:24px;height:24px;border-radius:6px;border:1px solid var(--field-line);
   background:var(--panel);display:inline-flex;align-items:center;justify-content:center;
@@ -812,6 +819,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .planhead h2{margin:0 0 4px;font-size:16px}
 .planhead p{margin:0;font-size:12.5px;color:var(--muted)}
 .planhead .acts{display:flex;gap:8px}
+.pstart{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:12px auto 14px;max-width:760px}
 .plan-empty{border:1px dashed var(--field-line);border-radius:11px;padding:48px 20px;
   text-align:center;color:var(--muted)}
 .pgroup{border:1px solid var(--line);border-radius:11px;background:var(--panel);
@@ -849,6 +857,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
   word-break:break-all}
 .rule p{margin:0;font-size:12.5px;color:var(--muted)}
+.rule p.rdesc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .rule .rfoot{display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--line-soft);
   padding-top:9px}
 .fmt{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
@@ -1150,6 +1159,58 @@ button.istat:hover{background:var(--hover)}
   border-left:3px solid var(--accent);border-radius:11px;display:grid;
   grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
 @media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+.palbtn{display:inline-flex;align-items:center;gap:10px;min-height:34px;padding:5px 8px 5px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);font-size:12.5px}
+.palbtn:hover{border-color:var(--accent);color:var(--ink)}
+kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:4px;background:var(--panel-2);color:var(--muted)}
+.pal{position:fixed;inset:0;z-index:60;background:rgba(20,18,16,.35);display:flex;justify-content:center;
+  align-items:flex-start;padding:10vh 16px 16px}
+.pal[hidden]{display:none}
+.palbox{width:min(720px,100%);max-height:78vh;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.22);overflow:hidden}
+#palQ{border:0;border-bottom:1px solid var(--line);padding:14px 16px;font-size:15px;background:var(--panel);color:var(--ink);outline:none}
+#palRes{overflow:auto;padding:6px 0}
+.palg{padding:4px 0}
+.palgh{display:flex;justify-content:space-between;padding:6px 16px 4px;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint)}
+.palr{display:flex;flex-direction:column;gap:1px;padding:7px 16px;cursor:pointer}
+.palr[aria-selected=true]{background:var(--accent-soft)}
+.palt{font-size:13.5px;color:var(--ink)}
+.palt.m{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;overflow-wrap:anywhere}
+.palt mark{background:none;color:var(--accent);font-weight:600}
+.pals{font-size:11.5px;color:var(--muted)}
+.palall{font-size:12.5px;color:var(--accent)}
+.palempty{padding:18px 16px;font-size:13px;color:var(--muted)}
+.palsug{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.palfoot{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint)}
+.palfoot kbd{margin-right:3px}
+body.palopen{overflow:hidden}
+@media(max-width:620px){.palbtn .paltx,.palbtn kbd{display:none}}
+.scopenote{position:relative;margin:0 0 12px;padding:10px 40px 10px 14px;background:var(--panel);
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:12.5px;color:var(--muted)}
+.scopenote p{margin:0 0 4px;max-width:110ch}
+.scopenote b{color:var(--ink)}
+.scopenote ol{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:2px 18px;counter-reset:sn}
+.scopenote li{counter-increment:sn}
+.scopenote li::before{content:counter(sn) ". ";color:var(--accent);font-weight:600}
+.scopenote .lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline}
+.scopenote .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--faint);font-size:13px}
+.okpis{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.okpi{display:inline-flex;align-items:baseline;gap:5px;min-height:30px;padding:4px 11px;border:1px solid var(--line);
+  border-radius:999px;background:var(--panel);color:var(--muted);font-size:12.5px}
+.okpi b{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.okpi:hover{border-color:var(--accent);color:var(--ink)}
+.otrust{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.oth{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;font-size:13px}
+.oth span{font-size:12px;color:var(--muted)}
+.otbar{display:flex;gap:2px;height:10px;margin:8px 0 6px;border-radius:5px;overflow:hidden;background:var(--line-soft)}
+.otbar .tcseg{display:block;height:100%}
+.otkey{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--muted)}
+.otkey span{display:inline-flex;align-items:center;gap:5px}
+.otkey i{display:inline-block;width:9px;height:9px;border-radius:2px}
+.otkey .lnk{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent);text-decoration:underline}
+.tc-high{background:var(--conf-strong)}.tc-med{background:var(--series-3)}.tc-low{background:var(--gap)}
 .ovis{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
 .ovis h3{margin:0;font-size:13.5px}
 .orient .ovsub{margin:2px 0 10px;font-size:12px}
@@ -1267,7 +1328,14 @@ figure.mmd text,figure.mmd tspan,figure.mmd p,figure.mmd span,
 figure.mmd div{fill:#1f2328;color:#1f2328}
 figure.mmd p{margin:0;font-size:inherit}
 figure.mmd .edgeLabel rect,figure.mmd .labelBkg{fill:#fbfbfa}
-figure.mmd svg{max-width:100%;height:auto;display:block;margin:0 auto}
+/* !important because each pre-rendered SVG carries an inline max-width:100%. */
+figure.mmd svg{width:auto;max-width:min(100%,760px)!important;height:auto;max-height:420px;display:block;margin:0 auto}
+figure.mmd{cursor:zoom-in;position:relative}
+figure.mmd::after{content:'Click to enlarge';position:absolute;right:10px;bottom:8px;font-size:11px;
+  color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+figure.mmd.big{cursor:zoom-out}
+figure.mmd.big::after{content:'Click to shrink'}
+figure.mmd.big svg{width:100%;max-width:100%!important;max-height:none}
 
 /* ---- footer ---- */
 footer{max-width:1440px;margin:0 auto;padding:0 28px 40px;display:grid;
@@ -1426,6 +1494,9 @@ function goBack(){
 window.addEventListener('popstate',()=>{if(navStack.length)goBack()});
 
 let codeWrap=false, codeGrow=false, planMode='tool';
+// Per-viewer convenience only: storage may be unavailable, and the note
+// simply shows again.
+let scopeHidden=(()=>{try{return localStorage.getItem('aidfir-scope-hidden')==='1'}catch(e){return false}})();
 let view='guide', query='', unvOnly=false, dense=false,
     // Was entry_id, which sorted first paint by the one field a responder never
     // needs. triage_priority is on every row since F09, so the table can open in
@@ -1538,6 +1609,11 @@ function sBadge(v,label,bare,scale){
 // and repeating it in every cell is noise. Everywhere else the badge travels
 // without a header, so it carries its own label.
 const fvBadge=(v,bare)=>sBadge(v,'value',bare,'sc-value');
+const OS_SHORT={windows:'Win',macos:'macOS',linux:'Linux',docker:'Docker',container:'Container',cloud:'Cloud'};
+// One line for the common three-OS row; longer lists wrap between names, never inside one.
+const osCell=os=>`<span class="oscell">${os.map(o=>`<span>${esc(OS_SHORT[o]||o)}</span>`).join(' ')}</span>`;
+// Paths and hostnames wrap at their separators, never mid-name.
+const pathHTML=p=>esc(p).replace(/([\/\\.:_\-])/g,'$1<wbr>');
 const confBadge=(v,bare)=>sBadge(v,'sourcing',bare,'sc-conf');
 const riskBadge=(v,p)=>badge(v,v==='critical',p);
 const triageBadge=v=>badge(v,true,'triage');
@@ -1666,9 +1742,9 @@ function tableHTML(rows){
       <td><span class="id">${esc(r.entry_id)}</span></td>
       <td>${esc(r.tool)}</td>
       <td><span class="clspill">${esc(r.cls)}</span></td>
-      <td class="artcell"><span class="path">${esc(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
-      <td>${esc(r.os.join(', '))}</td>
-      <td>${fvBadge(r.forensic_value,true)}</td>
+      <td class="artcell"><span class="path">${pathHTML(r.artifact)}</span>${r.unverified?` <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</td>
+      <td>${osCell(r.os)}</td>
+      <td>${r.forensic_value?fvBadge(r.forensic_value,true):'<span class="nil" title="Not rated for this row class">&ndash;</span>'}</td>
       <td>${confBadge(r.confidence,true)}</td>
       <td><span class="note">${esc(r.description)}</span></td>
     </tr>`).join('')+'</tbody></table></div>';
@@ -1680,7 +1756,7 @@ function cardsHTML(rows){
     <div class="card" data-a="${esc(r.anchor)}" tabindex="0">
       <div class="top"><b>${esc(r.tool)}</b><span class="clspill">${esc(r.cls)}</span>
         ${fvBadge(r.forensic_value)}${confBadge(r.confidence)}</div>
-      <span class="path">${esc(r.artifact)}</span>
+      <span class="path">${pathHTML(r.artifact)}</span>
       <div class="meta">${esc(r.entry_id)}${r.os.length?' &middot; '+esc(r.os.join(', ')):''}${r.unverified?` &middot; <span class="unv" title="${esc(UNVERIFIED_MEANING)}">unverified</span>`:''}</div>
     </div>`).join('');
 }
@@ -1818,8 +1894,14 @@ function planHTML(){
       <button class="btn" id="cpLinks">Copy permalinks</button>
       <button class="btn primary" id="cpList">Copy as triage list</button>
       <button class="btn danger" id="cpClear">Clear all</button></div></div>`;
-  if(!rows.length)return head+`<div class="plan-empty">Nothing picked yet.
-    Tick artifacts in the catalog to build a collection plan.</div>`;
+  if(!rows.length){
+    const by={};ROWS.forEach(r=>{by[r.tool]=(by[r.tool]||0)+1});
+    const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    return head+`<div class="plan-empty"><b>Nothing picked yet.</b>
+      Tick rows in the catalog, or start from the tool you found on the host:
+      <div class="pstart">${top.map(([t,n])=>`<button type="button" class="chip" data-starttool="${esc(t)}">${esc(t)} <span class="n">${n}</span></button>`).join('')}</div>
+      <button type="button" class="btn" data-goto="catalog">Open the catalog</button></div>`;
+  }
   // A standing summary of what is in the plan, because the thing a responder
   // needs to know before starting is how much of it will not wait.
   const summary=`<div class="plansum">
@@ -1836,7 +1918,7 @@ function planHTML(){
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
+        <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="ptool">${esc(r.tool)}</span>${fvBadge(r.forensic_value)}</div>`).join('')}
       <div class="gfoot">${esc(VOL_MEANING[g.vol])}</div></div>`).join('')
     : planGroups().map(g=>`
@@ -1844,7 +1926,7 @@ function planHTML(){
         <span class="n">${g.rows.length} path${g.rows.length>1?'s':''}</span></div>
       ${g.rows.map(r=>`<div class="prow${rowState(r).state==='skip'?' off':''}">
         <button class="rm" data-a="${esc(r.anchor)}" aria-label="Remove">&#10005;</button>
-        <span class="path">${esc(r.artifact)}</span>${rowNeed(r)}
+        <span class="path">${pathHTML(r.artifact)}</span>${rowNeed(r)}
         <span class="badge vol v-${esc(r.vol)}"><i>vol</i>${esc(r.vol)}</span>
         ${fvBadge(r.forensic_value)}</div>`).join('')}
       ${g.t.guidance?`<div class="gfoot">${esc(g.t.guidance)}</div>`:''}</div>`).join('');
@@ -1877,6 +1959,17 @@ function planLinks(){
 }
 
 /* ---------- drawer ---------- */
+// Where a row is visible, by class. Derived, not authored: the point is the
+// same for every row of a class, and a network row in particular is only in
+// your logs when the tool ran on your network.
+const SEEN_WHERE={
+  network:'In your egress, proxy or DNS logs, and only when this tool runs inside your network. An attacker running the same tool on their own infrastructure never appears here.',
+  disk:'On the host where the tool is installed or ran. Absent if the AI ran somewhere else.',
+  credential:'On the host where the tool is installed. If the token was stolen and used elsewhere, that use shows only in the provider\'s audit log.',
+  'mcp-config':'On the host or in the repository where the agent is configured.',
+  process:'In process telemetry on the host where the tool ran, if process auditing was on beforehand.',
+  registry:'On the Windows host where the tool was installed or ran.',
+  eventlog:'In the event log of the Windows host where the tool ran, if the channel was enabled beforehand.'};
 function drawerHTML(r){
   const t=TOOLMAP[r.entry_id]||{};
   const base=location.origin==='null'?'':location.origin+location.pathname;
@@ -1897,6 +1990,8 @@ function drawerHTML(r){
       ${r.requires?`<div class="requires"><b>Requires.</b> ${esc(r.requires)}</div>`:''}
       ${r.mechanism?`<div class="requires"><b>How it is defined.</b> ${
         esc(MECH_MEANING[r.mechanism]||r.mechanism)}</div>`:''}</div>
+    ${SEEN_WHERE[r.cls]?`<div class="dsec"><h4>Where you would see it</h4><p>${esc(SEEN_WHERE[r.cls])}
+      <a href="#g-where-did-the-ai-run-what-you-can-actually-see" class="seenlnk">Where did the AI run?</a></p></div>`:''}
     <div class="dsec"><h4>Tool context</h4>
       <div class="tverify">${t.verified?`last verified ${esc(t.verified)}`
         :'never verified against a host or a current release'}</div>
@@ -2086,7 +2181,7 @@ function rulesHTML(rules){
       <div class="rtop"><div><h3 class="rname">${esc(r.title)}</h3>
         <div class="rfile">${esc(r.file)}</div></div>
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
-      ${r.description?`<p>${esc(r.description.split('\n')[0])}</p>`:''}
+      ${r.description?`<p class="rdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
       <div class="rfoot"><span class="fmt">${esc(r.format)}</span>
         ${r.atlas.map(a=>`<span class="tchip">${esc(a)}</span>`).join('')}
         ${r.owasp.map(o=>`<span class="tchip">${esc(o)}</span>`).join('')}</div>
@@ -2546,7 +2641,9 @@ function iocGroups(iocs){
     .map(k=>({kind:k,items:by[k]}));
 }
 function caseStudiesHTML(){
-  const LIST=caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES;
+  // Newest disclosure first: the case a responder is most likely chasing.
+  const LIST=(caseOnly?CASES.filter(c=>caseOnly.has(c.id)):CASES.slice())
+    .sort((a,b)=>(b.disclosed||'').localeCompare(a.disclosed||'')||b.id.localeCompare(a.id));
   if(!LIST.length)return`<div class="empty">No case studies.</div>`;
   const byConf={};
   for(const c of LIST){const k=c.confidence||'unrated'; byConf[k]=(byConf[k]||0)+1}
@@ -2669,6 +2766,26 @@ function csSeries(){
 const CLS_NAME={disk:'Files and folders',credential:'Credentials and tokens',
   'mcp-config':'MCP configuration',network:'Network endpoints',process:'Processes',
   registry:'Registry keys',eventlog:'Event log channels'};
+// Count pills that double as navigation, after the edge toolkit's start page.
+function orientKpisHTML(){
+  const k=[[ROWS.length,'artifact locations','catalog'],[TOOLS.length,'tools','tools'],
+    [RULES.length,'detections','rules'],[SOURCES.length,'telemetry sources','sources'],
+    [CASES.length,'case studies','cases'],[INTEL.actors.length,'actors','intel']];
+  return `<nav class="okpis" aria-label="What is here">${k.map(([n,t,v])=>
+    `<button type="button" class="okpi" data-goto="${v}"><b>${n}</b> ${t}</button>`).join('')}</nav>`;
+}
+// How far to trust a row: the provenance mix, the question a responder asks
+// before acting on a path. Same colours as the collection plan's mix bar.
+function orientTrustHTML(){
+  const c={high:0,medium:0,low:0}; ROWS.forEach(r=>{if(r.confidence in c)c[r.confidence]++});
+  const unv=ROWS.filter(r=>r.unverified).length, n=ROWS.length||1;
+  const seg=(k,cls)=>c[k]?`<span class="tcseg ${cls}" style="flex:${c[k]}" title="${c[k]} ${k}"></span>`:'';
+  return `<div class="otrust"><div class="oth"><b>How far to trust a row</b>
+      <span>${Math.round(c.high/n*100)}% verified on a host or documented by the vendor</span></div>
+    <div class="otbar">${seg('high','tc-high')}${seg('medium','tc-med')}${seg('low','tc-low')}</div>
+    <div class="otkey"><span><i class="tc-high"></i>${c.high} high</span><span><i class="tc-med"></i>${c.medium} medium, several sources agree</span>
+      <span><i class="tc-low"></i>${c.low} low, single source</span>${unv?`<button type="button" class="lnk" data-unv="1">${unv} marked unverified</button>`:''}</div></div>`;
+}
 // Landing graphic: where the evidence lives, by row class, and how the
 // documented incident count has grown. Every number is computed from the data.
 function orientVisHTML(){
@@ -2749,20 +2866,21 @@ function guideHTML(){
     `<a href="#g-${esc(p.anchor)}">${esc(p.title)}</a>`+
     p.sections.map(s=>`<a class="sub" href="#g-${esc(s.anchor)}">${esc(s.title)}</a>`).join('')
   ).join('');
-  const nTools=new Set(ROWS.map(r=>r.entry_id)).size;
   return `<section class="orient"><div class="otext">
     <h2>AI agents leave evidence most IR playbooks never collect</h2>
     <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
       configuration to disk that show what the agent was told and what it did. This site
       says where those traces are, what each one proves, and in what order to collect them.</p>
+    ${orientKpisHTML()}
     <ol class="steps">
       <li><a href="#g-is-this-an-ai-incident-decide-before-you-use-this-guide"><b>Decide</b>
         <span>Is an AI system the target, the way in, or the attacker's tool? If not, this isn't your guide.</span></a></li>
       <li><button type="button" data-goto="catalog"><b>Locate</b>
-        <span>${ROWS.length} artifact locations across ${nTools} tools, by OS and evidence type.</span></button></li>
+        <span>Where each tool leaves its traces, by OS, and what each one proves.</span></button></li>
       <li><button type="button" data-goto="plan"><b>Collect</b>
         <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
-    </ol></div>
+    </ol>
+    ${orientTrustHTML()}</div>
     ${orientVisHTML()}
   </section>
   <div class="guidewrap">
@@ -2777,6 +2895,7 @@ function renderMain(){
   const railed=(view==='catalog'||view==='rules');
   shell.classList.toggle('nocol',!railed);
   $('#controls').hidden=!railed;
+  $('#scopeNote').hidden=!(view==='catalog'&&!scopeHidden);
   $('#unvBtn').hidden=view!=='catalog';
   $('#denseBtn').hidden=view!=='catalog';
   $('#metaRow').hidden=!railed;
@@ -2922,6 +3041,11 @@ function renderMain(){
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
     $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
+    $$('#main [data-unv]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();unvOnly=true;
+      $('#unvBtn').setAttribute('aria-pressed','true');view='catalog';update();window.scrollTo(0,0)});
+    $$('#main figure.mmd').forEach(f=>{f.tabIndex=0;f.title='Click to enlarge';
+      const t=()=>{f.classList.toggle('big');f.title=f.classList.contains('big')?'Click to shrink':'Click to enlarge'};
+      f.onclick=t;f.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
     $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
       pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
@@ -2986,6 +3110,9 @@ function renderMain(){
   }else{
     main.innerHTML=`<div class="planwrap${picks.size?' has-build':''}"><div class="planmain">${planHTML()}</div>${triageHTML()}</div>`;
     wireTriage();
+    $$('#main [data-starttool]').forEach(b=>b.onclick=()=>{pushNav();resetFilters();
+      filters.tool=[b.dataset.starttool];view='catalog';update();window.scrollTo(0,0)});
+    $$('#main .plan-empty [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update()});
     const l=$('#cpLinks'),p=$('#cpList');
     if(l)l.onclick=()=>copy(planLinks(),l);
     if(p)p.onclick=()=>copy(planText(),p);
@@ -3100,12 +3227,114 @@ function applyHash(){
     if(el){el.open=true;el.scrollIntoView()}
     return}
   if(h==='guide'){view='guide';update();return}
-  if(h.startsWith('g-')){view='guide';update();
+  if(h.startsWith('g-')){if(!$('#drawer').hidden)closeDrawer();view='guide';update();
     const el=document.getElementById(h);if(el)el.scrollIntoView();return}
   if(ROWMAP[h]){view='catalog';update();openDrawer(h,null);return}
   const t=TOOLS.find(t=>t.entry_id.toLowerCase()===h.toLowerCase()||t.slug===h.toLowerCase());
   if(t){resetFilters();filters.tool=[t.tool];view='catalog';update()}
 }
+
+/* ---------- search everything ---------- */
+// One box over every corpus on the page, after edge-dfir-toolkit's palette:
+// results grouped by kind, five per group, and a jump to the full filtered
+// list where one exists. The index is built on first open, not at load.
+const PAL_GROUPS=['Tools','Artifacts','Detections','Case studies','Actors','Data sources','Investigation guide'];
+const PAL_SUGGEST=['~/.claude','oauth_creds','mcp.json','CVE-2025-3248','AML.T0053','APT28','Sysmon','Langflow'];
+let PAL=null, palFlat=[], palSel=0;
+function palIndex(){
+  const it=[], lc=x=>(x||'').toString().toLowerCase();
+  const add=(g,t,sub,hay,go,mono)=>it.push({g,t:t||'',s:sub||'',tl:lc(t),h:lc([t,hay].join(' ')),go,mono});
+  TOOLS.forEach(t=>add('Tools',t.tool,`${t.entry_id} · ${t.vendor||''}`,
+    [t.entry_id,t.vendor,(t.aliases||[]).join(' '),t.category].join(' '),
+    ()=>{view='tools';update();openToolDrawer(t.entry_id,null)}));
+  ROWS.forEach(r=>add('Artifacts',r.artifact,`${r.tool} · ${r.cls}`,
+    // Same fields as the catalog search, so the counts agree.
+    [r.tool,r.entry_id,r.cls,r.description,r.evidence.join(' '),((TOOLMAP[r.entry_id]||{}).aliases||[]).join(' ')].join(' '),
+    ()=>{view='catalog';update();openDrawer(r.anchor,null)},1));
+  RULES.forEach(r=>add('Detections',r.title,`${r.file} · ${r.format}`,
+    [r.file,r.description,r.format,r.category,(r.atlas||[]).join(' '),(r.attack||[]).join(' '),(r.owasp||[]).join(' ')].join(' '),
+    ()=>{view='rules';update();openRuleDrawer(r.path,null)}));
+  CASES.forEach(c=>add('Case studies',c.title,`${c.id} · disclosed ${c.disclosed}`,
+    [c.id,c.summary,c.affects,(c.iocs||[]).map(i=>i.value).join(' '),JSON.stringify(c.external_ids||{})].join(' '),
+    ()=>{view='cases';update();const el=document.getElementById('cs-'+c.id);if(el){el.open=true;el.scrollIntoView({block:'start'})}}));
+  INTEL.actors.forEach(a=>add('Actors',a.name,a.id,
+    [a.id,(a.aliases||[]).map(x=>typeof x==='string'?x:x.name).join(' '),a.summary].join(' '),
+    ()=>{view='intel';update();openActorDrawer(a.id,null)}));
+  SOURCES.forEach(x=>add('Data sources',x.name,x.kind,[x.id,x.kind,x.enable,x.without_it].join(' '),
+    ()=>{view='sources';update();const el=document.getElementById('src-'+x.id);if(el){el.open=true;el.scrollIntoView({block:'start'})}}));
+  GUIDE.toc.flatMap(q=>[q,...q.sections]).forEach(x=>add('Investigation guide',x.title,'',
+    '',()=>{view='guide';update();const el=document.getElementById('g-'+x.anchor);if(el)el.scrollIntoView()}));
+  return it;
+}
+function palHL(t,toks){
+  if(!toks.length)return esc(t);
+  const re=new RegExp('('+toks.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','ig');
+  return t.split(re).map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join('');
+}
+function palRender(){
+  const q=$('#palQ').value.trim(), ql=q.toLowerCase(), toks=ql.split(/\s+/).filter(Boolean);
+  const res=$('#palRes'); palFlat=[]; palSel=0;
+  if(!toks.length){
+    res.innerHTML=`<div class="palempty">Try a path, a CVE, a technique or an actor from your case:
+      <div class="palsug">${PAL_SUGGEST.map(x=>`<button type="button" class="chip" data-pq="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>`;
+    $$('#palRes [data-pq]').forEach(b=>b.onclick=()=>{$('#palQ').value=b.dataset.pq;palRender();$('#palQ').focus()});
+    return;
+  }
+  const by={};
+  for(const x of PAL){
+    if(!toks.every(k=>x.h.includes(k)))continue;
+    const sc=(x.tl===ql?100:0)+(x.tl.startsWith(ql)?40:0)+(x.tl.includes(ql)?20:0)+toks.filter(k=>x.tl.includes(k)).length*5;
+    (by[x.g]=by[x.g]||[]).push({x,sc});
+  }
+  let h='';
+  for(const g of PAL_GROUPS){
+    const a=(by[g]||[]).sort((m,n)=>n.sc-m.sc); if(!a.length)continue;
+    h+=`<div class="palg" role="group" aria-label="${esc(g)}"><div class="palgh"><span>${esc(g)}</span><span>${a.length}</span></div>`;
+    a.slice(0,5).forEach(({x})=>{const i=palFlat.push(x)-1;
+      h+=`<div class="palr" role="option" id="palr${i}" data-i="${i}" aria-selected="false">
+        <span class="palt${x.mono?' m':''}">${palHL(x.t,toks)}</span>${x.s?`<span class="pals">${esc(x.s)}</span>`:''}</div>`});
+    if(a.length>5&&(g==='Artifacts'||g==='Detections')){const i=palFlat.push({all:g==='Artifacts'?'catalog':'rules'})-1;
+      h+=`<div class="palr palall" role="option" id="palr${i}" data-i="${i}" aria-selected="false">All ${a.length} in ${g==='Artifacts'?'the catalog':'detections'} &#8594;</div>`}
+    h+='</div>';
+  }
+  res.innerHTML=h||`<div class="palempty">Nothing matches every word. Fewer words, or a shorter piece of the path, usually finds it.</div>`;
+  $$('#palRes .palr').forEach(r=>{r.onclick=()=>palGo(+r.dataset.i);r.onmousemove=()=>palMark(+r.dataset.i)});
+  palMark(0);
+}
+function palMark(i){
+  if(!palFlat.length)return;
+  palSel=(i+palFlat.length)%palFlat.length;
+  $$('#palRes .palr').forEach(r=>r.setAttribute('aria-selected',String(+r.dataset.i===palSel)));
+  const el=$('#palr'+palSel); if(el){el.scrollIntoView({block:'nearest'});$('#palQ').setAttribute('aria-activedescendant',el.id)}
+}
+function palGo(i){
+  const x=palFlat[i]; if(!x)return;
+  const q=$('#palQ').value.trim();
+  palClose(); pushNav();
+  if(x.all){resetFilters();if(x.all==='rules')resetRuleFilters();query=q.toLowerCase();$('#q').value=q;view=x.all;update();window.scrollTo(0,0);return}
+  if(!$('#drawer').hidden)closeDrawer();
+  x.go();
+}
+function palOpen(){
+  if(!PAL)PAL=palIndex();
+  $('#pal').hidden=false; document.body.classList.add('palopen');
+  const i=$('#palQ'); i.select(); i.focus(); palRender();
+}
+function palClose(){$('#pal').hidden=true;document.body.classList.remove('palopen');$('#palBtn').focus()}
+$('#palBtn').onclick=palOpen;
+$('#palQ').addEventListener('input',palRender);
+$('#palQ').addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();palMark(palSel+1)}
+  else if(e.key==='ArrowUp'){e.preventDefault();palMark(palSel-1)}
+  else if(e.key==='Enter'){e.preventDefault();palGo(palSel)}
+  else if(e.key==='Escape'){e.preventDefault();palClose()}
+});
+$('#pal').addEventListener('mousedown',e=>{if(e.target.id==='pal')palClose()});
+document.addEventListener('keydown',e=>{
+  const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)||document.activeElement.isContentEditable;
+  if((e.key==='k'&&(e.ctrlKey||e.metaKey))||(e.key==='/'&&!typing)){e.preventDefault();
+    $('#pal').hidden?palOpen():palClose()}
+});
 
 /* ---------- boot ---------- */
 $('#unvNote').textContent='Showing only unverified rows. '+UNVERIFIED_MEANING;
@@ -3201,6 +3430,9 @@ function setThemeBtn(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDrawer()});
 window.addEventListener('hashchange',applyHash);
+$('#scopeX').onclick=()=>{scopeHidden=true;try{localStorage.setItem('aidfir-scope-hidden','1')}catch(e){}
+  $('#scopeNote').hidden=true};
+$('#scopeNote [data-goplan]').onclick=()=>{pushNav();view='plan';update()};
 // The header wraps to a different height per viewport and per tab row, so the
 // anchor offset is measured rather than hard-coded.
 function syncHdr(){
@@ -3479,6 +3711,8 @@ def main():
       on an endpoint, what each trace proves, and in what order to collect it.</p>
     </div>
     <div class="hdr-right">
+      <button id="palBtn" type="button" class="palbtn" aria-haspopup="dialog"
+        aria-label="Search everything (press / or Ctrl+K)"><span aria-hidden="true">&#8981;</span><span class="paltx">Search everything</span><kbd>/</kbd></button>
       <a class="ghlink" href="{REPO}" target="_blank" rel="noopener"
          aria-label="View this project on GitHub">GitHub &#8599;</a>
       <button id="themeBtn" type="button"></button></div>
@@ -3506,6 +3740,15 @@ def main():
 </aside>
 <main class="content">
   <div id="backbar" hidden></div>
+  <div class="scopenote" id="scopeNote" hidden>
+    <p><b>What these rows are.</b> What an AI tool leaves on the machine it ran on. They apply when the
+      AI ran on your systems: your own agents, an insider's, or an attacker driving them. An attacker's
+      AI on their own infrastructure leaves none of this in your telemetry; read your evidence for tempo
+      instead. <a href="#g-where-did-the-ai-run-what-you-can-actually-see">Where did the AI run?</a></p>
+    <ol><li>Filter to the tool you found on the host.</li><li>Open a row to see what it proves and where you would see it.</li>
+      <li>Tick the rows you need, then build the <button type="button" class="lnk" data-goplan="1">collection plan</button>.</li></ol>
+    <button type="button" class="x" id="scopeX" aria-label="Hide this note">&#10005;</button>
+  </div>
   <div class="controls" id="controls">
     <div class="search"><span class="glyph">&#8981;</span>
       <input id="q" type="search" placeholder="Search paths, tools, descriptions..."
@@ -3530,6 +3773,15 @@ def main():
 </div>
 
 <div class="drawer" id="drawer" hidden role="dialog" aria-modal="false"></div>
+<div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-label="Search everything">
+  <div class="palbox">
+    <input id="palQ" type="search" autocomplete="off" spellcheck="false"
+      placeholder="A path, a tool, a CVE, a technique, an actor..." aria-label="Search everything"
+      aria-controls="palRes" aria-autocomplete="list">
+    <div id="palRes" role="listbox"></div>
+    <div class="palfoot"><span><kbd>&#8593;</kbd><kbd>&#8595;</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
+  </div>
+</div>
 <div class="toast" id="toast" hidden><span id="toastN"></span>
   <button id="toastOpen" type="button">Open collection plan</button>
   <a id="toastClear">clear</a>

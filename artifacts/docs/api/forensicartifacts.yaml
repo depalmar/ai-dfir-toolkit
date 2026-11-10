@@ -638,7 +638,11 @@ urls:
 ---
 name: GoogleGeminiCliArtifacts
 doc: Google Gemini CLI (AIRT-0037) - Terminal agent installed via npm @google/gemini-cli.
-  Binary `gemini`. Supports system-wide policy config.
+  Binary `gemini`. Supports system-wide policy config. On 18 June 2026 Google stopped
+  serving it to free, Google AI Pro and Ultra users and moved them to Antigravity
+  CLI. Gemini Code Assist Standard and Enterprise, Google Cloud and paid API-key use
+  continue, and the repository still receives security fixes, so installs remain on
+  enterprise hosts and orphaned ones on personal machines.
 sources:
 - type: FILE
   attributes:
@@ -677,6 +681,7 @@ supported_os:
 - Windows
 urls:
 - https://github.com/google-gemini/gemini-cli
+- https://github.com/google-gemini/gemini-cli/discussions/27274
 ---
 name: GooseArtifacts
 doc: Goose (AIRT-0038) - Rust-based agent shipping both CLI and Desktop. Extension/MCP

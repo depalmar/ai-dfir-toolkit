@@ -344,7 +344,7 @@ Detection content totals 70 rule files / 161 signatures across the nine attack-c
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
-content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.09.29,
+content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.11.09,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
 Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
@@ -423,6 +423,13 @@ table. The guide's incident timeline is injected at the
 never rows to it. Anchor offsets come from `--hdrh`, measured from the sticky
 header by `syncHdr()`; do not reintroduce a fixed pixel offset.
 
+The catalog only sees AI that ran on the responder's systems. Do not let it
+imply otherwise: an attacker's AI on their own infrastructure leaves no row,
+which is what the guide's "Where did the AI run?" section and each drawer's
+derived "Where you would see it" line say. Guide diagrams are capped at
+760x420 with click-to-enlarge; the SVGs carry an inline max-width, hence the
+!important.
+
 Four things worth not relearning:
 
 - Every embedded data blob goes through `js_data()`, which escapes `</`. A
@@ -482,10 +489,9 @@ resolved by whoever picks this up next without asking.
 **Then, in order of value:**
 
 0. **Threat-intel follow-through.**
-   - The first `intel_watch.py` run offline found five Langflow CVEs added to CISA
-     KEV this year that the catalog and `cve-status.json` do not cite:
-     CVE-2026-0770, -9198, -33017, -55255 and CVE-2025-34291. Research them into
-     AIRT-0044 and AIRT-CS-0003.
+   - Gemini CLI (AIRT-0037) is `legacy`: Google moved consumer tiers to
+     Antigravity CLI on 18 June 2026. Antigravity CLI has no entry yet - add one
+     only from a host or vendor-documented paths, not from the migration post.
    - Set up auto-merge: an `AUTOMATION_TOKEN` secret, branch protection on
      `main`, and "Allow auto-merge". Without them the refresh PR opens but waits.
    - Run the generated PowerShell triage script on a Windows host. The bash
@@ -519,12 +525,12 @@ resolved by whoever picks this up next without asking.
    Row-level `last_verified` now makes that visible in the data rather than only
    in prose, so the gap is auditable - `grep -L last_verified` per row is the
    query. LM Studio has a known macOS discrepancy on record (bug-tracker #1371).
-6. **Port the UI improvements into `build_site.py`.** A `/` search shortcut,
-   active-filter chips, copy-path buttons and a sticky table header are all worth
-   having. The site is generated and **never hand-edited**, so they go in the
-   generator. Do not accept a hand-written `index.html` as a starting point: the
-   one offered carried three catalogue claims that were wrong, including a
-   `medium` MSIX row displayed as `High`.
+6. **UI improvements - done.** Site-wide search (`/` or Ctrl/Cmd-K, grouped
+   results after edge-dfir-toolkit's palette), active-filter chips, copy-path
+   buttons and a sticky table header are all in the generator. The site is
+   **never hand-edited**: do not accept a hand-written `index.html` as a
+   starting point - the one offered carried three catalogue claims that were
+   wrong, including a `medium` MSIX row displayed as `High`.
 7. **Quarterly re-verification.** Paths change between tool releases. A catalog
    nobody re-verifies decays into a liability, which is worse than one that never
    existed, because people trust it.

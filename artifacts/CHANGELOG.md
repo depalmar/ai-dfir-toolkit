@@ -15,6 +15,23 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   cumulative line chart by disclosure quarter, is generated from the case
   studies at build time so it cannot drift from them. Feedback from Joshua
   Wright.
+- **Search everything.** Press `/` or Ctrl/Cmd-K, or use the header button,
+  to search tools, catalog rows, detections, case studies, actors, data
+  sources and guide sections at once. Results are grouped by kind, five per
+  group, with keyboard navigation and a jump to the full filtered catalog or
+  detection list; the empty state suggests queries. Modelled on
+  edge-dfir-toolkit's palette. Artifact matches use the catalog's own fields so
+  the two counts agree.
+- **Where did the AI run?** A guide section and catalog framing for the case
+  the catalog cannot see: an attacker's AI on the attacker's own
+  infrastructure. The guide splits incidents by where the AI ran (on your
+  hosts, attacker code calling a model API from your hosts, your keys used
+  elsewhere, or entirely on the attacker's side) with what each leaves and
+  where to look, and lists the tempo and pattern signs that the operator is
+  an agent. The catalog opens with a scope note and a three-step how-to-use,
+  and every row's drawer says where you would see it, derived from its class:
+  a network row is only in your logs when the tool ran on your network.
+  Feedback from Joshua Wright.
 - **Landing graphic.** Beside the orientation, a chart of where the evidence
   lives: the catalog's locations by type, each bar opening the catalog
   filtered to it, and a sparkline of documented incidents that links to the
@@ -69,6 +86,15 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   copyable canvas links and degree-scaled nodes.
 
 ### Changed
+- Langflow (AIRT-0044) cites the five Langflow flaws CISA added to its Known
+  Exploited Vulnerabilities catalog during 2026 - CVE-2026-33017,
+  CVE-2025-34291, CVE-2026-55255, CVE-2026-0770 and CVE-2026-9198 - and notes
+  that CISA now flags CVE-2025-3248 for known ransomware use. The Langflow case
+  study points to them. The KEV pin moves to catalog 2026.11.09, read through
+  a lookup of CISA's live feed because the runner cannot fetch it directly.
+- Gemini CLI (AIRT-0037) is marked `legacy`: on 18 June 2026 Google stopped
+  serving it to free, Pro and Ultra users in favour of Antigravity CLI.
+  Enterprise and paid API-key use continue.
 - Framework pins moved to ATLAS 2026.10 and ATT&CK 20.0. ATLAS dropped the
   three AML.T0024 subtechniques, AML.T0056 and AML.T0057, none of which the
   repository cited, and renamed AML.T0010 from AI Supply Chain Compromise to
