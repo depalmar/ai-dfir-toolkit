@@ -15,6 +15,10 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   cumulative line chart by disclosure quarter, is generated from the case
   studies at build time so it cannot drift from them. Feedback from Joshua
   Wright.
+- **Landing graphic.** Beside the orientation, a chart of where the evidence
+  lives: the catalog's locations by type, each bar opening the catalog
+  filtered to it, and a sparkline of documented incidents that links to the
+  timeline. Both are computed from the data at build time.
 - **Collection plan exports.** The plan now renders for the collectors people
   already run, from the same per-row spec the native scripts use: a KAPE
   `.tkape` target, a Velociraptor artifact (file globs per OS, registry,

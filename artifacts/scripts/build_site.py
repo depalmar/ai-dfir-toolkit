@@ -1147,11 +1147,33 @@ button.istat:hover{background:var(--hover)}
 
 /* ---- guide ---- */
 .orient{margin:0 0 18px;padding:18px 22px;background:var(--panel);border:1px solid var(--line);
-  border-left:3px solid var(--accent);border-radius:11px}
+  border-left:3px solid var(--accent);border-radius:11px;display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px 26px;align-items:start}
+@media(max-width:980px){.orient{grid-template-columns:minmax(0,1fr)}}
+.ovis{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.ovis h3{margin:0;font-size:13.5px}
+.orient .ovsub{margin:2px 0 10px;font-size:12px}
+.ovbars{display:grid;gap:3px}
+.ovbar{display:grid;grid-template-columns:150px minmax(0,1fr) 34px;align-items:center;gap:8px;
+  background:none;border:0;border-radius:6px;padding:3px 4px;text-align:left;color:var(--ink);font-size:12px}
+.ovbar:hover{background:var(--accent-soft)}
+.ovbar:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ovlab{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ovtrack{height:8px;display:block}
+.ovfill{display:block;height:100%;min-width:3px;background:var(--accent);border-radius:0 4px 4px 0}
+.ovbar:hover .ovfill{background:var(--accent-hover)}
+.ovn{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.ovspark{display:block;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);
+  color:var(--ink);text-decoration:none}
+.ovspark svg{display:block;width:100%;height:auto;margin:6px 0 4px}
+.ovsh{font-size:12px;color:var(--muted)}
+.ovsh b{font-size:15px;color:var(--ink)}
+.ovmore{font-size:11.5px;color:var(--accent)}
+.ovspark:hover .ovmore{text-decoration:underline}
 .orient h2{margin:0 0 6px;font-size:18px}
 .orient p{margin:0 0 14px;font-size:13.5px;color:var(--muted);max-width:84ch}
 .steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));counter-reset:st}
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));counter-reset:st}
 .steps li{counter-increment:st}
 .steps a,.steps button{display:block;width:100%;height:100%;text-align:left;font:inherit;
   color:var(--ink);text-decoration:none;cursor:pointer;background:var(--panel-2);
@@ -2634,19 +2656,51 @@ function csTools(c){
   return ids.map(id=>{const t=TOOLS.find(t=>t.entry_id===id);return esc(t?t.tool:id)}).join(', ');
 }
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// Cases per disclosure quarter, with the running total. One function so the
+// chart, its tooltip and the landing sparkline cannot disagree.
+function csSeries(){
+  const ks=CASES.map(csDate).filter(Boolean).map(d=>d[0]*4+Math.floor((d[1]-1)/3));
+  if(!ks.length)return [];
+  const q0=Math.min(...ks), q1=Math.max(...ks), out=[]; let run=0;
+  for(let k=q0;k<=q1;k++){const n=ks.filter(v=>v===k).length;run+=n;
+    out.push({k,label:`${Math.floor(k/4)} Q${k%4+1}`,n,total:run})}
+  return out;
+}
+const CLS_NAME={disk:'Files and folders',credential:'Credentials and tokens',
+  'mcp-config':'MCP configuration',network:'Network endpoints',process:'Processes',
+  registry:'Registry keys',eventlog:'Event log channels'};
+// Landing graphic: where the evidence lives, by row class, and how the
+// documented incident count has grown. Every number is computed from the data.
+function orientVisHTML(){
+  const by={}; ROWS.forEach(r=>{by[r.cls]=(by[r.cls]||0)+1});
+  const cls=Object.entries(by).sort((a,b)=>b[1]-a[1]), max=cls[0][1];
+  const bars=cls.map(([c,n])=>`<button type="button" class="ovbar" data-cls="${esc(c)}"
+      title="Show the ${n} ${esc(CLS_NAME[c]||c)} rows in the catalog">
+      <span class="ovlab">${esc(CLS_NAME[c]||c)}</span>
+      <span class="ovtrack"><span class="ovfill" style="width:${(n/max*100).toFixed(1)}%"></span></span>
+      <span class="ovn">${n}</span></button>`).join('');
+  const pts=csSeries(); let spark='';
+  if(pts.length){
+    const W=480,H=56,P=5, last=pts[pts.length-1];
+    const x=i=>P+(pts.length<2?0:i*(W-2*P)/(pts.length-1)), y=v=>H-P-v/last.total*(H-2*P);
+    const d=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(p.total).toFixed(1)}`).join('');
+    spark=`<a class="ovspark" href="#g-what-ai-incidents-have-looked-like-so-far">
+      <span class="ovsh"><b>${last.total}</b> documented incidents, ${pts[0].label} to ${last.label}</span>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Documented incidents, cumulative, ${pts[0].label} to ${last.label}">
+        <path d="${d}" class="tlline"/><circle cx="${x(pts.length-1)}" cy="${y(last.total)}" r="4" class="tldot"/></svg>
+      <span class="ovmore">See the timeline &#8595;</span></a>`;
+  }
+  return `<div class="ovis"><h3>Where the evidence lives</h3>
+    <p class="ovsub">${ROWS.length} catalogued locations by type. Click a bar to open those rows.</p>
+    <div class="ovbars">${bars}</div>${spark}</div>`;
+}
 // Cumulative documented incidents by disclosure quarter, and the same cases as a
 // table. Both are derived from the case studies, so neither can drift from them.
 function timelineHTML(){
   const cs=CASES.map(c=>({c,d:csDate(c)})).filter(x=>x.d)
     .sort((a,b)=>a.d[0]-b.d[0]||a.d[1]-b.d[1]||a.c.id.localeCompare(b.c.id));
   if(!cs.length)return '';
-  const q=d=>d[0]*4+Math.floor((d[1]-1)/3);
-  const q0=q(cs[0].d), q1=q(cs[cs.length-1].d);
-  const pts=[]; let run=0;
-  for(let k=q0;k<=q1;k++){
-    const n=cs.filter(x=>q(x.d)===k).length; run+=n;
-    pts.push({k,label:`${Math.floor(k/4)} Q${k%4+1}`,n,total:run});
-  }
+  const pts=csSeries(), run=pts[pts.length-1].total;
   const W=640,H=200,L=34,R=44,T=14,B=28, iw=W-L-R, ih=H-T-B;
   const ymax=Math.max(4,Math.ceil(run/10)*10);
   const x=i=>L+(pts.length<2?iw/2:i*iw/(pts.length-1));
@@ -2678,12 +2732,7 @@ function timelineHTML(){
 function wireTimeline(){
   const svg=$('#main .tlplot svg'); if(!svg)return;
   const tip=$('#main .tltip'), cross=svg.querySelector('.tlcross');
-  const pts=(()=>{ // rebuild the per-quarter series the chart was drawn from
-    const cs=CASES.map(csDate).filter(Boolean), q=d=>d[0]*4+Math.floor((d[1]-1)/3);
-    const ks=cs.map(q), q0=Math.min(...ks), q1=Math.max(...ks), out=[]; let run=0;
-    for(let k=q0;k<=q1;k++){const n=ks.filter(v=>v===k).length;run+=n;
-      out.push({label:`${Math.floor(k/4)} Q${k%4+1}`,n,total:run})}
-    return out})();
+  const pts=csSeries();
   svg.querySelectorAll('.tlhit').forEach(r=>{
     const show=()=>{const p=pts[+r.dataset.i], b=r.getBBox(), cx=b.x+b.width/2;
       cross.setAttribute('x1',cx);cross.setAttribute('x2',cx);cross.setAttribute('visibility','visible');
@@ -2701,7 +2750,7 @@ function guideHTML(){
     p.sections.map(s=>`<a class="sub" href="#g-${esc(s.anchor)}">${esc(s.title)}</a>`).join('')
   ).join('');
   const nTools=new Set(ROWS.map(r=>r.entry_id)).size;
-  return `<section class="orient">
+  return `<section class="orient"><div class="otext">
     <h2>AI agents leave evidence most IR playbooks never collect</h2>
     <p>Coding agents, local model runtimes and MCP servers write transcripts, tokens and
       configuration to disk that show what the agent was told and what it did. This site
@@ -2713,7 +2762,8 @@ function guideHTML(){
         <span>${ROWS.length} artifact locations across ${nTools} tools, by OS and evidence type.</span></button></li>
       <li><button type="button" data-goto="plan"><b>Collect</b>
         <span>Pick rows and export a triage script, KAPE target or Velociraptor artifact.</span></button></li>
-    </ol>
+    </ol></div>
+    ${orientVisHTML()}
   </section>
   <div class="guidewrap">
     <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
@@ -2872,6 +2922,8 @@ function renderMain(){
       if(h.id&&!h.id.startsWith('g-'))h.id='g-'+h.id;
     });
     $$('#main [data-goto]').forEach(b=>b.onclick=()=>{pushNav();view=b.dataset.goto;update();window.scrollTo(0,0)});
+    $$('#main .ovbar[data-cls]').forEach(b=>b.onclick=()=>{
+      pushNav();resetFilters();filters.cls=[b.dataset.cls];view='catalog';update();window.scrollTo(0,0)});
     $$('#main .tltable a[href^="#cs-"]').forEach(a=>a.onclick=()=>pushNav());
     wireTimeline();
     renderTabs();renderToast();renderBack();return;
