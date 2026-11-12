@@ -13,7 +13,7 @@ matches nothing, and also emitted `a  |  b` as one Path. Velociraptor globbed
 This module makes the decisions that do not depend on the target tool, once:
 
 * which part of a field is the path - split compound locators, drop a
-  `-> key` suffix and a trailing parenthetical note
+  `-> key` suffix or a `key inside` prefix, and a trailing parenthetical note
 * whether it is a path at all - it must start at a root (`~`, `%VAR%`, `/`, a
   drive letter, or a checkout placeholder). Prose such as "macOS login Keychain
   (~/Library/...)" never does, so no separate prose guard is needed, and a
@@ -40,8 +40,10 @@ import re
 # documents `*` in a Path directory segment for "folder or file names that are
 # unpredictable/unique" (KapeFiles Targets/TargetGuide.guide; Chrome's
 # `User Data\*\` target is the canonical example).
+# `<tenant_id>` and the like are `<id>` scoped to something - Dify writes one
+# keypair per tenant UUID under privkeys/<tenant_id>/.
 WILDCARD_TOKEN = re.compile(
-    r"<(version|ver|uuid[^>]*|hash|id|name|user|profile|workspace[^>]*|n)>", re.I)
+    r"<(version|ver|uuid[^>]*|hash|id|\w+_id|name|user|profile|workspace[^>]*|n)>", re.I)
 
 # A checkout root. Not a wildcard: it names an arbitrary repository location,
 # and templating it to `*` would walk the whole disk. Only a collector that is
@@ -50,6 +52,12 @@ REPO_TOKEN = re.compile(r"^<(repo|project|gitroot)>", re.I)
 
 # A locator is a path only if it starts at one of these.
 ROOTED = re.compile(r"^(~|%|/|<(repo|project|gitroot)>|[A-Za-z]:[\\/])", re.I)
+
+# Any leading placeholder directory: <repo>, <install>, <VS Code User dir>. The
+# feeds above cannot template one, but the native collector is handed
+# directories by the operator (--project-dir), so it resolves the rest of the
+# path relative to whichever directory the operator points it at.
+LEADING_ROOT = re.compile(r"^<([^<>]+)>[\\/]")
 
 # Roots that exist only on macOS, so a row that also lists Linux must not
 # render them there - '/home/*/Library/Application Support/...' matches nothing.
@@ -66,6 +74,8 @@ def clean(path: str) -> str:
     """The collectable part of one location."""
     # "path → key" names a key inside the file; the file is what gets collected.
     p = path.split(" → ")[0].split(" -> ")[0].strip()
+    # "key inside path" is the same statement written the other way round.
+    p = p.rsplit(" inside ", 1)[-1].strip()
     # A trailing parenthetical is a note, not part of the path.
     return re.sub(r"\s+\(.*\)$", "", p).strip()
 
