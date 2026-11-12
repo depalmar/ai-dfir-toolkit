@@ -75,6 +75,15 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   instead of comparing raw prose, so it no longer reports the Kiro config's
   embedded keys as nothing (two new MIXED findings) or two documented targets
   as catalog gaps.
+- **The Sigma correlation check passed or failed depending on the runner.**
+  `validate.yml` converted each correlation directory with `sigma convert
+  <dir>`, which loads files in filesystem listing order, and pySigma converts a
+  collection in load order: a correlation converted after only some of the rules
+  it names fails with "Conversion result not available". The unchanged
+  `07-runtime-ai-malware` rules passed on one run and failed on two later ones.
+  The step now loads plain rules first and correlation rules last through
+  pySigma directly. It still fails on a correlation that names a missing rule,
+  and passes on pySigma 1.5.1 and 2.1.0.
 - **KAPE targets carried catalog placeholders as literal folder names.**
   `CodeiumWindsurf.tkape` shipped `Path: 'C:\Users\%user%\.codeium\<version>\'`,
   and KAPE searches for a folder literally named `<version>`, so the target matched
