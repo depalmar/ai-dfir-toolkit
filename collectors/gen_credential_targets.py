@@ -31,6 +31,17 @@ metadata plus a hash and never copies the body unless the operator passes
 --collect-secrets. That is deliberate even for files that also hold ordinary
 configuration: a file the catalog rates as a credential location should not land
 whole in a case directory by default.
+
+Catalog placeholders are resolved here, not in the collector. The collector only
+expands `~` and environment variables, so it used to search for a folder
+literally named `<repo>` under every --project-dir and match nothing. A leading
+placeholder directory (`<repo>`, `<install>`, `<VS Code User dir>`) is now
+stripped to a path relative to --project-dir, with the root named in `notes`; a
+per-install segment such as `<version>` widens to `*`, by the rule in
+artifacts/scripts/locators.py that the KAPE, Velociraptor and ForensicArtifacts
+feeds share; and anything else in angle brackets is dropped. The collector
+itself stays standalone - it is copied to a suspect host with only PyYAML - so
+nothing it needs is imported from the repository.
 """
 from __future__ import annotations
 
@@ -41,6 +52,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "artifacts" / "scripts"))
+from locators import LEADING_ROOT, WILDCARD_TOKEN, clean  # noqa: E402
 CATALOG = ROOT / "artifacts" / "docs" / "api" / "catalog.json"
 TARGETS = Path(__file__).resolve().parent / "targets.yaml"
 
@@ -73,6 +86,71 @@ def split_locations(location: str) -> list[str]:
         if p:
             out.append(p)
     return out
+
+
+# Rooted on the host as written. `$VAR` and `%VAR%` count: the collector expands
+# them at run time on the host, which the KAPE and Velociraptor feeds cannot.
+ANCHORED = re.compile(r"^(~|/|%|\$|[A-Za-z]:[\\/])")
+
+
+def resolve_location(piece: str) -> tuple[str, str, str | None] | None:
+    """One catalog location to (collector path, anchor, placeholder root), or None.
+
+    anchor is "user" for a path rooted on the host, "project" for one under a
+    placeholder directory or a leading dot, and "relative" for anything else.
+    A bare relative piece only means something beside a project-scoped piece
+    of the same row; on its own it is usually prose that happens to hold a
+    slash ("AWS Builder ID / IAM Identity Center token cache").
+    """
+    p = clean(piece)
+    root = None
+    m = LEADING_ROOT.match(p)
+    if m:
+        root, p = m.group(1), p[m.end():]
+    p = WILDCARD_TOKEN.sub("*", p)
+    if not p or re.search(r"[<>]", p) or "..." in p:
+        return None
+    if root:
+        return p, "project", root
+    if p.startswith("."):
+        return p, "project", None
+    if ANCHORED.match(p):
+        return p, "user", None
+    return p, "relative", None
+
+
+def collector_targets(pieces: list[str]) -> list[dict]:
+    """Group one catalog row's pieces into collector targets, one per scope.
+
+    A target carries a single scope, and the collector joins a project-scoped
+    path onto --project-dir but resolves a user-scoped one as written - so a
+    relative path left in a user-scoped target would be searched for under the
+    collector's own working directory. Relative pieces therefore ride only with
+    a project-scoped piece of the same row, and a row that names both a home
+    path and a checkout path becomes two targets.
+    """
+    groups: dict[str, dict] = {}
+    relative: list[tuple[str, str]] = []
+    for raw in pieces:
+        r = resolve_location(raw)
+        if not r:
+            continue
+        path, anchor, root = r
+        if anchor == "relative":
+            relative.append((raw, path))
+            continue
+        g = groups.setdefault(anchor, {"scope": anchor, "raw": [], "paths": [], "roots": []})
+        g["raw"].append(raw)
+        if path not in g["paths"]:
+            g["paths"].append(path)
+        if root and root not in g["roots"]:
+            g["roots"].append(root)
+    if "project" in groups:
+        for raw, path in relative:
+            groups["project"]["raw"].append(raw)
+            if path not in groups["project"]["paths"]:
+                groups["project"]["paths"].append(path)
+    return list(groups.values())
 
 
 def slug(entry_id: str, location: str) -> str:
@@ -120,20 +198,19 @@ def collect_disk(catalog, taken: set, cred_paths: set) -> list[dict]:
             paths = [p for p in paths
                      if not any(c.startswith(_norm(p).rstrip("/") + "/")
                                 for c in cred_paths if _norm(p))]
-            if not paths:
-                continue
-            key = tuple(sorted(paths))
-            if key in taken:
-                continue
-            taken.add(key)
-            out.append({
-                "id": slug(entry["id"], paths[0]).replace("cred_", "art_", 1),
-                "name": f"{entry['name']} artifact ({entry['id']})",
-                "os": a.get("os") or entry.get("supported_os") or ["linux"],
-                "paths": paths,
-                "artifact_type": a.get("artifact_type", "unknown"),
-                "confidence": a.get("confidence", "unknown"),
-            })
+            for g in collector_targets(paths):
+                key = tuple(sorted(g["raw"]))
+                if key in taken:
+                    continue
+                taken.add(key)
+                out.append({
+                    "id": slug(entry["id"], g["raw"][0]).replace("cred_", "art_", 1),
+                    "name": f"{entry['name']} artifact ({entry['id']})",
+                    "os": a.get("os") or entry.get("supported_os") or ["linux"],
+                    **g,
+                    "artifact_type": a.get("artifact_type", "unknown"),
+                    "confidence": a.get("confidence", "unknown"),
+                })
     return sorted(out, key=lambda t: t["id"])
 
 
@@ -145,22 +222,29 @@ def collect(catalog) -> list[dict]:
             if not location or not is_path(location):
                 continue
             paths = [p for p in split_locations(location) if is_path(p)]
-            if not paths:
-                continue
-            key = tuple(sorted(paths))
-            if key in seen:
-                continue
-            seen.add(key)
-            targets.append({
-                "id": slug(entry["id"], paths[0]),
-                "name": f"{entry['name']} credential store ({entry['id']})",
-                "os": cred.get("os") or entry.get("supported_os") or ["linux"],
-                "paths": paths,
-                "secret_type": cred.get("secret_type", "unknown"),
-                "storage": cred.get("storage", "unknown"),
-                "confidence": cred.get("confidence", "unknown"),
-            })
+            for g in collector_targets(paths):
+                key = tuple(sorted(g["raw"]))
+                if key in seen:
+                    continue
+                seen.add(key)
+                targets.append({
+                    "id": slug(entry["id"], g["raw"][0]),
+                    "name": f"{entry['name']} credential store ({entry['id']})",
+                    "os": cred.get("os") or entry.get("supported_os") or ["linux"],
+                    **g,
+                    "secret_type": cred.get("secret_type", "unknown"),
+                    "storage": cred.get("storage", "unknown"),
+                    "confidence": cred.get("confidence", "unknown"),
+                })
     return sorted(targets, key=lambda t: t["id"]), seen
+
+
+def root_note(t: dict) -> str:
+    """Tell the operator which directory a stripped placeholder root stood for."""
+    if not t["roots"]:
+        return ""
+    names = " or ".join(f"<{r}>" for r in t["roots"])
+    return f" Paths are relative to {names}: pass that directory as --project-dir."
 
 
 def render(targets: list[dict], disk: list[dict]) -> str:
@@ -171,9 +255,11 @@ def render(targets: list[dict], disk: list[dict]) -> str:
         "# filesystem location, plus every disk artifact rated forensic_value: high.",
         "# Credential targets are sensitivity: secret, so they are recorded as",
         "# metadata and a hash and never copied unless --collect-secrets is passed.",
+        "# Catalog placeholder roots (<repo>, <install>) become paths relative to",
+        "# --project-dir; per-install segments such as <version> become *.",
     ]
     for t in targets:
-        scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
+        scope = t["scope"]
         os_list = [o for o in t["os"] if o in
                    ("windows", "macos", "linux", "docker", "container")] or ["linux"]
         lines += [
@@ -190,10 +276,10 @@ def render(targets: list[dict], disk: list[dict]) -> str:
         lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
         note = (f"{t['storage']}/{t['secret_type']}, catalog confidence "
                 f"{t['confidence']}. Existence and mode are the finding; the body "
-                f"is not copied unless --collect-secrets.")
+                f"is not copied unless --collect-secrets.") + root_note(t)
         lines.append(f"    notes: {json.dumps(note)}")
     for t in disk:
-        scope = "project" if t["paths"][0].startswith(("<", ".")) else "user"
+        scope = t["scope"]
         os_list = [o for o in t["os"] if o in
                    ("windows", "macos", "linux", "docker", "container")] or ["linux"]
         lines += [
@@ -209,7 +295,7 @@ def render(targets: list[dict], disk: list[dict]) -> str:
         ]
         lines += [f"      - {json.dumps(p)}" for p in t["paths"]]
         note = (f"{t['artifact_type']}, forensic_value high, catalog confidence "
-                f"{t['confidence']}.")
+                f"{t['confidence']}.") + root_note(t)
         lines.append(f"    notes: {json.dumps(note)}")
     lines.append(FOOTER)
     return "\n".join(lines)
@@ -224,8 +310,20 @@ def main() -> int:
 
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     creds, taken = collect(catalog)
-    cred_paths = {_norm(p) for t in creds for p in t["paths"]}
-    block = render(creds, collect_disk(catalog, taken, cred_paths))
+    # Compared against raw catalog disk paths, so built from the raw locations.
+    cred_paths = {_norm(p) for t in creds for p in t["raw"]}
+    disk = collect_disk(catalog, taken, cred_paths)
+
+    # The collector searches exactly these strings. A placeholder left in one is
+    # a folder name nothing on disk carries, and a relative path in a
+    # user-scoped target is resolved against the collector's working directory.
+    bad = [f"{t['id']}: {p}" for t in creds + disk for p in t["paths"]
+           if re.search(r"[<>]", p) or (t["scope"] == "user" and not ANCHORED.match(p))]
+    if bad:
+        print("Generated targets the collector cannot resolve:")
+        print("\n".join(f"  {b}" for b in bad))
+        return 1
+    block = render(creds, disk)
 
     text = TARGETS.read_text(encoding="utf-8")
     if MARKER in text:

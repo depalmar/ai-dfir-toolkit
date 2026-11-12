@@ -99,26 +99,45 @@ jobs:
           # each containing directory is converted as one collection. Splunk is
           # used because the Elastic backend has no correlation support; the
           # choice is arbitrary and nothing vendor-specific is committed.
-          failed=0
-          dirs=$(grep -rl '^correlation:' --include='*.yml' . \
-                   | grep -v '^./.github/' | xargs -r -n1 dirname | sort -u)
-          if [ -z "$dirs" ]; then
-            echo "No correlation rules present."
-            exit 0
-          fi
-          for d in $dirs; do
-            echo "=== $d ==="
-            if ! sigma convert -t splunk --without-pipeline "$d" > /dev/null 2>&1; then
-              echo "FAILED: $d"
-              sigma convert -t splunk --without-pipeline "$d" 2>&1 | head -8
-              failed=$((failed + 1))
-            fi
-          done
-          if [ "$failed" -gt 0 ]; then
-            echo "$failed correlation collection(s) failed validation"
-            exit 1
-          fi
-          echo "All correlation rules validated successfully"
+          #
+          # The load order is fixed here rather than left to `sigma convert
+          # <dir>`. pySigma converts a collection in load order, and a
+          # correlation converted after only some of the rules it names fails
+          # with "Conversion result not available". The CLI loads a directory
+          # in filesystem listing order, which can differ between runners, so
+          # the same unchanged rules passed on one run and failed on later ones.
+          # Plain rules first, correlation rules last, is valid on every runner.
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+
+          import yaml
+          from sigma.backends.splunk import SplunkBackend
+          from sigma.collection import SigmaCollection
+
+          def is_correlation(p):
+              return any(l.startswith("correlation:") for l in p.read_text().splitlines())
+
+          dirs = sorted({p.parent for p in Path(".").rglob("*.yml")
+                         if not {".git", ".github"} & set(p.parts) and is_correlation(p)})
+          if not dirs:
+              print("No correlation rules present.")
+              sys.exit(0)
+          failed = 0
+          for d in dirs:
+              print(f"=== {d} ===")
+              files = sorted(d.glob("*.yml"), key=lambda p: (is_correlation(p), p.name))
+              docs = [doc for f in files for doc in yaml.safe_load_all(f.read_text()) if doc]
+              try:
+                  SplunkBackend().convert(SigmaCollection.from_dicts(docs))
+              except Exception as exc:
+                  print(f"FAILED: {d}: {exc}"[:600])
+                  failed += 1
+          if failed:
+              print(f"{failed} correlation collection(s) failed validation")
+              sys.exit(1)
+          print("All correlation rules validated successfully")
+          PY
 
   suricata-validation:
     name: Suricata syntax check

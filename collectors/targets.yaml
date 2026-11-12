@@ -525,6 +525,8 @@ targets:
 # filesystem location, plus every disk artifact rated forensic_value: high.
 # Credential targets are sensitivity: secret, so they are recorded as
 # metadata and a hash and never copied unless --collect-secrets is passed.
+# Catalog placeholder roots (<repo>, <install>) become paths relative to
+# --project-dir; per-install segments such as <version> become *.
   - id: cred_airt_0001_claude_config_dir_credentials_json
     name: "Claude Code credential store (AIRT-0001)"
     repo_cat: "cred"
@@ -578,8 +580,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<project>/.mcp.json"
-    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".mcp.json"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <project>: pass that directory as --project-dir."
   - id: cred_airt_0002_appdata_cursor_user_globalstorage_state
     name: "Cursor credential store (AIRT-0002)"
     repo_cat: "cred"
@@ -644,8 +646,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<repo>/.cursor/mcp.json"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".cursor/mcp.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: cred_airt_0003_config_github_copilot_apps_json
     name: "GitHub Copilot (Agent Mode / CLI) credential store (AIRT-0003)"
     repo_cat: "cred"
@@ -732,8 +734,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<home|gitroot|cwd>/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <home|gitroot|cwd>: pass that directory as --project-dir."
   - id: cred_airt_0005_continue_auth_json
     name: "Continue.dev credential store (AIRT-0005)"
     repo_cat: "cred"
@@ -787,8 +789,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<repo>/.continue/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".continue/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: cred_airt_0005_vs_code_user_dir_globalstorage_continue
     name: "Continue.dev credential store (AIRT-0005)"
     repo_cat: "cred"
@@ -798,8 +800,8 @@ targets:
     type: glob
     sensitivity: secret
     paths:
-      - "<VS Code User dir>/globalStorage/continue.continue/*.bin"
-    notes: "encrypted/unknown, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "globalStorage/continue.continue/*.bin"
+    notes: "encrypted/unknown, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <VS Code User dir>: pass that directory as --project-dir."
   - id: cred_airt_0006_appdata_windsurf_user_globalstorage_stat
     name: "Codeium / Windsurf credential store (AIRT-0006)"
     repo_cat: "cred"
@@ -864,8 +866,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<nvim stdpath('cache')>/codeium/config.json"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "codeium/config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <nvim stdpath('cache')>: pass that directory as --project-dir."
   - id: cred_airt_0006_userprofile_codeium_windsurf_mcp_config
     name: "Codeium / Windsurf credential store (AIRT-0006)"
     repo_cat: "cred"
@@ -919,8 +921,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<project>/.supermaven/config.json"
-    notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".supermaven/config.json"
+    notes: "plaintext/unknown, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <project>: pass that directory as --project-dir."
   - id: cred_airt_0010_supermaven_config_json
     name: "Supermaven credential store (AIRT-0010)"
     repo_cat: "cred"
@@ -974,8 +976,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/.env"
-    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".env"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0013_install_docker_compose_yml
     name: "AgentGPT credential store (AIRT-0013)"
     repo_cat: "cred"
@@ -985,8 +987,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/docker-compose.yml"
-    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "docker-compose.yml"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0013_install_next_env
     name: "AgentGPT credential store (AIRT-0013)"
     repo_cat: "cred"
@@ -996,8 +998,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/next/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "next/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0013_install_platform_env
     name: "AgentGPT credential store (AIRT-0013)"
     repo_cat: "cred"
@@ -1007,8 +1009,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/platform/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "platform/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0014_localappdata_microsoft_power_automate_de
     name: "Microsoft Copilot Studio Agents credential store (AIRT-0014)"
     repo_cat: "cred"
@@ -1088,8 +1090,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/config.json"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "config.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0016_install_data_database_pythagora_db
     name: "GPT Pilot credential store (AIRT-0016)"
     repo_cat: "cred"
@@ -1099,8 +1101,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/data/database/pythagora.db"
-    notes: "sqlite/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "data/database/pythagora.db"
+    notes: "sqlite/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0016_install_pilot_env
     name: "GPT Pilot credential store (AIRT-0016)"
     repo_cat: "cred"
@@ -1110,8 +1112,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/pilot/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "pilot/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0017_ollama_id_ed25519
     name: "Ollama credential store (AIRT-0017)"
     repo_cat: "cred"
@@ -1143,8 +1145,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<project>/langgraph.json"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "langgraph.json"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <project>: pass that directory as --project-dir."
   - id: cred_airt_0027_autogenstudio_database_sqlite
     name: "AutoGen credential store (AIRT-0027)"
     repo_cat: "cred"
@@ -1176,8 +1178,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/docker/.env"
-    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "docker/.env"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0029_install_docker_volumes_app_storage_dify
     name: "Dify credential store (AIRT-0029)"
     repo_cat: "cred"
@@ -1187,19 +1189,19 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/docker/volumes/app/storage/.dify_secret_key"
-    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "docker/volumes/app/storage/.dify_secret_key"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0029_install_docker_volumes_app_storage_privk
     name: "Dify credential store (AIRT-0029)"
     repo_cat: "cred"
     cosai: []
     os: [linux, docker]
     scope: project
-    type: file
+    type: glob
     sensitivity: secret
     paths:
-      - "<install>/docker/volumes/app/storage/privkeys/<tenant_id>/private.pem"
-    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "docker/volumes/app/storage/privkeys/*/private.pem"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0029_install_docker_volumes_db_data
     name: "Dify credential store (AIRT-0029)"
     repo_cat: "cred"
@@ -1209,8 +1211,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/docker/volumes/db/data"
-    notes: "encrypted/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "docker/volumes/db/data"
+    notes: "encrypted/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0030_flowise_database_sqlite
     name: "Flowise credential store (AIRT-0030)"
     repo_cat: "cred"
@@ -1253,8 +1255,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/packages/server/.env"
-    notes: "plaintext/admin-credential, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "packages/server/.env"
+    notes: "plaintext/admin-credential, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0032_config_browseruse_cloud_auth_json
     name: "Browser-Use credential store (AIRT-0032)"
     repo_cat: "cred"
@@ -1309,8 +1311,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<project>/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - ".env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <project>: pass that directory as --project-dir."
   - id: cred_airt_0033_anthropic_api_key
     name: "Claude Computer Use credential store (AIRT-0033)"
     repo_cat: "cred"
@@ -1364,8 +1366,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/browser_sessions/"
-    notes: "plaintext/session-state, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "browser_sessions/"
+    notes: "plaintext/session-state, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0035_install_skyvern_frontend_env
     name: "Skyvern credential store (AIRT-0035)"
     repo_cat: "cred"
@@ -1375,8 +1377,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<install>/skyvern-frontend/.env"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "skyvern-frontend/.env"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <install>: pass that directory as --project-dir."
   - id: cred_airt_0035_skyvern_credential_vault_creditem_bin
     name: "Skyvern credential store (AIRT-0035)"
     repo_cat: "cred"
@@ -1474,8 +1476,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<config>/githubcopilot/info.json"
-    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "githubcopilot/info.json"
+    notes: "plaintext/api-key, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <config>: pass that directory as --project-dir."
   - id: cred_airt_0038_config_goose_secrets_yaml
     name: "Goose credential store (AIRT-0038)"
     repo_cat: "cred"
@@ -1487,17 +1489,6 @@ targets:
     paths:
       - "~/.config/goose/secrets.yaml"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
-  - id: cred_airt_0041_aws_builder_id_iam_identity_center_token
-    name: "Kiro credential store (AIRT-0041)"
-    repo_cat: "cred"
-    cosai: []
-    os: [windows, macos, linux]
-    scope: user
-    type: file
-    sensitivity: secret
-    paths:
-      - "AWS Builder ID / IAM Identity Center token cache"
-    notes: "unknown/aws-sso-token, catalog confidence low. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0041_mcpservers_name_env_inside_kiro_settings
     name: "Kiro credential store (AIRT-0041)"
     repo_cat: "cred"
@@ -1507,7 +1498,7 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "mcpServers.<name>.env inside ~/.kiro/settings/mcp.json"
+      - "~/.kiro/settings/mcp.json"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0042_app_backend_data_webui_secret_key
     name: "Open WebUI credential store (AIRT-0042)"
@@ -1586,8 +1577,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<project>/config.toml"
-    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "config.toml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <project>: pass that directory as --project-dir."
   - id: cred_airt_0044_appdata_com_langflowdesktop_data_databas
     name: "Langflow credential store (AIRT-0044)"
     repo_cat: "cred"
@@ -1608,8 +1599,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<LANGFLOW_CONFIG_DIR>/private_key.pem"
-    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "private_key.pem"
+    notes: "plaintext/jwt-signing-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <LANGFLOW_CONFIG_DIR>: pass that directory as --project-dir."
   - id: cred_airt_0044_langflow_config_dir_secret_key
     name: "Langflow credential store (AIRT-0044)"
     repo_cat: "cred"
@@ -1619,8 +1610,8 @@ targets:
     type: file
     sensitivity: secret
     paths:
-      - "<LANGFLOW_CONFIG_DIR>/secret_key"
-    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+      - "secret_key"
+    notes: "plaintext/encryption-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets. Paths are relative to <LANGFLOW_CONFIG_DIR>: pass that directory as --project-dir."
   - id: cred_airt_0044_langflow_data_database_db
     name: "Langflow credential store (AIRT-0044)"
     repo_cat: "cred"
@@ -1652,8 +1643,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<repo>/.github/mcp.json"
-    notes: "mcp-config, forensic_value high, catalog confidence high."
+      - ".github/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0004_aider_conf_yml
     name: "Aider artifact (AIRT-0004)"
     repo_cat: "art"
@@ -1707,8 +1698,8 @@ targets:
     type: glob
     sensitivity: normal
     paths:
-      - "<repo>/.amazonq/cli-agents/*.json"
-    notes: "agent-definition, forensic_value high, catalog confidence high."
+      - ".amazonq/cli-agents/*.json"
+    notes: "agent-definition, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0008_xdg_runtime_dir_qlog_cli_log
     name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
     repo_cat: "art"
@@ -1814,10 +1805,10 @@ targets:
     cosai: []
     os: [docker, container]
     scope: user
-    type: file
+    type: glob
     sensitivity: normal
     paths:
-      - "/tmp/outputs/screenshot_<uuid4hex>.png"
+      - "/tmp/outputs/screenshot_*.png"
     notes: "session-artifact, forensic_value high, catalog confidence high."
   - id: art_airt_0036_codex_config_toml
     name: "OpenAI Codex CLI artifact (AIRT-0036)"
@@ -1949,8 +1940,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<repo>/.roo/mcp.json"
-    notes: "mcp-config, forensic_value high, catalog confidence high."
+      - ".roo/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0041_kiro_settings_mcp_json
     name: "Kiro artifact (AIRT-0041)"
     repo_cat: "art"
@@ -1962,17 +1953,6 @@ targets:
     paths:
       - "~/.kiro/settings/mcp.json"
     notes: "mcp-config, forensic_value high, catalog confidence high."
-  - id: art_airt_0041_power_md_plugin_json_dev_kiro
-    name: "Kiro artifact (AIRT-0041)"
-    repo_cat: "art"
-    cosai: []
-    os: [windows, macos, linux]
-    scope: user
-    type: file
-    sensitivity: normal
-    paths:
-      - "POWER.md / plugin.json / dev.kiro/"
-    notes: "extension-bundle, forensic_value high, catalog confidence high."
   - id: art_airt_0041_repo_kiro_agents
     name: "Kiro artifact (AIRT-0041)"
     repo_cat: "art"
@@ -1982,8 +1962,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<repo>/.kiro/agents/"
-    notes: "agent-definition, forensic_value high, catalog confidence high."
+      - ".kiro/agents/"
+    notes: "agent-definition, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0041_repo_kiro_hooks_kiro_hook
     name: "Kiro artifact (AIRT-0041)"
     repo_cat: "art"
@@ -1993,8 +1973,8 @@ targets:
     type: glob
     sensitivity: normal
     paths:
-      - "<repo>/.kiro/hooks/*.kiro.hook"
-    notes: "agent-definition, forensic_value high, catalog confidence high."
+      - ".kiro/hooks/*.kiro.hook"
+    notes: "agent-definition, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0041_repo_kiro_settings_mcp_json
     name: "Kiro artifact (AIRT-0041)"
     repo_cat: "art"
@@ -2004,8 +1984,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<repo>/.kiro/settings/mcp.json"
-    notes: "mcp-config, forensic_value high, catalog confidence high."
+      - ".kiro/settings/mcp.json"
+    notes: "mcp-config, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0041_repo_kiro_steering_md
     name: "Kiro artifact (AIRT-0041)"
     repo_cat: "art"
@@ -2015,8 +1995,8 @@ targets:
     type: glob
     sensitivity: normal
     paths:
-      - "<repo>/.kiro/steering/*.md"
-    notes: "rules-file, forensic_value high, catalog confidence high."
+      - ".kiro/steering/*.md"
+    notes: "rules-file, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0042_app_backend_data_config_json
     name: "Open WebUI artifact (AIRT-0042)"
     repo_cat: "art"
@@ -2050,28 +2030,6 @@ targets:
     paths:
       - "/app/backend/data/webui.db"
     notes: "database, forensic_value high, catalog confidence high."
-  - id: art_airt_0042_docker_compose_yml_docker_run_invocation
-    name: "Open WebUI artifact (AIRT-0042)"
-    repo_cat: "art"
-    cosai: []
-    os: [linux, docker]
-    scope: user
-    type: file
-    sensitivity: normal
-    paths:
-      - "docker-compose.yml / docker run invocation"
-    notes: "config-file, forensic_value high, catalog confidence high."
-  - id: art_airt_0043_ghcr_io_openhands_agent_server_docker_op
-    name: "OpenHands artifact (AIRT-0043)"
-    repo_cat: "art"
-    cosai: []
-    os: [linux, docker]
-    scope: user
-    type: file
-    sensitivity: normal
-    paths:
-      - "ghcr.io/openhands/agent-server ; docker.openhands.dev/openhands/openhands"
-    notes: "container, forensic_value high, catalog confidence high."
   - id: art_airt_0043_openhands_config_toml
     name: "OpenHands artifact (AIRT-0043)"
     repo_cat: "art"
@@ -2158,8 +2116,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<repo>/.zed/settings.json"
-    notes: "config-file, forensic_value high, catalog confidence medium."
+      - ".zed/settings.json"
+    notes: "config-file, forensic_value high, catalog confidence medium. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0051_config_code_user_globalstorage_kilocode
     name: "Kilo Code artifact (AIRT-0051)"
     repo_cat: "art"
@@ -2180,8 +2138,8 @@ targets:
     type: file
     sensitivity: normal
     paths:
-      - "<globalStorage>/kilocode.kilo-code/settings/custom_modes.yaml"
-    notes: "agent-definition, forensic_value high, catalog confidence medium."
+      - "kilocode.kilo-code/settings/custom_modes.yaml"
+    notes: "agent-definition, forensic_value high, catalog confidence medium. Paths are relative to <globalStorage>: pass that directory as --project-dir."
   - id: art_airt_0051_library_application_support_code_user_gl
     name: "Kilo Code artifact (AIRT-0051)"
     repo_cat: "art"

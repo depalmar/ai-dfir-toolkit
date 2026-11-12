@@ -47,6 +47,43 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **The native collector searched for folders named `<repo>`.** 38 generated
+  targets in `collectors/targets.yaml` kept catalog placeholders verbatim, and
+  `collect_ai_artifacts.py` only expands `~` and environment variables, so
+  `<repo>/.cursor/mcp.json` became `<project-dir>/<repo>/.cursor/mcp.json` and
+  matched nothing - credentials from `.env` files to Dify's per-tenant private
+  key were never acquired. `gen_credential_targets.py` now
+  resolves them when it writes the file, and the collector stays standalone. A
+  leading placeholder directory (`<repo>`, `<install>`, `<VS Code User dir>`)
+  becomes a path relative to `--project-dir`, with the root named in `notes`;
+  `<uuid4hex>` and `<tenant_id>` widen to `*` by the shared rule in
+  `locators.py`, which now treats `<…_id>` like `<id>`. Against a fixture with
+  four planted files, the old credential targets matched none of them and the
+  new ones match all four, hashed and not copied. Target ids are unchanged.
+- **Prose shipped as collector paths, and the drift check counted it as
+  coverage.** Four generated targets were descriptions that happened to hold a
+  slash - `AWS Builder ID / IAM Identity Center token cache`, `POWER.md /
+  plugin.json / dev.kiro/`, `docker-compose.yml / docker run invocation` and a
+  pair of container image names - resolved against the collector's working
+  directory. They are gone, and
+  the generator now refuses a placeholder or an unanchored path in a user-scoped
+  target. Kiro's `mcpServers.<name>.env inside ~/.kiro/settings/mcp.json` now
+  resolves to the file, because `locators.clean()` reads `key inside FILE` as it
+  already read `FILE -> key`; that also adds the file to the KAPE and
+  Velociraptor credential targets and to the site's plan for that row.
+  `check_target_drift.py` resolves catalog locations through the generator
+  instead of comparing raw prose, so it no longer reports the Kiro config's
+  embedded keys as nothing (two new MIXED findings) or two documented targets
+  as catalog gaps.
+- **The Sigma correlation check passed or failed depending on the runner.**
+  `validate.yml` converted each correlation directory with `sigma convert
+  <dir>`, which loads files in filesystem listing order, and pySigma converts a
+  collection in load order: a correlation converted after only some of the rules
+  it names fails with "Conversion result not available". The unchanged
+  `07-runtime-ai-malware` rules passed on one run and failed on two later ones.
+  The step now loads plain rules first and correlation rules last through
+  pySigma directly. It still fails on a correlation that names a missing rule,
+  and passes on pySigma 1.5.1 and 2.1.0.
 - **KAPE targets carried catalog placeholders as literal folder names.**
   `CodeiumWindsurf.tkape` shipped `Path: 'C:\Users\%user%\.codeium\<version>\'`,
   and KAPE searches for a folder literally named `<version>`, so the target matched
