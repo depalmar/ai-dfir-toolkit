@@ -83,7 +83,14 @@ jobs:
         run: |
           set +e
           python artifacts/scripts/refresh_guard.py --base HEAD --summary "$RUNNER_TEMP/refresh.md"
-          echo "code=$?" >> "$GITHUB_OUTPUT"
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "3" ]; then
+            echo "::notice::The pins are already current - nothing to open a pull request for."
+          elif [ "$code" != "0" ] && [ "$code" != "2" ]; then
+            echo "::error::refresh_guard.py exited $code"
+            exit 1
+          fi
 
       - name: Open or update the refresh PR
         id: cpr
@@ -113,10 +120,11 @@ jobs:
           fi
           gh pr merge --auto --squash "$PR" --repo "$GITHUB_REPOSITORY"
 
-      # The refresh itself worked and the pull request could not be opened. This
-      # is a repository setting, not an upstream change, and it failed every
-      # weekly run for six weeks while the step below reported it as a broken
-      # gate. One issue, commented on while it stays open, not one a week.
+      # The refresh itself worked and the pull request could not be opened or
+      # updated. For six weeks that was a repository setting, and every run was
+      # reported by the step below as a broken gate. The cause is not always the
+      # setting, so the issue names the usual causes and points at the log.
+      # One issue, commented on while it stays open, not one a week.
       - name: Report that the refresh PR could not be opened
         if: failure() && steps.cpr.outcome == 'failure'
         env:
@@ -131,7 +139,7 @@ jobs:
             gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Still failing on $(date -u +%Y-%m-%d): $run_url"
           else
             gh issue create --repo "$GITHUB_REPOSITORY" --label framework-refresh --title "$title" \
-              --body "The weekly refresh re-pinned upstream data and every gate passed, but the workflow is not allowed to open a pull request, so the pins are not being updated. See $run_url. Fix it once in the repository settings: either turn on Settings > Actions > General > Workflow permissions > 'Allow GitHub Actions to create and approve pull requests', or add an AUTOMATION_TOKEN secret (a fine-grained token with contents and pull-requests write), which also lets the refresh PR trigger CI and merge itself. Close this issue once a refresh PR has opened."
+              --body "The weekly refresh re-pinned upstream data and every gate passed, but the step that opens or updates the pull request failed, so the pins are not being updated. The log at $run_url has the error. The usual causes are repository settings: Settings > Actions > General > Workflow permissions > 'Allow GitHub Actions to create and approve pull requests' is off, or the AUTOMATION_TOKEN secret (a fine-grained token with contents and pull-requests write) has expired or lost access. Close this issue once a refresh PR has opened."
           fi
 
       # A gate that fails on refreshed data is the case auto-merge must never
