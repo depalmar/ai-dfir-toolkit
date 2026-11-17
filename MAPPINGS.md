@@ -160,7 +160,7 @@ to a single attack class, so they apply across every tool in the catalog.
 | `ai_agent_docker_socket_mount.yml` | Sigma | T0053 | LLM03 | ASI03, ASI05 | OpenHands deployment docs |
 | `ai_model_file_written_to_endpoint.yml` | Sigma | T0010.003 | LLM04 | ASI04 | — |
 | `ai_cli_permission_bypass_invocation.yml` | Sigma | T0053, T0098 | LLM03 | ASI05, ASI02 | s1ngularity / Nx GHSA-cxm3-wv7p-598c (AIRT-CS-0015) |
-| `ai_agent_hook_config_modification.yml` | Sigma | T0081 | LLM03 | ASI04, ASI05 | GTIG Sep 2026, MIDNIGHT NEPTUNE (AIRT-CS-0017) |
+| `ai_agent_hook_config_modification.yml` | Sigma | T0081 | LLM03 | ASI04, ASI05 | GTIG Sep 2026, MIDNIGHT NEPTUNE (AIRT-CS-0017); Claude Code, Cursor, Devin CLI and Antigravity hook files |
 
 Also in this set: `artifacts/detections/osquery/ai-agent-artifacts.conf` — a
 six-query osquery pack for fleet inventory (running agents, listeners, MCP

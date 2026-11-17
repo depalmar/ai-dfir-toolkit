@@ -1254,3 +1254,29 @@ from `%APPDATA%\Windsurf` to `\Devin` and from `~/.config/Windsurf` to `Devin`,
 and whether the old directory survives an update; which product owns `~/.devin`;
 the session database, MCP OAuth token store and daemon socket of the CLI.
 
+## 2026-11-17 - AIRT-0002 Cursor: hook file locations, read from the vendor's page
+
+cursor.com is blocked from this runner. The page was fetched through the
+Firecrawl connector as a live read (`maxAge: 0`), which returned
+`https://cursor.com/docs/agent/hooks` with HTTP 200 and the page text. The
+rows below are the page's own words, not a summary of them. Nothing was
+checked on a host.
+
+| Row | The page says |
+|---|---|
+| `~/.cursor/hooks.json` | User hooks; commands run from `~/.cursor/` |
+| `<repo>/.cursor/hooks.json` | Project hooks; "run in any trusted workspace and are checked into version control" |
+| `/Library/Application Support/Cursor/hooks.json` | Enterprise, MDM-managed, macOS |
+| `/etc/cursor/hooks.json` | Enterprise, Linux and WSL |
+| `C:\ProgramData\Cursor\hooks.json` | Enterprise, Windows |
+| `~/.cursor/managed/` | Team hooks: "writes each command hook to `~/.cursor/managed/team_<team ID>/hooks/` and rewrites the folder on every sync" |
+
+Also from the page: hooks are spawned processes; priority is Enterprise, then
+Team, then Project, then User; Cursor watches `hooks.json` and reloads it on
+save; cloud distribution syncs every thirty minutes.
+
+Six disk rows added to AIRT-0002, each stamped 2026-11-17. The entry's own
+`last_verified` stays at 2026-08-14 because no existing row was re-checked.
+`ai_agent_hook_config_modification.yml` now matches these files, and the
+Devin CLI and Antigravity hook files already in the catalog.
+

@@ -5,6 +5,14 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-0002 Cursor: six hook locations.** User, project, three
+  machine-wide MDM paths and the team-hooks folder, read from the vendor's
+  hooks page. A Cursor hook is a process the editor starts on agent events,
+  so these are persistence and execution rows the entry did not have.
+- **`ai_agent_hook_config_modification.yml` covers four tools, not one.** It
+  matched Claude Code's settings files only. It now also matches Cursor's
+  `hooks.json` at every scope, Devin CLI's `hooks.v1.json` and Antigravity's
+  hook files, all paths the catalog already documents from vendor sources.
 - **AIRT-0007 Devin now covers Devin CLI.** The entry was cloud-only and the
   last one never verified. It gains the CLI's config, logs, machine-wide
   policy file, project `.devin/` directory, the plaintext login token file,

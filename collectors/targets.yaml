@@ -1689,6 +1689,50 @@ targets:
     paths:
       - "~/.gemini/config/mcp_config.json"
     notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: art_airt_0002_cursor_hooks_json
+    name: "Cursor artifact (AIRT-0002)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.cursor/hooks.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0002_etc_cursor_hooks_json
+    name: "Cursor artifact (AIRT-0002)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/etc/cursor/hooks.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0002_library_application_support_cursor_hooks
+    name: "Cursor artifact (AIRT-0002)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/Library/Application Support/Cursor/hooks.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0002_repo_cursor_hooks_json
+    name: "Cursor artifact (AIRT-0002)"
+    repo_cat: "art"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: project
+    type: file
+    sensitivity: normal
+    paths:
+      - ".cursor/hooks.json"
+    notes: "config-file, forensic_value high, catalog confidence high. Paths are relative to <repo>: pass that directory as --project-dir."
   - id: art_airt_0003_copilot_mcp_config_json
     name: "GitHub Copilot (Agent Mode / CLI) artifact (AIRT-0003)"
     repo_cat: "art"

@@ -61,13 +61,19 @@ maltego.File,artifact:AIRT-0002/credential/macos-login-keychain-generic-password
 maltego.File,artifact:AIRT-0002/credential/repo-cursor-mcp-json,artifact,<repo>/.cursor/mcp.json
 maltego.File,artifact:AIRT-0002/disk/appdata-cursor-user,artifact,%APPDATA%\Cursor\User\
 maltego.File,artifact:AIRT-0002/disk/appdata-cursor-user-skills,artifact,%APPDATA%\Cursor\User\skills\
+maltego.File,artifact:AIRT-0002/disk/c-programdata-cursor-hooks-json,artifact,C:\ProgramData\Cursor\hooks.json
 maltego.File,artifact:AIRT-0002/disk/config-cursor-user,artifact,~/.config/Cursor/User/
+maltego.File,artifact:AIRT-0002/disk/cursor-hooks-json,artifact,~/.cursor/hooks.json
+maltego.File,artifact:AIRT-0002/disk/cursor-managed,artifact,~/.cursor/managed/
 maltego.File,artifact:AIRT-0002/disk/cursor-mcp-json,artifact,~/.cursor/mcp.json
+maltego.File,artifact:AIRT-0002/disk/etc-cursor-hooks-json,artifact,/etc/cursor/hooks.json
+maltego.File,artifact:AIRT-0002/disk/library-application-support-cursor-hooks-json,artifact,/Library/Application Support/Cursor/hooks.json
 maltego.File,artifact:AIRT-0002/disk/library-application-support-cursor-user,artifact,~/Library/Application Support/Cursor/User/
 maltego.File,artifact:AIRT-0002/disk/localappdata-cursor-updater,artifact,%LOCALAPPDATA%\cursor-updater\
 maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor,artifact,%LOCALAPPDATA%\Programs\cursor\
 maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor-cursor-exe,artifact,%LOCALAPPDATA%\Programs\cursor\_\Cursor.exe
 maltego.File,artifact:AIRT-0002/disk/localappdata-programs-cursor-resources-app-bin-cursor,artifact,%LOCALAPPDATA%\Programs\cursor\_\resources\app\bin\cursor
+maltego.File,artifact:AIRT-0002/disk/repo-cursor-hooks-json,artifact,<repo>/.cursor/hooks.json
 maltego.File,artifact:AIRT-0002/disk/repo-cursor-mcp-json,artifact,<repo>/.cursor/mcp.json
 maltego.File,artifact:AIRT-0002/disk/repo-cursorrules-repo-cursor-rules-mdc,artifact,<repo>/.cursorrules  |  <repo>/.cursor/rules/*.mdc
 maltego.File,artifact:AIRT-0002/eventlog/microsoft-windows-sysmon-operational-eid-1,artifact,Microsoft-Windows-Sysmon/Operational EID 1

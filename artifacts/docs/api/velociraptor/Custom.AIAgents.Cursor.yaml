@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\AppData\Local\Programs\cursor\**', 'C:\Users\*\AppData\Local\Programs\cursor\_\Cursor.exe', 'C:\Users\*\AppData\Local\Programs\cursor\_\resources\app\bin\cursor', 'C:\Users\*\AppData\Local\cursor-updater\**', 'C:\Users\*\AppData\Roaming\Cursor\User\**', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\AppData\Roaming\Cursor\User\skills\**', 'C:\Users\*\AppData\Roaming\Cursor\User\globalStorage\state.vscdb']
+      LET Globs = ['C:\Users\*\AppData\Local\Programs\cursor\**', 'C:\Users\*\AppData\Local\Programs\cursor\_\Cursor.exe', 'C:\Users\*\AppData\Local\Programs\cursor\_\resources\app\bin\cursor', 'C:\Users\*\AppData\Local\cursor-updater\**', 'C:\Users\*\AppData\Roaming\Cursor\User\**', 'C:\Users\*\.cursor\mcp.json', 'C:\Users\*\AppData\Roaming\Cursor\User\skills\**', 'C:\Users\*\.cursor\hooks.json', 'C:\ProgramData\Cursor\hooks.json', 'C:\Users\*\.cursor\managed\**', 'C:\Users\*\AppData\Roaming\Cursor\User\globalStorage\state.vscdb']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/Library/Application Support/Cursor/User/**', '/Users/*/.cursor/mcp.json', '/Users/*/Library/Application Support/Cursor/User/globalStorage/state.vscdb']
+      LET Globs = ['/Users/*/Library/Application Support/Cursor/User/**', '/Users/*/.cursor/mcp.json', '/Users/*/.cursor/hooks.json', '/Library/Application Support/Cursor/hooks.json', '/Users/*/.cursor/managed/**', '/Users/*/Library/Application Support/Cursor/User/globalStorage/state.vscdb']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.config/Cursor/User/**', '/home/*/.cursor/mcp.json', '/home/*/.config/Cursor/User/globalStorage/state.vscdb', '/home/*/.config/cursor/auth.json']
+      LET Globs = ['/home/*/.config/Cursor/User/**', '/home/*/.cursor/mcp.json', '/home/*/.cursor/hooks.json', '/etc/cursor/hooks.json', '/home/*/.cursor/managed/**', '/home/*/.config/Cursor/User/globalStorage/state.vscdb', '/home/*/.config/cursor/auth.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
