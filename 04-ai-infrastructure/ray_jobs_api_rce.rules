@@ -32,7 +32,12 @@ alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission with shell c
     metadata:atlas AML.T0011, mitre-attack T1190; \
     sid:9000200; rev:1;)
 
-alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard API accessed without auth (default port 8265)"; \
+# Reports use, not exposure. It matches any API request to the dashboard port
+# that carries no Authorization header, from any source, and a default Ray
+# install sends none, so on a working cluster this fires on ordinary internal
+# traffic. Keep it as an inventory signal for where Ray dashboards are being
+# called. 9000206 is the exposure rule: the same traffic from outside.
+alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard API request with no Authorization header (use, not exposure - see 9000206)"; \
     flow:established,to_server; \
     http.method; content:"GET"; \
     http.uri; content:"/api/"; nocase; \
@@ -40,7 +45,7 @@ alert http any any -> any 8265 (msg:"AI-DFIR Ray Dashboard API accessed without 
     classtype:misc-activity; \
     reference:cve,2023-48022; \
     metadata:atlas AML.T0011; \
-    sid:9000201; rev:1;)
+    sid:9000201; rev:2;)
 
 alert http any any -> any any (msg:"AI-DFIR Ray Jobs API submission downloading external script"; \
     flow:established,to_server; \

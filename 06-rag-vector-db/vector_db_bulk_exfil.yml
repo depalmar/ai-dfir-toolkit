@@ -33,10 +33,8 @@ detection:
       - '/v1/graphql'
   selection_high_limit:
     request_body|re: '"limit"\s*:\s*[1-9][0-9]{4,}'
-  selection_high_volume:
-    request_uri|contains: '/collections/'
-    rate_per_minute|gte: 500
-  condition: selection_endpoint and (selection_high_limit or selection_high_volume)
+  # High request volume is the correlation rule further down this file.
+  condition: selection_endpoint and selection_high_limit
 fields:
   - source_ip
   - api_key_id
@@ -47,4 +45,58 @@ falsepositives:
   - Legitimate batch indexing or migration jobs
   - Approved analytics pipelines reading vector data
   - Backup/replication workflows
+level: medium
+---
+title: Vector Database Collection Request
+name: vector_db_collection_request_base
+id: bef18357-d881-428f-a00f-b5f2269ae3dd
+status: experimental
+description: |
+  Base rule for the correlation below. One request to a collection is
+  ordinary use and is not an alert; it is counted per source.
+author: Raymond DePalma (ai-dfir-toolkit)
+date: 2026-11-17
+tags:
+  - attack.collection
+  - attack.atlas.t0024
+  - owasp.llm02
+  - owasp.llm08
+logsource:
+  product: vector_db
+detection:
+  selection:
+    request_uri|contains: '/collections/'
+  condition: selection
+falsepositives:
+  - Every legitimate query. Use only through the correlation rule.
+level: informational
+---
+title: Vector Database High Request Volume From One Source
+id: 6380a93c-e682-46a0-93f1-aa178e3d4c02
+status: experimental
+description: |
+  One source making 500 or more collection requests within a minute. This
+  replaces a rate_per_minute field the rule used to test, which no log
+  carries and a pipeline had to compute. Tune the count to the busiest
+  legitimate indexing or analytics job in the estate.
+author: Raymond DePalma (ai-dfir-toolkit)
+date: 2026-11-17
+correlation:
+  type: event_count
+  rules:
+    - vector_db_collection_request_base
+  group-by:
+    - source_ip
+  timespan: 1m
+  condition:
+    gte: 500
+tags:
+  - attack.collection
+  - attack.exfiltration
+  - attack.atlas.t0024
+  - owasp.llm02
+  - owasp.llm08
+falsepositives:
+  - Legitimate batch indexing or migration jobs
+  - Approved analytics pipelines reading vector data
 level: medium

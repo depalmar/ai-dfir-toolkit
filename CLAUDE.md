@@ -340,7 +340,7 @@ IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
 names a different category here than it did there -
 `scripts/remap_owasp_2026.py` holds the mapping table and the reasoning.
 
-Detection content totals 72 rule files / 163 signatures across the nine attack-class
+Detection content totals 72 rule files / 167 signatures across the nine attack-class
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
@@ -545,26 +545,30 @@ override and whether the rules glob is `**/*.md`.
      CS0068-CS0071, the OWASP ASI incident tracker and the OpenAI threat reports.
      Only AIRT-TA ids with a case or a sighting belong.
 
-1. **Detection-pack audit backlog (2026-11-17).** The guide was audited against
-   the rules. What was verified and fixed is in the root CHANGELOG: five
-   Suricata rules that parsed and could not alert, three Sigma rules, and the
-   guide's overstated claims. `tests/suricata_replay.py` is the gate for the
-   first kind; add a case when a rule depends on direction or ports. The
-   findings below were reported by the audit and **not** verified or changed,
-   because each is a design call about what telemetry the rule assumes:
-   - `mlflow_unauth_api_access.yml` does not test for authentication at all.
-   - `ssh_authorized_keys_injection.yml` compares `ParentImage` with a process
-     title (`ray::`), which an executable path never contains.
-   - `shadowray_process_masquerading.yml` needs miner arguments or listed
-     paths, not "any arguments on a kworker name" as the guide describes.
-   - `chatgpt_paste_sensitive_data.yml` needs `BytesSent`, which Sysmon
-     network events do not carry.
-   - Suricata 9000201 matches any GET to 8265 from any source, so it reports
-     use, not exposure; 9000206 is the exposure rule.
-   - `.cursor/rules/` and Cursor hooks have no file rule in
-     `09-agent-memory-forensics/`; model-file YARA covers pickle and Keras only.
-   - Several application-telemetry rules use fields such as `rate_per_minute`
-     and `duration_minutes` that a pipeline has to compute before they convert.
+1. **Detection-pack audit (2026-11-17) - worked through, two things left.**
+   The guide was audited against the rules. The root CHANGELOG has what was
+   fixed: five Suricata rules that parsed and could not alert, eight Sigma
+   rules, and the guide's overstated claims. `tests/suricata_replay.py` is the
+   gate for a Suricata rule that depends on direction or ports; add a case
+   when one does. Nothing replays Sigma: the rewrites below were reasoned from
+   the telemetry's field set and converted, not fired against real events, so
+   treat them as untested until somebody runs them on a host.
+   - `ssh_authorized_keys_injection.yml` is a process-creation rule now. As a
+     file-event rule it tested `ParentImage`, which file events do not carry.
+   - `chatgpt_paste_sensitive_data.yml` reads proxy logs now, the one place an
+     upload's size is recorded.
+   - `mlflow_unauth_api_access.yml` and `vector_db_bulk_exfil.yml` express
+     their rate tests as correlation rules instead of a `rate_per_minute`
+     field no log carries. `gpu_unexpected_high_utilization.yml` still needs
+     `duration_minutes` computed by the collector and now says so.
+   - Suricata 9000201 is labelled as reporting use, not exposure.
+   Still open:
+   - **Cursor hooks have no rule and no catalog row.** The path could not be
+     read from the vendor (cursor.com is blocked here) and was not guessed.
+     `.cursor/rules/` is covered by `memory_poisoning.yml` since this pass.
+   - **Model-file YARA covers pickle and Keras only.** GGUF, ONNX and
+     safetensors metadata have no rule. That is new detection content, not a
+     fix.
 
 3. **Apply the rest of `docs/RESEARCH-2026-08-14.md`.** Roughly thirty candidate
    rows survived adversarial verification and were deliberately not committed,

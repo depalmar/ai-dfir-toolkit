@@ -22,6 +22,7 @@ tags:
 logsource:
   product: nvidia
   service: gpu_telemetry
+  definition: 'Per-process GPU samples (DCGM exporter, or nvidia-smi pmon shipped by a collector) normalised to: host, process_name, gpu_utilization_pct, duration_minutes. duration_minutes is not emitted by any exporter. The collector has to compute it: how long this process has stayed at or above the utilisation threshold without a break. Without that step the rule converts and never matches.'
 detection:
   selection_high_util:
     gpu_utilization_pct|gte: 40

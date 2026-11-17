@@ -16,7 +16,7 @@ Detects attacks against retrieval-augmented generation pipelines and vector data
 ## Files
 
 - `vector_db_unauth_exposure.rules` — Suricata for exposed Chroma/Weaviate/Qdrant/Milvus
-- `vector_db_bulk_exfil.yml` — Sigma for high-volume vector retrieval
+- `vector_db_bulk_exfil.yml` — Sigma for oversized `limit` values, and a correlation rule for high request volume from one source
 - `rag_document_hidden_text.yar` — YARA for white-text / Unicode hidden instructions
 - `chroma_sqlite_unexpected_writer.yml` — Sigma for ChromaDB persistence tampering
 - `vector_db_query_anomaly.yml` — Sigma for vector DB port access and RAG injection ingestion

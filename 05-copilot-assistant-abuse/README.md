@@ -23,7 +23,7 @@ Detects abuse of AI productivity assistants (Microsoft 365 Copilot, GitHub Copil
 - `github_copilot_yolo_mode_enabled.yml` — Sigma for .vscode/settings.json YOLO toggle
 - `copilot_rules_file_backdoor.yar` — YARA for hidden Unicode in copilot-instructions
 - `cursor_settings_db_modification.yml` — Sigma for state.vscdb tampering
-- `chatgpt_paste_sensitive_data.yml` — Sigma for clipboard / browser network detection
+- `chatgpt_paste_sensitive_data.yml` — Sigma for large uploads to AI SaaS endpoints, read from web proxy logs
 - `claude_session_jsonl_unexpected_access.yml` — Sigma for ~/.claude/projects/ access
 - `ai_assistant_outbound_to_camo_proxy.rules` — Suricata for CamoLeak-style exfil
 
