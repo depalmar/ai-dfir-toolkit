@@ -149,6 +149,10 @@ def parse_sigma(path: Path):
         "logsource": " / ".join(str(v) for v in (
             ls.get("product"), ls.get("category"), ls.get("service")) if v),
         "falsepositives": [str(f) for f in (doc.get("falsepositives") or [])],
+        # What the rule's author says to look at in a match, and how many rules
+        # the file holds - the Hunts tab shows the first and says so.
+        "fields": [str(f) for f in (doc.get("fields") or [])],
+        "docs": len(docs),
         "references": [str(r) for r in (doc.get("references") or [])],
         "atlas": atlas, "owasp": owasp, "attack": attack,
         "body": raw,

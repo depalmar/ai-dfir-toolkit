@@ -822,14 +822,42 @@ th .pick.all{vertical-align:middle}
 .huntsec{margin-top:22px}
 .huntsec>h3{margin:0;font-size:14.5px}
 .huntnote{margin:4px 0 12px;font-size:12.5px;color:var(--muted);max-width:84ch}
-.huntgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.huntgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(460px,100%),1fr));gap:14px;align-items:start}
+.hlh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:13px 0 6px}
+.hlh h5,.htune h5,.hsub{margin:0;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hunt pre.yaml,.hdet pre.yaml{max-height:280px;overflow:auto;font-size:11.5px}
+.htune{margin-top:11px}
+.htune .fplist{margin:6px 0 0}
+.htune p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.hfields{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:8px 0 0}
+.hfields code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--panel-2);
+  border:1px solid var(--line-soft);border-radius:5px;padding:1px 6px;color:var(--ink)}
+.hmulti{font-size:11.5px;color:var(--muted);margin:6px 0 0}
+.hsub{margin:15px 0 8px;display:flex;gap:7px;align-items:center}
+.hsub .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:0;
+  background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.hdets{display:flex;flex-direction:column;gap:8px}
+details.hdet{border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+details.hdet>summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;
+  padding:10px 12px;cursor:pointer;list-style:none}
+details.hdet>summary::-webkit-details-marker{display:none}
+details.hdet>summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--muted);
+  border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .12s}
+details.hdet[open]>summary::before{transform:rotate(45deg)}
+details.hdet>summary:hover .hdt{color:var(--accent)}
+details.hdet>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:9px}
+.hdt{font-weight:600;font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+.hdm{grid-column:2/4;font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+.hdm .mono{font-family:ui-monospace,Menlo,monospace}
+.hdetbody{padding:2px 12px 13px;border-top:1px solid var(--line-soft)}
+.hdesc{font-size:12.5px;color:var(--muted);margin:11px 0 0;max-width:96ch}
+.huntfoot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:13px;padding-top:11px;border-top:1px solid var(--line-soft)}
 .hunt,.huntcase{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px;min-width:0}
 .huntcase{margin-bottom:12px}
 .hunthead{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
 .hunthead h4{margin:0;font-size:13.5px;line-height:1.35;min-width:0}
 .hunthead .cardbtn:hover{color:var(--accent)}
-.huntlook{margin:9px 0 0;font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-box-orient:vertical;
-  -webkit-line-clamp:6;overflow:hidden}
+.huntlook{margin:9px 0 0;font-size:12.5px;color:var(--muted)}
 .huntk{font-size:11.5px;color:var(--faint)}
 .huntlist{list-style:none;margin:11px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
 .huntlist li{padding:9px 11px;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel-2);
@@ -2213,10 +2241,46 @@ function huntsShown(){
   const rules=HUNTS.rules.filter(h=>m([h.title,h.file,h.look_for,h.logsource,h.category,
     h.sources.map(s=>s.name).join(' '),h.cases.join(' ')].join(' ')));
   const groups=HUNTS.behaviours.map(g=>{
-    const head=m([g.case,g.title].join(' '));
+    const head=m([g.case,g.title,g.rules.join(' '),g.rules.map(f=>(RULEFILE[f]||{}).title||'').join(' ')].join(' '));
     return {...g,items:g.items.filter(i=>head||m([i.look_for,i.why].join(' ')))};
   }).filter(g=>g.items.length);
   return {rules,groups,n:rules.length+groups.reduce((a,g)=>a+g.items.length,0)};
+}
+// What a rule matches, without the prose around it: logsource and detection
+// for Sigma, the whole body for YARA and Suricata, which are their own logic.
+function ruleLogic(r){
+  if(r.format!=='Sigma')return r.body.trim();
+  const all=r.body.split('\n'), cut=all.findIndex((l,i)=>i>0&&l.trim()==='---');
+  const doc=cut>0?all.slice(0,cut):all;
+  const block=key=>{
+    const i=doc.findIndex(l=>l.startsWith(key+':'));
+    if(i<0)return [];
+    let j=i+1;
+    while(j<doc.length&&(!doc[j].trim()||/^[ \t#]/.test(doc[j])))j++;
+    const b=doc.slice(i,j);
+    while(b.length&&!b[b.length-1].trim())b.pop();
+    return b;
+  };
+  const out=[...block('logsource'),...block('detection')];
+  return out.length?out.join('\n'):r.body.trim();
+}
+// Logic and tuning for one rule. Used on a hunting rule's card and inside each
+// detection a case links, so the two read the same way.
+function huntRuleBody(r){
+  const multi=r.format==='Sigma'&&r.docs>1, fp=r.falsepositives||[], fields=r.fields||[];
+  return `<div class="hlogic">
+      <div class="hlh"><h5>Logic</h5><span class="codetools"><button type="button" class="minibtn"
+        data-copyrule="${esc(r.file)}" title="Copy the whole rule file">copy rule</button><button type="button"
+        class="minibtn" data-rule="${esc(r.path)}" title="Open the full rule with its references">open rule</button></span></div>
+      <pre class="yaml" tabindex="0">${esc(ruleLogic(r))}</pre>
+      ${multi?`<p class="hmulti">This file holds ${r.docs} rules and the first is shown. Open the rule for the rest, including any correlation over them.</p>`:''}
+    </div>
+    <div class="htune"><h5>Tuning</h5>
+      ${fp.length?`<ul class="fplist">${fp.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`
+        :r.format==='Sigma'?`<p>The rule lists no false positives. Baseline it on your own data before trusting a quiet result.</p>`
+        :`<p>${esc(r.format)} rules carry no false-positive notes. Read the comments in the rule and its category README before deploying it.</p>`}
+      ${fields.length?`<div class="hfields"><span class="huntk">review in a match</span>${fields.map(f=>`<code>${esc(f)}</code>`).join('')}</div>`:''}
+    </div>`;
 }
 function huntChecklist(){
   const {rules,groups}=huntsShown(), out=[`# Hunts - AI DFIR Toolkit, ${stamp()}`,''];
@@ -2226,43 +2290,64 @@ function huntChecklist(){
   if(groups.length){out.push('## Behaviours reported in case studies','');
     for(const g of groups){out.push(`### ${g.case} ${g.title}`,'');
       for(const i of g.items)out.push(`- [ ] ${i.look_for}`);
+      for(const f of g.rules){const r=RULEFILE[f];out.push(`- [ ] Detection: ${r?r.title:f} (${f})`)}
       out.push('')}}
   return out.join('\n');
 }
 function huntsHTML(){
   const S=HUNTS.stats, {rules,groups,n}=huntsShown();
-  const ruleBtn=f=>RULEFILE[f]?`<button class="tchip" data-rule="${esc(RULEFILE[f].path)}" title="Open this rule">${esc(f)}</button>`
-    :`<span class="tchip">${esc(f)}</span>`;
+  const linked=new Set(HUNTS.behaviours.flatMap(g=>g.rules)).size;
+  const techs=r=>[...r.atlas,...(r.attack||[])].map(x=>`<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('');
+  const det=f=>{
+    const r=RULEFILE[f];
+    if(!r)return `<div class="hdet"><div class="hdetbody"><p class="hdesc">${esc(f)} is named by this case and is not a rule on this page.</p></div></div>`;
+    const fp=(r.falsepositives||[]).length;
+    return `<details class="hdet">
+      <summary><span class="hdt">${esc(r.title)}</span>${r.level?badge(r.level,r.level==='critical'):'<span></span>'}
+        <span class="hdm">${esc(r.format)} &middot; <span class="mono">${esc(r.file)}</span>${r.logsource&&r.format==='Sigma'?` &middot; reads ${esc(r.logsource)}`:''}${
+          fp?` &middot; ${fp} tuning note${fp>1?'s':''}`:''}</span></summary>
+      <div class="hdetbody">${r.description?`<p class="hdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
+        ${huntRuleBody(r)}</div></details>`;
+  };
   return `<div class="gtop"><div><h2>Hunts</h2>
     <p>What to go looking for where an alert would be wrong, or where nobody has
-    written a rule. Nothing here is a query in one vendor's language: a hunting
-    rule is Sigma and converts to any backend, and a behaviour is a description
-    to turn into a search of your own logs.</p>
-    <p class="csconf">${S.rule_hunts} hunting rules &middot; ${S.behaviours} behaviours from ${S.cases} case studies</p></div>
-    <button class="btn" id="huntCopy" title="Copy the hunts shown as a Markdown checklist">Copy as checklist</button></div>
-  <div class="huntbar"><input id="huntQ" type="search" placeholder="Filter hunts: a log source, a tool, a case id..."
+    written a rule. Each hunt shows its detection: the logic it matches and how its
+    author says to tune it. Nothing here is a query in one vendor's language: a rule
+    is Sigma, YARA or Suricata, and a behaviour is a description to turn into a
+    search of your own logs.</p>
+    <p class="csconf">${S.rule_hunts} hunting rules &middot; ${S.behaviours} behaviours from ${S.cases} case studies &middot; ${linked} detections linked to those cases</p></div>
+    <div class="badgerow"><button class="btn" id="huntAll" data-open="0" title="Open or close the logic of every detection below">Expand all logic</button>
+    <button class="btn" id="huntCopy" title="Copy the hunts shown as a Markdown checklist">Copy as checklist</button></div></div>
+  <div class="huntbar"><input id="huntQ" type="search" placeholder="Filter hunts: a log source, a rule, a case id..."
     aria-label="Filter hunts" value="${esc(huntQ)}"><span class="huntn" role="status">${n} of ${S.total} shown</span></div>
   ${!n?`<div class="empty">No hunt matches that filter.</div>`:''}
   ${rules.length?`<section class="huntsec"><h3>Hunting rules</h3>
     <p class="huntnote">Sigma rules whose own level is low. That is the author saying a match is not
-    an alert: baseline it first, then run it on a schedule and read the results.</p>
-    <div class="huntgrid">${rules.map(h=>`<article class="hunt" id="${esc(h.anchor)}">
+    an alert: baseline it first, then run it on a schedule and read the results. The other
+    ${RULES.length-S.rule_hunts} rules are on the Detections tab.</p>
+    <div class="huntgrid">${rules.map(h=>{const r=RULEFILE[h.file];return `<article class="hunt" id="${esc(h.anchor)}">
       <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4>${badge(h.level)}</div>
-      <div class="rfile">${esc(h.file)}</div>
+      <div class="rfile">${esc(h.file)}${r&&r.status?` &middot; ${esc(r.status)}`:''}</div>
       <p class="huntlook">${esc(h.look_for)}</p>
       <div class="srcfoot">${h.logsource?`<span class="huntk">reads</span><span class="srcstat flat">${esc(h.logsource)}</span>`:''}
-        ${h.sources.map(s=>`<button class="srcstat" data-src="${esc(s.id)}" title="How to switch this source on">${esc(s.name)}</button>`).join('')}
-        ${h.cases.map(c=>`<button class="srcstat" data-case="${esc(c)}" title="The case study this rule came from">${esc(c)}</button>`).join('')}
-      </div></article>`).join('')}</div></section>`:''}
+        ${h.sources.map(s=>`<button class="srcstat" data-src="${esc(s.id)}" title="How to switch this source on">${esc(s.name)}</button>`).join('')}</div>
+      ${r?huntRuleBody(r):''}
+      ${h.cases.length||(r&&(r.atlas.length||(r.attack||[]).length))?`<div class="huntfoot">
+        ${h.cases.length?`<span class="huntk">from</span>${h.cases.map(c=>`<button class="srcstat" data-case="${esc(c)}" title="The case study this rule came from">${esc(c)}</button>`).join('')}`:''}
+        ${r?techs(r):''}</div>`:''}
+      </article>`}).join('')}</div></section>`:''}
   ${groups.length?`<section class="huntsec"><h3>Behaviours reported in case studies</h3>
-    <p class="huntnote">What the activity looked like, in the words of the case, newest first. Each
-    case lists its rules, but nothing here says a given rule matches a given behaviour, so read the
-    rule before relying on it.</p>
+    <p class="huntnote">What the activity looked like, in the words of the case, newest first, with the
+    detections the case links. A rule belongs to the case, not to one behaviour: nothing here says a
+    given rule matches a given behaviour, so read its logic before relying on it.</p>
     ${groups.map(g=>`<article class="huntcase">
       <div class="hunthead"><h4><button type="button" class="cardbtn" data-case="${esc(g.case)}">${esc(g.title)}</button></h4>${confBadge(g.confidence)}</div>
-      <div class="srcfoot"><span class="huntk">${esc(g.case)} &middot; disclosed ${esc(g.disclosed)} &middot; ${g.rules.length?'rules for this case':'no rule in this repository'}</span>
-        ${g.rules.map(ruleBtn).join('')}</div>
+      <div class="srcsub">${esc(g.case)} &middot; disclosed ${esc(g.disclosed)}</div>
+      <h5 class="hsub">Behaviours <span class="n">${g.items.length}</span></h5>
       <ul class="huntlist">${g.items.map(i=>`<li id="${esc(i.anchor)}"><b>${esc(i.look_for)}</b>${i.why?`<span>${esc(i.why)}</span>`:''}</li>`).join('')}</ul>
+      <h5 class="hsub">Detections for this case <span class="n">${g.rules.length}</span></h5>
+      ${g.rules.length?`<div class="hdets">${g.rules.map(det).join('')}</div>`
+        :`<p class="huntnote">No rule in this repository. These behaviours are hunted by hand.</p>`}
     </article>`).join('')}</section>`:''}`;
 }
 function sourcesHTML(){
@@ -3878,6 +3963,11 @@ function renderMain(){
       pushNav();caseOnly=null;view='cases';update();
       const el=document.getElementById('cs-'+b.dataset.case);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
     const hc=$('#huntCopy');if(hc)hc.onclick=()=>copy(huntChecklist(),hc);
+    $$('#main [data-copyrule]').forEach(b=>b.onclick=()=>{const r=RULEFILE[b.dataset.copyrule];if(r)copy(r.body,b)});
+    const ha=$('#huntAll');
+    if(ha)ha.onclick=()=>{const open=ha.dataset.open!=='1';
+      $$('#main details.hdet').forEach(d=>{d.open=open});
+      ha.dataset.open=open?'1':'0';ha.textContent=open?'Collapse all logic':'Expand all logic'};
     renderTabs();renderToast();renderBack();return;
   }
   if(view==='sources'){
