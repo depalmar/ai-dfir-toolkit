@@ -154,6 +154,11 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   copyable canvas links and degree-scaled nodes.
 
 ### Changed
+- **The SANS wordmark now comes from SANS's own masters.** The first files
+  were taken from a public logo directory; SANS has since supplied its logo
+  masters, and the three files in `docs/brand/` are converted from those. The
+  shapes are the same and the blue moves from `#004F6E` to `#08527D`, a
+  conversion of the master's CMYK value.
 - **Cloud logging defaults in the guide.** The provider table now separates
   what is on by default from where prompt and completion text lives and how
   long it is kept. Azure OpenAI diagnostic logs carry metadata, not the
