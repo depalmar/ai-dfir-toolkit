@@ -115,6 +115,9 @@ Only for documented, dated, publicly reported incidents. Include concrete IOCs
 response actions, and the transferable lesson. No IOCs, no case study.
 
 Case studies validate against `artifacts/schema/case-study.schema.json`.
+`skills/case-study-authoring/SKILL.md` is the workflow, including how to count
+sources: only parties who wrote from their own data count, and trade press, a
+MITRE entry or an advisory that cites one vendor post is that post again.
 Structured fields are optional, but when you use them, stick to what the source
 states:
 - `actors`: links to profiles, each with our `link_confidence` and the

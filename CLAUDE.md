@@ -368,9 +368,13 @@ is not a second observation of it. Count parties who wrote from their own data.
 AIRT-CS-0024 is the worked example - four parties confirm the intrusion, one
 asserts the AI agent, and the responders say in terms that they cannot confirm
 it. Still single-source after the audit: AIRT-CS-0012, 0016 to 0022 and 0026.
-The KEV pin could not be refreshed from this runner (cisa.gov is blocked), so a
-Ray CVE added to KEV in August 2026 is described in AIRT-CS-0014 without its id;
-cite it once the weekly refresh can pin it.
+The KEV pin could not be refreshed from the runner that audit ran on (cisa.gov
+was blocked), so a Ray CVE added to KEV in August 2026 is described in
+AIRT-CS-0014 without its id. A cloud environment named `ai-dfir-toolkit` was
+created the same day: it allows `www.cisa.gov` and its setup script installs
+Suricata, YARA and the Sigma CLI. From a session on it, run
+`cve_status.py --refresh` and cite the CVE. The Default environment still has
+neither, and vendor documentation domains remain blocked on both.
 
 Confidence: 29 high, 19 medium, 4 low.
 Provenance: 52/52 entries carry a reference. AIRT-0034 was the last holdout and
@@ -630,6 +634,8 @@ previous day and had three wrong `high` paths.
 
 - `artifacts/README.md` — the catalog itself
 - `skills/agent-artifact-catalog/SKILL.md` — the authoring workflow
+- `skills/case-study-authoring/SKILL.md` — case studies and actor profiles: how
+  to count sources, write `basis` and `contested`, and audit an existing case
 - `artifacts/docs/VERIFICATION.md` — audit trail of every correction so far
 - `artifacts/docs/REVERIFICATION.md` — the quarterly re-verification checklist
 - `artifacts/docs/HOST_VERIFICATION.md` — how to verify paths on a real machine

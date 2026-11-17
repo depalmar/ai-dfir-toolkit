@@ -10,6 +10,11 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Added
 
+- **A case-study authoring skill**, `skills/case-study-authoring/SKILL.md`. It
+  carries the rule the November 2026 audit applied - count only parties who
+  wrote from their own data - with the workflow for indicators, actor links,
+  `basis` and `contested`, and a six-question audit for an existing case.
+
 - **Four Sigma rules from the case-study audit.** In
   `08-agentic-orchestration/`: `entra_role_member_added_by_app.yml` (a directory
   role assigned by an application, Privileged Identity Management filtered),
