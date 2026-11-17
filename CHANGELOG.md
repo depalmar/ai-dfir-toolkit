@@ -17,6 +17,10 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   vendor's language: a hunting rule is Sigma and a behaviour is prose. Each
   hunt has a permalink, the list filters, and it copies as a Markdown
   checklist. `build_site.py --check` gates its anchors and cross-references.
+  Every hunt shows its detection: each hunting rule carries its logic and its
+  tuning notes on the card, and each case lists its linked detections as rows
+  that open to the same two blocks, with copy rule and open rule. The first
+  version showed a case's rules as filename chips only.
 
 - **A hardening section in the guide**, "Before the next one: prevent it, or
   make it investigable", at the end of section 8. The prose is limited to what

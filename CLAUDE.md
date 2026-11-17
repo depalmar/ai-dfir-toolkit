@@ -463,7 +463,12 @@ The Hunts tab is derived in `hunts.py` from two things that already exist: Sigma
 rules whose own level is low, and `behavior` indicators on case studies. It
 carries no queries and must never gain any - that is the Sigma-only rule in
 another place. It also does not claim a rule covers a behaviour, because nothing
-in the data says so. The guide's hardening section is prose in the guide plus a
+in the data says so. Every hunt shows its detection, not a filename: the logic
+(`logsource` and `detection` for Sigma, the whole body for YARA and Suricata)
+and the tuning (the rule's own false positives and review fields). The first
+version showed linked rules as filename chips and read as having no detections
+at all. `ruleLogic()` and `huntRuleBody()` render both, from the rule body the
+page already carries. The guide's hardening section is prose in the guide plus a
 block injected at `<!-- site:hardening -->` whose every number comes from
 `build_hardening()`. Case indicators are published as `docs/api/iocs.csv` and
 `docs/api/iocs/<case-id>.txt` by `intel_graph.py --export`, and the page's Copy
