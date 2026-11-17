@@ -18,6 +18,7 @@ tests/
 │   ├── azure_openai_injection.json        (Azure diagnostic log — triggers Azure Sigma rule)
 │   ├── bedrock_high_tokens.json           (Bedrock invocation log — triggers Bedrock Sigma rule)
 │   ├── m365_copilot_sensitive.json        (Purview audit log — triggers M365 Copilot Sigma rule)
+│   ├── entra_app_signin_invalid_secret.json (Entra service principal sign-in — triggers the invalid-secret Sigma rule)
 │   ├── ray_jobs_api_rce.pcap.txt          (HTTP request — triggers Ray Suricata)
 │   └── camoleak_pixel_burst.pcap.txt      (HTTP burst — triggers CamoLeak Suricata)
 └── validate.sh                            (smoke-test runner script)

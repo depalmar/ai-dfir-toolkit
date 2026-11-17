@@ -10,6 +10,17 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Added
 
+- **Two Sigma rules for application credentials used by somebody else**, in
+  `08-agentic-orchestration/`. `entra_app_signin_invalid_or_expired_secret.yml`
+  fires on a Microsoft Entra application sign-in that fails with a wrong or
+  expired client secret, which is the first trace a tenant gets when a secret
+  harvested from a public repository is tried. `entra_app_signin_scripted_client.yml`
+  is a low-level hunt for a successful application sign-in from a bare scripting
+  client, the user agents published for the October 2026 ARTEX campaign. Both
+  read the service principal sign-in log, a diagnostic category that is not
+  exported unless selected. They exist because in the three ARTEX cases
+  (AIRT-CS-0024 to 0026) the agent ran on the actor's side and the identity log
+  is all a victim holds. 72 rule files, 163 signatures.
 - **Four Wave 3 entries** — `AIRT-0046` Warp, `AIRT-0047` Letta, `AIRT-0048`
   Docker Model Runner and `AIRT-0049` Agent framework libraries. The last is one
   entry for Semantic Kernel, PydanticAI, Smolagents, the OpenAI Agents SDK and

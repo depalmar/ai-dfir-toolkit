@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 70 rule files / 161 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 72 rule files / 163 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -114,10 +114,15 @@ ratio of agent actions to human decisions.
 | `sesameop_assistants_api_c2.yml` | Sigma | T0096 | LLM03 | — | SesameOp, Microsoft DART Nov 2025 (AML.CS0042) |
 | `agentic_orchestration_behavior.yml` | Sigma | T0086, T0054, T0053, T0096 | LLM03 | ASI02 | GTG-1002, Anthropic Nov 2025 |
 | `ai_service_api_c2.rules` | Suricata | T0096, T0086 | LLM03 | — | SesameOp / agent-as-C2 egress |
+| `entra_app_signin_invalid_or_expired_secret.yml` | Sigma | T0055, T0012 | — | — | ARTEX exposed-secret abuse, Microsoft Nov 2026 (AIRT-CS-0025) |
+| `entra_app_signin_scripted_client.yml` | Sigma | T0012 | — | — | Storm-0940 / ARTEX, Microsoft Oct 2026 (AIRT-CS-0024) |
 
 GTG-1002 is vendor-disclosed with no public IOCs, so these are behavioural rather
 than signature-based. `agentic_orchestration_behavior.yml` is threshold-driven and
-must be baselined before alerting - see the category README.
+must be baselined before alerting - see the category README. The two Entra
+sign-in rules read the victim tenant's identity log, because in the ARTEX cases
+the agent ran on the actor's side and that log is all the victim holds;
+`entra_app_signin_scripted_client.yml` is a hunt, not an alert.
 
 ## 09 — Agent Memory Forensics & Context Poisoning
 
@@ -175,6 +180,7 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | T0010.002 | Supply Chain Compromise: Data Repository | Initial Access | 3 |
 | T0010.003 | Supply Chain Compromise: Model Repository | Initial Access | 3 |
 | T0011    | User Execution | Execution | 13 |
+| T0012    | Valid Accounts | Initial Access, Privilege Escalation, Lateral Movement | 2 |
 | T0018    | Manipulate AI Model | AI Attack Adaptation, Persistence | 5 |
 | T0020    | Training Data Poisoning | Persistence | 3 |
 | T0024    | Exfiltration via AI Inference API | Exfiltration | 8 |
@@ -185,7 +191,7 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | T0051.001 | LLM Prompt Injection: Indirect | Execution | 1 |
 | T0053    | AI Agent Tool Invocation | Execution, Privilege Escalation, Lateral Movement | 6 |
 | T0054    | LLM Jailbreak | Defense Evasion, Privilege Escalation | 5 |
-| T0055    | Unsecured Credentials | Credential Access | 1 |
+| T0055    | Unsecured Credentials | Credential Access | 2 |
 | T0080    | AI Agent Context Poisoning | Persistence | 1 |
 | T0080.000 | AI Agent Context Poisoning: Memory | Persistence | 2 |
 | T0081    | Modify AI Agent Configuration | Persistence, Defense Evasion | 4 |

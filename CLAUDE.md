@@ -326,7 +326,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 ## Current state
 
 52 entries, 638 artifacts, 169 credential locations, 68 MCP config
-locations, 14 endpoint Sigma rules, 23 case studies, 26 telemetry sources.
+locations, 14 endpoint Sigma rules, 26 case studies, 26 telemetry sources.
 Validation clean.
 
 Volatility across the 638 site rows: live 115 · rotating 55 · stable 468
@@ -340,15 +340,15 @@ IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
 names a different category here than it did there -
 `scripts/remap_owasp_2026.py` holds the mapping table and the reasoning.
 
-Detection content totals 70 rule files / 161 signatures across the nine attack-class
+Detection content totals 72 rule files / 163 signatures across the nine attack-class
 directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
-content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.11.09,
+content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.1, CISA KEV 2026.11.17,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
-Threat intel: 20 actor profiles, 23 case studies (234 indicators, 173 atomic),
-30 ATLAS techniques observed. 15 have a rule, 11 are off-host by nature, and the
+Threat intel: 22 actor profiles, 26 case studies (267 indicators, 195 atomic),
+34 ATLAS techniques observed. 16 have a rule, 13 are off-host by nature, and the
 detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
 
 Confidence: 28 high, 20 medium, 4 low.
@@ -504,18 +504,20 @@ override and whether the rules glob is `**/*.md`.
      from vendor documentation only (see `docs/VERIFICATION.md`, 2026-11-10).
      Install it on a host and confirm the `brain/` transcripts and
      `cache/projects.json`, which rests on one early release note.
-   - **The weekly framework refresh has never opened a PR.** Every run fails
-     with "GitHub Actions is not permitted to create or approve pull requests".
-     Until the owner turns that setting on (Settings > Actions > General >
-     Workflow permissions) or adds an `AUTOMATION_TOKEN` secret, the ATLAS,
-     ATT&CK and KEV pins only move when a session runs `--refresh` by hand.
-     Auto-merge then also needs branch protection on `main` and "Allow
-     auto-merge".
-   - **Nobody triages `intel-candidate` issues.** The watcher runs weekly and
-     works; 133 issues were open on 2026-11-17, none closed. Closing one as not
-     planned is how the watcher learns to stop raising it. `tool-releases`
-     candidates ask for a re-verification of one entry and are the quickest to
-     act on.
+   - **The weekly framework refresh opens its PR now, and nothing merges it.**
+     The owner turned on "Allow GitHub Actions to create and approve pull
+     requests" on 2026-11-17 and run 8 opened #236. A PR opened with the
+     default `GITHUB_TOKEN` does not trigger CI, so #236 was checked by running
+     the gates on its branch locally and merged by hand. Until an
+     `AUTOMATION_TOKEN` secret exists (plus branch protection on `main` and
+     "Allow auto-merge"), every refresh PR needs that same manual pass.
+   - **`intel-candidate` issues need a standing owner.** The watcher runs
+     weekly and works. 133 were open on 2026-11-17 and none had ever been
+     closed; that day's triage closed 86 and turned the Microsoft ARTEX
+     reports into AIRT-CS-0024 to 0026. Closing one as not planned is how the
+     watcher learns to stop raising it. `tool-releases` candidates ask for a
+     re-verification of one entry and are the quickest to act on. A weekly
+     scheduled session now triages new ones and opens one PR; it never merges.
    - Run the generated PowerShell triage script on a Windows host, under
      Windows PowerShell 5.1 as the usage line says. It has been run end to end
      under PowerShell 7.6 on Linux against a fixture (credentials hashed, not

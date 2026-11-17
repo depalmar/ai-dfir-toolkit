@@ -935,7 +935,10 @@ sources:
       sign-in, Copilot Studio connections, any connector granted through an
       OAuth consent - leave a sign-in and a consent grant in the identity
       provider. Export them to a SIEM or Log Analytics; the native windows are
-      days.
+      days. In Entra, application (service principal) sign-ins are a separate
+      diagnostic category from user sign-ins and are not exported unless it is
+      selected. When an attacker's agent signs in with a stolen application
+      credential, that category is the only record of it.
     default_state: On in every tenant.
     retention: >-
       Microsoft Entra keeps sign-in and audit logs for seven days on the Free

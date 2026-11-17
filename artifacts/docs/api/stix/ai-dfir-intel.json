@@ -6,8 +6,8 @@
    "type": "identity",
    "spec_version": "2.1",
    "id": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
-   "created": "2026-10-30T00:00:00.000Z",
-   "modified": "2026-10-30T00:00:00.000Z",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
    "name": "ai-dfir-toolkit",
    "identity_class": "organization",
    "description": "Open AI-agent artifact catalog and detection content."
@@ -16,7 +16,7 @@
    "type": "marking-definition",
    "spec_version": "2.1",
    "id": "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6",
-   "created": "2026-10-30T00:00:00.000Z",
+   "created": "2026-11-06T00:00:00.000Z",
    "definition_type": "statement",
    "name": "CC BY 4.0",
    "definition": {
@@ -3115,6 +3115,695 @@
    "relationship_type": "targets",
    "source_ref": "intrusion-set--58552f76-4ba6-59ff-806f-705f814753d9",
    "target_ref": "identity--5d5cb585-02af-535f-865e-ff58cf584edc"
+  },
+  {
+   "type": "intrusion-set",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Storm-0940",
+   "description": "Microsoft's designation for a China-state aligned actor, active since 2021, that targets organisations across many industries for data theft and historically gained access by password spraying and by exploiting internet-facing applications. In 2026 Microsoft reported it using ARTEX, an open-source multi-agent penetration-testing framework, to automate attacks on hundreds of organisations, and assessed it responsible for the compromise of a software vendor's multitenant applications that was then used against the vendor's customers.",
+   "confidence": 50,
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-TA-0021"
+    },
+    {
+     "source_name": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--048f3c2e-ed10-57a4-afee-f3db3d0c2ff2",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Valid Accounts",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0012",
+     "url": "https://atlas.mitre.org/techniques/AML.T0012"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--656eb925-83d9-5af6-b3b4-54b6d8b310e6",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--048f3c2e-ed10-57a4-afee-f3db3d0c2ff2"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--05654e4e-5774-59dd-8eef-e39a50b8f56e",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Software Tools",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0016.001",
+     "url": "https://atlas.mitre.org/techniques/AML.T0016.001"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--9c1df9c7-3dbb-506b-9db7-8018b630a78d",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--05654e4e-5774-59dd-8eef-e39a50b8f56e"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--d5fa75a0-2f08-57f0-a604-b26d6da4e7e5",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--06e1aeed-f839-5de1-b96c-69ee456919f7"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--5bf1199c-4776-5853-81fd-9d88e0f46881",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--c3a3fd88-0ac5-5294-973f-0dbee15b1da5"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--37620c74-2636-5a50-b10a-53e2de3f5c17",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Cloud Accounts",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1078.004",
+     "url": "https://attack.mitre.org/techniques/T1078/004/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--9173ddac-5e52-54e7-8283-e18a7c9a38b0",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--37620c74-2636-5a50-b10a-53e2de3f5c17"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--b8ee4ea9-cdeb-5ac3-aa0c-670380b406dd",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Cloud Account",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1087.004",
+     "url": "https://attack.mitre.org/techniques/T1087/004/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--ec306e02-f0ca-53a2-93a6-424190de75bd",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--b8ee4ea9-cdeb-5ac3-aa0c-670380b406dd"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--e243856c-ef66-5239-9b60-50b81dcd27c2",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Additional Cloud Credentials",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1098.001",
+     "url": "https://attack.mitre.org/techniques/T1098/001/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--02940e50-0b1c-5593-b668-0dcaccda0ddd",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--e243856c-ef66-5239-9b60-50b81dcd27c2"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--7170a438-724f-5b4c-a4ad-75d6731332fc",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Additional Cloud Roles",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1098.003",
+     "url": "https://attack.mitre.org/techniques/T1098/003/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--c97f1e24-3a98-56b9-b662-97c2a123de4f",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--7170a438-724f-5b4c-a4ad-75d6731332fc"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--e5d105c2-abb4-52e6-921c-f8317d5e50a9",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Password Spraying",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1110.003",
+     "url": "https://attack.mitre.org/techniques/T1110/003/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--444c9a63-295a-51fd-b04a-211b18a8a6d5",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--e5d105c2-abb4-52e6-921c-f8317d5e50a9"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--6154be24-5176-587a-9f5a-6d4d289a4f1d",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Supply Chain Compromise",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1195",
+     "url": "https://attack.mitre.org/techniques/T1195/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--2564d3d7-ed8b-5ecf-a21e-ba6703d1b198",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--6154be24-5176-587a-9f5a-6d4d289a4f1d"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--55b175df-9bb8-5148-88f6-324a7bc2380a",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Trusted Relationship",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1199",
+     "url": "https://attack.mitre.org/techniques/T1199/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--485d7102-03cc-59ea-bf64-99156e57a59a",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--55b175df-9bb8-5148-88f6-324a7bc2380a"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--c8229c24-4ebf-583a-95f4-5975ef145c11",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--3c7664be-7fa4-5efb-a852-d1fdc740cc3a"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--b6b6bb25-4fa5-5863-9d93-088f93c1187c",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Cloud Secrets Management Stores",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1555.006",
+     "url": "https://attack.mitre.org/techniques/T1555/006/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--ff35c266-a901-578b-9cae-070659e765dd",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--b6b6bb25-4fa5-5863-9d93-088f93c1187c"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--5c8cd8d8-cf6b-5dec-9aac-ee6d8843482d",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Cloud Infrastructure Discovery",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1580",
+     "url": "https://attack.mitre.org/techniques/T1580/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--90720ecf-21b1-539d-b5bd-6e6d738e701a",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--5c8cd8d8-cf6b-5dec-9aac-ee6d8843482d"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--7eb6650c-7445-59ed-85ae-4040eb0a7ca2",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Active Scanning",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1595",
+     "url": "https://attack.mitre.org/techniques/T1595/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--e01e7cb4-cd28-52d8-9cea-a8bf09cb00f0",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "attack-pattern--7eb6650c-7445-59ed-85ae-4040eb0a7ca2"
+  },
+  {
+   "type": "intrusion-set",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "Storm-3358",
+   "description": "Microsoft's designation for a financially motivated, Cambodia-based intrusion cluster that mainly targets financial organisations in Southeast Asia and a smaller number of large ones elsewhere. In October 2026 Microsoft reported it using the agentic offensive framework ARTEX, alongside conventional automated tools, to scan and exploit internet-facing systems before installing open-source remote-access tools.",
+   "confidence": 50,
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-TA-0022"
+    },
+    {
+     "source_name": "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--66770497-1c9a-54df-8b84-6862a793d22b",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--05654e4e-5774-59dd-8eef-e39a50b8f56e"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--4f75d8c1-c01d-5fda-9d89-650f30378df8",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--06e1aeed-f839-5de1-b96c-69ee456919f7"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--4a209fcd-d881-5f1e-8f39-cf4d2eaa1cc2",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--c3a3fd88-0ac5-5294-973f-0dbee15b1da5"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--bc770a88-62c4-5482-a569-9c5ce4c6e140",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "Ingress Tool Transfer",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1105",
+     "url": "https://attack.mitre.org/techniques/T1105/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--b22eac78-f586-5686-a2a5-974fb5c4a74d",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--bc770a88-62c4-5482-a569-9c5ce4c6e140"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--9de7c50f-1cf8-5e40-9d7e-2b278e7f25dd",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--4acd779c-9b97-5a6a-afb6-b1225b446d41"
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--49a3e017-3228-5240-a665-9505053a9a82",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "Vulnerability Scanning",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1595.002",
+     "url": "https://attack.mitre.org/techniques/T1595/002/"
+    }
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--e7850ecd-a727-5e9a-a9c4-42fd042a7d6a",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "attack-pattern--49a3e017-3228-5240-a665-9505053a9a82"
+  },
+  {
+   "type": "malware",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "malware--579263d0-c168-5670-a453-710d79ca3a2f",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "WISP",
+   "is_family": true
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--7515e3ef-b024-538a-bfb9-ca9a8197cf12",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "malware--579263d0-c168-5670-a453-710d79ca3a2f"
+  },
+  {
+   "type": "malware",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "malware--782e9688-1484-506b-b7d1-8dfa8cdfe550",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "vshell",
+   "is_family": true
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--79708935-a5fe-51c0-bfe4-e6191d99edbc",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "malware--782e9688-1484-506b-b7d1-8dfa8cdfe550"
+  },
+  {
+   "type": "malware",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "malware--afbc7ce0-7f19-518b-827b-78d4504889d9",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "AdaptixC2",
+   "is_family": true
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--b0ff70b6-9378-5ed8-870c-4368a8c12ee1",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "uses",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "malware--afbc7ce0-7f19-518b-827b-78d4504889d9"
   },
   {
    "type": "tool",
@@ -9313,6 +10002,984 @@
     {
      "source_name": "Cursor - Claude Code extension security notice (cited by Microsoft; not retrieved for this entry)",
      "url": "https://cursor.com/blog/claude-code-extension-security-notice"
+    }
+   ]
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--6946141f-ede7-5f11-bb65-638834291cd2",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "144.172.64.128",
+   "description": "Sign-ins and Graph API activity in customer tenants through the vendor's applications",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '144.172.64.128']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--cb79370a-3385-5c5f-82e7-c7a9eca8453c",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--6946141f-ede7-5f11-bb65-638834291cd2",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--22bfa476-9f6b-59a6-8641-86d5d48c0101",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "144.172.64.99",
+   "description": "Same activity, and the source of the 10 to 14 October password spray",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '144.172.64.99']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--367a27fb-3590-5435-8aa0-4404b6ee88f8",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--22bfa476-9f6b-59a6-8641-86d5d48c0101",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--2644658c-4e9b-5a8f-ad63-8f169614cb9b",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "144.172.64.60",
+   "description": "Same activity",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '144.172.64.60']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--8f4b0b20-2886-54a6-aa72-92a3a6221723",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--2644658c-4e9b-5a8f-ad63-8f169614cb9b",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--97fe3420-2a3c-58c5-b6bd-b36484236792",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "187.15.88.186",
+   "description": "Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '187.15.88.186']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--bb4f4667-4a22-57df-a744-ad2ccfee7586",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--97fe3420-2a3c-58c5-b6bd-b36484236792",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--31ab0316-4588-5c8b-aba6-d8a0d046018d",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "187.15.90.217",
+   "description": "As above; VPN address, 15 and 16 October only",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '187.15.90.217']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--7767ac84-50d8-550d-8194-2a496375e9dc",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--31ab0316-4588-5c8b-aba6-d8a0d046018d",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--e083e6fd-0a51-574a-ac39-aadb2b74dfac",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "187.15.89.186",
+   "description": "As above; VPN address, 15 and 16 October only",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '187.15.89.186']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-21T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--3ddcaa6f-3316-5025-9588-e5cdd8e682c1",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--e083e6fd-0a51-574a-ac39-aadb2b74dfac",
+   "target_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--a609b65f-8522-54f5-8dca-4ec803ac38db",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--3792b856-8cf5-5432-8392-af5b197a566a"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--6c1fc7db-a339-5748-9769-f40977b92421",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--24f3603a-bb46-5550-9690-7acedfeb4a56"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--80acd102-240a-50ff-97bc-b58004d0bc5b",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--b844bf0e-4364-5afd-b786-fcd835c1e648"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--2bf925dd-2223-5d83-bc13-a5e7f78ee860",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--9720136c-9b7d-5a34-ac77-f88a55ccded8"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--7c0d4bab-0ef7-519e-aacd-d197cf440097",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--5d5cb585-02af-535f-865e-ff58cf584edc"
+  },
+  {
+   "type": "identity",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "identity--e4a290c9-98ee-514a-87f8-078cb483be03",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "legal-professional-services",
+   "identity_class": "class",
+   "sectors": [
+    "legal-professional-services"
+   ]
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--63e2bf87-676b-548d-b824-fc84c4a6f24b",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--e4a290c9-98ee-514a-87f8-078cb483be03"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--7e3a6f38-8604-53e0-bdde-56b7d6e20216",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--b34c64c8-2123-55ca-97c7-c586181f86ec"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--41e5d4c7-f138-5156-a9f8-65970394851c",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--984e523f-1927-5a94-a283-9245720ff117"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--630756f5-5672-5138-8c13-bfb3105c15b6",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--e55086c4-2284-53d8-8072-d0c42fe13709"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--8921e685-568c-5083-b468-a75be9404f1a",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e",
+   "target_ref": "identity--c176d369-1ee0-599c-bec9-0a4b5d9e11ff"
+  },
+  {
+   "type": "report",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "report--79b7f35b-c111-5526-ad3e-fefe5d2107bc",
+   "created": "2026-10-21T00:00:00.000Z",
+   "modified": "2026-10-21T00:00:00.000Z",
+   "name": "Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants",
+   "description": "Microsoft reports that Storm-0940, which it describes as a China-state aligned actor, has used ARTEX since at least September 2026 to automate attacks on hundreds of organisations. ARTEX is described as an open-source, multi-agent penetration-testing framework that can drive any model and runs a test from reconnaissance to exfiltration with little human input. In October the actor took control of the identities of several ConnectWise cloud applications, among them Cloud Backup, and used the trust customers had already granted those applications to attempt sign-ins to more than 2,250 tenants. Where a sign-in succeeded, the reported follow-on was reconnaissance through Microsoft Graph, credentials added to applications for persistence, changes to roles and groups including an application assigning itself Global Administrator, bulk reads of Key Vault secrets and mail access. A password spray from one of the same addresses on 10 to 14 October hit 327 accounts in eight organisations and, by Microsoft's account, authenticated to none. Microsoft says some intrusions went from first targeting to privileged access in under three hours.",
+   "published": "2026-10-21T00:00:00.000Z",
+   "report_types": [
+    "threat-report"
+   ],
+   "object_refs": [
+    "attack-pattern--048f3c2e-ed10-57a4-afee-f3db3d0c2ff2",
+    "attack-pattern--05654e4e-5774-59dd-8eef-e39a50b8f56e",
+    "attack-pattern--06e1aeed-f839-5de1-b96c-69ee456919f7",
+    "attack-pattern--37620c74-2636-5a50-b10a-53e2de3f5c17",
+    "attack-pattern--3c7664be-7fa4-5efb-a852-d1fdc740cc3a",
+    "attack-pattern--55b175df-9bb8-5148-88f6-324a7bc2380a",
+    "attack-pattern--5c8cd8d8-cf6b-5dec-9aac-ee6d8843482d",
+    "attack-pattern--6154be24-5176-587a-9f5a-6d4d289a4f1d",
+    "attack-pattern--7170a438-724f-5b4c-a4ad-75d6731332fc",
+    "attack-pattern--7eb6650c-7445-59ed-85ae-4040eb0a7ca2",
+    "attack-pattern--b6b6bb25-4fa5-5863-9d93-088f93c1187c",
+    "attack-pattern--b8ee4ea9-cdeb-5ac3-aa0c-670380b406dd",
+    "attack-pattern--c3a3fd88-0ac5-5294-973f-0dbee15b1da5",
+    "attack-pattern--e243856c-ef66-5239-9b60-50b81dcd27c2",
+    "attack-pattern--e5d105c2-abb4-52e6-921c-f8317d5e50a9",
+    "indicator--22bfa476-9f6b-59a6-8641-86d5d48c0101",
+    "indicator--2644658c-4e9b-5a8f-ad63-8f169614cb9b",
+    "indicator--31ab0316-4588-5c8b-aba6-d8a0d046018d",
+    "indicator--6946141f-ede7-5f11-bb65-638834291cd2",
+    "indicator--97fe3420-2a3c-58c5-b6bd-b36484236792",
+    "indicator--e083e6fd-0a51-574a-ac39-aadb2b74dfac",
+    "intrusion-set--fdc6b374-0751-5b39-b49c-73adaf20f87e"
+   ],
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-CS-0024"
+    },
+    {
+     "source_name": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--69a47738-feb0-5909-b506-46bee6f92a0e",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "Code Repositories",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0095.000",
+     "url": "https://atlas.mitre.org/techniques/AML.T0095.000"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--19a62392-7e95-5114-9442-5a49aa30c520",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "Exfiltration via Cyber Means",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0025",
+     "url": "https://atlas.mitre.org/techniques/AML.T0025"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--98f986cf-8604-523d-8f6f-aedd080e50fb",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "Code Repositories",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1593.003",
+     "url": "https://attack.mitre.org/techniques/T1593/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--ca387151-52ee-547f-8f2e-99c4ef520902",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "Data from Cloud Storage",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1530",
+     "url": "https://attack.mitre.org/techniques/T1530/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--c4cc4405-edcc-58de-884c-6a01e9e0078e",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "Cloud Administration Command",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1651",
+     "url": "https://attack.mitre.org/techniques/T1651/"
+    }
+   ]
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--dd7c28de-4cd9-5f91-bada-fd7010847e97",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "199.19.77.84",
+   "description": "Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '199.19.77.84']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-05T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--193bb2e5-d3b6-503c-b9ac-0698f2f06cda",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "199.19.77.18",
+   "description": "A Tor exit node, which the post warns may carry unrelated activity from unrelated sources. Use to pivot, not to conclude",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '199.19.77.18']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-05T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--c8360c54-32c1-52dc-ad71-b336cef5ccc8",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "65.87.223.26",
+   "description": "Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent. One of two addresses the post calls potentially associated",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '65.87.223.26']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-05T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--526e3bd3-6e26-5661-9c5b-03687045a169",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "157.22.126.128",
+   "description": "Reconnaissance against AI workloads the victims run on Azure AI services",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '157.22.126.128']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-05T00:00:00.000Z"
+  },
+  {
+   "type": "report",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "report--52a05c67-0839-5578-9b31-2edd078daa2d",
+   "created": "2026-11-05T00:00:00.000Z",
+   "modified": "2026-11-05T00:00:00.000Z",
+   "name": "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application",
+   "description": "Microsoft reports that from August 2026 an agentic offensive framework, ARTEX, sent large volumes of searches to GitHub for secrets, combining a target organisation's name with secret, cloud-service and AI-provider keywords. It looked for application credentials and for API keys to AI services, which the post says the agents sought out repeatedly. From 28 October the harvested application credentials were used for service principal sign-ins to Entra ID across dozens of applications in several tenants, followed by discovery of subscriptions, permissions and AI model deployments, reads of storage keys, connection strings and Key Vault secrets, searches of Azure DevOps, SharePoint and mailbox access, and scripts run on virtual machines through Run Command. In one tenant a vendor-owned multitenant application's credential, compromised at the vendor, gave access to downstream tenants. Microsoft describes one run that went from searching GitHub for a client secret to exfiltrating from a Key Vault in five minutes, and requests that failed and were reissued against a different API version within about half a minute.",
+   "published": "2026-11-05T00:00:00.000Z",
+   "report_types": [
+    "threat-report"
+   ],
+   "object_refs": [
+    "attack-pattern--048f3c2e-ed10-57a4-afee-f3db3d0c2ff2",
+    "attack-pattern--19a62392-7e95-5114-9442-5a49aa30c520",
+    "attack-pattern--2339d29a-b18d-53ea-8c53-cba484d8d811",
+    "attack-pattern--37620c74-2636-5a50-b10a-53e2de3f5c17",
+    "attack-pattern--5c8cd8d8-cf6b-5dec-9aac-ee6d8843482d",
+    "attack-pattern--69a47738-feb0-5909-b506-46bee6f92a0e",
+    "attack-pattern--98f986cf-8604-523d-8f6f-aedd080e50fb",
+    "attack-pattern--9b4d2a22-c803-5df9-868b-5cd3680c2487",
+    "attack-pattern--b6b6bb25-4fa5-5863-9d93-088f93c1187c",
+    "attack-pattern--c3a3fd88-0ac5-5294-973f-0dbee15b1da5",
+    "attack-pattern--c4cc4405-edcc-58de-884c-6a01e9e0078e",
+    "attack-pattern--ca387151-52ee-547f-8f2e-99c4ef520902",
+    "attack-pattern--cb69a857-3a1e-5441-ac29-f2332202c955",
+    "indicator--193bb2e5-d3b6-503c-b9ac-0698f2f06cda",
+    "indicator--526e3bd3-6e26-5661-9c5b-03687045a169",
+    "indicator--c8360c54-32c1-52dc-ad71-b336cef5ccc8",
+    "indicator--dd7c28de-4cd9-5f91-bada-fd7010847e97"
+   ],
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-CS-0025"
+    },
+    {
+     "source_name": "Microsoft Threat Intelligence and Microsoft Security Research - Threat actors use agentic AI tooling to find and abuse e",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/"
+    }
+   ]
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--8bfacd76-5032-575f-839e-0b13f40d0ef6",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "199.19.95.66",
+   "description": "WISP command-and-control node, first seen 2 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '199.19.95.66']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--4119850d-4ad7-5744-840a-8fd6a60de5f6",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--8bfacd76-5032-575f-839e-0b13f40d0ef6",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--20fe0b44-dfdf-5fa5-a13d-cba5b18e4eae",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "199.19.95.67",
+   "description": "WISP command-and-control node, first seen 2 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '199.19.95.67']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--9f3c19b2-7ae0-5848-a4a5-72700671cad8",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--20fe0b44-dfdf-5fa5-a13d-cba5b18e4eae",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--5523bc1a-51aa-533e-bfce-931c33580334",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "199.19.95.68",
+   "description": "WISP command-and-control node, first seen 2 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '199.19.95.68']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--49f732a2-e33e-585d-9511-d23b60bc75c7",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--5523bc1a-51aa-533e-bfce-931c33580334",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--2342b126-73c9-5e40-829f-bdc2c139a33e",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "91.92.240.238",
+   "description": "ARTEX server, first seen 4 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '91.92.240.238']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--2ae2eeac-34ed-5d3e-86c9-60b092c7d304",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--2342b126-73c9-5e40-829f-bdc2c139a33e",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--c4ff71c0-7a0d-5eb7-8b41-d0be76496d7c",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "85.11.168.45",
+   "description": "ARTEX server, first seen 4 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '85.11.168.45']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--004f3e7c-910a-5a68-a25e-21e70f96d1d2",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--c4ff71c0-7a0d-5eb7-8b41-d0be76496d7c",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--9d91124a-13c6-5c84-b24f-0f16e59da768",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "85.11.167.52",
+   "description": "Command-and-control server, first seen 4 Nov 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '85.11.167.52']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--91b422be-e3bc-53ee-b258-8117d572764f",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--9d91124a-13c6-5c84-b24f-0f16e59da768",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--eb2c45eb-3b16-510a-ba6e-fdbf344c94c7",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "178.16.54.129",
+   "description": "ARTEX server, first seen 19 Oct 2026, as the indicator table prints it. The post's hunting query prints 178.15.54[.]129 for the same row",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '178.16.54.129']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--e52cb0e2-61a9-587f-91ef-95c8d76ee739",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--eb2c45eb-3b16-510a-ba6e-fdbf344c94c7",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--d70f3b3e-1435-50ba-a5b9-c782af4aa786",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "178.15.54.129",
+   "description": "The same row as the post's hunting query prints it. One of the two is a typographical error in the source; search for both",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '178.15.54.129']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--4e9136ed-9f3c-52c5-9177-21c03ba13a6f",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--d70f3b3e-1435-50ba-a5b9-c782af4aa786",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--375773c6-3aa9-50de-95ef-29c6902575bd",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "31.77.229.35",
+   "description": "ARTEX server, first seen 28 Oct 2026",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '31.77.229.35']",
+   "pattern_type": "stix",
+   "valid_from": "2026-11-06T00:00:00.000Z"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--e90d778c-541a-5e02-822a-bf48bc930cd5",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "indicates",
+   "source_ref": "indicator--375773c6-3aa9-50de-95ef-29c6902575bd",
+   "target_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+  },
+  {
+   "type": "relationship",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "relationship--6aeb30ce-c51c-5589-b1cb-5b336f049e60",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "relationship_type": "targets",
+   "source_ref": "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705",
+   "target_ref": "identity--9720136c-9b7d-5a34-ac77-f88a55ccded8"
+  },
+  {
+   "type": "report",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "report--f652290e-ec53-5fb2-a65c-1a1fd83f1d0e",
+   "created": "2026-11-06T00:00:00.000Z",
+   "modified": "2026-11-06T00:00:00.000Z",
+   "name": "Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations",
+   "description": "Microsoft reports that in October 2026 Storm-3358, which it describes as a financially motivated, Cambodia-based intrusion cluster, began using the agentic offensive framework ARTEX against financial organisations. The actor runs ARTEX alongside conventional automated tools to scan internet-facing systems and exploit flaws that include anonymous file upload and server-side request forgery. ARTEX agents were then seen using netcat and curl to fetch remote-access tools onto the compromised systems, and the actor used three open-source ones - WISP, vshell and AdaptixC2 - for persistence and lateral movement. The post lists ARTEX's default tools as Nmap, curl, wget, Python HTTP clients, a web-fetch SDK and headless Chromium driven by Playwright, and says their default user agents and signatures can help identify the traffic.",
+   "published": "2026-11-06T00:00:00.000Z",
+   "report_types": [
+    "threat-report"
+   ],
+   "object_refs": [
+    "attack-pattern--05654e4e-5774-59dd-8eef-e39a50b8f56e",
+    "attack-pattern--06e1aeed-f839-5de1-b96c-69ee456919f7",
+    "attack-pattern--49a3e017-3228-5240-a665-9505053a9a82",
+    "attack-pattern--4acd779c-9b97-5a6a-afb6-b1225b446d41",
+    "attack-pattern--bc770a88-62c4-5482-a569-9c5ce4c6e140",
+    "attack-pattern--c3a3fd88-0ac5-5294-973f-0dbee15b1da5",
+    "indicator--20fe0b44-dfdf-5fa5-a13d-cba5b18e4eae",
+    "indicator--2342b126-73c9-5e40-829f-bdc2c139a33e",
+    "indicator--375773c6-3aa9-50de-95ef-29c6902575bd",
+    "indicator--5523bc1a-51aa-533e-bfce-931c33580334",
+    "indicator--8bfacd76-5032-575f-839e-0b13f40d0ef6",
+    "indicator--9d91124a-13c6-5c84-b24f-0f16e59da768",
+    "indicator--c4ff71c0-7a0d-5eb7-8b41-d0be76496d7c",
+    "indicator--d70f3b3e-1435-50ba-a5b9-c782af4aa786",
+    "indicator--eb2c45eb-3b16-510a-ba6e-fdbf344c94c7",
+    "intrusion-set--3e6d685b-4e3c-5b68-83d8-95bbf1631705"
+   ],
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-CS-0026"
+    },
+    {
+     "source_name": "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/"
     }
    ]
   }

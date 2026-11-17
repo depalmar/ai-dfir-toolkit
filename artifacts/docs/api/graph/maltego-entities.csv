@@ -19,6 +19,8 @@ maltego.Phrase,actor:AIRT-TA-0017,actor,GTG-50020
 maltego.Phrase,actor:AIRT-TA-0018,actor,GTG-50029
 maltego.Phrase,actor:AIRT-TA-0019,actor,GTG-50021
 maltego.Phrase,actor:AIRT-TA-0020,actor,GTG-10007
+maltego.Phrase,actor:AIRT-TA-0021,actor,Storm-0940
+maltego.Phrase,actor:AIRT-TA-0022,actor,Storm-3358
 maltego.File,artifact:AIRT-0001/credential/anthropic-api-key,artifact,ANTHROPIC_API_KEY
 maltego.File,artifact:AIRT-0001/credential/anthropic-auth-token,artifact,ANTHROPIC_AUTH_TOKEN
 maltego.File,artifact:AIRT-0001/credential/claude-code-oauth-token,artifact,CLAUDE_CODE_OAUTH_TOKEN
@@ -209,11 +211,14 @@ maltego.Phrase,atlas:AML.T0008.000,technique,AML.T0008.000 AI Development Worksp
 maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 Supply Chain Compromise
 maltego.Phrase,atlas:AML.T0010.001,technique,AML.T0010.001 Software
 maltego.Phrase,atlas:AML.T0011,technique,AML.T0011 User Execution
+maltego.Phrase,atlas:AML.T0012,technique,AML.T0012 Valid Accounts
+maltego.Phrase,atlas:AML.T0016.001,technique,AML.T0016.001 Software Tools
 maltego.Phrase,atlas:AML.T0016.002,technique,AML.T0016.002 Generative AI
 maltego.Phrase,atlas:AML.T0016.004,technique,AML.T0016.004 AI Agent Tools
 maltego.Phrase,atlas:AML.T0017.001,technique,AML.T0017.001 Autonomous Exploit Development
 maltego.Phrase,atlas:AML.T0017.002,technique,AML.T0017.002 AI Agent Tools
 maltego.Phrase,atlas:AML.T0024,technique,AML.T0024 Exfiltration via AI Inference API
+maltego.Phrase,atlas:AML.T0025,technique,AML.T0025 Exfiltration via Cyber Means
 maltego.Phrase,atlas:AML.T0034,technique,AML.T0034 Cost Harvesting
 maltego.Phrase,atlas:AML.T0049,technique,AML.T0049 Exploit Public-Facing Application
 maltego.Phrase,atlas:AML.T0051,technique,AML.T0051 LLM Prompt Injection
@@ -226,6 +231,7 @@ maltego.Phrase,atlas:AML.T0081,technique,AML.T0081 Modify AI Agent Configuration
 maltego.Phrase,atlas:AML.T0082,technique,AML.T0082 RAG Credential Harvesting
 maltego.Phrase,atlas:AML.T0086,technique,AML.T0086 Exfiltration via AI Agent Tool Invocation
 maltego.Phrase,atlas:AML.T0087,technique,AML.T0087 Gather Victim Identity Information
+maltego.Phrase,atlas:AML.T0095.000,technique,AML.T0095.000 Code Repositories
 maltego.Phrase,atlas:AML.T0096,technique,AML.T0096 AI Service API
 maltego.Phrase,atlas:AML.T0102,technique,AML.T0102 Generate Malicious Commands
 maltego.Phrase,atlas:AML.T0103,technique,AML.T0103 Deploy AI Agent
@@ -238,17 +244,32 @@ maltego.Phrase,attack:T1053.003,technique,T1053.003 Cron
 maltego.Phrase,attack:T1053.005,technique,T1053.005 Scheduled Task
 maltego.Phrase,attack:T1059,technique,T1059 Command and Scripting Interpreter
 maltego.Phrase,attack:T1070,technique,T1070 Indicator Removal
+maltego.Phrase,attack:T1078.004,technique,T1078.004 Cloud Accounts
+maltego.Phrase,attack:T1087.004,technique,T1087.004 Cloud Account
+maltego.Phrase,attack:T1098.001,technique,T1098.001 Additional Cloud Credentials
+maltego.Phrase,attack:T1098.003,technique,T1098.003 Additional Cloud Roles
 maltego.Phrase,attack:T1098.004,technique,T1098.004 SSH Authorized Keys
+maltego.Phrase,attack:T1105,technique,T1105 Ingress Tool Transfer
+maltego.Phrase,attack:T1110.003,technique,T1110.003 Password Spraying
 maltego.Phrase,attack:T1190,technique,T1190 Exploit Public-Facing Application
+maltego.Phrase,attack:T1195,technique,T1195 Supply Chain Compromise
 maltego.Phrase,attack:T1195.002,technique,T1195.002 Compromise Software Supply Chain
+maltego.Phrase,attack:T1199,technique,T1199 Trusted Relationship
 maltego.Phrase,attack:T1505.003,technique,T1505.003 Web Shell
 maltego.Phrase,attack:T1528,technique,T1528 Steal Application Access Token
+maltego.Phrase,attack:T1530,technique,T1530 Data from Cloud Storage
 maltego.Phrase,attack:T1546,technique,T1546 Event Triggered Execution
 maltego.Phrase,attack:T1552.001,technique,T1552.001 Credentials In Files
+maltego.Phrase,attack:T1555.006,technique,T1555.006 Cloud Secrets Management Stores
 maltego.Phrase,attack:T1557,technique,T1557 Adversary-in-the-Middle
 maltego.Phrase,attack:T1566,technique,T1566 Phishing
 maltego.Phrase,attack:T1567,technique,T1567 Exfiltration Over Web Service
 maltego.Phrase,attack:T1572,technique,T1572 Protocol Tunneling
+maltego.Phrase,attack:T1580,technique,T1580 Cloud Infrastructure Discovery
+maltego.Phrase,attack:T1593.003,technique,T1593.003 Code Repositories
+maltego.Phrase,attack:T1595,technique,T1595 Active Scanning
+maltego.Phrase,attack:T1595.002,technique,T1595.002 Vulnerability Scanning
+maltego.Phrase,attack:T1651,technique,T1651 Cloud Administration Command
 maltego.Phrase,campaign:C0045,attack-campaign,C0045 ShadowRay
 maltego.Phrase,campaign:C0062,attack-campaign,C0062 Anthropic AI-orchestrated Campaign
 maltego.Phrase,case:AIRT-CS-0001,case,GPT Pilot core/telemetry Supply-Chain Credential Stealer
@@ -274,6 +295,9 @@ maltego.Phrase,case:AIRT-CS-0020,case,GTG-50020 - From Hotel Booking Fraud to Pr
 maltego.Phrase,case:AIRT-CS-0021,case,GTG-50029 - A Single Hacktivist Against European Political Targets
 maltego.Phrase,case:AIRT-CS-0022,case,GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
 maltego.Phrase,case:AIRT-CS-0023,case,Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel
+maltego.Phrase,case:AIRT-CS-0024,case,Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants
+maltego.Phrase,case:AIRT-CS-0025,case,ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application
+maltego.Phrase,case:AIRT-CS-0026,case,Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations
 maltego.Location,country:CA,country,CA
 maltego.Location,country:FR,country,FR
 maltego.Location,country:MX,country,MX
@@ -294,6 +318,9 @@ maltego.Phrase,8628746407,ioc,8628746407
 maltego.Phrase,8632748474,ioc,8632748474
 maltego.Phrase,8664033117,ioc,8664033117
 maltego.Phrase,8709258476,ioc,8709258476
+maltego.Phrase,Application id 0de14c77-b9b0-4137-9360-34878a929827,ioc,Application id 0de14c77-b9b0-4137-9360-34878a929827
+maltego.Phrase,Application id 24205314-2b89-4e07-a2a4-579e898a5640,ioc,Application id 24205314-2b89-4e07-a2a4-579e898a5640
+maltego.Phrase,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae,ioc,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae
 maltego.Phrase,https://t.me/Soraki_Bot,ioc,https[:]//t[.]me/Soraki_Bot
 maltego.Phrase,phanpak,ioc,phanpak
 maltego.Phrase,bun,ioc,bun
@@ -410,27 +437,41 @@ maltego.IPv4Address,138.199.6.208,ioc,138.199.6[.]208
 maltego.IPv4Address,139.59.2.243,ioc,139.59.2[.]243
 maltego.IPv4Address,141.133.125.208,ioc,141.133.125[.]208
 maltego.IPv4Address,144.172.114.192,ioc,144.172.114[.]192
+maltego.IPv4Address,144.172.64.128,ioc,144.172.64[.]128
+maltego.IPv4Address,144.172.64.60,ioc,144.172.64[.]60
+maltego.IPv4Address,144.172.64.99,ioc,144.172.64[.]99
 maltego.IPv4Address,146.103.101.253,ioc,146.103.101[.]253
 maltego.IPv4Address,146.103.97.169,ioc,146.103.97[.]169
 maltego.IPv4Address,146.70.116.131,ioc,146.70.116[.]131
 maltego.IPv4Address,148.135.195.111,ioc,148.135.195[.]111
 maltego.IPv4Address,149.22.83.6,ioc,149.22.83[.]6
 maltego.IPv4Address,149.54.42.106,ioc,149.54.42[.]106
+maltego.IPv4Address,157.22.126.128,ioc,157.22.126[.]128
 maltego.IPv4Address,158.173.46.118,ioc,158.173.46[.]118
 maltego.IPv4Address,162.128.129.106,ioc,162.128.129[.]106
 maltego.IPv4Address,163.172.157.53,ioc,163.172.157[.]53
 maltego.IPv4Address,167.250.111.136,ioc,167.250.111[.]136
 maltego.IPv4Address,176.177.12.62,ioc,176.177.12[.]62
+maltego.IPv4Address,178.15.54.129,ioc,178.15.54[.]129
+maltego.IPv4Address,178.16.54.129,ioc,178.16.54[.]129
 maltego.IPv4Address,178.16.54.141,ioc,178.16.54[.]141
 maltego.IPv4Address,185.198.234.101,ioc,185.198.234[.]101
 maltego.IPv4Address,185.198.234.26,ioc,185.198.234[.]26
 maltego.IPv4Address,185.65.134.199,ioc,185.65.134[.]199
 maltego.IPv4Address,185.65.134.246,ioc,185.65.134[.]246
+maltego.IPv4Address,187.15.88.186,ioc,187.15.88[.]186
+maltego.IPv4Address,187.15.89.186,ioc,187.15.89[.]186
+maltego.IPv4Address,187.15.90.217,ioc,187.15.90[.]217
 maltego.IPv4Address,193.32.249.161,ioc,193.32.249[.]161
 maltego.IPv4Address,193.32.249.164,ioc,193.32.249[.]164
 maltego.IPv4Address,193.32.249.170,ioc,193.32.249[.]170
 maltego.IPv4Address,194.163.183.216,ioc,194.163.183[.]216
 maltego.IPv4Address,195.178.110.131,ioc,195.178.110[.]131
+maltego.IPv4Address,199.19.77.18,ioc,199.19.77[.]18
+maltego.IPv4Address,199.19.77.84,ioc,199.19.77[.]84
+maltego.IPv4Address,199.19.95.66,ioc,199.19.95[.]66
+maltego.IPv4Address,199.19.95.67,ioc,199.19.95[.]67
+maltego.IPv4Address,199.19.95.68,ioc,199.19.95[.]68
 maltego.IPv4Address,2.26.53.194,ioc,2.26.53[.]194
 maltego.IPv4Address,2001:ac8:27:89::a02d,ioc,2001:ac8:27[:]89::a02d
 maltego.IPv4Address,2001:ac8:29:84::a01d,ioc,2001:ac8:29[:]84::a01d
@@ -440,13 +481,18 @@ maltego.IPv4Address,213.145.86.112,ioc,213.145.86[.]112
 maltego.IPv4Address,2a01:e0a:2e2:aa40:b15d:5d28:6f4a:8d53,ioc,2a01:e0a:2e2:aa40:b15d:5d28:6f4a[:]8d53
 maltego.IPv4Address,2a04:cec0:1185:34f2:a150:7081:caed:448e,ioc,2a04:cec0:1185:34f2:a150:7081:caed[:]448e
 maltego.IPv4Address,31.57.243.154,ioc,31.57.243[.]154
+maltego.IPv4Address,31.77.229.35,ioc,31.77.229[.]35
 maltego.IPv4Address,34.156.199.132,ioc,34.156.199[.]132
 maltego.IPv4Address,34.156.95.176,ioc,34.156.95[.]176
 maltego.IPv4Address,37.27.103.22,ioc,37.27.103[.]22
 maltego.IPv4Address,38.146.28.132,ioc,38.146.28[.]132
 maltego.IPv4Address,38.146.28.75,ioc,38.146.28[.]75
 maltego.IPv4Address,45.148.10.242,ioc,45.148.10[.]242
+maltego.IPv4Address,65.87.223.26,ioc,65.87.223[.]26
+maltego.IPv4Address,85.11.167.52,ioc,85.11.167[.]52
+maltego.IPv4Address,85.11.168.45,ioc,85.11.168[.]45
 maltego.IPv4Address,91.171.138.169,ioc,91.171.138[.]169
+maltego.IPv4Address,91.92.240.238,ioc,91.92.240[.]238
 maltego.IPv4Address,92.118.39.3,ioc,92.118.39[.]3
 maltego.Phrase,Netapi64,ioc,Netapi64
 maltego.Phrase,OpenAI APIS,ioc,OpenAI APIS
@@ -460,12 +506,15 @@ maltego.Phrase,ssh or autossh with -N -R '*:0:localhost:22',ioc,ssh or autossh w
 maltego.URL,Assistant URL carrying a pre-filled prompt in a query parameter,ioc,Assistant URL carrying a pre-filled prompt in a query parameter
 maltego.URL,https://s3.eu-central-1.s4.mega.io/fuckyoubasil/,ioc,https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/
 maltego.URL,http://134.209.82.225:8099/beacon,ioc,hxxp://134[.]209[.]82[.]225:8099/beacon
+maltego.Phrase,malware:adaptixc2,malware,AdaptixC2
 maltego.Phrase,malware:dustmaker,malware,DUSTMAKER
 maltego.Phrase,malware:flodrix botnet,malware,Flodrix botnet
 maltego.Phrase,malware:lamehug,malware,LAMEHUG
 maltego.Phrase,malware:promptsteal,malware,PROMPTSTEAL
 maltego.Phrase,malware:sandclock,malware,SANDCLOCK
 maltego.Phrase,malware:sombermeme,malware,SOMBERMEME
+maltego.Phrase,malware:vshell,malware,vshell
+maltego.Phrase,malware:wisp,malware,WISP
 maltego.Location,region:Americas,region,Americas
 maltego.Location,region:Europe,region,Europe
 maltego.File,rule:agentic_orchestration_behavior.yml,rule,agentic_orchestration_behavior.yml
@@ -489,6 +538,8 @@ maltego.File,rule:claude_desktop_config_modify.yml,rule,claude_desktop_config_mo
 maltego.File,rule:claude_session_jsonl_unexpected_access.yml,rule,claude_session_jsonl_unexpected_access.yml
 maltego.File,rule:copilot_rules_file_backdoor.yar,rule,copilot_rules_file_backdoor.yar
 maltego.File,rule:cursor_settings_db_modification.yml,rule,cursor_settings_db_modification.yml
+maltego.File,rule:entra_app_signin_invalid_or_expired_secret.yml,rule,entra_app_signin_invalid_or_expired_secret.yml
+maltego.File,rule:entra_app_signin_scripted_client.yml,rule,entra_app_signin_scripted_client.yml
 maltego.File,rule:github_copilot_yolo_mode_enabled.yml,rule,github_copilot_yolo_mode_enabled.yml
 maltego.File,rule:gpu_unexpected_high_utilization.yml,rule,gpu_unexpected_high_utilization.yml
 maltego.File,rule:huggingface_cache_unexpected_writer.yml,rule,huggingface_cache_unexpected_writer.yml
@@ -547,6 +598,7 @@ maltego.Phrase,sector:financial-services,sector,financial-services
 maltego.Phrase,sector:government,sector,government
 maltego.Phrase,sector:healthcare,sector,healthcare
 maltego.Phrase,sector:information-technology,sector,information-technology
+maltego.Phrase,sector:legal-professional-services,sector,legal-professional-services
 maltego.Phrase,sector:media-entertainment,sector,media-entertainment
 maltego.Phrase,sector:ngo-think-tank,sector,ngo-think-tank
 maltego.Phrase,sector:religious-institutions,sector,religious-institutions

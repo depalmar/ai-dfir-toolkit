@@ -5,6 +5,18 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-CS-0024 to 0026: three ARTEX cases, and actors AIRT-TA-0021 and
+  0022.** Microsoft reported an open-source multi-agent penetration-testing
+  framework in three campaigns between 21 October and 6 November 2026: a
+  state-aligned actor (Storm-0940) signing in to customer tenants with a
+  vendor's stolen application credentials, unattributed harvesting of
+  application secrets and AI service keys from public repositories, and a
+  criminal cluster (Storm-3358) scanning and exploiting financial
+  organisations. Each post was re-read from the page for the indicators. All
+  three are `medium` on one reporting party. The agent ran on the actor's side
+  in every case, so none maps to a catalogued tool. Two things in the sources
+  are recorded rather than resolved: one post refers to four application ids
+  and lists three, and another prints one address two ways.
 - **AIRT-0008: the command-line client's own token store.** The CLI keeps its
   Builder ID or Identity Center token in the `auth_kv` table of
   `data.sqlite3`, not in `~/.aws/sso/cache`, so a collection that took only the

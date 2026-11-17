@@ -1,0 +1,28 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0021 - Storm-0940
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0021
+name: Storm-0940
+kind: state-nexus
+nexus: CN
+motivation:
+- espionage
+summary: Microsoft's designation for a China-state aligned actor, active since 2021, that
+  targets organisations across many industries for data theft and historically gained access
+  by password spraying and by exploiting internet-facing applications. In 2026 Microsoft
+  reported it using ARTEX, an open-source multi-agent penetration-testing framework, to
+  automate attacks on hundreds of organisations, and assessed it responsible for the compromise
+  of a software vendor's multitenant applications that was then used against the vendor's
+  customers.
+confidence: medium
+basis: One reporting party. Microsoft says the actor has no known industry aliases, so no
+  second vendor's tracking can be lined up against it.
+external_ids:
+  vendor_cluster:
+  - Storm-0940
+references:
+- title: Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale
+    nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)
+  url: https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/

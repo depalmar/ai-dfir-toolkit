@@ -1,0 +1,127 @@
+# AI agent artifact case study
+# AIRT-CS-0026 - Storm-3358 and ARTEX: Agent-Driven Scanning and Exploitation of Financial Organisations
+
+id: AIRT-CS-0026
+title: "Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations"
+date_range: Oct 2026 to at least 6 Nov 2026, when every published indicator was still active
+disclosed: "2026-11-06"
+affects: Internet-facing web applications of the targeted organisations - no catalogued endpoint tool
+confidence: medium
+basis: >-
+  One reporting party, read from the page itself, and a short account. The
+  post gives no victim count, no outcome, no vulnerability identifier and no
+  host artifact for any of the three remote-access tools it names. It names
+  no model and says only that some published addresses are ARTEX servers. Its
+  figure showing the download commands is an image whose text could not be
+  read for this entry. Several of its statements describe ARTEX-related
+  attacks in general, not this actor, and are kept out of the indicators for
+  that reason.
+contested: >-
+  The post's indicator table and its own hunting query disagree on one
+  address: the table lists 178.16.54[.]129 and the query lists
+  178.15.54[.]129. Nothing in the post says which is right, so both are
+  recorded here and neither should be dropped from a search. The post does
+  not say whether Storm-3358 is connected to Storm-0940, the other actor
+  Microsoft reports using the same framework.
+atlas:
+  - AML.T0116
+  - AML.T0124
+  - AML.T0016.001
+attack:
+  - T1595.002
+  - T1190
+  - T1105
+actors:
+  - ref: AIRT-TA-0022
+    role: operator
+    link_confidence: medium
+    attributed_by: Microsoft Threat Intelligence
+    stated_confidence: '"the financially motivated threat actor Storm-3358"; no confidence level is given'
+    reference: https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/
+victims:
+  sectors:
+    - financial-services
+  basis: >-
+    Microsoft says the cluster primarily targets financial organisations in
+    Southeast Asia and a smaller number of large financial organisations
+    globally. It names no country and gives no count.
+summary: >-
+  Microsoft reports that in October 2026 Storm-3358, which it describes as a
+  financially motivated, Cambodia-based intrusion cluster, began using the
+  agentic offensive framework ARTEX against financial organisations. The
+  actor runs ARTEX alongside conventional automated tools to scan
+  internet-facing systems and exploit flaws that include anonymous file
+  upload and server-side request forgery. ARTEX agents were then seen using
+  netcat and curl to fetch remote-access tools onto the compromised systems,
+  and the actor used three open-source ones - WISP, vshell and AdaptixC2 -
+  for persistence and lateral movement. The post lists ARTEX's default tools
+  as Nmap, curl, wget, Python HTTP clients, a web-fetch SDK and headless
+  Chromium driven by Playwright, and says their default user agents and
+  signatures can help identify the traffic.
+iocs:
+  - type: ip
+    value: 199.19.95[.]66
+    description: WISP command-and-control node, first seen 2 Nov 2026
+  - type: ip
+    value: 199.19.95[.]67
+    description: WISP command-and-control node, first seen 2 Nov 2026
+  - type: ip
+    value: 199.19.95[.]68
+    description: WISP command-and-control node, first seen 2 Nov 2026
+  - type: ip
+    value: 91.92.240[.]238
+    description: ARTEX server, first seen 4 Nov 2026
+  - type: ip
+    value: 85.11.168[.]45
+    description: ARTEX server, first seen 4 Nov 2026
+  - type: ip
+    value: 85.11.167[.]52
+    description: Command-and-control server, first seen 4 Nov 2026
+  - type: ip
+    value: 178.16.54[.]129
+    description: ARTEX server, first seen 19 Oct 2026, as the indicator table prints it. The post's hunting query prints 178.15.54[.]129 for the same row
+  - type: ip
+    value: 178.15.54[.]129
+    description: The same row as the post's hunting query prints it. One of the two is a typographical error in the source; search for both
+  - type: ip
+    value: 31.77.229[.]35
+    description: ARTEX server, first seen 28 Oct 2026
+  - type: malware
+    value: WISP
+    description: Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash
+  - type: malware
+    value: vshell
+    description: As above
+  - type: malware
+    value: AdaptixC2
+    description: As above
+  - type: behavior
+    value: A web server or application process running netcat or curl to fetch a file from an address it has not contacted before
+    description: How the remote-access tools arrived. The post's own hunt baselines curl targets over a week and reports new ones, and notes curl has legitimate uses
+  - type: behavior
+    value: Many varied requests to one internet-facing application in a short time, with failures retried or abandoned at machine tempo, from Nmap, curl, wget, Python or headless Chromium user agents
+    description: The scanning signature the post attributes to agentic tooling. Operators change user agents readily, so it identifies and does not block
+response_actions:
+  - phase: contain
+    action: Search proxy, firewall and web server logs for all nine addresses, including both forms of the disputed one, across at least the period since 19 October 2026. On any server that contacted them, capture memory and the process tree before restarting anything, since none of the three tools has a published on-disk indicator.
+  - phase: eradicate
+    action: On affected web servers, list files created by the web server's account in the upload and temporary directories, cron entries and services added since the first contact, and outbound connections that persist. Remove what is found and close the upload or request-forgery flaw that let it in.
+  - phase: recover
+    action: Rotate credentials stored on or reachable from the compromised servers, including database and cloud credentials in application configuration, and review authentication from those servers to internal systems for the lateral movement the post reports.
+  - phase: harden
+    action: Require authentication on file upload endpoints, restrict what internet-facing applications may request on the server's behalf, and alert when a web server process starts a download tool or a shell.
+lesson: >-
+  This is the case the guide's "where did the AI run" section exists for. The
+  agent was on the actor's server and what reached the victim was scanning, an
+  exploited web application and a conventional remote-access tool, so the
+  catalog has no row and the investigation is an ordinary web server
+  compromise run faster. The published indicators are all network addresses
+  with a short life, and one of them is printed two ways in the source.
+detections: []
+references:
+  - title: "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)"
+    url: https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/
+    accessed: "2026-11-17"
+external_ids:
+  vendor_cluster:
+    - Storm-3358
