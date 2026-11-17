@@ -819,6 +819,7 @@ th .pick.all{vertical-align:middle}
   color:var(--ink);background:var(--panel);border:1px solid var(--field-line);border-radius:8px}
 .huntbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .huntn{font-size:12px;color:var(--muted)}
+.hlevel{flex:none;border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:1px 8px;font-size:11px;white-space:nowrap}
 .huntsec{margin-top:22px}
 .huntsec>h3{margin:0;font-size:14.5px}
 .huntnote{margin:4px 0 12px;font-size:12.5px;color:var(--muted);max-width:84ch}
@@ -2303,7 +2304,7 @@ function huntsHTML(){
     if(!r)return `<div class="hdet"><div class="hdetbody"><p class="hdesc">${esc(f)} is named by this case and is not a rule on this page.</p></div></div>`;
     const fp=(r.falsepositives||[]).length;
     return `<details class="hdet">
-      <summary><span class="hdt">${esc(r.title)}</span>${r.level?badge(r.level,r.level==='critical'):'<span></span>'}
+      <summary><span class="hdt">${esc(r.title)}</span>${r.level?`<span title="The rule author's ${r.format==='Sigma'?'Sigma ':''}level for an alert on this rule.">${badge(r.level,r.level==='critical')}</span>`:'<span></span>'}
         <span class="hdm">${esc(r.format)} &middot; <span class="mono">${esc(r.file)}</span>${r.logsource&&r.format==='Sigma'?` &middot; reads ${esc(r.logsource)}`:''}${
           fp?` &middot; ${fp} tuning note${fp>1?'s':''}`:''}</span></summary>
       <div class="hdetbody">${r.description?`<p class="hdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
@@ -2322,11 +2323,11 @@ function huntsHTML(){
     aria-label="Filter hunts" value="${esc(huntQ)}"><span class="huntn" role="status">${n} of ${S.total} shown</span></div>
   ${!n?`<div class="empty">No hunt matches that filter.</div>`:''}
   ${rules.length?`<section class="huntsec"><h3>Hunting rules</h3>
-    <p class="huntnote">Sigma rules whose own level is low. That is the author saying a match is not
+    <p class="huntnote">Sigma rules whose own level is low or informational. That is the author saying a match is not
     an alert: baseline it first, then run it on a schedule and read the results. The other
     ${RULES.length-S.rule_hunts} rules are on the Detections tab.</p>
     <div class="huntgrid">${rules.map(h=>{const r=RULEFILE[h.file];return `<article class="hunt" id="${esc(h.anchor)}">
-      <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4>${badge(h.level)}</div>
+      <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4><span class="hlevel" title="The rule author's Sigma level. Low and informational mean a match is not an alert.">Sigma level ${esc(h.level)}</span></div>
       <div class="rfile">${esc(h.file)}${r&&r.status?` &middot; ${esc(r.status)}`:''}</div>
       <p class="huntlook">${esc(h.look_for)}</p>
       <div class="srcfoot">${h.logsource?`<span class="huntk">reads</span><span class="srcstat flat">${esc(h.logsource)}</span>`:''}
@@ -3562,7 +3563,7 @@ function hardeningHTML(){
     [H.mcp_files,`MCP config files across ${H.mcp_tools} tools, each naming what the host may launch`,'#catalog?cls=mcp-config','Open the MCP config rows'],
     [H.listeners_noauth,`of ${H.listeners} catalogued listeners are documented with no authentication`,'#catalog?cls=network','Open the network rows'],
     [H.sources,'telemetry sources, each with its default state and how to switch it on','#sources','Open Data sources'],
-    [HUNTS.stats.total,'hunts that need a baseline you can only record beforehand','#hunts','Open Hunts']];
+    [HUNTS.stats.rule_hunts,'hunting rules that need a baseline you can only record beforehand','#hunts','Open Hunts']];
   const steps=CASES.map(c=>({c,a:(c.response_actions||[]).filter(a=>a.phase==='harden').map(a=>a.action)}))
     .filter(x=>x.a.length)
     .sort((x,y)=>(y.c.disclosed||'').localeCompare(x.c.disclosed||'')||y.c.id.localeCompare(x.c.id));
@@ -4879,7 +4880,7 @@ def main():
     <button role="tab" data-v="catalog">Catalog <span class="n" title="{len(rows)} artifact rows">{len(rows)}<span class="sr"> artifact rows</span></span></button>
     <button role="tab" data-v="tools">Tools <span class="n" title="{len(tools)} tools">{len(tools)}<span class="sr"> tools</span></span></button>
     <button role="tab" data-v="rules">Detections <span class="n" title="{len(rules)} detection rules">{len(rules)}<span class="sr"> detection rules</span></span></button>
-    <button role="tab" data-v="hunts">Hunts <span class="n" title="{hunt_data["stats"]["total"]} hunts">{hunt_data["stats"]["total"]}<span class="sr"> hunts</span></span></button>
+    <button role="tab" data-v="hunts">Hunts <span class="n" title="{hunt_data["stats"]["rule_hunts"]} hunting rules and {hunt_data["stats"]["behaviours"]} behaviours">{hunt_data["stats"]["total"]}<span class="sr"> hunts: {hunt_data["stats"]["rule_hunts"]} hunting rules and {hunt_data["stats"]["behaviours"]} behaviours</span></span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n" title="{len(atlas_index) + len(owasp_index)} framework entries">{len(atlas_index) + len(owasp_index)}<span class="sr"> framework entries</span></span></button>
     <button role="tab" data-v="sources">Data sources <span class="n" title="{len(sources)} telemetry sources">{len(sources)}<span class="sr"> telemetry sources</span></span></button>
     <button role="tab" data-v="cases">Case studies <span class="n" title="{len(cases)} case studies">{len(cases)}<span class="sr"> case studies</span></span></button>
