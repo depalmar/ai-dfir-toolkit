@@ -33,6 +33,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
 .env (deployment directory)
+/Library/Application Support/Cursor/hooks.json
 /Library/Application Support/Devin/system.json
 /app/backend/data/
 /app/backend/data/.webui_secret_key
@@ -41,6 +42,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 /app/backend/data/webui.db
 /data/credential_vault
 /etc/codex/config.toml
+/etc/cursor/hooks.json
 /etc/devin/system.json
 /etc/gemini-cli/settings.json
 /home/node/.flowise/encryption.key
@@ -89,6 +91,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <repo>/.claude/settings.local.json
 <repo>/.codex/config.toml
 <repo>/.continue/.env
+<repo>/.cursor/hooks.json
 <repo>/.cursor/mcp.json
 <repo>/.devin/
 <repo>/.devin/mcp_config.json
@@ -111,6 +114,7 @@ AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
 Azure Key Vault named per computer-use tool, by subscription, resource group and vault name
 BROWSER_USE_API_KEY
 Browser Local Storage, key "agentgpt-settings-storage-v2" (browser profile Local Storage LevelDB, AgentGPT origin - http://localhost:3000 self-hosted)
+C:\ProgramData\Cursor\hooks.json
 C:\ProgramData\Devin\system.json
 CLAUDE_CODE_OAUTH_TOKEN
 CONTINUE_API_KEY
@@ -251,6 +255,7 @@ webui.db (user and API key tables)
 ~/.copilot/mcp-config.json
 ~/.copilot/mcp-oauth-config/
 ~/.copilot/mcp-secrets/
+~/.cursor/hooks.json
 ~/.cursor/mcp.json
 ~/.flowise/database.sqlite
 ~/.flowise/encryption.key

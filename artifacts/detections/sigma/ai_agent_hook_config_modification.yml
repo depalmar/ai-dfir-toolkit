@@ -1,23 +1,32 @@
-title: Claude Code Settings or Hooks File Created or Modified
+title: AI Coding Agent Hook Configuration Created or Modified
 id: cd43df78-2afd-585d-b6e5-74548a881311
 status: experimental
 description: |
-  Detects a write to a Claude Code settings file. The file carries hooks: shell
-  commands the agent runs automatically on lifecycle events such as a session
-  start or a tool call. A hook fires with the developer's privileges every time
-  the agent is used, which makes it both a persistence mechanism and an
-  execution primitive. The repository-scoped copy travels with a clone. GTIG
-  reported in September 2026 that MIDNIGHT NEPTUNE (formerly UNC1069) poisoned
-  internal repository configurations and altered Claude CLI hooks, then deployed
-  the SOMBERMEME backdoor on developer interaction. It reported in the same
-  publication that UNC6780's DUSTMAKER drops files into .claude/ workspace
-  directories. Treat this as change tracking. Review a hooks block that appeared
-  or changed without a matching commit by the developer.
+  Detects a write to a file that defines hooks for an AI coding agent: Claude
+  Code's settings files, Cursor's hooks.json, Devin CLI's hooks.v1.json and
+  Antigravity's hooks.json. A hook is a shell command the agent runs
+  automatically on lifecycle events such as a session start or a tool call. It
+  fires with the developer's privileges every time the agent is used, which
+  makes it both a persistence mechanism and an execution primitive. The
+  repository-scoped copies travel with a clone, and the machine-wide Cursor
+  files apply to every user on the host. GTIG reported in September 2026 that
+  MIDNIGHT NEPTUNE (formerly UNC1069) poisoned internal repository
+  configurations and altered Claude CLI hooks, then deployed the SOMBERMEME
+  backdoor on developer interaction. It reported in the same publication that
+  UNC6780's DUSTMAKER drops files into .claude/ workspace directories. Treat
+  this as change tracking. Review a hooks block that appeared or changed
+  without a matching commit by the developer. Every path here is taken from
+  the vendor's documentation and recorded in the catalog entry for the tool.
 references:
     - https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai
     - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/claude-code.yml
+    - https://cursor.com/docs/agent/hooks
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/cursor.yml
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/devin.yml
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/catalog/google-antigravity-cli.yml
 author: AI DFIR Toolkit contributors
 date: 2026-09-30
+modified: 2026-11-17
 tags:
     - attack.persistence
     - attack.t1546
@@ -34,8 +43,23 @@ detection:
             - '\.claude\settings.local.json'
             - '/.claude/settings.json'
             - '/.claude/settings.local.json'
+            # Cursor: user, project and MDM-managed machine-wide files
+            - '\.cursor\hooks.json'
+            - '/.cursor/hooks.json'
+            - '\ProgramData\Cursor\hooks.json'
+            - '/Library/Application Support/Cursor/hooks.json'
+            - '/etc/cursor/hooks.json'
+            # Devin CLI: project file
+            - '\.devin\hooks.v1.json'
+            - '/.devin/hooks.v1.json'
+            # Antigravity: global and workspace files
+            - '\.gemini\config\hooks.json'
+            - '/.gemini/config/hooks.json'
+            - '\.agents\hooks.json'
+            - '/.agents/hooks.json'
     condition: selection
 falsepositives:
     - Developers editing their own agent settings
+    - MDM or a team sync writing managed hook files; Cursor rewrites its team hooks folder on every sync
     - Claude Code rewriting its own settings on upgrade or when the user approves a permission
 level: low

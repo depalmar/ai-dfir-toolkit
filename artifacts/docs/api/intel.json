@@ -5315,11 +5315,56 @@
       "forensic_value": "high"
      },
      {
+      "anchor": "AIRT-0002/disk/c-programdata-cursor-hooks-json",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "C:\\ProgramData\\Cursor\\hooks.json",
+      "vol": "stable",
+      "forensic_value": "high"
+     },
+     {
+      "anchor": "AIRT-0002/disk/cursor-hooks-json",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "~/.cursor/hooks.json",
+      "vol": "stable",
+      "forensic_value": "high"
+     },
+     {
       "anchor": "AIRT-0002/disk/cursor-mcp-json",
       "tool": "Cursor",
       "entry_id": "AIRT-0002",
       "cls": "disk",
       "artifact": "~/.cursor/mcp.json",
+      "vol": "stable",
+      "forensic_value": "high"
+     },
+     {
+      "anchor": "AIRT-0002/disk/etc-cursor-hooks-json",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "/etc/cursor/hooks.json",
+      "vol": "stable",
+      "forensic_value": "high"
+     },
+     {
+      "anchor": "AIRT-0002/disk/library-application-support-cursor-hooks-json",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "/Library/Application Support/Cursor/hooks.json",
+      "vol": "stable",
+      "forensic_value": "high"
+     },
+     {
+      "anchor": "AIRT-0002/disk/repo-cursor-hooks-json",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "<repo>/.cursor/hooks.json",
       "vol": "stable",
       "forensic_value": "high"
      },
@@ -5419,6 +5464,15 @@
       "entry_id": "AIRT-0001",
       "cls": "registry",
       "artifact": "HKLM\\SOFTWARE\\Microsoft\\Cryptography → MachineGuid",
+      "vol": "stable",
+      "forensic_value": "medium"
+     },
+     {
+      "anchor": "AIRT-0002/disk/cursor-managed",
+      "tool": "Cursor",
+      "entry_id": "AIRT-0002",
+      "cls": "disk",
+      "artifact": "~/.cursor/managed/",
       "vol": "stable",
       "forensic_value": "medium"
      },
@@ -12801,6 +12855,14 @@
     "vol": "stable"
    },
    {
+    "id": "artifact:AIRT-0002/disk/c-programdata-cursor-hooks-json",
+    "type": "artifact",
+    "label": "C:\\ProgramData\\Cursor\\hooks.json",
+    "anchor": "AIRT-0002/disk/c-programdata-cursor-hooks-json",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
     "id": "artifact:AIRT-0002/disk/config-cursor-user",
     "type": "artifact",
     "label": "~/.config/Cursor/User/",
@@ -12809,10 +12871,42 @@
     "vol": "stable"
    },
    {
+    "id": "artifact:AIRT-0002/disk/cursor-hooks-json",
+    "type": "artifact",
+    "label": "~/.cursor/hooks.json",
+    "anchor": "AIRT-0002/disk/cursor-hooks-json",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0002/disk/cursor-managed",
+    "type": "artifact",
+    "label": "~/.cursor/managed/",
+    "anchor": "AIRT-0002/disk/cursor-managed",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
     "id": "artifact:AIRT-0002/disk/cursor-mcp-json",
     "type": "artifact",
     "label": "~/.cursor/mcp.json",
     "anchor": "AIRT-0002/disk/cursor-mcp-json",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0002/disk/etc-cursor-hooks-json",
+    "type": "artifact",
+    "label": "/etc/cursor/hooks.json",
+    "anchor": "AIRT-0002/disk/etc-cursor-hooks-json",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0002/disk/library-application-support-cursor-hooks-json",
+    "type": "artifact",
+    "label": "/Library/Application Support/Cursor/hooks.json",
+    "anchor": "AIRT-0002/disk/library-application-support-cursor-hooks-json",
     "cls": "disk",
     "vol": "stable"
    },
@@ -12853,6 +12947,14 @@
     "type": "artifact",
     "label": "%LOCALAPPDATA%\\Programs\\cursor\\_\\resources\\app\\bin\\cursor",
     "anchor": "AIRT-0002/disk/localappdata-programs-cursor-resources-app-bin-cursor",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0002/disk/repo-cursor-hooks-json",
+    "type": "artifact",
+    "label": "<repo>/.cursor/hooks.json",
+    "anchor": "AIRT-0002/disk/repo-cursor-hooks-json",
     "cls": "disk",
     "vol": "stable"
    },
@@ -20061,12 +20163,37 @@
    },
    {
     "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/c-programdata-cursor-hooks-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
     "target": "artifact:AIRT-0002/disk/config-cursor-user",
     "rel": "leaves"
    },
    {
     "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/cursor-hooks-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/cursor-managed",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
     "target": "artifact:AIRT-0002/disk/cursor-mcp-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/etc-cursor-hooks-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/library-application-support-cursor-hooks-json",
     "rel": "leaves"
    },
    {
@@ -20092,6 +20219,11 @@
    {
     "source": "tool:AIRT-0002",
     "target": "artifact:AIRT-0002/disk/localappdata-programs-cursor-resources-app-bin-cursor",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0002",
+    "target": "artifact:AIRT-0002/disk/repo-cursor-hooks-json",
     "rel": "leaves"
    },
    {

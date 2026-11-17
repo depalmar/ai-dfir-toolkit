@@ -44,7 +44,7 @@
   {
     "file": "detections/sigma/ai_agent_hook_config_modification.yml",
     "id": "cd43df78-2afd-585d-b6e5-74548a881311",
-    "title": "Claude Code Settings or Hooks File Created or Modified",
+    "title": "AI Coding Agent Hook Configuration Created or Modified",
     "level": "low",
     "tags": [
       "attack.persistence",

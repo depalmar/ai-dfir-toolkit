@@ -288,8 +288,16 @@ when the vendor documents `~/.codeium/windsurf/mcp_config.json`). Stamping
 `last_verified` from a summary would inflate the exact field the staleness gate
 was built around, which is worse than leaving the entry visibly unchecked.
 
-So: verify from a network that can reach the vendor, or from the tool installed
-on a host. Corroborating from a project's own GitHub repository is legitimate and
+One route does reach the vendor from here. The Firecrawl connector, when the
+owner has signed it in, fetches the page itself and returns its text with the
+source URL and HTTP status. Ask for a live fetch (`maxAge: 0`), check the status
+and URL in the metadata, and read the page's own words: that is a read of the
+vendor's page, not a summary of it, and Cursor's hook file locations were
+stamped on that basis on 2026-11-17. A search result's snippet from the same
+connector is still a summary.
+
+Otherwise: verify from a network that can reach the vendor, or from the tool
+installed on a host. Corroborating from a project's own GitHub repository is legitimate and
 works from here - that is where several of these projects keep their docs - but
 check that the repo really is the source rather than a README pointing at a site
 you cannot open.
@@ -325,11 +333,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-52 entries, 661 artifacts, 173 credential locations, 72 MCP config
+52 entries, 667 artifacts, 173 credential locations, 72 MCP config
 locations, 14 endpoint Sigma rules, 26 case studies, 26 telemetry sources.
 Validation clean.
 
-Volatility across the 661 site rows: live 117 · rotating 57 · stable 487
+Volatility across the 667 site rows: live 117 · rotating 57 · stable 493
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
@@ -563,9 +571,6 @@ override and whether the rules glob is `**/*.md`.
      `duration_minutes` computed by the collector and now says so.
    - Suricata 9000201 is labelled as reporting use, not exposure.
    Still open:
-   - **Cursor hooks have no rule and no catalog row.** The path could not be
-     read from the vendor (cursor.com is blocked here) and was not guessed.
-     `.cursor/rules/` is covered by `memory_poisoning.yml` since this pass.
    - **Model-file YARA covers pickle and Keras only.** GGUF, ONNX and
      safetensors metadata have no rule. That is new detection content, not a
      fix.

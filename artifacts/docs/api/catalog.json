@@ -3795,6 +3795,114 @@
           ],
           "install_method": "n/a",
           "confidence": "medium"
+        },
+        {
+          "path": "~/.cursor/hooks.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "User-level hooks, which apply to every project. Each hook is a spawned process that Cursor runs before or after a stage of the agent loop - a shell command, a prompt submission, a file read or edit, an MCP call - and that can observe, block or modify it. Commands run from ~/.cursor/, and the scripts are conventionally kept in ~/.cursor/hooks/. Cursor watches the file and reloads it on save, so a change takes effect without a restart.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "<repo>/.cursor/hooks.json",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Project hooks, committed with the repository and loaded automatically when the project is opened in a trusted workspace. Commands run from the project root. Cloud agents working on the repository run them too. Compare against the repository history.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "/Library/Application Support/Cursor/hooks.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "config-file",
+          "description": "Machine-wide hooks, normally placed by MDM. They take priority over team, project and user hooks and apply to every user of the host.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "/etc/cursor/hooks.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Linux and WSL location of the machine-wide hooks file. Same role as the macOS file.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "C:\\ProgramData\\Cursor\\hooks.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Windows location of the machine-wide hooks file. Same role as the macOS file.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "~/.cursor/managed/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Team hooks delivered from the vendor's dashboard on Enterprise plans. The desktop app writes each command hook under team_<team ID>/hooks/ and rewrites the folder on every sync, about every thirty minutes, so what is on disk is the dashboard's current state and an earlier version has to come from the account.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "persistence",
+            "execution",
+            "configuration"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
         }
       ],
       "registry": [
@@ -4000,10 +4108,15 @@
         "title": "Cursor documentation",
         "url": "https://cursor.com/docs",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Hooks - Cursor Docs (file locations per scope and OS)",
+        "url": "https://cursor.com/docs/agent/hooks",
+        "accessed": "2026-11-17"
       }
     ],
     "last_verified": "2026-08-14",
-    "last_modified": "2026-08-14"
+    "last_modified": "2026-11-17"
   },
   {
     "id": "AIRT-0007",

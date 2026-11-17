@@ -426,15 +426,19 @@ sources:
     paths:
     - '%%users.homedir%%/.config/Cursor/User/globalStorage/state.vscdb'
     - '%%users.homedir%%/.config/cursor/auth.json'
+    - '%%users.homedir%%/.cursor/hooks.json'
     - '%%users.homedir%%/.cursor/mcp.json'
+    - /etc/cursor/hooks.json
     separator: /
   supported_os:
   - Linux
 - type: FILE
   attributes:
     paths:
+    - '%%users.homedir%%/.cursor/hooks.json'
     - '%%users.homedir%%/.cursor/mcp.json'
     - '%%users.homedir%%/Library/Application Support/Cursor/User/globalStorage/state.vscdb'
+    - /Library/Application Support/Cursor/hooks.json
     separator: /
   supported_os:
   - Darwin
@@ -442,7 +446,9 @@ sources:
   attributes:
     paths:
     - '%%users.appdata%%\Cursor\User\globalStorage\state.vscdb'
+    - '%%users.homedir%%/.cursor/hooks.json'
     - '%%users.homedir%%/.cursor/mcp.json'
+    - C:\ProgramData\Cursor\hooks.json
     separator: \
   supported_os:
   - Windows
@@ -452,6 +458,7 @@ supported_os:
 - Windows
 urls:
 - https://cursor.com/docs
+- https://cursor.com/docs/agent/hooks
 ---
 name: DevinArtifacts
 doc: 'Devin (AIRT-0007) - Two products under one name and one account. Devin is a

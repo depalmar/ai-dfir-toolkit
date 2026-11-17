@@ -50,3 +50,22 @@ Targets:
         FileMask: '*'
         Recursive: true
         Comment: 'AIRT-0002 | [confidence: medium] Custom agent skills'
+    -
+        Name: 'User-level hooks, which apply to every project. Each hook is a spawned...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cursor\'
+        FileMask: 'hooks.json'
+        Comment: 'AIRT-0002 | User-level hooks, which apply to every project. Each hook is a spawned process that Cursor runs before or after a stage of the agent loop - a shell command, a prompt submission, a '
+    -
+        Name: 'Windows location of the machine-wide hooks file. Same role as the macOS file.'
+        Category: AIAgents
+        Path: 'C:\ProgramData\Cursor\'
+        FileMask: 'hooks.json'
+        Comment: 'AIRT-0002 | Windows location of the machine-wide hooks file. Same role as the macOS file.'
+    -
+        Name: 'Team hooks delivered from the vendor''s dashboard on Enterprise plans. The...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.cursor\managed\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0002 | Team hooks delivered from the vendor''s dashboard on Enterprise plans. The desktop app writes each command hook under team_<team ID>/hooks/ and rewrites the folder on every sync, ab'
