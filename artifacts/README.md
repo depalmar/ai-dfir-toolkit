@@ -129,7 +129,8 @@ python scripts/export_forensicartifacts.py
 
 Commit the entry and the regenerated `docs/api/` together. `BACKLOG.md` lists
 tools that are in scope but not yet verified — good first contributions.
-An authoring skill for Claude lives in `../skills/agent-artifact-catalog/`.
+An authoring skill for Claude lives in `../skills/agent-artifact-catalog/`, and
+one for case studies and actor profiles in `../skills/case-study-authoring/`.
 
 ## Related work
 
