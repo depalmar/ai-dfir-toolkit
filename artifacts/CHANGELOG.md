@@ -5,6 +5,11 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **Supported by SANS Institute.** SANS cleared its standard logo for the
+  project. The wordmark sits in the site header and footer, in its blue on the
+  light theme and white on the dark one, and at the top of the README, with
+  the files in `docs/brand/`. The README's independence disclaimer is
+  unchanged, and a line under the logo says the project stays vendor-neutral.
 - **AIRT-0052 Google Antigravity CLI.** The tool Google moved Gemini CLI's
   consumer users to in June 2026. Eight disk rows, one process, three
   credential rows and two MCP config locations, all from vendor

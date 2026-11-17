@@ -71,6 +71,25 @@ OUT = ROOT / "docs" / "site"
 REPO = "https://github.com/depalmar/ai-dfir-toolkit"
 SITE = "https://depalmar.github.io/ai-dfir-toolkit/"
 
+# SANS Institute supports the project and cleared its standard logo for it
+# (November 2026). The files live in docs/brand/ at the repository root, beside
+# the README that uses them; the site inlines them so it stays one file.
+BRAND = ROOT.parent / "docs" / "brand"
+
+
+def _svg_uri(name: str) -> str:
+    import base64
+    return "data:image/svg+xml;base64," + base64.b64encode((BRAND / name).read_bytes()).decode()
+
+
+def sans_mark(cls: str) -> str:
+    """The SANS wordmark in both colourways; CSS shows the one that suits the theme."""
+    return (f'<a class="{cls}" href="https://www.sans.org/" target="_blank" rel="noopener">'
+            f'<span class="sanstx">Supported by</span>'
+            f'<img class="sans-l" src="{_svg_uri("sans-logo.svg")}" alt="SANS Institute" width="47" height="24">'
+            f'<img class="sans-d" src="{_svg_uri("sans-logo-white.svg")}" alt="SANS Institute" width="47" height="24">'
+            f'</a>')
+
 FAVICON = (
     "data:image/svg+xml,"
     "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
@@ -424,6 +443,19 @@ h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
 /* Once the page scrolls the header keeps the title row and the tabs only, so
    the table gets the height the subtitle was taking. */
 .hdr.compact .sub,.hdr.compact .pill{display:none}
+/* SANS supports the project; the wordmark ships in a light and a dark colourway. */
+.sans{display:inline-flex;align-items:center;gap:7px;margin-left:4px;text-decoration:none;color:var(--muted)}
+.sans .sanstx{font-size:11.5px}
+.sans img{height:20px;width:auto;display:block}
+.sans .sans-d{display:none}
+:root[data-theme=dark] .sans .sans-l{display:none}
+:root[data-theme=dark] .sans .sans-d{display:block}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]) .sans .sans-l{display:none}
+  :root:not([data-theme=light]) .sans .sans-d{display:block}}
+footer .fsans{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+footer .sans-f{margin-left:0}
+footer .sans-f img{height:26px}
 .hdr.compact .hdr-in{padding-top:8px}
 .hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 /* Visible only once focused: the filter rail has six facet groups, one listing
@@ -1543,7 +1575,7 @@ footer p{margin:0}
 @media(max-width:900px){
   /* Sticky on phones too, collapsed to the title row and the tab strip, so a
      reader deep in a long view can still change tabs. */
-  .hdr .sub,.hdr .pill{display:none}
+  .hdr .sub,.hdr .pill,.hdr .sans{display:none}
   .hdr-top{flex-wrap:nowrap;align-items:center}
   .hdr-id{flex:1 1 auto;min-width:0}
   .h1row{flex-wrap:nowrap}
@@ -4518,7 +4550,7 @@ def main():
   <div class="hdr-top">
     <div class="hdr-id">
       <div class="h1row"><span class="dot"></span><h1>AI DFIR Toolkit</h1>
-        <span class="pill">generated &middot; CC BY 4.0</span></div>
+        <span class="pill">generated &middot; CC BY 4.0</span>{sans_mark("sans")}</div>
       <p class="sub">Is this an AI incident, what did the AI tool leave on the host and what
       does it prove, and in what order to collect it.</p>
     </div>
@@ -4607,6 +4639,7 @@ def main():
 <div id="sr" class="sr" role="status" aria-live="polite"></div>
 
 <footer>
+  <p class="fsans">{sans_mark("sans sans-f")}<span>The catalog stays independent and vendor-neutral.</span></p>
   <p><strong>Sourcing confidence reflects provenance, not conviction.</strong>
   <em>high</em> means verified on a live host or documented by the vendor,
   <em>medium</em> means multiple independent sources agree, and <em>low</em> means

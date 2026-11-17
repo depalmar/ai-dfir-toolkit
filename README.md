@@ -2,6 +2,13 @@
 
 **Open-source detection signatures for AI/ML attacks and breaches.**
 
+<a href="https://www.sans.org/"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/sans-logo-white.svg">
+  <img src="docs/brand/sans-logo.svg" alt="SANS Institute" height="40">
+</picture></a>
+
+Developed with support from [SANS Institute](https://www.sans.org/). The project stays independent and vendor-neutral; see the disclaimer below.
+
 A vendor-neutral collection of Sigma, YARA, and Suricata rules for detecting compromise of LLM applications, MCP servers, ML supply chains, AI infrastructure, AI-powered insider threats, and RAG/vector database attacks.
 
 **Browse it at [depalmar.github.io/ai-dfir-toolkit](https://depalmar.github.io/ai-dfir-toolkit/)** — the
