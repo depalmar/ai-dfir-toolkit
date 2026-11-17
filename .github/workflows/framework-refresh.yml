@@ -113,11 +113,32 @@ jobs:
           fi
           gh pr merge --auto --squash "$PR" --repo "$GITHUB_REPOSITORY"
 
+      # The refresh itself worked and the pull request could not be opened. This
+      # is a repository setting, not an upstream change, and it failed every
+      # weekly run for six weeks while the step below reported it as a broken
+      # gate. One issue, commented on while it stays open, not one a week.
+      - name: Report that the refresh PR could not be opened
+        if: failure() && steps.cpr.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create framework-refresh --color 5319e7 --force --repo "$GITHUB_REPOSITORY" || true
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          title="Framework refresh cannot open its pull request"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label framework-refresh --state open \
+            --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Still failing on $(date -u +%Y-%m-%d): $run_url"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label framework-refresh --title "$title" \
+              --body "The weekly refresh re-pinned upstream data and every gate passed, but the workflow is not allowed to open a pull request, so the pins are not being updated. See $run_url. Fix it once in the repository settings: either turn on Settings > Actions > General > Workflow permissions > 'Allow GitHub Actions to create and approve pull requests', or add an AUTOMATION_TOKEN secret (a fine-grained token with contents and pull-requests write), which also lets the refresh PR trigger CI and merge itself. Close this issue once a refresh PR has opened."
+          fi
+
       # A gate that fails on refreshed data is the case auto-merge must never
       # paper over: usually upstream renamed or dropped an id that something
       # here still cites. That needs a person, so it becomes an issue.
       - name: Report a refresh that breaks a gate
-        if: failure()
+        if: failure() && steps.cpr.outcome != 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
