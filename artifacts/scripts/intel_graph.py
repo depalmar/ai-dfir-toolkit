@@ -45,6 +45,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 REPO = ROOT.parent
 API = ROOT / "docs" / "api"
+# Where a reader of a published indicator file finds the case it came from.
+CASE_URL = "https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/"
 SCHEMA = ROOT / "schema"
 sys.path.insert(0, str(HERE))
 
@@ -848,6 +850,49 @@ def write_lf(path: Path, text: str) -> None:
         fh.write(text)
 
 
+def ioc_text(case: dict) -> str:
+    """One case's atomic indicators as plain text, refanged, one per line.
+
+    For pasting into a search or a blocklist review, which is why the values
+    are refanged and carry no description. The caveats live in the case study,
+    and the header says so: several values here are legitimate services or
+    ordinary strings that mean something only in context. Returns "" for a
+    case with nothing atomic.
+    """
+    groups: dict[str, list[str]] = {}
+    for i in case.get("iocs") or []:
+        if i.get("type") in ATOMIC_IOC:
+            v = _refang(str(i.get("value", ""))).strip()
+            if v and v not in groups.setdefault(i["type"], []):
+                groups[i["type"]].append(v)
+    if not groups:
+        return ""
+    out = [f"# {case['id']} - {case.get('title', '')}",
+           f"# Disclosed {case.get('disclosed', '')}; sourcing confidence {case.get('confidence', '')}.",
+           "# Atomic indicators only, refanged for searching. Do not browse to them.",
+           "# Read the case study before acting on a value: some are legitimate services",
+           "# or ordinary strings that matter only in context, and behaviours are not here.",
+           f"# {CASE_URL}{case['id'].lower()}.yml"]
+    for t in sorted(groups):
+        out += ["", f"# {t}"] + groups[t]
+    return "\n".join(out) + "\n"
+
+
+def iocs_csv(cases: list) -> str:
+    """Every indicator of every case, with its description, as one CSV."""
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(["case_id", "disclosed", "confidence", "type", "atomic", "value",
+                "value_defanged", "description"])
+    for c in sorted(cases, key=lambda c: c["id"]):
+        for i in c.get("iocs") or []:
+            raw = str(i.get("value", ""))
+            w.writerow([c["id"], c.get("disclosed", ""), c.get("confidence", ""), i.get("type", ""),
+                        "yes" if i.get("type") in ATOMIC_IOC else "no",
+                        _refang(raw), raw, re.sub(r"\s+", " ", str(i.get("description", ""))).strip()])
+    return buf.getvalue()
+
+
 def export(intel: dict, pin: dict) -> list[Path]:
     public = {"atlas_release": intel["atlas"]["release"], "stats": intel["stats"],
               "analytics": intel["analytics"],
@@ -859,7 +904,21 @@ def export(intel: dict, pin: dict) -> list[Path]:
                                                         ensure_ascii=False) + "\n",
         API / "graph" / "maltego-entities.csv": ent,
         API / "graph" / "maltego-links.csv": lnk,
+        API / "iocs.csv": iocs_csv(intel["cases"]),
     }
+    # One text file per case that has something atomic to search for.
+    ioc_dir = API / "iocs"
+    wanted = set()
+    for c in intel["cases"]:
+        text = ioc_text(c)
+        if text:
+            out[ioc_dir / f"{c['id'].lower()}.txt"] = text
+            wanted.add(f"{c['id'].lower()}.txt")
+    # A case that lost its last atomic indicator must not leave a stale file.
+    if ioc_dir.is_dir():
+        for old in ioc_dir.glob("*.txt"):
+            if old.name not in wanted:
+                old.unlink()
     for p, text in out.items():
         write_lf(p, text)
     return list(out)

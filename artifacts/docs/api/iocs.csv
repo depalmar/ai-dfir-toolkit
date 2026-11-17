@@ -1,0 +1,317 @@
+case_id,disclosed,confidence,type,atomic,value,value_defanged,description
+AIRT-CS-0001,2026-06-08,high,file,yes,core/telemetry/_runtime.bin,core/telemetry/_runtime.bin,Payload binary
+AIRT-CS-0001,2026-06-08,high,file,yes,core/telemetry/_hooks.py,core/telemetry/_hooks.py,Injection hooks
+AIRT-CS-0001,2026-06-08,high,file,yes,core/telemetry/.loader.lock,core/telemetry/.loader.lock,Loader lock file
+AIRT-CS-0001,2026-06-08,high,file,yes,core/telemetry/__init__.py,core/telemetry/__init__.py,Modified to wire in the loader
+AIRT-CS-0001,2026-06-08,high,binary,yes,bun,bun,Unexpected bun runtime binary present on host
+AIRT-CS-0001,2026-06-08,high,directory,yes,rt-*,rt-*,Temp folders matching rt-* pattern
+AIRT-CS-0001,2026-06-08,high,commit,yes,065ee8eb,065ee8eb,Malicious commit hash
+AIRT-CS-0002,2025-09,high,package,yes,postmark-mcp@1.0.16,postmark-mcp@1.0.16,Backdoored version
+AIRT-CS-0002,2025-09,high,account,yes,phanpak,phanpak,Publishing account
+AIRT-CS-0002,2025-09,high,email,yes,phan@giftshop.club,phan@giftshop[.]club,BCC exfiltration destination
+AIRT-CS-0003,2025-04-09,high,endpoint,no,POST /api/v1/validate/code,POST /api/v1/validate/code,Exploitation endpoint for CVE-2025-3248
+AIRT-CS-0003,2025-04-09,high,endpoint,no,POST /api/v2/files,POST /api/v2/files,Exploitation endpoint for CVE-2026-5027
+AIRT-CS-0003,2025-04-09,high,pattern,no,Python payloads in decorators or argument defaults,Python payloads in decorators or argument defaults,Payload placement observed in the wild
+AIRT-CS-0003,2025-04-09,high,malware,no,Flodrix botnet,Flodrix botnet,Payload delivered post-exploitation
+AIRT-CS-0003,2025-04-09,high,url,yes,http://80.66.75.121:25565/docker,hxxp://80[.]66[.]75[.]121:25565/docker,Downloader script fetched by the exploit's curl command and piped to a shell. The one download address the vendor published
+AIRT-CS-0003,2025-04-09,high,ip,yes,80.66.75.121,80.66.75[.]121,Hosted the downloader scripts and listed as a command-and-control server
+AIRT-CS-0003,2025-04-09,high,ip,yes,45.61.137.226,45.61.137[.]226,Listed command-and-control server
+AIRT-CS-0003,2025-04-09,high,ip,yes,206.71.149.179,206.71.149[.]179,Listed command-and-control server
+AIRT-CS-0003,2025-04-09,high,ip,yes,188.166.68.21,188.166.68[.]21,Listed command-and-control server
+AIRT-CS-0003,2025-04-09,high,hash,yes,ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec,ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec,SHA-256 of the bash downloader named docker
+AIRT-CS-0003,2025-04-09,high,hash,yes,64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3,64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3,"SHA-256 of a second downloader. The article's table calls it deez and the vendor's indicator file calls it zxc_deez, so match the hash and not the name"
+AIRT-CS-0003,2025-04-09,high,hash,yes,912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee,912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee,"SHA-256 of the Flodrix ELF for x86_64, e1x.x86_64. The vendor's indicator file lists further architectures and related samples"
+AIRT-CS-0003,2025-04-09,high,file,yes,.system_idle,.system_idle,Hidden file the malware writes to hold its process id. Its presence means the payload ran at least once on the host
+AIRT-CS-0003,2025-04-09,high,behavior,no,Scanning of exposed port 7860,Scanning of exposed port 7860,Pre-exploitation enumeration via Shodan/FOFA
+AIRT-CS-0003,2025-04-09,high,config,no,LANGFLOW_AUTO_LOGIN=true,LANGFLOW_AUTO_LOGIN=true,Removes authentication entirely; highest-risk configuration
+AIRT-CS-0004,2025-11-13,medium,behavior,no,Agent session with tool_use/tool_result records spanning multiple kill-chain phases,Agent session with tool_use/tool_result records spanning multiple kill-chain phases,"Recon, exploitation, credential access and exfiltration inside one session is the signal; no single call is anomalous"
+AIRT-CS-0004,2025-11-13,medium,behavior,no,Sustained request cadence far above human working tempo,Sustained request cadence far above human working tempo,Reported in the thousands of requests per second; the exact rate is vendor-claimed
+AIRT-CS-0004,2025-11-13,medium,behavior,no,Task framing that asserts authorised defensive testing,Task framing that asserts authorised defensive testing,"The documented guardrail bypass, visible in the prompt history rather than on the endpoint"
+AIRT-CS-0004,2025-11-13,medium,pattern,no,High ratio of agent actions to human decision points in one session,High ratio of agent actions to human decision points in one session,Reported as 4-6 human interventions per campaign
+AIRT-CS-0005,2025-11-03,high,file,yes,Netapi64.dll,Netapi64.dll,Eazfuscator.NET-obfuscated .NET loader
+AIRT-CS-0005,2025-11-03,high,file,yes,C:\Windows\Temp\Netapi64.start,C:\Windows\Temp\Netapi64.start,Marker file written by the loader
+AIRT-CS-0005,2025-11-03,high,file,yes,C:\Windows\Temp\Netapi64.Exception,C:\Windows\Temp\Netapi64.Exception,Exception log written by the loader
+AIRT-CS-0005,2025-11-03,high,file,yes,C:\Windows\Temp\*.Netapi64,C:\Windows\Temp\*.Netapi64,Encoded payload the loader searches for and XOR-decodes
+AIRT-CS-0005,2025-11-03,high,file,yes,<host>.exe.config containing appDomainManagerAssembly,<host>.exe.config containing appDomainManagerAssembly,The injection mechanism - a .config beside a trusted binary is the durable artifact
+AIRT-CS-0005,2025-11-03,high,process,yes,OpenAIAgent.Netapi64,OpenAIAgent.Netapi64,.NET backdoor component
+AIRT-CS-0005,2025-11-03,high,mutex,yes,Netapi64,Netapi64,"Loader mutex, prevents duplicate infection"
+AIRT-CS-0005,2025-11-03,high,mutex,yes,OpenAI APIS,OpenAI APIS,Backdoor mutex
+AIRT-CS-0005,2025-11-03,high,domain,yes,api.openai.com,api.openai.com,"C2 relay; the finding is the process making the request, not the destination"
+AIRT-CS-0005,2025-11-03,high,config,no,TextFile1 .NET resource holding <OpenAI_API_Key>|<Dictionary_Key_Name>|<Proxy>,TextFile1 .NET resource holding <OpenAI_API_Key>|<Dictionary_Key_Name>|<Proxy>,"Embedded configuration; fields surface as OpenAIAgent.token, .aaazzz and .proxy"
+AIRT-CS-0005,2025-11-03,high,pattern,no,SLEEP / Payload / Result verbs in the Assistants API description field,SLEEP / Payload / Result verbs in the Assistants API description field,"The command protocol, visible only in provider-side API records"
+AIRT-CS-0006,2025-11-05,medium,file,yes,%TEMP%\thinking_robot_log.txt,%TEMP%\thinking_robot_log.txt,"The model's responses - effectively the attacker's tooling history, turn by turn"
+AIRT-CS-0006,2025-11-05,medium,directory,yes,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup,Regenerated script variants land here; contents differ on each iteration
+AIRT-CS-0006,2025-11-05,medium,domain,yes,generativelanguage.googleapis.com,generativelanguage.googleapis.com,Gemini API endpoint; the finding is wscript.exe or cscript.exe reaching it
+AIRT-CS-0006,2025-11-05,medium,pattern,no,gemini-1.5-flash-latest referenced in a script body,gemini-1.5-flash-latest referenced in a script body,Hard-coded model selector
+AIRT-CS-0006,2025-11-05,medium,pattern,no,Hard-coded provider API key inside a script,Hard-coded provider API key inside a script,Recoverable from the script and usable for provider-side scoping
+AIRT-CS-0006,2025-11-05,medium,behavior,no,Propagation to removable drives and mapped network shares,Propagation to removable drives and mapped network shares,Distribution mechanism described by GTIG
+AIRT-CS-0007,2025-07-17,high,domain,yes,api-inference.huggingface.co,api-inference.huggingface.co,Inference API egress from a compiled desktop utility is the pivot
+AIRT-CS-0007,2025-07-17,high,pattern,no,Hard-coded hf_ API token inside a binary,Hard-coded hf_ API token inside a binary,Hugging Face token; usable for provider-side scoping
+AIRT-CS-0007,2025-07-17,high,pattern,no,Qwen2.5-Coder-32B-Instruct referenced as the target model,Qwen2.5-Coder-32B-Instruct referenced as the target model,Model selector observed in samples
+AIRT-CS-0007,2025-07-17,high,file,yes,Додаток.pdf.zip,Додаток.pdf.zip,Phishing archive name reported by CERT-UA; carries a PyInstaller executable beside a decoy PDF
+AIRT-CS-0007,2025-07-17,high,behavior,no,Command execution parented by a desktop utility rather than a shell,Command execution parented by a desktop utility rather than a shell,"The executed commands never appear in the sample, so process lineage is the evidence"
+AIRT-CS-0007,2025-07-17,high,behavior,no,"Staged collection from Documents, Desktop and Downloads","Staged collection from Documents, Desktop and Downloads","Collection targets Office, PDF and TXT files"
+AIRT-CS-0007,2025-07-17,high,behavior,no,Exfiltration over SFTP or HTTP POST,Exfiltration over SFTP or HTTP POST,Two observed channels
+AIRT-CS-0008,2025-06-11,high,pattern,no,Markdown image reference in a completion whose URL carries content as parameters,Markdown image reference in a completion whose URL carries content as parameters,The exfiltration primitive; the render path fetches it without user action
+AIRT-CS-0008,2025-06-11,high,behavior,no,Copilot interaction events for a user who never invoked Copilot on that content,Copilot interaction events for a user who never invoked Copilot on that content,Recorded in the M365 unified audit log / Purview if AI interaction auditing is on
+AIRT-CS-0008,2025-06-11,high,behavior,no,Outbound fetch from an image proxy immediately after a completion,Outbound fetch from an image proxy immediately after a completion,The beacon carrying the payload; not on the endpoint at all
+AIRT-CS-0008,2025-06-11,high,pattern,no,Inbound mail containing assistant-directed instructions,Inbound mail containing assistant-directed instructions,Looks like ordinary mail; only the instruction text distinguishes it
+AIRT-CS-0009,2025-07-09,high,pattern,no,mcp-remote 0.0.5 through 0.1.15,mcp-remote 0.0.5 through 0.1.15,Vulnerable range for CVE-2025-6514; fixed in 0.1.16
+AIRT-CS-0009,2025-07-09,high,pattern,no,@modelcontextprotocol/inspector below 0.14.1,@modelcontextprotocol/inspector below 0.14.1,Vulnerable range for CVE-2025-49596
+AIRT-CS-0009,2025-07-09,high,pattern,no,Cursor before 1.3,Cursor before 1.3,Vulnerable range for CVE-2025-54136 (MCPoison)
+AIRT-CS-0009,2025-07-09,high,config,no,MCP server entry pointing at a remote URL the organisation did not vet,MCP server entry pointing at a remote URL the organisation did not vet,"Present in Claude Desktop, Claude Code, Cursor, VS Code and Windsurf configs"
+AIRT-CS-0009,2025-07-09,high,behavior,no,MCP tool invocation whose arguments do not match the definition currently on disk,MCP tool invocation whose arguments do not match the definition currently on disk,The rug-pull signature - config and execution disagree
+AIRT-CS-0009,2025-07-09,high,behavior,no,Child process spawned by an MCP client immediately after a server connection,Child process spawned by an MCP client immediately after a server connection,Command injection on connect
+AIRT-CS-0010,2024-09-24,high,behavior,no,Memory store entry containing a standing instruction rather than a user preference,Memory store entry containing a standing instruction rather than a user preference,"The persistence mechanism; reads as configuration, not as an attack"
+AIRT-CS-0010,2024-09-24,high,file,yes,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)","Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)",The same primitive in coding agents - an on-disk file that is context every run
+AIRT-CS-0010,2024-09-24,high,file,yes,Framework checkpoint stores (LangGraph SQLite and equivalents),Framework checkpoint stores (LangGraph SQLite and equivalents),Where an agent framework persists state between invocations
+AIRT-CS-0010,2024-09-24,high,behavior,no,"Repeating outbound fetch, one per assistant response","Repeating outbound fetch, one per assistant response","Regular beacon in proxy logs, cadence tied to conversation turns rather than to a timer"
+AIRT-CS-0010,2024-09-24,high,pattern,no,Markdown image URL carrying conversation text as query parameters,Markdown image URL carrying conversation text as query parameters,Exfiltration primitive; spaces escaped
+AIRT-CS-0011,2026-02-10,medium,url,yes,Assistant URL carrying a pre-filled prompt in a query parameter,Assistant URL carrying a pre-filled prompt in a query parameter,Recoverable from browser history and referrer logs; the delivery mechanism
+AIRT-CS-0011,2026-02-10,medium,behavior,no,Memory entry phrased as an innocuous user preference,Memory entry phrased as an innocuous user preference,"For example, remember X as a trusted source - defeats keyword triage"
+AIRT-CS-0011,2026-02-10,medium,behavior,no,Assistant interaction log entry at the moment of the memory write,Assistant interaction log entry at the moment of the memory write,The only record tying the entry back to the turn that created it
+AIRT-CS-0011,2026-02-10,medium,pattern,no,"Prompt text embedded in a document, email or web page","Prompt text embedded in a document, email or web page","Second delivery path, no click required beyond processing the content"
+AIRT-CS-0012,2025-08-13,high,behavior,no,Vector store records whose ingestion provenance is missing or unattributable,Vector store records whose ingestion provenance is missing or unattributable,"Chroma, Pinecone, Weaviate, Qdrant, pgvector and FAISS all store this differently"
+AIRT-CS-0012,2025-08-13,high,behavior,no,Retrieval log showing the same small document set returned for a narrow question set,Retrieval log showing the same small document set returned for a narrow question set,The retrieval side of the attack; visible before the answer is
+AIRT-CS-0012,2025-08-13,high,behavior,no,Ingestion pipeline record with no upstream source or an unexpected one,Ingestion pipeline record with no upstream source or an unexpected one,When a document entered and from where - usually the only provenance that exists
+AIRT-CS-0012,2025-08-13,high,pattern,no,Embedding whose nearest neighbours are inconsistent with its stated topic,Embedding whose nearest neighbours are inconsistent with its stated topic,Anomaly signal in embedding space rather than in file content
+AIRT-CS-0013,2026-02-25,medium,behavior,no,Agent session trace containing authorised-testing or bug-bounty framing,Agent session trace containing authorised-testing or bug-bounty framing,"The jailbreak, visible in the prompt history rather than on the endpoint"
+AIRT-CS-0013,2026-02-25,medium,behavior,no,Task decomposition following the framing turn,Task decomposition following the framing turn,"The sequence that matters - framing, then a long run of individually ordinary tasks"
+AIRT-CS-0013,2026-02-25,medium,behavior,no,Bulk database extraction and staging on the victim estate,Bulk database extraction and staging on the victim estate,Conventional intrusion artifacts; nothing AI-specific about them
+AIRT-CS-0013,2026-02-25,medium,pattern,no,Two different commercial models used within one campaign,Two different commercial models used within one campaign,Reported as Claude Code plus a second hosted model; provider-side scoping needs both
+AIRT-CS-0014,2024-03-26,high,behavior,no,Job submission to the Ray Jobs API from outside the cluster network,Job submission to the Ray Jobs API from outside the cluster network,Recorded in Ray dashboard and jobs API access logs
+AIRT-CS-0014,2024-03-26,high,behavior,no,Submitted job definition carrying a multi-stage Bash or Python payload,Submitted job definition carrying a multi-stage Bash or Python payload,The job definition is the payload record and is retained by Ray
+AIRT-CS-0014,2024-03-26,high,process,yes,XMRig or equivalent miner on a GPU host,XMRig or equivalent miner on a GPU host,Observed payload in the ShadowRay 2.0 campaign
+AIRT-CS-0014,2024-03-26,high,behavior,no,Orchestration used to fan a job out to every node,Orchestration used to fan a job out to every node,Ray's own scheduling is the lateral movement mechanism
+AIRT-CS-0014,2024-03-26,high,behavior,no,Outbound job submission from one cluster to another,Outbound job submission from one cluster to another,Cluster-to-cluster propagation observed in ShadowRay 2.0
+AIRT-CS-0014,2024-03-26,high,pattern,no,Ray dashboard reachable from the internet,Ray dashboard reachable from the internet,The precondition; the exposure is the vulnerability here
+AIRT-CS-0014,2024-03-26,high,ip,yes,18.228.3.224,18.228.3[.]224,"Primary command-and-control server for reverse shells in the second campaign, ports 48331 and 3876"
+AIRT-CS-0014,2024-03-26,high,ip,yes,18.230.118.147,18.230.118[.]147,"Secondary command-and-control server and mining endpoint, ports 443 and 40331"
+AIRT-CS-0014,2024-03-26,high,ip,yes,67.217.57.240,67.217.57[.]240,"File server for the netsh reverse-shell binary, port 666. Reverse shells to it ran from September to November 2025, and it is the address the later report ties to TeamPCP"
+AIRT-CS-0014,2024-03-26,high,ip,yes,103.127.134.124,103.127.134[.]124,Received reverse shells on ports 30654 and 30987. The later report says the same address signed in to the accounts that hosted the payloads
+AIRT-CS-0014,2024-03-26,high,ip,yes,45.61.150.83,45.61.150[.]83,"File server for the second-phase dropper, port 80"
+AIRT-CS-0014,2024-03-26,high,ip,yes,45.95.168.100,45.95.168[.]100,"File server for downloaded binaries, port 8000"
+AIRT-CS-0014,2024-03-26,high,ip,yes,185.215.180.70,185.215.180[.]70,"File server for downloaded binaries, port 8000"
+AIRT-CS-0014,2024-03-26,high,ip,yes,162.248.53.119,162.248.53[.]119,"Payload server, port 8000"
+AIRT-CS-0014,2024-03-26,high,url,yes,http://45.61.150.83/1mmy/xd.sh,hxxp://45[.]61[.]150[.]83/1mmy/xd.sh,Second-phase dropper
+AIRT-CS-0014,2024-03-26,high,hash,yes,1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b,1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b,"SHA-256 of the second-phase dropper xd.sh. The source also lists a hash for the miner, which is the legitimate XMRig release and proves nothing alone"
+AIRT-CS-0014,2024-03-26,high,domain,yes,masscan.cloud,masscan[.]cloud,"With matrix.masscan[.]cloud, staging infrastructure the later report links to this campaign. A compromised cluster fetched /ep9TS2/ndt.sh from it in July 2025"
+AIRT-CS-0014,2024-03-26,high,domain,yes,pool.supportxmr.com,pool.supportxmr.com,"Primary mining pool, port 443 over TLS. A public pool that other miners also use; gulf.moneroocean.stream on 20128 and eu.zano.k1pool.com on 8866 were the others"
+AIRT-CS-0014,2024-03-26,high,file,yes,/usr/lib/dev/systemdev/dns-filter,/usr/lib/dev/systemdev/dns-filter,The miner under a name chosen to look like a DNS service. /tmp/dns is the alternative location
+AIRT-CS-0014,2024-03-26,high,file,yes,/var/tmp/.ddns.sh,/var/tmp/.ddns.sh,Persistence script
+AIRT-CS-0014,2024-03-26,high,file,yes,/etc/init.d/dns-filter,/etc/init.d/dns-filter,Persistence through init.d
+AIRT-CS-0014,2024-03-26,high,config,no,authorized_keys entry ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHy6WMgqslpdUCaumLmlUcBjBjuAk4KspADxbcAKrzYd root@archtop,authorized_keys entry ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHy6WMgqslpdUCaumLmlUcBjBjuAk4KspADxbcAKrzYd root@archtop,Key appended by the payload for SSH access. Match the key material; the comment is trivially changed
+AIRT-CS-0014,2024-03-26,high,config,no,User crontab entry every 15 minutes piping a script named mon.sh from a code-hosting raw URL into bash,User crontab entry every 15 minutes piping a script named mon.sh from a code-hosting raw URL into bash,"Persistence and update channel. The hosting project and its replacement were removed in November 2025, so the entry now fails and is still evidence"
+AIRT-CS-0014,2024-03-26,high,process,yes,kworker/0:0 or [kworker/0:0] as the name of a userland process,kworker/0:0 or [kworker/0:0] as the name of a userland process,The miner renames itself by writing to /proc/$$/comm. A real kernel worker has no executable path and no command line
+AIRT-CS-0015,2025-08-26,high,package,yes,"nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0","nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0",Affected versions per the Nx advisory
+AIRT-CS-0015,2025-08-26,high,file,yes,/tmp/inventory.txt,/tmp/inventory.txt,Secret inventory written by the AI CLI run; its presence proves the payload executed
+AIRT-CS-0015,2025-08-26,high,pattern,no,GitHub repository name containing s1ngularity-repository,GitHub repository name containing s1ngularity-repository,Exfiltration destination created under the victim's own account - check the GitHub audit log
+AIRT-CS-0015,2025-08-26,high,config,no,sudo shutdown -h 0 appended to ~/.bashrc and ~/.zshrc,sudo shutdown -h 0 appended to ~/.bashrc and ~/.zshrc,Shell profile modification
+AIRT-CS-0015,2025-08-26,high,behavior,no,"claude --dangerously-skip-permissions, gemini --yolo, q --trust-all-tools started by node from an npm lifecycle script","claude --dangerously-skip-permissions, gemini --yolo, q --trust-all-tools started by node from an npm lifecycle script",The AI CLIs did the reconnaissance; the parent process is the evidence
+AIRT-CS-0016,2026-09-08,medium,package,yes,tiktoken_mcp (PyPI),tiktoken_mcp (PyPI),Trojanised fork of a legitimate MCP server
+AIRT-CS-0016,2026-09-08,medium,pattern,no,Injected code in azure-functions-mcp-extension,Injected code in azure-functions-mcp-extension,Official organisational repository compromised through a developer account
+AIRT-CS-0016,2026-09-08,medium,malware,no,DUSTMAKER,DUSTMAKER,Credential stealer with CI/CD and AI-workspace targeting
+AIRT-CS-0016,2026-09-08,medium,directory,yes,"<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/","<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/",Files dropped or modified in hidden AI assistant workspace directories
+AIRT-CS-0016,2026-09-08,medium,behavior,no,GitHub Actions workflow run logs deleted after execution,GitHub Actions workflow run logs deleted after execution,Anti-forensics; the absence of runs is the signal
+AIRT-CS-0017,2026-09-08,medium,malware,no,SOMBERMEME,SOMBERMEME,Backdoor delivered on developer interaction
+AIRT-CS-0017,2026-09-08,medium,config,no,Hooks added to or altered in .claude/settings.json or .claude/settings.local.json,Hooks added to or altered in .claude/settings.json or .claude/settings.local.json,The persistence and trigger; compare against repository history
+AIRT-CS-0017,2026-09-08,medium,behavior,no,"Shell or interpreter child of the Claude Code process at session start, before any user prompt","Shell or interpreter child of the Claude Code process at session start, before any user prompt",A hook firing looks like this; an agent acting on a prompt does not
+AIRT-CS-0018,2026-09-10,medium,domain,yes,ad-g.org,ad-g[.]org,"C2 domain (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,cdncounter.net,cdncounter[.]net,"Actor infrastructure domain (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,chamber-ua.org,chamber-ua[.]org,"Lookalike of a Ukrainian chamber organization (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,chathamhouse.eu,chathamhouse[.]eu,"Lookalike of Chatham House (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,docs-viewer.org,docs-viewer[.]org,"C2 nginx reverse proxy (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,itechx.tel,itechx[.]tel,"Actor identity domain (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,m365-owa.com,m365-owa[.]com,"Microsoft 365 Phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,meridian-protocol.org,meridian-protocol[.]org,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,meridiangroup-corp.com,meridiangroup-corp[.]com,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,metricwave.org,metricwave[.]org,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,mgsend.org,mgsend[.]org,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,ms365-device.com,ms365-device[.]com,"Microsoft 365 Phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,ms365-live.com,ms365-live[.]com,"Microsoft 365 Phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,my-invite.org,my-invite[.]org,"Actor phishing domain (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,mygreatmarket.com,mygreatmarket[.]com,"ClickFix cookie-exfil C2 (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,mygreatmarket.org,mygreatmarket[.]org,"ClickFix cookie-exfil C2 (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,owa-ms365.com,owa-ms365[.]com,"Microsoft 365 Phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,projectnightcrawler.dev,projectnightcrawler[.]dev,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,russianearabroad.com,russianearabroad[.]com,"ClickFix lure (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,russianearabroad.org,russianearabroad[.]org,"Actor persona domain (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,static-ms.live,static-ms[.]live,"Operator/lure infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,statistic-ms.live,statistic-ms[.]live,"Primary RAT C2 domain (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,stuseamandesilt.org,stuseamandesilt[.]org,"Campaign base domain (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,ukrinform-share.net,ukrinform-share[.]net,"Lookalike of Ukrinform (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,wa-connect.eu,wa-connect[.]eu,"ClickFix cookie exfil C2 (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,wa-meeting.com,wa-meeting[.]com,"WhatsApp Web pairing code phishing domain (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,email,yes,anna.manager@russianearabroad.net,anna.manager@russianearabroad[.]net,"Phishing persona address (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,email,yes,events@embassy-protocol.int,events@embassy-protocol[.]int,"Phishing persona address (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,file,yes,WUEngine.exe,WUEngine.exe,"Malware file name. Windows malware (role malware, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,file,yes,client_20260507093021_4286d211_x64.exe,client_20260507093021_4286d211_x64.exe,"Malware build artifact (role malware, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,file,yes,fix_network.apk,fix_network.apk,"Android malware payload (role malware, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,file,yes,msedgeupdate_v3.exe,msedgeupdate_v3.exe,"Malware implant build (role malware, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,api.stuseamandesilt.org,api.stuseamandesilt[.]org,"Campaign C2 (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,cdn.stuseamandesilt.org,cdn.stuseamandesilt[.]org,"Campaign malware delivery (role malware_delivery, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,mslivetest.duckdns.org,mslivetest.duckdns[.]org,"Dynamic-DNS C2 (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,pdfviewer2024.b-cdn.net,pdfviewer2024.b-cdn[.]net,"Malware payload domain (role malware_delivery, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,static.cdncounter.net,static.cdncounter[.]net,"Exploit/payload delivery hostname (role malware_delivery, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,teams.ms365-live.com,teams.ms365-live[.]com,"Microsoft 365 Phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,domain,yes,update.stuseamandesilt.org,update.stuseamandesilt[.]org,"Campaign subdomain (role malware_delivery, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,104.145.210.184,104.145.210[.]184,"Embassy Kit device-code phishing VPS (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,104.194.149.228,104.194.149[.]228,"Phishing VPS (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,104.194.151.133,104.194.151[.]133,"Primary C2 VPS (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,104.194.159.55,104.194.159[.]55,"C2 holding exfiltrated browser-data zips (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,144.172.114.192,144.172.114[.]192,"C2 proxy IP / operator VPS (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,148.135.195.111,148.135.195[.]111,"C2 Endpoint (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,149.54.42.106,149.54.42[.]106,"Operator/operational infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,185.198.234.101,185.198.234[.]101,"C2 server (role c2, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,185.198.234.26,185.198.234[.]26,"Operator/operational infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,2.26.53.194,2.26.53[.]194,"Operator/operational infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,213.145.86.112,213.145.86[.]112,"Operator/operational infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,31.57.243.154,31.57.243[.]154,"Phishing host (role phishing, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,38.146.28.132,38.146.28[.]132,"Actor rogue DNS resolver (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,ip,yes,38.146.28.75,38.146.28[.]75,"Notifier C2 for the phishing console (role infrastructure, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,hash,yes,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593,"Windows Backdoor (role malware, handling detect-or-block)"
+AIRT-CS-0018,2026-09-10,medium,hash,yes,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c,"Malware hash (role malware, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,https://t.me/Soraki_Bot,https[:]//t[.]me/Soraki_Bot,"Criminal storefront account on Telegram (role monetization, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,ari-chain.com,ari-chain[.]com,"Crypto Themed Phishing Domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,arichain.network,arichain[.]network,"Crypto Themed Phishing Domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,bitmart-mystery.com,bitmart-mystery[.]com,"Crypto Themed Phishing Domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,defi-claim.xyz,defi-claim[.]xyz,"Phishing Domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,emailsecure.email,emailsecure[.]email,"Actor email domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,mozilla.ws,mozilla[.]ws,"Mozilla brand-impersonation phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,on-pssword.com,on-pssword[.]com,"1Password typosquat phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,policenationale.cc,policenationale[.]cc,"A domain name impersonating the French national police (though we believe this served as branding for the criminal storefront rather than as a phishing lure) (role monetization, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,service-infos.info,service-infos[.]info,"Phishing email domain (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,signin-1psswoord.com,signin-1psswoord[.]com,"1Password phishing (role phishing, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,soraki.cc,soraki[.]cc,"AutoShop carding storefront (role monetization, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,soraki.work,soraki[.]work,"Actor infrastructure (role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,autoshop.policenationale.cc,autoshop.policenationale[.]cc,"Served as the web frontend for the actor's carding autoshop (role monetization, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,esvfecawvjmchjslqyemho2fiduc59wzn.oast.fun,esvfecawvjmchjslqyemho2fiduc59wzn.oast[.]fun,"Callback domain to confirm SSRF and out of band code execution (role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers.dev,soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers[.]dev,"Cloudflare Workers proxy (role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,domain,yes,updatebeacon.duckdns.org,updatebeacon.duckdns[.]org,"C2 callback domain (role c2, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,104.193.135.207,104.193.135[.]207,"Attacker egress IP (seen 2026-04-05 to 2026-04-05; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,104.36.50.54,104.36.50[.]54,"Attacker egress IP (seen 2026-04-24 to 2026-04-24; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,162.128.129.106,162.128.129[.]106,"Attacker egress IP (seen 2026-02-20 to 2026-03-10; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,176.177.12.62,176.177.12[.]62,"Attacker egress IP (seen 2026-04-19 to 2026-04-20; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,185.65.134.199,185.65.134[.]199,"Attacker egress IP (seen 2026-04-19 to 2026-04-28; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,185.65.134.246,185.65.134[.]246,"Attacker egress IP (seen 2026-04-19 to 2026-05-04; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,193.32.249.161,193.32.249[.]161,"Attacker egress IP (seen 2026-03-21 to 2026-04-18; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,193.32.249.164,193.32.249[.]164,"Attacker egress IP (seen 2026-04-18 to 2026-05-06; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,193.32.249.170,193.32.249[.]170,"Attacker egress IP (seen 2026-03-20 to 2026-04-06; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,195.178.110.131,195.178.110[.]131,"VPS Host (seen 2026-03-12 to 2026-04-30; role infrastructure, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,45.148.10.242,45.148.10[.]242,"Attacker egress IP (seen 2026-04-06 to 2026-04-27; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,91.171.138.169,91.171.138[.]169,"Attacker egress IP (seen 2026-04-19 to 2026-04-21; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,92.118.39.3,92.118.39[.]3,"Attacker egress IP (seen 2026-04-10 to 2026-04-19; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,2a01:e0a:2e2:aa40:b15d:5d28:6f4a:8d53,2a01:e0a:2e2:aa40:b15d:5d28:6f4a[:]8d53,"Attacker egress IP (seen 2026-04-20 to 2026-04-21; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,ip,yes,2a04:cec0:1185:34f2:a150:7081:caed:448e,2a04:cec0:1185:34f2:a150:7081:caed[:]448e,"Attacker egress IP (seen 2026-04-06 to 2026-04-07; role egress, handling hunt)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,8628746407,8628746407,"Telegram bot delivering AWS SES credential-validation results directly to the operator's user account (telegram bot id; role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,8632748474,8632748474,"Telegram bot that posted stolen data. (telegram bot id; role exfiltration, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,8664033117,8664033117,"Telegram bot that posted stolen data. (telegram bot id; role exfiltration, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,8709258476,8709258476,"Telegram bot delivering AWS SNS SMS-abuse test results directly to the operator's user account (telegram bot id; role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,-1003311614569,-1003311614569,"Telegram group 'ChatMignon' that received stolen data. (telegram chat id; role exfiltration, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,-1003893854338,-1003893854338,"Telegram group 'ClintonHog' that received stolen data. (telegram chat id; role exfiltration, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,account,yes,8179098353,8179098353,"Operator's Telegram account (telegram user id; role infrastructure, handling detect-or-block)"
+AIRT-CS-0019,2026-09-10,medium,url,yes,https://s3.eu-central-1.s4.mega.io/fuckyoubasil/,https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/,"Exfiltration URL (role exfiltration, handling detect-or-block)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,141.133.125.208,141.133.125[.]208,"Attacker egress IP (seen 2026-05-21 to 2026-05-23; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,146.103.101.253,146.103.101[.]253,"Attacker egress IP (seen 2026-05-21 to 2026-06-13; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,146.103.97.169,146.103.97[.]169,"Attacker egress IP (seen 2026-05-21 to 2026-05-25; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,167.250.111.136,167.250.111[.]136,"Attacker egress IP (seen 2026-05-23 to 2026-06-03; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,178.16.54.141,178.16.54[.]141,"Attacker egress IP (seen 2026-05-21 to 2026-06-16; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,194.163.183.216,194.163.183[.]216,"Attacker egress IP (seen 2026-05-23 to 2026-05-24; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,202.66.167.230,202.66.167[.]230,"Attacker egress IP (seen 2026-05-21 to 2026-06-04; role egress, handling hunt)"
+AIRT-CS-0020,2026-09-10,medium,ip,yes,37.27.103.22,37.27.103[.]22,"Attacker egress IP (seen 2026-05-26 to 2026-06-13; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,fafwatch.xyz,fafwatch[.]xyz,"Actor-registered doxing adjacent domain (seen 2026-04 to ?; role infrastructure, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,prod-artfkt.com,prod-artfkt[.]com,"Actor-registered operational domain (seen 2026-04 to ?; role infrastructure, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,frntrs-analytics-863060591218.europe-west1.run.app,frntrs-analytics-863060591218.europe-west1.run[.]app,"Cloud Run origin behind C2 domain (seen 2026-05-13 to 2026-06; role c2, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,frntrs-analytics.dedyn.io,frntrs-analytics.dedyn[.]io,"BeEF browser-C2 hostname (deSEC dynamic DNS, actor-held API token) (seen 2026-05-13 to 2026-06; role c2, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,103.124.165.199,103.124.165[.]199,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,103.141.60.144,103.141.60[.]144,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,103.216.220.19,103.216.220[.]19,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,136.144.242.56,136.144.242[.]56,"Staging & scan box used on EU political organizations (seen 2026-05-17 to 2026-05-21; role staging, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,138.199.6.208,138.199.6[.]208,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,138.199.60.29,138.199.60[.]29,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,139.59.2.243,139.59.2[.]243,"Key-validation box (DigitalOcean) (seen 2026-02-06 to 2026-06-12; role key_validation, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,146.70.116.131,146.70.116[.]131,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,149.22.83.6,149.22.83[.]6,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,158.173.46.118,158.173.46[.]118,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,163.172.157.53,163.172.157[.]53,"Persistent dedicated server, Scaleway FR used in late-phase operations (seen 2026-06-26 to 2026-07-04; role dedicated_server, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,34.156.199.132,34.156.199[.]132,"Exfiltration endpoints in hijacked GCP projects (seen 2026-04 to 2026-05; role exfiltration, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,34.156.95.176,34.156.95[.]176,"Exfiltration endpoints in hijacked GCP projects (seen 2026-04 to 2026-05; role exfiltration, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,2001:ac8:27:89::a02d,2001:ac8:27[:]89::a02d,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,2001:ac8:29:84::a01d,2001:ac8:29[:]84::a01d,"Commercial VPN/DC attack exits (Mullvad/M247/31173/Datacamp; AL/AT/AR/CH/BG/SK/DE) - primary-key ops window (seen 2026-03-25 to 2026-05-20; role egress, handling hunt)"
+AIRT-CS-0021,2026-09-10,medium,ip,yes,2001:bc8:711:5854:dc00:1ff:fe18:ba53,2001:bc8:711:5854:dc00:1ff:fe18[:]ba53,"Persistent dedicated server, Scaleway FR used in late-phase operations (seen 2026-06-26 to 2026-07-04; role dedicated_server, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd.onion,3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd[.]onion,"CRS credential-vault API (Tor onion service; seen 2026-05 to 2026-07; role infrastructure, handling detect-or-block)"
+AIRT-CS-0021,2026-09-10,medium,domain,yes,6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad.onion,6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad[.]onion,"Actor's Tor LLM-gateway (third-party model routing) (Tor onion service; seen 2026-06 to 2026-06; role infrastructure, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,aws-us-east-3.com,aws-us-east-3[.]com,"AWS lookalike domain (role infrastructure, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,awstore.cloud,awstore[.]cloud,"Fake Claude API reseller storefront (role monetization, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,holdboost.store,holdboost[.]store,"Malware platform domain (role c2, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,kiro.cheap,kiro[.]cheap,"Fake Kiro API reseller storefront (role monetization, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,sys-tools.cfd,sys-tools[.]cfd,"Malware C2 (role c2, handling detect-or-block)"
+AIRT-CS-0022,2026-09-10,medium,domain,yes,iymkjuzymkapovrntoxy.supabase.co,iymkjuzymkapovrntoxy.supabase[.]co,"Malware Supabase backend (role c2, handling detect-or-block)"
+AIRT-CS-0023,2026-10-30,high,package,yes,"anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace","anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace","The tampered builds, for Apple-silicon macOS and 64-bit Windows only. The same extension id from the Visual Studio Marketplace is not affected. The bundle inside the 2.1.313 package still reports 2.1.312, so match on file content and not on the version"
+AIRT-CS-0023,2026-10-30,high,hash,yes,fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364,fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364,"SHA-256 of the tampered VSIX package, 2.1.312 for darwin-arm64, as Cursor published it. A hash of the download, so it finds a cached or archived package and not an installed extension"
+AIRT-CS-0023,2026-10-30,high,hash,yes,3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081,3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081,"SHA-256 of the tampered VSIX package, 2.1.312 for win32-x64"
+AIRT-CS-0023,2026-10-30,high,hash,yes,80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c,80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c,"SHA-256 of the tampered VSIX package, 2.1.313 for darwin-arm64"
+AIRT-CS-0023,2026-10-30,high,hash,yes,6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731,6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731,"SHA-256 of the tampered VSIX package, 2.1.313 for win32-x64"
+AIRT-CS-0023,2026-10-30,high,ip,yes,134.209.82.225,134.209.82[.]225,Configured remote SSH and HTTP destination
+AIRT-CS-0023,2026-10-30,high,url,yes,http://134.209.82.225:8099/beacon,hxxp://134[.]209[.]82[.]225:8099/beacon,Host-profiling endpoint; correlate with the address above
+AIRT-CS-0023,2026-10-30,high,hash,yes,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15,"SHA-256 of the extension's JavaScript entry point, extension.js, 3,692,922 bytes. The same in all four tampered packages, which makes it the one hash to sweep installed extensions for"
+AIRT-CS-0023,2026-10-30,high,hash,yes,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278,SHA-256 of the decoded tunnel private-key file
+AIRT-CS-0023,2026-10-30,high,config,no,"Tunnel identity key, fingerprint SHA256:KOAU57+ZG6u3MG4WwzPzPX2O5YEe9qdOC1Bl+6MVyDQ, connecting as the remote account tunnel","Tunnel identity key, fingerprint SHA256:KOAU57+ZG6u3MG4WwzPzPX2O5YEe9qdOC1Bl+6MVyDQ, connecting as the remote account tunnel","The key the host used to open the reverse tunnel, distinct from the key added to authorized_keys. Useful where SSH client or server logs record the fingerprint"
+AIRT-CS-0023,2026-10-30,high,config,no,"authorized_keys entry with the comment svc-telemetry, fingerprint SHA256:0Z6R+DF64Do2nwQic8a7kkfDLNNk4IiK+2U2Rci4htk","authorized_keys entry with the comment svc-telemetry, fingerprint SHA256:0Z6R+DF64Do2nwQic8a7kkfDLNNk4IiK+2U2Rci4htk","The added key. Check ~/.ssh/authorized_keys, %USERPROFILE%\.ssh\authorized_keys and C:\ProgramData\ssh\administrators_authorized_keys, and verify the key material, not only the comment"
+AIRT-CS-0023,2026-10-30,high,pattern,no,.stk_[0-9a-f]{10},.stk_[0-9a-f]{10},"Hidden temporary file holding the tunnel identity, in the user's temporary directory. The suffix is derived from the host name and home path, so it is stable per host and differs between hosts"
+AIRT-CS-0023,2026-10-30,high,file,yes,~/Library/LaunchAgents/com.apple.sysmond.plist,~/Library/LaunchAgents/com.apple.sysmond.plist,macOS persistence; inspect its launch action
+AIRT-CS-0023,2026-10-30,high,file,yes,~/.config/.smt and ~/.config/.smtk,~/.config/.smt and ~/.config/.smtk,macOS and Linux tunnel script and key
+AIRT-CS-0023,2026-10-30,high,file,yes,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk,Windows tunnel script and key
+AIRT-CS-0023,2026-10-30,high,file,yes,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd,Windows fallback persistence
+AIRT-CS-0023,2026-10-30,high,config,no,Scheduled task named SysMon; user crontab @reboot entry,Scheduled task named SysMon; user crontab @reboot entry,Windows and Linux persistence for the tunnel. The names imitate monitoring components
+AIRT-CS-0023,2026-10-30,high,process,yes,ssh or autossh with -N -R '*:0:localhost:22',ssh or autossh with -N -R '*:0:localhost:22',The reverse tunnel. The identity-file path is redacted in the source
+AIRT-CS-0024,2026-10-16,medium,ip,yes,144.172.64.128,144.172.64[.]128,"Application sign-ins and Graph API activity in customer tenants. Named by the vendor on 16 October, and the only address one responder saw produce application sign-ins"
+AIRT-CS-0024,2026-10-16,medium,ip,yes,144.172.64.99,144.172.64[.]99,Listed by Microsoft for the same activity and as the source of the 10 to 14 October password spray. One responder saw it only in failed user sign-ins. The vendor added it on 18 October from downstream monitoring
+AIRT-CS-0024,2026-10-16,medium,ip,yes,144.172.64.60,144.172.64[.]60,"Listed by Microsoft for the same activity. One responder saw a few failed sign-ins from it on 18 October, after the identities were disabled"
+AIRT-CS-0024,2026-10-16,medium,ip,yes,144.172.94.243,144.172.94[.]243,"Broad failed password spraying, reported by one responder and not by Microsoft. A different /24 from the three above"
+AIRT-CS-0024,2026-10-16,medium,ip,yes,104.194.150.21,104.194.150[.]21,Published by a cloud security vendor for activity against other software vendors that overlaps this actor's addresses and tooling. Not reported in the customer-tenant sign-ins
+AIRT-CS-0024,2026-10-16,medium,ip,yes,167.88.172.97,167.88.172[.]97,As above
+AIRT-CS-0024,2026-10-16,medium,ip,yes,187.15.88.186,187.15.88[.]186,Graph API access through the compromised applications. A VPN address Microsoft calls transient and relevant only for 15 and 16 October
+AIRT-CS-0024,2026-10-16,medium,ip,yes,187.15.90.217,187.15.90[.]217,"As above; VPN address, 15 and 16 October only"
+AIRT-CS-0024,2026-10-16,medium,ip,yes,187.15.89.186,187.15.89[.]186,"As above; VPN address, 15 and 16 October only"
+AIRT-CS-0024,2026-10-16,medium,account,yes,506e08f9-6e9a-4da4-942b-a099a03644ae,506e08f9-6e9a-4da4-942b-a099a03644ae,"Application id of ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant"
+AIRT-CS-0024,2026-10-16,medium,account,yes,2399d300-6fca-4e6a-a686-399fefe75b83,2399d300-6fca-4e6a-a686-399fefe75b83,Application id of ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list
+AIRT-CS-0024,2026-10-16,medium,account,yes,24205314-2b89-4e07-a2a4-579e898a5640,24205314-2b89-4e07-a2a4-579e898a5640,Application id of ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others
+AIRT-CS-0024,2026-10-16,medium,account,yes,b78f6a77-d4e5-46fb-87e5-d1648bd02519,b78f6a77-d4e5-46fb-87e5-d1648bd02519,Application id of ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list
+AIRT-CS-0024,2026-10-16,medium,account,yes,0de14c77-b9b0-4137-9360-34878a929827,0de14c77-b9b0-4137-9360-34878a929827,Application id of ConnectWise Cloud Management - MS Graph
+AIRT-CS-0024,2026-10-16,medium,account,yes,412dcf96-176d-4b3a-a1b0-4981ad66971e,412dcf96-176d-4b3a-a1b0-4981ad66971e,Application id of ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list
+AIRT-CS-0024,2026-10-16,medium,account,yes,b2b55f5b-7758-4719-8d8f-88ae172e6bdb,b2b55f5b-7758-4719-8d8f-88ae172e6bdb,Application id of ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list
+AIRT-CS-0024,2026-10-16,medium,account,yes,c921256f-04a7-44e8-9b2a-69c33929ba19,c921256f-04a7-44e8-9b2a-69c33929ba19,"Application id named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised"
+AIRT-CS-0024,2026-10-16,medium,account,yes,3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,"Tenant id of the vendor's home tenant, as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids"
+AIRT-CS-0024,2026-10-16,medium,pattern,no,"User agents Python-urllib/3.12 and python-requests/2.31 on application sign-ins; Microsoft adds python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0","User agents Python-urllib/3.12 and python-requests/2.31 on application sign-ins; Microsoft adds python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0","The first two are the vendor's own findings. One responder did not see azure-toolkit/1.0 at all. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone"
+AIRT-CS-0024,2026-10-16,medium,pattern,no,User agent norma/0.4,User agent norma/0.4,"Seen by a cloud security vendor in the overlapping activity against other software vendors, in a list it warns is otherwise noisy. The one string in that list with no ordinary sender"
+AIRT-CS-0024,2026-10-16,medium,pattern,no,The applications' normal sign-ins present a kiota-dotnet user agent from private Azure IPv6 addresses,The applications' normal sign-ins present a kiota-dotnet user agent from private Azure IPv6 addresses,The baseline the vendor published. A sign-in for one of these applications from a public address with a Python client is outside it
+AIRT-CS-0024,2026-10-16,medium,behavior,no,"One application signing in to many tenants in ascending order of tenant id, one to six minutes apart","One application signing in to many tenants in ascending order of tenant id, one to six minutes apart",Reported by a provider with sight of many customer tenants. A single tenant sees one sign-in; the ordering is visible only across tenants
+AIRT-CS-0024,2026-10-16,medium,behavior,no,"An application adding a credential to itself or to another application, or being added to a directory role, with an application as the initiator","An application adding a credential to itself or to another application, or being added to a directory role, with an application as the initiator","The persistence and privilege steps reported after a successful sign-in. In the audit log these are the operations the vendor lists - credential and secret management on an application, added service principal credentials, added owners, role members, app role assignments, delegated permission grants and consent"
+AIRT-CS-0024,2026-10-16,medium,behavior,no,One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults,One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults,"The shape of the bulk secret reads, as Microsoft's hunting guidance frames it"
+AIRT-CS-0025,2026-11-03,medium,ip,yes,199.19.77.84,199.19.77[.]84,"Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026. One provider attributes it to the operator with high confidence and counts 412 sign-in attempts from it between 1 and 3 November"
+AIRT-CS-0025,2026-11-03,medium,ip,yes,199.19.77.18,199.19.77[.]18,"A Tor exit node by Microsoft's account, which warns it may carry unrelated activity. One provider reports password spraying through the Azure command-line client from it. Use to pivot, not to conclude"
+AIRT-CS-0025,2026-11-03,medium,ip,yes,65.87.223.26,65.87.223[.]26,"Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent, by Microsoft's account, and Azure command-line password spraying by one provider's. Both sources hold the link to the campaign loosely"
+AIRT-CS-0025,2026-11-03,medium,ip,yes,157.22.126.128,157.22.126[.]128,Reconnaissance against AI workloads the victims run on Azure AI services
+AIRT-CS-0025,2026-11-03,medium,pattern,no,Network 199.19.77.0/24,Network 199.19.77.0/24,"The range the first two addresses sit in, published by one provider. A range on a hosting network, so it widens a hunt and identifies nothing"
+AIRT-CS-0025,2026-11-03,medium,pattern,no,User agents task177-f2267/1.0 and sait-tenant-deep/37346,User agents task177-f2267/1.0 and sait-tenant-deep/37346,"Published by one provider as unique to this operator. Unlike the Python and curl strings in the related case, nothing legitimate is known to send these"
+AIRT-CS-0025,2026-11-03,medium,behavior,no,Password-grant sign-ins through the Azure command-line client (application id 04b07795-8ddb-461a-bbee-02f9e1bf7b46) from the addresses above,Password-grant sign-ins through the Azure command-line client (application id 04b07795-8ddb-461a-bbee-02f9e1bf7b46) from the addresses above,"That id is Microsoft's own client and every tenant sees it daily. The indicator is the password grant from these addresses, never the application id alone"
+AIRT-CS-0025,2026-11-03,medium,behavior,no,"Application sign-in failures with error AADSTS7000215 or AADSTS7000222, then a success for the same application","Application sign-in failures with error AADSTS7000215 or AADSTS7000222, then a success for the same application",An invalid or expired client secret means somebody holds a credential for the application. A failure followed by a success is the urgent case
+AIRT-CS-0025,2026-11-03,medium,behavior,no,"One address authenticating to three or more service principals with mixed success, or one application requesting tokens for Resource Manager, Key Vault, Storage and Graph in a short window","One address authenticating to three or more service principals with mixed success, or one application requesting tokens for Resource Manager, Key Vault, Storage and Graph in a short window",The breadth pattern the post tells defenders to hunt for
+AIRT-CS-0025,2026-11-03,medium,behavior,no,A management-plane request that fails with HTTP 400 and succeeds within 30 to 80 seconds against a different API version or with corrected parameters,A management-plane request that fails with HTTP 400 and succeeds within 30 to 80 seconds against a different API version or with corrected parameters,"Reported for Key Vault, Azure SQL firewall and Application Insights calls. A script repeats the same failing call; this corrects itself"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,199.19.95.66,199.19.95[.]66,"WISP command-and-control node, first seen 2 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,199.19.95.67,199.19.95[.]67,"WISP command-and-control node, first seen 2 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,199.19.95.68,199.19.95[.]68,"WISP command-and-control node, first seen 2 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,91.92.240.238,91.92.240[.]238,"ARTEX server, first seen 4 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,85.11.168.45,85.11.168[.]45,"ARTEX server, first seen 4 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,85.11.167.52,85.11.167[.]52,"Command-and-control server, first seen 4 Nov 2026"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,178.16.54.129,178.16.54[.]129,"ARTEX server, first seen 19 Oct 2026, as the indicator table prints it. The post's hunting query prints 178.15.54[.]129 for the same row"
+AIRT-CS-0026,2026-11-06,medium,ip,yes,178.15.54.129,178.15.54[.]129,The same row as the post's hunting query prints it. One of the two is a typographical error in the source; search for both
+AIRT-CS-0026,2026-11-06,medium,ip,yes,31.77.229.35,31.77.229[.]35,"ARTEX server, first seen 28 Oct 2026"
+AIRT-CS-0026,2026-11-06,medium,pattern,no,"Files named artex-probe- followed by a five-digit number, with various extensions","Files named artex-probe- followed by a five-digit number, with various extensions","A default artefact of the framework, reported by an incident response team in an intrusion by a different user of it. Not reported for this actor, and an operator can change it"
+AIRT-CS-0026,2026-11-06,medium,pattern,no,"Accounts created with ArtexProbe in the name, and web shells with short incrementing names of the form cl1217.jsp, f1219a.jsp, z1219.jsp","Accounts created with ArtexProbe in the name, and web shells with short incrementing names of the form cl1217.jsp, f1219a.jsp, z1219.jsp","As above. The framework numbers what it creates, so one find points to its neighbours"
+AIRT-CS-0026,2026-11-06,medium,malware,no,WISP,WISP,"Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash"
+AIRT-CS-0026,2026-11-06,medium,malware,no,vshell,vshell,As above
+AIRT-CS-0026,2026-11-06,medium,malware,no,AdaptixC2,AdaptixC2,As above
+AIRT-CS-0026,2026-11-06,medium,behavior,no,A web server or application process running netcat or curl to fetch a file from an address it has not contacted before,A web server or application process running netcat or curl to fetch a file from an address it has not contacted before,"How the remote-access tools arrived. The post's own hunt baselines curl targets over a week and reports new ones, and notes curl has legitimate uses"
+AIRT-CS-0026,2026-11-06,medium,behavior,no,"Many varied requests to one internet-facing application in a short time, with failures retried or abandoned at machine tempo, from Nmap, curl, wget, Python or headless Chromium user agents","Many varied requests to one internet-facing application in a short time, with failures retried or abandoned at machine tempo, from Nmap, curl, wget, Python or headless Chromium user agents","The scanning signature the post attributes to agentic tooling. Operators change user agents readily, so it identifies and does not block"

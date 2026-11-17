@@ -1,0 +1,15 @@
+# AIRT-CS-0006 - PROMPTFLUX - Malware That Asks an LLM to Rewrite Itself
+# Disclosed 2025-11-05; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0006.yml
+
+# directory
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
+
+# domain
+generativelanguage.googleapis.com
+
+# file
+%TEMP%\thinking_robot_log.txt

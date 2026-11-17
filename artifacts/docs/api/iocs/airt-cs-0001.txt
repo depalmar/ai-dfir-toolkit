@@ -1,0 +1,21 @@
+# AIRT-CS-0001 - GPT Pilot core/telemetry Supply-Chain Credential Stealer
+# Disclosed 2026-06-08; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0001.yml
+
+# binary
+bun
+
+# commit
+065ee8eb
+
+# directory
+rt-*
+
+# file
+core/telemetry/_runtime.bin
+core/telemetry/_hooks.py
+core/telemetry/.loader.lock
+core/telemetry/__init__.py

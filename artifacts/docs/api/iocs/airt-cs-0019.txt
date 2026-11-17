@@ -1,0 +1,54 @@
+# AIRT-CS-0019 - GTG-50014 - ShinyHunters Affiliates Vibe-Hacking SaaS Estates
+# Disclosed 2026-09-10; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0019.yml
+
+# account
+https://t.me/Soraki_Bot
+8628746407
+8632748474
+8664033117
+8709258476
+-1003311614569
+-1003893854338
+8179098353
+
+# domain
+ari-chain.com
+arichain.network
+bitmart-mystery.com
+defi-claim.xyz
+emailsecure.email
+mozilla.ws
+on-pssword.com
+policenationale.cc
+service-infos.info
+signin-1psswoord.com
+soraki.cc
+soraki.work
+autoshop.policenationale.cc
+esvfecawvjmchjslqyemho2fiduc59wzn.oast.fun
+soraki-proxy.20245aad98d27b1b1a2f0f103e1d7ee0.workers.dev
+updatebeacon.duckdns.org
+
+# ip
+104.193.135.207
+104.36.50.54
+162.128.129.106
+176.177.12.62
+185.65.134.199
+185.65.134.246
+193.32.249.161
+193.32.249.164
+193.32.249.170
+195.178.110.131
+45.148.10.242
+91.171.138.169
+92.118.39.3
+2a01:e0a:2e2:aa40:b15d:5d28:6f4a:8d53
+2a04:cec0:1185:34f2:a150:7081:caed:448e
+
+# url
+https://s3.eu-central-1.s4.mega.io/fuckyoubasil/

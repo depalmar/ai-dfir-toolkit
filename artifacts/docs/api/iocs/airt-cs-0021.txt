@@ -1,0 +1,32 @@
+# AIRT-CS-0021 - GTG-50029 - A Single Hacktivist Against European Political Targets
+# Disclosed 2026-09-10; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0021.yml
+
+# domain
+fafwatch.xyz
+prod-artfkt.com
+frntrs-analytics-863060591218.europe-west1.run.app
+frntrs-analytics.dedyn.io
+3ell6n47y3ct4a3x67fbuz62q2mk2l4vo6eacho2suzftdshsnrfopyd.onion
+6mshbvhvzhdgumwwazf4jcep2xx4kdk6n4wgffc46msu2gc3j3t2fpad.onion
+
+# ip
+103.124.165.199
+103.141.60.144
+103.216.220.19
+136.144.242.56
+138.199.6.208
+138.199.60.29
+139.59.2.243
+146.70.116.131
+149.22.83.6
+158.173.46.118
+163.172.157.53
+34.156.199.132
+34.156.95.176
+2001:ac8:27:89::a02d
+2001:ac8:29:84::a01d
+2001:bc8:711:5854:dc00:1ff:fe18:ba53

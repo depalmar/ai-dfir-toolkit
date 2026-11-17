@@ -1,0 +1,12 @@
+# AIRT-CS-0015 - s1ngularity - A Supply-Chain Payload That Used the Victim's Own AI CLIs
+# Disclosed 2025-08-26; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0015.yml
+
+# file
+/tmp/inventory.txt
+
+# package
+nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0

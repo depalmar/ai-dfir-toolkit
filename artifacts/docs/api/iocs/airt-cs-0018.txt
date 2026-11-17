@@ -1,0 +1,71 @@
+# AIRT-CS-0018 - GTG-20006 - Russian State-Nexus Espionage Run Through AI Workflows
+# Disclosed 2026-09-10; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0018.yml
+
+# domain
+ad-g.org
+cdncounter.net
+chamber-ua.org
+chathamhouse.eu
+docs-viewer.org
+itechx.tel
+m365-owa.com
+meridian-protocol.org
+meridiangroup-corp.com
+metricwave.org
+mgsend.org
+ms365-device.com
+ms365-live.com
+my-invite.org
+mygreatmarket.com
+mygreatmarket.org
+owa-ms365.com
+projectnightcrawler.dev
+russianearabroad.com
+russianearabroad.org
+static-ms.live
+statistic-ms.live
+stuseamandesilt.org
+ukrinform-share.net
+wa-connect.eu
+wa-meeting.com
+api.stuseamandesilt.org
+cdn.stuseamandesilt.org
+mslivetest.duckdns.org
+pdfviewer2024.b-cdn.net
+static.cdncounter.net
+teams.ms365-live.com
+update.stuseamandesilt.org
+
+# email
+anna.manager@russianearabroad.net
+events@embassy-protocol.int
+
+# file
+WUEngine.exe
+client_20260507093021_4286d211_x64.exe
+fix_network.apk
+msedgeupdate_v3.exe
+
+# hash
+918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593
+be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c
+
+# ip
+104.145.210.184
+104.194.149.228
+104.194.151.133
+104.194.159.55
+144.172.114.192
+148.135.195.111
+149.54.42.106
+185.198.234.101
+185.198.234.26
+2.26.53.194
+213.145.86.112
+31.57.243.154
+38.146.28.132
+38.146.28.75

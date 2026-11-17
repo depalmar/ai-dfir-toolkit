@@ -327,20 +327,20 @@ maltego.Phrase,group:G1044,attack-group,G1044 APT42
 maltego.Phrase,group:G1057,attack-group,G1057 ShinyHunters
 maltego.Phrase,-1003311614569,ioc,-1003311614569
 maltego.Phrase,-1003893854338,ioc,-1003893854338
+maltego.Phrase,0de14c77-b9b0-4137-9360-34878a929827,ioc,0de14c77-b9b0-4137-9360-34878a929827
+maltego.Phrase,2399d300-6fca-4e6a-a686-399fefe75b83,ioc,2399d300-6fca-4e6a-a686-399fefe75b83
+maltego.Phrase,24205314-2b89-4e07-a2a4-579e898a5640,ioc,24205314-2b89-4e07-a2a4-579e898a5640
+maltego.Phrase,3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,ioc,3f9cd7a0-127a-4ed4-bf06-2f830d5616b7
+maltego.Phrase,412dcf96-176d-4b3a-a1b0-4981ad66971e,ioc,412dcf96-176d-4b3a-a1b0-4981ad66971e
+maltego.Phrase,506e08f9-6e9a-4da4-942b-a099a03644ae,ioc,506e08f9-6e9a-4da4-942b-a099a03644ae
 maltego.Phrase,8179098353,ioc,8179098353
 maltego.Phrase,8628746407,ioc,8628746407
 maltego.Phrase,8632748474,ioc,8632748474
 maltego.Phrase,8664033117,ioc,8664033117
 maltego.Phrase,8709258476,ioc,8709258476
-maltego.Phrase,Application id 0de14c77-b9b0-4137-9360-34878a929827,ioc,Application id 0de14c77-b9b0-4137-9360-34878a929827
-maltego.Phrase,Application id 2399d300-6fca-4e6a-a686-399fefe75b83,ioc,Application id 2399d300-6fca-4e6a-a686-399fefe75b83
-maltego.Phrase,Application id 24205314-2b89-4e07-a2a4-579e898a5640,ioc,Application id 24205314-2b89-4e07-a2a4-579e898a5640
-maltego.Phrase,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e,ioc,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e
-maltego.Phrase,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae,ioc,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae
-maltego.Phrase,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb,ioc,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb
-maltego.Phrase,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519,ioc,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519
-maltego.Phrase,Application id c921256f-04a7-44e8-9b2a-69c33929ba19,ioc,Application id c921256f-04a7-44e8-9b2a-69c33929ba19
-maltego.Phrase,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,ioc,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7
+maltego.Phrase,b2b55f5b-7758-4719-8d8f-88ae172e6bdb,ioc,b2b55f5b-7758-4719-8d8f-88ae172e6bdb
+maltego.Phrase,b78f6a77-d4e5-46fb-87e5-d1648bd02519,ioc,b78f6a77-d4e5-46fb-87e5-d1648bd02519
+maltego.Phrase,c921256f-04a7-44e8-9b2a-69c33929ba19,ioc,c921256f-04a7-44e8-9b2a-69c33929ba19
 maltego.Phrase,https://t.me/Soraki_Bot,ioc,https[:]//t[.]me/Soraki_Bot
 maltego.Phrase,phanpak,ioc,phanpak
 maltego.Phrase,bun,ioc,bun

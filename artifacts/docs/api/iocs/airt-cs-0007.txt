@@ -1,0 +1,12 @@
+# AIRT-CS-0007 - PROMPTSTEAL / LAMEHUG - An LLM Writing Collection Commands at Runtime
+# Disclosed 2025-07-17; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0007.yml
+
+# domain
+api-inference.huggingface.co
+
+# file
+Додаток.pdf.zip
