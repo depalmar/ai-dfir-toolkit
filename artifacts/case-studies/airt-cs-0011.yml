@@ -6,11 +6,25 @@ title: "AI Recommendation Poisoning - Memory Manipulation for Profit"
 date_range: Dec 2025 to Feb 2026 (observation window)
 disclosed: "2026-02-10"
 affects: Assistant memory stores - no catalogued endpoint tool
-confidence: high
+confidence: medium
 basis: >-
-  Vendor security research published by Microsoft's Defender Security Research team
-  with counts, an observation window and an ATLAS technique mapping, and picked up
-  independently in trade press.
+  One reporting party for what was measured. Microsoft's Defender Security
+  Research team published the counts and the observation window; the trade
+  press repeats them and the ATLAS case study cites the Microsoft post alone,
+  so neither is a second observation. This entry was rated high until
+  November 2026 on the strength of that coverage and should not have been.
+  What is independently documented is narrower: the technique and ready-made
+  tooling for it were published by the tools' own authors from mid-2025, seven
+  months before Microsoft's report, including a package that tells site owners
+  to ask the assistant to remember their brand. That shows the mechanism is
+  real and deployed. It does not show that any assistant stored a memory, and
+  Microsoft notes that some behaviours it had seen could no longer be
+  reproduced.
+contested: >-
+  The source disagrees with itself on the count. Its introduction gives over
+  50 unique prompts from 31 companies across 14 industries, and its scope
+  section gives 50 distinct examples from 31 companies across more than a
+  dozen industries. Treat the figures as approximate.
 atlas:
   - AML.T0080
 summary: >-
@@ -55,6 +69,9 @@ detections:
 references:
   - title: "Microsoft Security Blog - Manipulating AI memory for profit: The rise of AI Recommendation Poisoning"
     url: https://www.microsoft.com/en-us/security/blog/2026/02/10/ai-recommendation-poisoning/
+  - title: "npm - citemet package, the share-button generator named in the ATLAS case study"
+    url: https://www.npmjs.com/package/citemet
+    accessed: "2026-11-17"
   - title: "Help Net Security - That summarize with AI button might be manipulating you"
     url: https://www.helpnetsecurity.com/2026/02/11/ai-recommendation-memory-poisoning-attacks/
   - title: "The Hacker News - Microsoft Finds Summarize with AI Prompts Manipulating Chatbot Recommendations"

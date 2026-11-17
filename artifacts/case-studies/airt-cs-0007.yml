@@ -94,3 +94,6 @@ victims:
   countries:
     - UA
   basis: CERT-UA and GTIG both describe targeting of Ukraine's security and defence sector.
+external_ids:
+  atlas_case_study:
+    - AML.CS0044

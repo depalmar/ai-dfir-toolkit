@@ -8,7 +8,13 @@ disclosed: "2026-11-06"
 affects: Internet-facing web applications of the targeted organisations - no catalogued endpoint tool
 confidence: medium
 basis: >-
-  One reporting party, read from the page itself, and a short account. The
+  One reporting party for the actor and the intrusions, read from the page
+  itself, and a short account. No second party has reported on Storm-3358 from
+  its own data: an FBI FLASH of 13 November reprints these indicators and
+  credits them to Microsoft, which is distribution and not corroboration.
+  Other parties do report on the framework, from operator consoles and from
+  intrusions by other users of it, and the framework artefacts listed below
+  come from those reports and were not observed for this actor. The
   post gives no victim count, no outcome, no vulnerability identifier and no
   host artifact for any of the three remote-access tools it names. It names
   no model and says only that some published addresses are ARTEX servers. Its
@@ -22,7 +28,13 @@ contested: >-
   178.15.54[.]129. Nothing in the post says which is right, so both are
   recorded here and neither should be dropped from a search. The post does
   not say whether Storm-3358 is connected to Storm-0940, the other actor
-  Microsoft reports using the same framework.
+  Microsoft reports using the same framework. The FBI FLASH carries the table's
+  form of the address, which shows which line it copied and settles nothing.
+  A research team that read exposed operator consoles of the framework found
+  criminal operators prompting it for theft with no reported success in the
+  campaigns it examined, including findings the agents invented, so a
+  framework server in the logs is evidence of an attempt and the outcome has
+  to be established on the victim's own systems.
 atlas:
   - AML.T0116
   - AML.T0124
@@ -86,6 +98,12 @@ iocs:
   - type: ip
     value: 31.77.229[.]35
     description: ARTEX server, first seen 28 Oct 2026
+  - type: pattern
+    value: "Files named artex-probe- followed by a five-digit number, with various extensions"
+    description: A default artefact of the framework, reported by an incident response team in an intrusion by a different user of it. Not reported for this actor, and an operator can change it
+  - type: pattern
+    value: Accounts created with ArtexProbe in the name, and web shells with short incrementing names of the form cl1217.jsp, f1219a.jsp, z1219.jsp
+    description: As above. The framework numbers what it creates, so one find points to its neighbours
   - type: malware
     value: WISP
     description: Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash
@@ -116,11 +134,24 @@ lesson: >-
   exploited web application and a conventional remote-access tool, so the
   catalog has no row and the investigation is an ordinary web server
   compromise run faster. The published indicators are all network addresses
-  with a short life, and one of them is printed two ways in the source.
-detections: []
+  with a short life, and one of them is printed two ways in the source. The
+  one rule linked here matches a default file name the framework leaves, taken
+  from another party's intrusion report, which makes it a tripwire for a
+  careless operator and nothing more.
+detections:
+  - artex_default_probe_file_created.yml
 references:
   - title: "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)"
     url: https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/
+    accessed: "2026-11-17"
+  - title: "FBI - FLASH: Threat Overview of ARTEX Autonomous Penetration Testing Framework (13 Nov 2026)"
+    url: https://www.ic3.gov/CSA/2026/261113.pdf
+    accessed: "2026-11-17"
+  - title: "Check Point Research - Hacking on Autopilot: Inside ARTEX Cybercrime Campaigns (5 Nov 2026)"
+    url: https://research.checkpoint.com/2026/hacking-on-autopilot-inside-artex-cybercrime-campaigns/
+    accessed: "2026-11-17"
+  - title: "GTIG - ARTEX and Friends: Enter Agentic Offensive Frameworks (30 Oct 2026)"
+    url: https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks
     accessed: "2026-11-17"
 external_ids:
   vendor_cluster:

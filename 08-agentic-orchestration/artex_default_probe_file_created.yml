@@ -1,0 +1,41 @@
+title: ARTEX Framework Default Probe File Created
+name: artex_default_probe_file_created
+id: bcf10343-2a55-4f49-9626-29c29e590567
+status: experimental
+description: |
+    Detects a file whose name begins with artex-probe-, the default name the ARTEX agentic
+    penetration-testing framework gives the files it writes while testing what access it has. An
+    incident response team reported files of several extension types named artex-probe- and a five-digit,
+    roughly incrementing number in one intrusion, and noted the same numbering in the accounts and web
+    shells the framework created. The framework is open source and was published as a testing tool, so on
+    a system nobody engaged a tester for, the name means an operator pointed it there.
+    This is a tripwire and nothing more. An operator who edits one string defeats it, the name was
+    reported from one intrusion, and no report says every run writes such a file. Absence proves nothing.
+    The agent ran on the operator's server. This rule finds what it left on the target.
+    Not fired against real events.
+references:
+    - https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks
+    - https://www.ic3.gov/CSA/2026/261113.pdf
+    - https://atlas.mitre.org/techniques/AML.T0116
+author: Raymond DePalma (@depalmar)
+date: 2026-11-17
+tags:
+    - attack.discovery
+    - attack.persistence
+    - attack.t1505.003      # Server Software Component: Web Shell
+    - atlas.aml-t0116
+logsource:
+    category: file_event
+detection:
+    selection:
+        TargetFilename|contains:
+            - '/artex-probe-'
+            - '\artex-probe-'
+    condition: selection
+fields:
+    - TargetFilename
+    - Image
+    - User
+falsepositives:
+    - An authorised penetration test that uses the framework. Confirm against the engagement record before closing.
+level: high

@@ -334,7 +334,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 ## Current state
 
 52 entries, 667 artifacts, 173 credential locations, 72 MCP config
-locations, 14 endpoint Sigma rules, 26 case studies, 26 telemetry sources.
+locations, 15 endpoint Sigma rules, 26 case studies, 26 telemetry sources.
 Validation clean.
 
 Volatility across the 667 site rows: live 117 · rotating 57 · stable 493
@@ -348,16 +348,29 @@ IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
 names a different category here than it did there -
 `scripts/remap_owasp_2026.py` holds the mapping table and the reasoning.
 
-Detection content totals 72 rule files / 167 signatures across the nine attack-class
-directories plus `artifacts/detections/` (14 endpoint Sigma rules), all indexed in
+Detection content totals 76 rule files / 171 signatures across the nine attack-class
+directories plus `artifacts/detections/` (15 endpoint Sigma rules), all indexed in
 `MAPPINGS.md`. Every rule carries an OWASP Agentic (ASI01-ASI10) value, or a dash.
 Those values are this project's assessment, because OWASP maps no detection
 content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.1, CISA KEV 2026.11.17,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
-Threat intel: 22 actor profiles, 26 case studies (267 indicators, 195 atomic),
-34 ATLAS techniques observed. 16 have a rule, 13 are off-host by nature, and the
-detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
+Threat intel: 22 actor profiles, 26 case studies (316 indicators, 233 atomic),
+39 ATLAS techniques observed. 18 have a rule, 13 are off-host by nature, and the
+detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest. Case
+confidence: 12 high, 14 medium.
+
+The case studies were audited against their sources on 2026-11-17. The pattern
+it found is worth keeping in mind for every new case: "corroborated in trade
+press" is not corroboration, a MITRE case study or an FBI FLASH that cites one
+vendor post is that post again, and a second party agreeing with an attribution
+is not a second observation of it. Count parties who wrote from their own data.
+AIRT-CS-0024 is the worked example - four parties confirm the intrusion, one
+asserts the AI agent, and the responders say in terms that they cannot confirm
+it. Still single-source after the audit: AIRT-CS-0012, 0016 to 0022 and 0026.
+The KEV pin could not be refreshed from this runner (cisa.gov is blocked), so a
+Ray CVE added to KEV in August 2026 is described in AIRT-CS-0014 without its id;
+cite it once the weekly refresh can pin it.
 
 Confidence: 29 high, 19 medium, 4 low.
 Provenance: 52/52 entries carry a reference. AIRT-0034 was the last holdout and

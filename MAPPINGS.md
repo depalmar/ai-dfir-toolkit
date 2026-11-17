@@ -4,7 +4,7 @@ Per-rule mapping of detection content to MITRE ATLAS techniques, OWASP Top 10 fo
 
 All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SIEM query language using [pySigma](https://github.com/SigmaHQ/pySigma) backends.
 
-**Scope:** 72 rule files / 167 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
+**Scope:** 76 rule files / 171 individual signatures. Tables below are indexed by **rule file**; the ATLAS / OWASP counts at the bottom reflect per-file coverage (one rule file often tags multiple techniques and OWASP categories).
 
 ---
 
@@ -116,13 +116,20 @@ ratio of agent actions to human decisions.
 | `ai_service_api_c2.rules` | Suricata | T0096, T0086 | LLM03 | — | SesameOp / agent-as-C2 egress |
 | `entra_app_signin_invalid_or_expired_secret.yml` | Sigma | T0055, T0012 | — | — | ARTEX exposed-secret abuse, Microsoft Nov 2026 (AIRT-CS-0025) |
 | `entra_app_signin_scripted_client.yml` | Sigma | T0012 | — | — | Storm-0940 / ARTEX, Microsoft Oct 2026 (AIRT-CS-0024) |
+| `entra_role_member_added_by_app.yml` | Sigma | T0012 | — | — | Vendor application compromise, Oct 2026: an application assigning a directory role (AIRT-CS-0024) |
+| `entra_app_credential_added_by_app.yml` | Sigma | T0012 | — | — | Credential added to an application by an application, the persistence step in both ARTEX identity cases (AIRT-CS-0024, AIRT-CS-0025) |
+| `artex_default_probe_file_created.yml` | Sigma | T0116 | — | — | ARTEX default file name, GTIG Oct 2026 (AIRT-CS-0026) |
 
 GTG-1002 is vendor-disclosed with no public IOCs, so these are behavioural rather
 than signature-based. `agentic_orchestration_behavior.yml` is threshold-driven and
 must be baselined before alerting - see the category README. The two Entra
 sign-in rules read the victim tenant's identity log, because in the ARTEX cases
 the agent ran on the actor's side and that log is all the victim holds;
-`entra_app_signin_scripted_client.yml` is a hunt, not an alert.
+`entra_app_signin_scripted_client.yml` is a hunt, not an alert. The two audit-log
+rules match what an application did after it signed in, and
+`artex_default_probe_file_created.yml` is a tripwire on one default file name that
+an operator can change. None of the four newest rules here has been fired against
+real events.
 
 ## 09 — Agent Memory Forensics & Context Poisoning
 
@@ -161,6 +168,7 @@ to a single attack class, so they apply across every tool in the catalog.
 | `ai_model_file_written_to_endpoint.yml` | Sigma | T0010.003 | LLM04 | ASI04 | — |
 | `ai_cli_permission_bypass_invocation.yml` | Sigma | T0053, T0098 | LLM03 | ASI05, ASI02 | s1ngularity / Nx GHSA-cxm3-wv7p-598c (AIRT-CS-0015) |
 | `ai_agent_hook_config_modification.yml` | Sigma | T0081 | LLM03 | ASI04, ASI05 | GTIG Sep 2026, MIDNIGHT NEPTUNE (AIRT-CS-0017); Claude Code, Cursor, Devin CLI and Antigravity hook files |
+| `reverse_ssh_tunnel_exposing_local_sshd.yml` | Sigma | T0010.001 | LLM04 | ASI04 | Tampered AI coding extension in an editor marketplace, Oct 2026 (AIRT-CS-0023) |
 
 Also in this set: `artifacts/detections/osquery/ai-agent-artifacts.conf` — a
 six-query osquery pack for fleet inventory (running agents, listeners, MCP
@@ -177,10 +185,11 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | ATLAS ID | Title | Tactic | Rule count |
 |----------|-------|--------|------------|
 | T0010    | Supply Chain Compromise | Initial Access | 9 |
+| T0010.001 | Supply Chain Compromise: Software | Initial Access | 1 |
 | T0010.002 | Supply Chain Compromise: Data Repository | Initial Access | 3 |
 | T0010.003 | Supply Chain Compromise: Model Repository | Initial Access | 3 |
 | T0011    | User Execution | Execution | 13 |
-| T0012    | Valid Accounts | Initial Access, Privilege Escalation, Lateral Movement | 2 |
+| T0012    | Valid Accounts | Initial Access, Privilege Escalation, Lateral Movement | 4 |
 | T0018    | Manipulate AI Model | AI Attack Adaptation, Persistence | 5 |
 | T0020    | Training Data Poisoning | Persistence | 3 |
 | T0024    | Exfiltration via AI Inference API | Exfiltration | 8 |
@@ -201,6 +210,7 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | T0098    | AI Agent Tool Credential Harvesting | Credential Access | 1 |
 | T0110    | AI Agent Tool Poisoning | Persistence | 3 |
 | T0115.002 | Publish Poisoned AI Artifacts: AI Agent Tools | Resource Development | 1 |
+| T0116    | Autonomous Reconnaissance | Reconnaissance | 1 |
 
 ## OWASP Top 10 for LLM Applications 2026 Index
 
@@ -215,7 +225,7 @@ visible rather than merely absent.
 | LLM01    | Prompt Injection | 12 | LLM01 |
 | LLM02    | Sensitive Information Disclosure | 16 | LLM02 |
 | LLM03    | Excessive Agency | 24 | LLM06 |
-| LLM04    | Supply Chain | 12 | LLM03 |
+| LLM04    | Supply Chain | 13 | LLM03 |
 | LLM05    | Data and Model Poisoning | 0 | LLM04 |
 | LLM06    | Unbounded Consumption | 6 | LLM10 |
 | LLM07    | Misinformation | 0 | LLM09 |
@@ -240,7 +250,7 @@ map, which cites the 2025 list, translated to 2026 IDs through
 | ASI01 | Agent Goal Hijack | 10 | LLM01, LLM03 |
 | ASI02 | Tool Misuse and Exploitation | 6 | LLM03 |
 | ASI03 | Identity and Privilege Abuse | 6 | LLM01, LLM02, LLM03 |
-| ASI04 | Agentic Supply Chain Vulnerabilities | 16 | LLM04 |
+| ASI04 | Agentic Supply Chain Vulnerabilities | 17 | LLM04 |
 | ASI05 | Unexpected Code Execution | 11 | LLM01, LLM10 |
 | ASI06 | Memory and Context Poisoning | 5 | LLM01, LLM05, LLM09 |
 | ASI07 | Insecure Inter-Agent Communication | 0 | LLM02, LLM03 |

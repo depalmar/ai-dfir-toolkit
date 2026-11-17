@@ -3,18 +3,31 @@
 
 id: AIRT-CS-0025
 title: "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application"
-date_range: Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026
-disclosed: "2026-11-05"
+date_range: Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026, still under way on 3 Nov 2026
+disclosed: "2026-11-03"
 affects: Application secrets and AI service keys exposed in public repositories, and the Entra ID and Azure resources they unlock - no catalogued endpoint tool
 confidence: medium
 basis: >-
-  One reporting party, read from the page itself. Microsoft attributes the
-  activity to no one: it calls the network indicators unattributed and two of
-  the addresses only "potentially associated" with the campaign, and one of
-  the four is a Tor exit node. The post gives no victim count, sector or
-  country, names no model and does not say where the framework ran. It
-  credits one other vendor with reporting a similar campaign from the same
-  addresses; that report was not read for this entry.
+  Two parties writing from their own data, both read from the page. A managed
+  security provider published the campaign on 3 November from what it saw in
+  its customers' tenants, and Microsoft's post two days later credits that
+  report and adds the repository searches and the framework. The intrusion,
+  its scale and the data taken are the provider's first-hand account. That an
+  agentic framework drove it is Microsoft's: the provider first put AI
+  involvement at low confidence and then said Microsoft's findings matched its
+  assessment, which is agreement and not a second observation. Nobody
+  attributes the activity to an actor. Microsoft calls the network indicators
+  unattributed and two of the addresses only "potentially associated", and no
+  source names a model or says where the framework ran.
+contested: >-
+  Whether this is the same operation as the October compromise of a backup
+  vendor's applications (AIRT-CS-0024). The provider that saw both assesses
+  them as unrelated. Microsoft places both under the same framework and
+  attributes this one to nobody, and a shared open-source tool is not a shared
+  operator. The two sources also describe one address differently: Microsoft
+  flags 199.19.77[.]18 as a Tor exit node, and the provider reports password
+  spraying through the Azure command-line client from it and from
+  65.87.223[.]26, linked to the operator with low to moderate confidence.
 atlas:
   - AML.T0095.000
   - AML.T0055
@@ -22,6 +35,27 @@ atlas:
   - AML.T0117
   - AML.T0124
   - AML.T0025
+victims:
+  sectors:
+    - government
+    - energy
+    - food-agriculture
+    - transportation
+    - legal-professional-services
+    - education
+    - ngo-think-tank
+  org_count:
+    value: 27
+    qualifier: approx
+  basis: >-
+    One provider's count among its own customers: about 45 application
+    registrations in about 18 organisations targeted, more than 33
+    authenticated, and 27 organisations reached once downstream tenants are
+    included. It lists government, energy, food and agriculture,
+    transportation, construction and engineering, legal, education and
+    nonprofits; construction has no term in this vocabulary and is left out.
+    Microsoft gives no count, sector or country. Neither figure is the size of
+    the campaign.
 attack:
   - T1593.003
   - T1552.001
@@ -46,20 +80,34 @@ summary: >-
   vendor, gave access to downstream tenants. Microsoft describes one run that
   went from searching GitHub for a client secret to exfiltrating from a Key
   Vault in five minutes, and requests that failed and were reissued against a
-  different API version within about half a minute.
+  different API version within about half a minute. A managed security provider
+  that watched the same addresses in its customers' tenants reports what was
+  taken: searches of SharePoint and mail in about 25 tenants, 81 files
+  downloaded and roughly 2,279 mailbox items read, with one address making
+  412 sign-in attempts in seven days from 1 November. One of its partners was
+  billed thousands of dollars of AI service usage in about ten minutes.
 iocs:
   - type: ip
     value: 199.19.77[.]84
-    description: Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026
+    description: Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026. One provider attributes it to the operator with high confidence and counts 412 sign-in attempts from it between 1 and 3 November
   - type: ip
     value: 199.19.77[.]18
-    description: A Tor exit node, which the post warns may carry unrelated activity from unrelated sources. Use to pivot, not to conclude
+    description: A Tor exit node by Microsoft's account, which warns it may carry unrelated activity. One provider reports password spraying through the Azure command-line client from it. Use to pivot, not to conclude
   - type: ip
     value: 65.87.223[.]26
-    description: Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent. One of two addresses the post calls potentially associated
+    description: Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent, by Microsoft's account, and Azure command-line password spraying by one provider's. Both sources hold the link to the campaign loosely
   - type: ip
     value: 157.22.126[.]128
     description: Reconnaissance against AI workloads the victims run on Azure AI services
+  - type: pattern
+    value: "Network 199.19.77.0/24"
+    description: The range the first two addresses sit in, published by one provider. A range on a hosting network, so it widens a hunt and identifies nothing
+  - type: pattern
+    value: "User agents task177-f2267/1.0 and sait-tenant-deep/37346"
+    description: Published by one provider as unique to this operator. Unlike the Python and curl strings in the related case, nothing legitimate is known to send these
+  - type: behavior
+    value: Password-grant sign-ins through the Azure command-line client (application id 04b07795-8ddb-461a-bbee-02f9e1bf7b46) from the addresses above
+    description: That id is Microsoft's own client and every tenant sees it daily. The indicator is the password grant from these addresses, never the application id alone
   - type: behavior
     value: Application sign-in failures with error AADSTS7000215 or AADSTS7000222, then a success for the same application
     description: An invalid or expired client secret means somebody holds a credential for the application. A failure followed by a success is the urgent case
@@ -75,7 +123,7 @@ response_actions:
   - phase: eradicate
     action: For every application that signed in from those addresses or logged the two secret errors, remove all client secrets, certificates and federated credentials, including any the actor added, and disable the service principal if it cannot be re-credentialed at once. Revoke sessions, Azure DevOps personal access tokens and SSH keys for affected users.
   - phase: recover
-    action: Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Managed service providers should also review partner access and customer tenants.
+    action: Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Check the bill for AI services on the days in question - one affected organisation was charged thousands of dollars in about ten minutes - and treat mail and files the application could search as read. Managed service providers should also review partner access and customer tenants.
   - phase: harden
     action: Treat any secret that was ever in a public repository as compromised - removing the commit does not invalidate it. Turn on secret scanning and push protection, set maximum lifetimes for application passwords, and move applications from client secrets to managed identities or federated credentials.
 lesson: >-
@@ -89,7 +137,11 @@ lesson: >-
 detections:
   - entra_app_signin_invalid_or_expired_secret.yml
   - entra_app_signin_scripted_client.yml
+  - entra_app_credential_added_by_app.yml
 references:
   - title: "Microsoft Threat Intelligence and Microsoft Security Research - Threat actors use agentic AI tooling to find and abuse exposed secrets (5 Nov 2026)"
     url: https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/
+    accessed: "2026-11-17"
+  - title: "Todyl - Stolen app credentials, real access: an actor is signing into Entra ID and Azure DevOps as your workloads (3 Nov 2026, updated 6 Nov 2026)"
+    url: https://www.todyl.com/blog/stolen-app-credentials-real-access-an-actor-is-signing-into-entra-id-and-azure-devops-as-your-workloads
     accessed: "2026-11-17"

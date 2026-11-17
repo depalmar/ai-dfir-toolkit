@@ -17,12 +17,22 @@ summary: Microsoft's designation for a China-state aligned actor, active since 2
   of a software vendor's multitenant applications that was then used against the vendor's
   customers.
 confidence: medium
-basis: One reporting party. Microsoft says the actor has no known industry aliases, so no
-  second vendor's tracking can be lined up against it.
+basis: One attributing party. Microsoft says the actor has no known industry aliases. Two
+  other parties report activity that overlaps it without adopting the name - Google tracks
+  a campaign using the same framework as UNC7228 and says it overlaps the activity Microsoft
+  tracks as Storm-0940, and a cloud security vendor reports the same addresses and tooling
+  against other software vendors. Overlap is not an alias, so neither is recorded as one.
+  The responders who saw the vendor compromise in tenant logs say their telemetry is consistent
+  with Microsoft's attribution and does not confirm it.
 external_ids:
   vendor_cluster:
   - Storm-0940
 references:
+- title: 'GTIG - ARTEX and Friends: Enter Agentic Offensive Frameworks (30 Oct 2026)'
+  url: https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks
+- title: 'Wiz Research - ARTEX in the Wild: Storm-0940 Expands Targeting of IT and Software Vendors
+    (22 Oct 2026)'
+  url: https://www.wiz.io/blog/artex-in-the-wild-storm-0940-expands-targeting-of-it-and-software-vendors
 - title: Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale
     nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)
   url: https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/

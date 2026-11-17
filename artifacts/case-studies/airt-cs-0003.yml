@@ -27,6 +27,33 @@ iocs:
   - type: malware
     value: Flodrix botnet
     description: Payload delivered post-exploitation
+  - type: url
+    value: hxxp://80[.]66[.]75[.]121:25565/docker
+    description: Downloader script fetched by the exploit's curl command and piped to a shell. The one download address the vendor published
+  - type: ip
+    value: 80.66.75[.]121
+    description: Hosted the downloader scripts and listed as a command-and-control server
+  - type: ip
+    value: 45.61.137[.]226
+    description: Listed command-and-control server
+  - type: ip
+    value: 206.71.149[.]179
+    description: Listed command-and-control server
+  - type: ip
+    value: 188.166.68[.]21
+    description: Listed command-and-control server
+  - type: hash
+    value: ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec
+    description: SHA-256 of the bash downloader named docker
+  - type: hash
+    value: 64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3
+    description: SHA-256 of a second downloader. The article's table calls it deez and the vendor's indicator file calls it zxc_deez, so match the hash and not the name
+  - type: hash
+    value: 912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee
+    description: SHA-256 of the Flodrix ELF for x86_64, e1x.x86_64. The vendor's indicator file lists further architectures and related samples
+  - type: file
+    value: .system_idle
+    description: Hidden file the malware writes to hold its process id. Its presence means the payload ran at least once on the host
   - type: behavior
     value: Scanning of exposed port 7860
     description: Pre-exploitation enumeration via Shodan/FOFA
@@ -49,8 +76,9 @@ references:
     url: https://nvd.nist.gov/vuln/detail/CVE-2025-3248
   - title: "CISA - Known Exploited Vulnerabilities Catalog"
     url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
-  - title: "Trend Micro - Langflow CVE-2025-3248 exploited to deliver the Flodrix botnet"
-    url: https://www.trendmicro.com/en_us/research/25/f/langflow-flodrix-botnet.html
+  - title: "Trend Micro - Critical Langflow Vulnerability (CVE-2025-3248) Actively Exploited to Deliver Flodrix Botnet (17 Jun 2025)"
+    url: https://www.trendmicro.com/en_us/research/25/f/langflow-vulnerability-flodric-botnet.html
+    accessed: "2026-11-17"
 
 owasp_agentic:
   - ASI05

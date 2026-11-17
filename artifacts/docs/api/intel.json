@@ -3,10 +3,10 @@
  "stats": {
   "actors": 22,
   "cases": 26,
-  "iocs": 267,
-  "atomic_iocs": 195,
-  "techniques_observed": 34,
-  "techniques_covered": 16,
+  "iocs": 316,
+  "atomic_iocs": 233,
+  "techniques_observed": 39,
+  "techniques_covered": 18,
   "techniques_off_host": 13,
   "by_kind": {
    "state-nexus": 14,
@@ -62,39 +62,41 @@
    "Americas": 2
   },
   "case_sectors": {
-   "government": 6,
+   "government": 7,
    "information-technology": 6,
+   "ngo-think-tank": 4,
    "defense-industrial-base": 3,
+   "energy": 3,
    "financial-services": 3,
-   "ngo-think-tank": 3,
    "chemical": 2,
    "consumers": 2,
-   "energy": 2,
+   "legal-professional-services": 2,
    "media-entertainment": 2,
+   "transportation": 2,
    "commercial-facilities": 1,
    "critical-manufacturing": 1,
    "cryptocurrency": 1,
-   "legal-professional-services": 1,
+   "education": 1,
+   "food-agriculture": 1,
    "retail": 1,
    "software-supply-chain": 1,
-   "telecommunications": 1,
-   "transportation": 1
+   "telecommunications": 1
   },
   "by_ioc_type": {
-   "ip": 73,
-   "domain": 64,
-   "behavior": 36,
-   "file": 22,
-   "pattern": 21,
-   "account": 12,
-   "config": 7,
+   "ip": 88,
+   "domain": 66,
+   "behavior": 38,
+   "pattern": 27,
+   "file": 26,
+   "account": 18,
+   "hash": 12,
+   "config": 10,
    "malware": 6,
-   "hash": 4,
+   "url": 5,
    "package": 4,
+   "process": 4,
    "directory": 3,
    "email": 3,
-   "process": 3,
-   "url": 3,
    "endpoint": 2,
    "mutex": 2,
    "binary": 1,
@@ -112,9 +114,18 @@
    "2026-Q4": 4
   },
   "link_confidence": {
-   "medium": 11
+   "medium": 12
   },
   "technique_use": {
+   "AML.T0006": {
+    "actors": [
+     "AIRT-TA-0005"
+    ],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
    "AML.T0008": {
     "actors": [
      "AIRT-TA-0014"
@@ -170,6 +181,27 @@
      "model_file_hash_mismatch.yml",
      "ollama_vllm_unauth_exposure.rules",
      "pip_install_typosquat.yml",
+     "reverse_ssh_tunnel_exposing_local_sshd.yml",
+     "torchserve_shelltorch.rules",
+     "triton_inference_server_exploit.rules"
+    ]
+   },
+   "AML.T0010.005": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0009"
+    ],
+    "rules": [
+     "claude_desktop_config_modify.yml",
+     "copilot_rules_file_backdoor.yar",
+     "cursor_settings_db_modification.yml",
+     "github_copilot_yolo_mode_enabled.yml",
+     "huggingface_cache_unexpected_writer.yml",
+     "mcp_config_tampering.yml",
+     "mlflow_path_traversal.rules",
+     "model_file_hash_mismatch.yml",
+     "ollama_vllm_unauth_exposure.rules",
+     "pip_install_typosquat.yml",
      "torchserve_shelltorch.rules",
      "triton_inference_server_exploit.rules"
     ]
@@ -207,8 +239,10 @@
      "AIRT-CS-0025"
     ],
     "rules": [
+     "entra_app_credential_added_by_app.yml",
      "entra_app_signin_invalid_or_expired_secret.yml",
-     "entra_app_signin_scripted_client.yml"
+     "entra_app_signin_scripted_client.yml",
+     "entra_role_member_added_by_app.yml"
     ]
    },
    "AML.T0016.001": {
@@ -283,8 +317,11 @@
     ]
    },
    "AML.T0025": {
-    "actors": [],
+    "actors": [
+     "AIRT-TA-0005"
+    ],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0025"
     ],
     "rules": []
@@ -299,12 +336,32 @@
     ],
     "rules": []
    },
+   "AML.T0035": {
+    "actors": [
+     "AIRT-TA-0005"
+    ],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
+   "AML.T0048.000": {
+    "actors": [
+     "AIRT-TA-0005"
+    ],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
    "AML.T0049": {
     "actors": [
+     "AIRT-TA-0005",
      "AIRT-TA-0017",
      "AIRT-TA-0018"
     ],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0020",
      "AIRT-CS-0021"
     ],
@@ -368,6 +425,7 @@
      "AIRT-TA-0019"
     ],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0015",
      "AIRT-CS-0016",
      "AIRT-CS-0019",
@@ -406,6 +464,7 @@
      "AIRT-TA-0005"
     ],
     "cases": [
+     "AIRT-CS-0009",
      "AIRT-CS-0016",
      "AIRT-CS-0017"
     ],
@@ -511,6 +570,13 @@
     ],
     "rules": []
    },
+   "AML.T0109": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0009"
+    ],
+    "rules": []
+   },
    "AML.T0115.002": {
     "actors": [
      "AIRT-TA-0005"
@@ -538,7 +604,9 @@
      "AIRT-CS-0024",
      "AIRT-CS-0026"
     ],
-    "rules": []
+    "rules": [
+     "artex_default_probe_file_created.yml"
+    ]
    },
    "AML.T0117": {
     "actors": [
@@ -582,7 +650,7 @@
   "method": {
    "similarity": "IDF-weighted Jaccard over techniques (0.4), tools (0.2), sectors (0.2), ai_services (0.1), motivation (0.1); facets neither side reports are skipped",
    "clusters": "average-linkage agglomerative, stopped below similarity 0.3",
-   "cooccurrence": "44 observations (case studies and sightings); pairs seen at least twice",
+   "cooccurrence": "46 observations (case studies and sightings); pairs seen at least twice",
    "backlog": "score = 2 x actors + cases using the technique, rule-less techniques only"
   },
   "similarity": {
@@ -629,7 +697,7 @@
      0.169,
      0.359,
      0.0,
-     0.126,
+     0.129,
      0.0,
      0.144,
      0.192,
@@ -664,7 +732,7 @@
      0.258,
      1.0,
      0.332,
-     0.205,
+     0.185,
      0.52,
      0.0,
      0.056,
@@ -677,7 +745,7 @@
      0.025,
      0.168,
      0.1,
-     0.085,
+     0.088,
      0.252,
      0.083,
      0.054,
@@ -688,7 +756,7 @@
      0.2,
      0.332,
      1.0,
-     0.219,
+     0.193,
      0.322,
      0.072,
      0.183,
@@ -701,7 +769,7 @@
      0.0,
      0.059,
      0.1,
-     0.069,
+     0.071,
      0.166,
      0.0,
      0.023,
@@ -710,10 +778,10 @@
     [
      0.0,
      0.073,
-     0.205,
-     0.219,
+     0.185,
+     0.193,
      1.0,
-     0.202,
+     0.184,
      0.0,
      0.056,
      0.0,
@@ -724,9 +792,9 @@
      0.0,
      0.0,
      0.0,
-     0.111,
-     0.041,
-     0.202,
+     0.136,
+     0.051,
+     0.177,
      0.0,
      0.0,
      0.111
@@ -736,7 +804,7 @@
      0.216,
      0.52,
      0.322,
-     0.202,
+     0.184,
      1.0,
      0.0,
      0.056,
@@ -749,7 +817,7 @@
      0.0,
      0.065,
      0.118,
-     0.075,
+     0.077,
      0.256,
      0.054,
      0.024,
@@ -772,8 +840,8 @@
      0.229,
      0.125,
      0.187,
-     0.061,
-     0.07,
+     0.063,
+     0.072,
      0.0,
      0.19,
      0.149,
@@ -797,7 +865,7 @@
      0.056,
      0.18,
      0.069,
-     0.164,
+     0.175,
      0.056,
      0.056,
      0.098,
@@ -821,7 +889,7 @@
      0.03,
      0.129,
      0.0,
-     0.123,
+     0.128,
      0.0,
      0.03,
      0.066,
@@ -845,7 +913,7 @@
      0.125,
      0.16,
      0.0,
-     0.041,
+     0.043,
      0.0,
      0.125,
      0.156,
@@ -869,7 +937,7 @@
      0.125,
      0.224,
      0.0,
-     0.123,
+     0.128,
      0.0,
      0.125,
      0.161,
@@ -893,7 +961,7 @@
      0.0,
      0.125,
      0.125,
-     0.164,
+     0.175,
      0.1,
      0.0,
      0.043,
@@ -917,7 +985,7 @@
      0.173,
      0.315,
      0.0,
-     0.215,
+     0.225,
      0.0,
      0.155,
      0.188,
@@ -941,7 +1009,7 @@
      0.247,
      0.286,
      0.0,
-     0.164,
+     0.169,
      0.0,
      0.19,
      0.176,
@@ -989,7 +1057,7 @@
      0.163,
      1.0,
      0.0,
-     0.196,
+     0.199,
      0.0,
      0.194,
      0.302,
@@ -1000,9 +1068,9 @@
      0.031,
      0.1,
      0.1,
-     0.111,
+     0.136,
      0.118,
-     0.061,
+     0.063,
      0.069,
      0.0,
      0.0,
@@ -1013,42 +1081,42 @@
      0.0,
      0.0,
      1.0,
+     0.138,
      0.152,
-     0.152,
-     0.327,
-     0.079,
-     0.22
+     0.338,
+     0.081,
+     0.222
     ],
     [
-     0.126,
+     0.129,
      0.053,
-     0.085,
-     0.069,
-     0.041,
-     0.075,
-     0.07,
-     0.164,
-     0.123,
-     0.041,
-     0.123,
-     0.164,
-     0.215,
-     0.164,
+     0.088,
+     0.071,
+     0.051,
+     0.077,
+     0.072,
+     0.175,
+     0.128,
+     0.043,
+     0.128,
+     0.175,
+     0.225,
+     0.169,
      0.0,
-     0.196,
-     0.152,
+     0.199,
+     0.138,
      1.0,
-     0.117,
+     0.121,
      0.034,
-     0.132,
-     0.045
+     0.133,
+     0.046
     ],
     [
      0.0,
      0.104,
      0.252,
      0.166,
-     0.202,
+     0.177,
      0.256,
      0.0,
      0.056,
@@ -1061,7 +1129,7 @@
      0.102,
      0.0,
      0.152,
-     0.117,
+     0.121,
      1.0,
      0.015,
      0.013,
@@ -1084,7 +1152,7 @@
      0.19,
      0.176,
      0.194,
-     0.327,
+     0.338,
      0.034,
      0.015,
      1.0,
@@ -1108,8 +1176,8 @@
      0.176,
      0.141,
      0.302,
-     0.079,
-     0.132,
+     0.081,
+     0.133,
      0.013,
      0.325,
      1.0,
@@ -1132,8 +1200,8 @@
      0.045,
      0.0,
      0.113,
-     0.22,
-     0.045,
+     0.222,
+     0.046,
      0.111,
      0.178,
      0.417,
@@ -1346,7 +1414,7 @@
    "AIRT-TA-0005": [
     {
      "actor": "AIRT-TA-0004",
-     "score": 0.219,
+     "score": 0.193,
      "shared": {
       "techniques": [
        "AML.T0081"
@@ -1361,7 +1429,7 @@
     },
     {
      "actor": "AIRT-TA-0003",
-     "score": 0.205,
+     "score": 0.185,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1376,7 +1444,7 @@
     },
     {
      "actor": "AIRT-TA-0006",
-     "score": 0.202,
+     "score": 0.184,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1893,7 +1961,7 @@
    "AIRT-TA-0017": [
     {
      "actor": "AIRT-TA-0020",
-     "score": 0.327,
+     "score": 0.338,
      "shared": {
       "techniques": [
        "AML.T0017",
@@ -1907,7 +1975,7 @@
     },
     {
      "actor": "AIRT-TA-0022",
-     "score": 0.22,
+     "score": 0.222,
      "shared": {
       "techniques": [
        "AML.T0124"
@@ -1918,14 +1986,14 @@
      }
     },
     {
-     "actor": "AIRT-TA-0018",
+     "actor": "AIRT-TA-0019",
      "score": 0.152,
      "shared": {
-      "techniques": [
-       "AML.T0049"
-      ],
       "sectors": [
        "information-technology"
+      ],
+      "motivation": [
+       "financial"
       ]
      }
     }
@@ -1933,7 +2001,7 @@
    "AIRT-TA-0018": [
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.215,
+     "score": 0.225,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1946,7 +2014,7 @@
     },
     {
      "actor": "AIRT-TA-0016",
-     "score": 0.196,
+     "score": 0.199,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1960,7 +2028,7 @@
     },
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.164,
+     "score": 0.175,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -2005,7 +2073,7 @@
     },
     {
      "actor": "AIRT-TA-0005",
-     "score": 0.202,
+     "score": 0.177,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -2022,7 +2090,7 @@
    "AIRT-TA-0020": [
     {
      "actor": "AIRT-TA-0017",
-     "score": 0.327,
+     "score": 0.338,
      "shared": {
       "techniques": [
        "AML.T0017",
@@ -2143,7 +2211,7 @@
     },
     {
      "actor": "AIRT-TA-0017",
-     "score": 0.22,
+     "score": 0.222,
      "shared": {
       "techniques": [
        "AML.T0124"
@@ -2232,7 +2300,7 @@
      "AIRT-TA-0020"
     ],
     "thin": false,
-    "cohesion": 0.327,
+    "cohesion": 0.338,
     "shared": {
      "techniques": [
       "AML.T0017",
@@ -2271,7 +2339,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 1.0,
-    "lift": 11.0
+    "lift": 11.5
    },
    {
     "a": "AML.T0010",
@@ -2279,7 +2347,7 @@
     "support": 2,
     "confidence_ab": 0.4,
     "confidence_ba": 1.0,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0012",
@@ -2287,7 +2355,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0016.001",
@@ -2295,7 +2363,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0017.001",
@@ -2303,7 +2371,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0016.001",
@@ -2311,7 +2379,15 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.333,
-    "lift": 7.33
+    "lift": 7.67
+   },
+   {
+    "a": "AML.T0025",
+    "b": "AML.T0055",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.222,
+    "lift": 5.11
    },
    {
     "a": "AML.T0116",
@@ -2319,7 +2395,7 @@
     "support": 2,
     "confidence_ab": 0.333,
     "confidence_ba": 0.667,
-    "lift": 4.89
+    "lift": 5.11
    },
    {
     "a": "AML.T0116",
@@ -2327,7 +2403,7 @@
     "support": 3,
     "confidence_ab": 0.5,
     "confidence_ba": 0.6,
-    "lift": 4.4
+    "lift": 4.6
    },
    {
     "a": "AML.T0103",
@@ -2335,15 +2411,15 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.333,
-    "lift": 3.67
+    "lift": 3.83
    },
    {
-    "a": "AML.T0010",
+    "a": "AML.T0049",
     "b": "AML.T0055",
-    "support": 3,
-    "confidence_ab": 0.6,
-    "confidence_ba": 0.375,
-    "lift": 3.3
+    "support": 2,
+    "confidence_ab": 0.667,
+    "confidence_ba": 0.222,
+    "lift": 3.41
    },
    {
     "a": "AML.T0054",
@@ -2351,15 +2427,23 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.286,
-    "lift": 3.14
+    "lift": 3.29
+   },
+   {
+    "a": "AML.T0010",
+    "b": "AML.T0055",
+    "support": 3,
+    "confidence_ab": 0.6,
+    "confidence_ba": 0.333,
+    "lift": 3.07
    },
    {
     "a": "AML.T0055",
     "b": "AML.T0103",
     "support": 2,
-    "confidence_ab": 0.25,
+    "confidence_ab": 0.222,
     "confidence_ba": 0.5,
-    "lift": 2.75
+    "lift": 2.56
    }
   ],
   "events": [
@@ -2383,10 +2467,17 @@
    },
    {
     "date": "2024-03-26",
-    "actor": "",
+    "actor": "AIRT-TA-0005",
     "kind": "case",
     "ref": "AIRT-CS-0014",
-    "techniques": []
+    "techniques": [
+     "AML.T0006",
+     "AML.T0049",
+     "AML.T0055",
+     "AML.T0035",
+     "AML.T0025",
+     "AML.T0048.000"
+    ]
    },
    {
     "date": "2024-09-24",
@@ -2433,7 +2524,11 @@
     "actor": "",
     "kind": "case",
     "ref": "AIRT-CS-0009",
-    "techniques": []
+    "techniques": [
+     "AML.T0010.005",
+     "AML.T0109",
+     "AML.T0081"
+    ]
    },
    {
     "date": "2025-07-17",
@@ -2778,7 +2873,7 @@
     ]
    },
    {
-    "date": "2026-10-21",
+    "date": "2026-10-16",
     "actor": "AIRT-TA-0021",
     "kind": "case",
     "ref": "AIRT-CS-0024",
@@ -2799,7 +2894,7 @@
     ]
    },
    {
-    "date": "2026-11-05",
+    "date": "2026-11-03",
     "actor": "",
     "kind": "case",
     "ref": "AIRT-CS-0025",
@@ -2846,9 +2941,9 @@
     "median_gap_days": 307
    },
    "AIRT-TA-0005": {
-    "events": 2,
-    "span_days": 120,
-    "median_gap_days": 120
+    "events": 3,
+    "span_days": 896,
+    "median_gap_days": 776
    },
    "AIRT-TA-0006": {
     "events": 2,
@@ -2954,19 +3049,35 @@
     "off_host": false
    },
    {
-    "technique": "AML.T0126",
-    "name": "Automated Collection",
+    "technique": "AML.T0025",
+    "name": "Exfiltration via Cyber Means",
+    "actors": 1,
+    "cases": 2,
+    "score": 4,
+    "off_host": false
+   },
+   {
+    "technique": "AML.T0035",
+    "name": "AI Artifact Collection",
     "actors": 1,
     "cases": 1,
     "score": 3,
     "off_host": false
    },
    {
-    "technique": "AML.T0025",
-    "name": "Exfiltration via Cyber Means",
-    "actors": 0,
+    "technique": "AML.T0048.000",
+    "name": "Financial Harm",
+    "actors": 1,
     "cases": 1,
-    "score": 1,
+    "score": 3,
+    "off_host": false
+   },
+   {
+    "technique": "AML.T0126",
+    "name": "Automated Collection",
+    "actors": 1,
+    "cases": 1,
+    "score": 3,
     "off_host": false
    },
    {
@@ -2978,19 +3089,19 @@
     "off_host": false
    },
    {
+    "technique": "AML.T0109",
+    "name": "AI Supply Chain Rug Pull",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": false
+   },
+   {
     "technique": "AML.T0016.002",
     "name": "Generative AI",
     "actors": 11,
     "cases": 2,
     "score": 24,
-    "off_host": true
-   },
-   {
-    "technique": "AML.T0116",
-    "name": "Autonomous Reconnaissance",
-    "actors": 6,
-    "cases": 4,
-    "score": 16,
     "off_host": true
    },
    {
@@ -3023,6 +3134,14 @@
     "actors": 2,
     "cases": 1,
     "score": 5,
+    "off_host": true
+   },
+   {
+    "technique": "AML.T0006",
+    "name": "Active Scanning",
+    "actors": 1,
+    "cases": 1,
+    "score": 3,
     "off_host": true
    },
    {
@@ -3083,22 +3202,22 @@
    }
   ],
   "tactic_observations": {
-   "AML.TA0004": 10,
+   "AML.TA0004": 12,
    "AML.TA0003": 23,
    "AML.TA0005": 9,
    "AML.TA0001": 8,
-   "AML.TA0002": 8,
-   "AML.TA0007": 7,
+   "AML.TA0002": 9,
+   "AML.TA0007": 8,
    "AML.TA0012": 7,
    "AML.TA0014": 7,
    "AML.TA0015": 4,
-   "AML.TA0010": 3,
-   "AML.TA0006": 5,
-   "AML.TA0013": 9,
-   "AML.TA0009": 2,
-   "AML.TA0011": 2
+   "AML.TA0010": 4,
+   "AML.TA0006": 6,
+   "AML.TA0013": 10,
+   "AML.TA0009": 3,
+   "AML.TA0011": 3
   },
-  "observations": 44
+  "observations": 46
  },
  "actors": [
   {
@@ -3486,6 +3605,7 @@
      "ai_agent_spawning_shell.yml",
      "ai_cli_permission_bypass_invocation.yml",
      "ai_service_api_c2.rules",
+     "artex_default_probe_file_created.yml",
      "azure_openai_injection.yml",
      "bedrock_high_token_usage.yml",
      "jailbreak_personas.yml",
@@ -3503,7 +3623,6 @@
     ],
     "gaps": [],
     "off_host": [
-     "AML.T0116",
      "AML.T0117"
     ],
     "hunt": [
@@ -3568,7 +3687,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      },
      {
@@ -3970,14 +4091,13 @@
     "detections_cited": [],
     "detections_by_technique": [
      "ai_agent_credential_file_access.yml",
+     "artex_default_probe_file_created.yml",
      "entra_app_signin_invalid_or_expired_secret.yml"
     ],
     "gaps": [
      "AML.T0103"
     ],
-    "off_host": [
-     "AML.T0116"
-    ],
+    "off_host": [],
     "hunt": [
      {
       "technique": "AML.T0055",
@@ -4006,7 +4126,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      }
     ],
@@ -4819,7 +4941,7 @@
    ],
    "summary": "GTIG's cluster for a financially motivated supply-chain operator. In 2026 it compromised developer tooling and AI plumbing: Trivy, Checkmarx, the LiteLLM gateway, and trojanised forks of MCP servers. Its DUSTMAKER stealer writes into the workspace directories AI coding assistants read.",
    "confidence": "medium",
-   "basis": "One reporting party across two reports. The actor claimed responsibility for some compromises, which corroborates the link but not the details.",
+   "basis": "One reporting party across two reports for the supply-chain activity. The actor claimed responsibility for some compromises, which corroborates the link but not the details. A second party, Oligo Security, writes about the group under its self-chosen name and assesses that it ran the 2025 ShadowRay 2.0 campaign against Ray clusters. That is one party's assessment, it does not use GTIG's cluster name, and it rests on the name the two reports share, so the case is linked as suspected.",
    "external_ids": {
     "vendor_cluster": [
      "UNC6780"
@@ -4856,6 +4978,10 @@
    ],
    "references": [
     {
+     "title": "Oligo Security - New Intelligence Links TeamPCP to ShadowRay 2.0 and Traces Activity back to 2020 (5 Aug 2026)",
+     "url": "https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020"
+    },
+    {
      "title": "GTIG - Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations, and Initial Access (11 May 2026)",
      "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access"
     },
@@ -4865,9 +4991,19 @@
     }
    ],
    "cases": [
+    "AIRT-CS-0014",
     "AIRT-CS-0016"
    ],
    "links": [
+    {
+     "case": "AIRT-CS-0014",
+     "ref": "AIRT-TA-0005",
+     "role": "suspected",
+     "link_confidence": "medium",
+     "attributed_by": "Oligo Security",
+     "stated_confidence": "\"We also assess that TeamPCP was responsible for the ShadowRay 2.0 campaign based on our evidence\"; whether that reflects a rebrand, shared operators or collaboration \"cannot be determined with 100% certainty\"",
+     "reference": "https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020"
+    },
     {
      "case": "AIRT-CS-0016",
      "ref": "AIRT-TA-0005",
@@ -4880,7 +5016,12 @@
    ],
    "derived": {
     "techniques": [
+     "AML.T0006",
      "AML.T0010",
+     "AML.T0025",
+     "AML.T0035",
+     "AML.T0048.000",
+     "AML.T0049",
      "AML.T0055",
      "AML.T0081",
      "AML.T0115.002"
@@ -4895,10 +5036,14 @@
      "ASI04"
     ],
     "tactics": [
+     "AML.TA0002",
      "AML.TA0003",
      "AML.TA0004",
      "AML.TA0006",
      "AML.TA0007",
+     "AML.TA0009",
+     "AML.TA0010",
+     "AML.TA0011",
      "AML.TA0013"
     ],
     "sectors": [
@@ -4906,13 +5051,157 @@
     ],
     "countries": [],
     "regions": [],
-    "first_seen": "2026-05-11",
+    "first_seen": "2024-03-26",
     "last_seen": "2026-09-08",
     "tools": [
      "AIRT-0001",
      "AIRT-0002"
     ],
     "iocs": [
+     {
+      "type": "behavior",
+      "value": "Job submission to the Ray Jobs API from outside the cluster network",
+      "description": "Recorded in Ray dashboard and jobs API access logs",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "behavior",
+      "value": "Submitted job definition carrying a multi-stage Bash or Python payload",
+      "description": "The job definition is the payload record and is retained by Ray",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "process",
+      "value": "XMRig or equivalent miner on a GPU host",
+      "description": "Observed payload in the ShadowRay 2.0 campaign",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "behavior",
+      "value": "Orchestration used to fan a job out to every node",
+      "description": "Ray's own scheduling is the lateral movement mechanism",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "behavior",
+      "value": "Outbound job submission from one cluster to another",
+      "description": "Cluster-to-cluster propagation observed in ShadowRay 2.0",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "pattern",
+      "value": "Ray dashboard reachable from the internet",
+      "description": "The precondition; the exposure is the vulnerability here",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "18.228.3[.]224",
+      "description": "Primary command-and-control server for reverse shells in the second campaign, ports 48331 and 3876",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "18.230.118[.]147",
+      "description": "Secondary command-and-control server and mining endpoint, ports 443 and 40331",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "67.217.57[.]240",
+      "description": "File server for the netsh reverse-shell binary, port 666. Reverse shells to it ran from September to November 2025, and it is the address the later report ties to TeamPCP",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "103.127.134[.]124",
+      "description": "Received reverse shells on ports 30654 and 30987. The later report says the same address signed in to the accounts that hosted the payloads",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "45.61.150[.]83",
+      "description": "File server for the second-phase dropper, port 80",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "45.95.168[.]100",
+      "description": "File server for downloaded binaries, port 8000",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "185.215.180[.]70",
+      "description": "File server for downloaded binaries, port 8000",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "ip",
+      "value": "162.248.53[.]119",
+      "description": "Payload server, port 8000",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "url",
+      "value": "hxxp://45[.]61[.]150[.]83/1mmy/xd.sh",
+      "description": "Second-phase dropper",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "hash",
+      "value": "1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b",
+      "description": "SHA-256 of the second-phase dropper xd.sh. The source also lists a hash for the miner, which is the legitimate XMRig release and proves nothing alone",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "domain",
+      "value": "masscan[.]cloud",
+      "description": "With matrix.masscan[.]cloud, staging infrastructure the later report links to this campaign. A compromised cluster fetched /ep9TS2/ndt.sh from it in July 2025",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "domain",
+      "value": "pool.supportxmr.com",
+      "description": "Primary mining pool, port 443 over TLS. A public pool that other miners also use; gulf.moneroocean.stream on 20128 and eu.zano.k1pool.com on 8866 were the others",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "file",
+      "value": "/usr/lib/dev/systemdev/dns-filter",
+      "description": "The miner under a name chosen to look like a DNS service. /tmp/dns is the alternative location",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "file",
+      "value": "/var/tmp/.ddns.sh",
+      "description": "Persistence script",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "file",
+      "value": "/etc/init.d/dns-filter",
+      "description": "Persistence through init.d",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "config",
+      "value": "authorized_keys entry ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHy6WMgqslpdUCaumLmlUcBjBjuAk4KspADxbcAKrzYd root@archtop",
+      "description": "Key appended by the payload for SSH access. Match the key material; the comment is trivially changed",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "config",
+      "value": "User crontab entry every 15 minutes piping a script named mon.sh from a code-hosting raw URL into bash",
+      "description": "Persistence and update channel. The hosting project and its replacement were removed in November 2025, so the entry now fails and is still evidence",
+      "case": "AIRT-CS-0014"
+     },
+     {
+      "type": "process",
+      "value": "kworker/0:0 or [kworker/0:0] as the name of a userland process",
+      "description": "The miner renames itself by writing to /proc/$$/comm. A real kernel worker has no executable path and no command line",
+      "case": "AIRT-CS-0014"
+     },
      {
       "type": "package",
       "value": "tiktoken_mcp (PyPI)",
@@ -4947,7 +5236,11 @@
     "detections_cited": [
      "ai_agent_hook_config_modification.yml",
      "ai_agent_mcp_config_modification.yml",
-     "mcp_tool_poisoning.yar"
+     "gpu_unexpected_high_utilization.yml",
+     "mcp_tool_poisoning.yar",
+     "ray_dashboard_exposure.rules",
+     "ray_jobs_api_rce.rules",
+     "shadowray_process_masquerading.yml"
     ],
     "detections_by_technique": [
      "ai_agent_autostart_persistence.yml",
@@ -4967,12 +5260,28 @@
      "model_file_hash_mismatch.yml",
      "ollama_vllm_unauth_exposure.rules",
      "pip_install_typosquat.yml",
+     "ray_jobs_api_rce.rules",
      "torchserve_shelltorch.rules",
      "triton_inference_server_exploit.rules"
     ],
-    "gaps": [],
-    "off_host": [],
+    "gaps": [
+     "AML.T0025",
+     "AML.T0035",
+     "AML.T0048.000"
+    ],
+    "off_host": [
+     "AML.T0006"
+    ],
     "hunt": [
+     {
+      "technique": "AML.T0006",
+      "name": "Active Scanning",
+      "tactics": [
+       "AML.TA0002"
+      ],
+      "rules": [],
+      "off_host": true
+     },
      {
       "technique": "AML.T0010",
       "name": "Supply Chain Compromise",
@@ -4992,6 +5301,44 @@
        "pip_install_typosquat.yml",
        "torchserve_shelltorch.rules",
        "triton_inference_server_exploit.rules"
+      ],
+      "off_host": false
+     },
+     {
+      "technique": "AML.T0025",
+      "name": "Exfiltration via Cyber Means",
+      "tactics": [
+       "AML.TA0010"
+      ],
+      "rules": [],
+      "off_host": false
+     },
+     {
+      "technique": "AML.T0035",
+      "name": "AI Artifact Collection",
+      "tactics": [
+       "AML.TA0009"
+      ],
+      "rules": [],
+      "off_host": false
+     },
+     {
+      "technique": "AML.T0048.000",
+      "name": "Financial Harm",
+      "tactics": [
+       "AML.TA0011"
+      ],
+      "rules": [],
+      "off_host": false
+     },
+     {
+      "technique": "AML.T0049",
+      "name": "Exploit Public-Facing Application",
+      "tactics": [
+       "AML.TA0004"
+      ],
+      "rules": [
+       "ray_jobs_api_rce.rules"
       ],
       "off_host": false
      },
@@ -5604,6 +5951,31 @@
      }
     ],
     "recovery": [
+     {
+      "case": "AIRT-CS-0014",
+      "phase": "",
+      "action": "Inventory exposure first. There is no patch to apply, so the finding is which clusters are reachable and from where."
+     },
+     {
+      "case": "AIRT-CS-0014",
+      "phase": "",
+      "action": "Collect Ray dashboard and jobs API access logs, and the submitted job definitions - the definitions hold the payload and are the best evidence available."
+     },
+     {
+      "case": "AIRT-CS-0014",
+      "phase": "",
+      "action": "Scope the AI-specific impact separately from the miner: model weights, training data and pipeline credentials are what an attacker actually gained."
+     },
+     {
+      "case": "AIRT-CS-0014",
+      "phase": "",
+      "action": "Harvest and rotate every cloud credential reachable from the cluster environment, including instance-profile and mounted secret material."
+     },
+     {
+      "case": "AIRT-CS-0014",
+      "phase": "",
+      "action": "Check neighbouring clusters, since ShadowRay 2.0 propagated cluster to cluster rather than only host to host."
+     },
      {
       "case": "AIRT-CS-0016",
       "phase": "contain",
@@ -7720,13 +8092,14 @@
      }
     ],
     "detections_cited": [],
-    "detections_by_technique": [],
+    "detections_by_technique": [
+     "artex_default_probe_file_created.yml"
+    ],
     "gaps": [
      "AML.T0103"
     ],
     "off_host": [
      "AML.T0016.002",
-     "AML.T0116",
      "AML.T0117"
     ],
     "hunt": [
@@ -7754,7 +8127,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      },
      {
@@ -8883,11 +9258,12 @@
     "tools": [],
     "iocs": [],
     "detections_cited": [],
-    "detections_by_technique": [],
+    "detections_by_technique": [
+     "artex_default_probe_file_created.yml"
+    ],
     "gaps": [],
     "off_host": [
      "AML.T0017.001",
-     "AML.T0116",
      "AML.T0124"
     ],
     "hunt": [
@@ -8906,7 +9282,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      },
      {
@@ -8933,13 +9311,21 @@
    ],
    "summary": "Microsoft's designation for a China-state aligned actor, active since 2021, that targets organisations across many industries for data theft and historically gained access by password spraying and by exploiting internet-facing applications. In 2026 Microsoft reported it using ARTEX, an open-source multi-agent penetration-testing framework, to automate attacks on hundreds of organisations, and assessed it responsible for the compromise of a software vendor's multitenant applications that was then used against the vendor's customers.",
    "confidence": "medium",
-   "basis": "One reporting party. Microsoft says the actor has no known industry aliases, so no second vendor's tracking can be lined up against it.",
+   "basis": "One attributing party. Microsoft says the actor has no known industry aliases. Two other parties report activity that overlaps it without adopting the name - Google tracks a campaign using the same framework as UNC7228 and says it overlaps the activity Microsoft tracks as Storm-0940, and a cloud security vendor reports the same addresses and tooling against other software vendors. Overlap is not an alias, so neither is recorded as one. The responders who saw the vendor compromise in tenant logs say their telemetry is consistent with Microsoft's attribution and does not confirm it.",
    "external_ids": {
     "vendor_cluster": [
      "Storm-0940"
     ]
    },
    "references": [
+    {
+     "title": "GTIG - ARTEX and Friends: Enter Agentic Offensive Frameworks (30 Oct 2026)",
+     "url": "https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks"
+    },
+    {
+     "title": "Wiz Research - ARTEX in the Wild: Storm-0940 Expands Targeting of IT and Software Vendors (22 Oct 2026)",
+     "url": "https://www.wiz.io/blog/artex-in-the-wild-storm-0940-expands-targeting-of-it-and-software-vendors"
+    },
     {
      "title": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)",
      "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
@@ -9002,32 +9388,50 @@
     ],
     "countries": [],
     "regions": [],
-    "first_seen": "2026-10-21",
-    "last_seen": "2026-10-21",
+    "first_seen": "2026-10-16",
+    "last_seen": "2026-10-16",
     "tools": [],
     "iocs": [
      {
       "type": "ip",
       "value": "144.172.64[.]128",
-      "description": "Sign-ins and Graph API activity in customer tenants through the vendor's applications",
+      "description": "Application sign-ins and Graph API activity in customer tenants. Named by the vendor on 16 October, and the only address one responder saw produce application sign-ins",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "ip",
       "value": "144.172.64[.]99",
-      "description": "Same activity, and the source of the 10 to 14 October password spray",
+      "description": "Listed by Microsoft for the same activity and as the source of the 10 to 14 October password spray. One responder saw it only in failed user sign-ins. The vendor added it on 18 October from downstream monitoring",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "ip",
       "value": "144.172.64[.]60",
-      "description": "Same activity",
+      "description": "Listed by Microsoft for the same activity. One responder saw a few failed sign-ins from it on 18 October, after the identities were disabled",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "144.172.94[.]243",
+      "description": "Broad failed password spraying, reported by one responder and not by Microsoft. A different /24 from the three above",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "104.194.150[.]21",
+      "description": "Published by a cloud security vendor for activity against other software vendors that overlaps this actor's addresses and tooling. Not reported in the customer-tenant sign-ins",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "167.88.172[.]97",
+      "description": "As above",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "ip",
       "value": "187.15.88[.]186",
-      "description": "Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October",
+      "description": "Graph API access through the compromised applications. A VPN address Microsoft calls transient and relevant only for 15 and 16 October",
       "case": "AIRT-CS-0024"
      },
      {
@@ -9045,51 +9449,109 @@
      {
       "type": "account",
       "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-      "description": "Labelled ConnectWise Cloud Backup in the post. Search by application id, not display name, and record the local service principal object id in each tenant",
+      "description": "ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+      "description": "ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
       "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
-      "description": "Labelled ConnectWise - MS Teams in the post",
+      "description": "ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+      "description": "ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
       "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
-      "description": "Labelled ConnectWise - MS Graph in the post",
+      "description": "ConnectWise Cloud Management - MS Graph",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+      "description": "ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+      "description": "ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+      "description": "Named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+      "description": "The vendor's tenant as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "pattern",
-      "value": "User agents Python-urllib/3.12, python-requests/2.31.0, python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0 on application sign-ins and Graph requests",
-      "description": "Published as seen with the vendor's applications. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone",
+      "value": "User agents Python-urllib/3.12 and python-requests/2.31 on application sign-ins; Microsoft adds python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0",
+      "description": "The first two are the vendor's own findings. One responder did not see azure-toolkit/1.0 at all. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "pattern",
+      "value": "User agent norma/0.4",
+      "description": "Seen by a cloud security vendor in the overlapping activity against other software vendors, in a list it warns is otherwise noisy. The one string in that list with no ordinary sender",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "pattern",
+      "value": "The applications' normal sign-ins present a kiota-dotnet user agent from private Azure IPv6 addresses",
+      "description": "The baseline the vendor published. A sign-in for one of these applications from a public address with a Python client is outside it",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "behavior",
+      "value": "One application signing in to many tenants in ascending order of tenant id, one to six minutes apart",
+      "description": "Reported by a provider with sight of many customer tenants. A single tenant sees one sign-in; the ordering is visible only across tenants",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "behavior",
+      "value": "An application adding a credential to itself or to another application, or being added to a directory role, with an application as the initiator",
+      "description": "The persistence and privilege steps reported after a successful sign-in. In the audit log these are the operations the vendor lists - credential and secret management on an application, added service principal credentials, added owners, role members, app role assignments, delegated permission grants and consent",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "behavior",
       "value": "One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults",
-      "description": "The shape of the bulk secret reads, as the post's own hunting guidance frames it",
-      "case": "AIRT-CS-0024"
-     },
-     {
-      "type": "behavior",
-      "value": "An application adding a credential to itself or assigning itself a directory role after signing in from an unfamiliar address",
-      "description": "The persistence and privilege steps reported after a successful sign-in",
+      "description": "The shape of the bulk secret reads, as Microsoft's hunting guidance frames it",
       "case": "AIRT-CS-0024"
      }
     ],
     "detections_cited": [
-     "entra_app_signin_scripted_client.yml"
+     "entra_app_credential_added_by_app.yml",
+     "entra_app_signin_scripted_client.yml",
+     "entra_role_member_added_by_app.yml"
     ],
     "detections_by_technique": [
+     "artex_default_probe_file_created.yml",
+     "entra_app_credential_added_by_app.yml",
      "entra_app_signin_invalid_or_expired_secret.yml",
-     "entra_app_signin_scripted_client.yml"
+     "entra_app_signin_scripted_client.yml",
+     "entra_role_member_added_by_app.yml"
     ],
     "gaps": [],
     "off_host": [
      "AML.T0016.001",
-     "AML.T0116",
      "AML.T0124"
     ],
     "hunt": [
@@ -9102,8 +9564,10 @@
        "AML.TA0015"
       ],
       "rules": [
+       "entra_app_credential_added_by_app.yml",
        "entra_app_signin_invalid_or_expired_secret.yml",
-       "entra_app_signin_scripted_client.yml"
+       "entra_app_signin_scripted_client.yml",
+       "entra_role_member_added_by_app.yml"
       ],
       "off_host": false
      },
@@ -9122,7 +9586,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      },
      {
@@ -9140,17 +9606,17 @@
      {
       "case": "AIRT-CS-0024",
       "phase": "contain",
-      "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications first - deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory the application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
+      "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications as the first step - the vendor's own guidance says the same, because deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory all eight application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
      },
      {
       "case": "AIRT-CS-0024",
       "phase": "eradicate",
-      "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and remove the ones nobody can account for once they are recorded."
+      "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses - the persistence activity one responder saw came from private Azure addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and to any other application in the tenant on the same days, and remove the ones nobody can account for once they are recorded."
      },
      {
       "case": "AIRT-CS-0024",
       "phase": "recover",
-      "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that rotation removed the old credentials before re-enabling the connection, and check that backup and restore still work."
+      "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that the replacement identities no longer use a shared secret before re-enabling the connection - it reports moving to federated credentials - and check that backup and restore still work."
      },
      {
       "case": "AIRT-CS-0024",
@@ -9170,7 +9636,7 @@
    ],
    "summary": "Microsoft's designation for a financially motivated, Cambodia-based intrusion cluster that mainly targets financial organisations in Southeast Asia and a smaller number of large ones elsewhere. In October 2026 Microsoft reported it using the agentic offensive framework ARTEX, alongside conventional automated tools, to scan and exploit internet-facing systems before installing open-source remote-access tools.",
    "confidence": "medium",
-   "basis": "One reporting party and one report. Microsoft gives no aliases and no confidence level, and does not say whether the cluster is connected to the other actor it reports using the same framework.",
+   "basis": "One reporting party and one report. Microsoft gives no aliases and no confidence level, and does not say whether the cluster is connected to the other actor it reports using the same framework. No second party has reported on the cluster from its own data; an FBI FLASH of 13 November 2026 reprints Microsoft's indicators and credits them to Microsoft.",
    "external_ids": {
     "vendor_cluster": [
      "Storm-3358"
@@ -9282,6 +9748,18 @@
       "case": "AIRT-CS-0026"
      },
      {
+      "type": "pattern",
+      "value": "Files named artex-probe- followed by a five-digit number, with various extensions",
+      "description": "A default artefact of the framework, reported by an incident response team in an intrusion by a different user of it. Not reported for this actor, and an operator can change it",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "pattern",
+      "value": "Accounts created with ArtexProbe in the name, and web shells with short incrementing names of the form cl1217.jsp, f1219a.jsp, z1219.jsp",
+      "description": "As above. The framework numbers what it creates, so one find points to its neighbours",
+      "case": "AIRT-CS-0026"
+     },
+     {
       "type": "malware",
       "value": "WISP",
       "description": "Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash",
@@ -9312,12 +9790,15 @@
       "case": "AIRT-CS-0026"
      }
     ],
-    "detections_cited": [],
-    "detections_by_technique": [],
+    "detections_cited": [
+     "artex_default_probe_file_created.yml"
+    ],
+    "detections_by_technique": [
+     "artex_default_probe_file_created.yml"
+    ],
     "gaps": [],
     "off_host": [
      "AML.T0016.001",
-     "AML.T0116",
      "AML.T0124"
     ],
     "hunt": [
@@ -9336,7 +9817,9 @@
       "tactics": [
        "AML.TA0002"
       ],
-      "rules": [],
+      "rules": [
+       "artex_default_probe_file_created.yml"
+      ],
       "off_host": true
      },
      {
@@ -9512,6 +9995,11 @@
    "owasp_agentic": [
     "ASI04"
    ],
+   "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0053"
+    ]
+   },
    "affects_ids": []
   },
   {
@@ -9548,6 +10036,51 @@
      "description": "Payload delivered post-exploitation"
     },
     {
+     "type": "url",
+     "value": "hxxp://80[.]66[.]75[.]121:25565/docker",
+     "description": "Downloader script fetched by the exploit's curl command and piped to a shell. The one download address the vendor published"
+    },
+    {
+     "type": "ip",
+     "value": "80.66.75[.]121",
+     "description": "Hosted the downloader scripts and listed as a command-and-control server"
+    },
+    {
+     "type": "ip",
+     "value": "45.61.137[.]226",
+     "description": "Listed command-and-control server"
+    },
+    {
+     "type": "ip",
+     "value": "206.71.149[.]179",
+     "description": "Listed command-and-control server"
+    },
+    {
+     "type": "ip",
+     "value": "188.166.68[.]21",
+     "description": "Listed command-and-control server"
+    },
+    {
+     "type": "hash",
+     "value": "ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec",
+     "description": "SHA-256 of the bash downloader named docker"
+    },
+    {
+     "type": "hash",
+     "value": "64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3",
+     "description": "SHA-256 of a second downloader. The article's table calls it deez and the vendor's indicator file calls it zxc_deez, so match the hash and not the name"
+    },
+    {
+     "type": "hash",
+     "value": "912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee",
+     "description": "SHA-256 of the Flodrix ELF for x86_64, e1x.x86_64. The vendor's indicator file lists further architectures and related samples"
+    },
+    {
+     "type": "file",
+     "value": ".system_idle",
+     "description": "Hidden file the malware writes to hold its process id. Its presence means the payload ran at least once on the host"
+    },
+    {
      "type": "behavior",
      "value": "Scanning of exposed port 7860",
      "description": "Pre-exploitation enumeration via Shodan/FOFA"
@@ -9581,8 +10114,9 @@
      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
     },
     {
-     "title": "Trend Micro - Langflow CVE-2025-3248 exploited to deliver the Flodrix botnet",
-     "url": "https://www.trendmicro.com/en_us/research/25/f/langflow-flodrix-botnet.html"
+     "title": "Trend Micro - Critical Langflow Vulnerability (CVE-2025-3248) Actively Exploited to Deliver Flodrix Botnet (17 Jun 2025)",
+     "url": "https://www.trendmicro.com/en_us/research/25/f/langflow-vulnerability-flodric-botnet.html",
+     "accessed": "2026-11-17"
     }
    ],
    "owasp_agentic": [
@@ -9711,7 +10245,7 @@
    "disclosed": "2025-11-03",
    "affects": "OpenAI Assistants API - no catalogued endpoint tool",
    "confidence": "high",
-   "basis": "First-party incident response engagement by Microsoft's Detection and Response Team, published with named artifacts, mutex names, file paths and configuration layout. Nothing here is inferred from a sample alone.",
+   "basis": "First-party incident response engagement by Microsoft's Detection and Response Team, published with named artifacts, mutex names, file paths and configuration layout. Nothing here is inferred from a sample alone. OpenAI, whose API was the relay, confirmed the misuse in a statement to the press and said it found no evidence its models were used; Microsoft says OpenAI disabled the key and account. That is the affected provider agreeing, which is why this stays high. No second team has analysed the samples, Microsoft published no hashes to make that possible, and the ATLAS case study cites the Microsoft post alone.",
    "atlas": [
     "AML.T0096"
    ],
@@ -9789,6 +10323,11 @@
     {
      "title": "Microsoft Security Blog - SesameOp: Novel backdoor uses OpenAI Assistants API for command and control",
      "url": "https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/"
+    },
+    {
+     "title": "Infosecurity Magazine - OpenAI Assistants API Exploited in 'SesameOp' Backdoor (4 Nov 2025, updated 6 Nov with OpenAI's statement)",
+     "url": "https://www.infosecurity-magazine.com/news/openai-assistants-api-sesameop/",
+     "accessed": "2026-11-17"
     },
     {
      "title": "The Hacker News - Microsoft Detects SesameOp Backdoor Using OpenAI's API as a Stealth Command Channel",
@@ -9979,6 +10518,11 @@
     ],
     "basis": "CERT-UA and GTIG both describe targeting of Ukraine's security and defence sector."
    },
+   "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0044"
+    ]
+   },
    "affects_ids": []
   },
   {
@@ -10048,6 +10592,9 @@
     "ASI01"
    ],
    "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0059"
+    ],
     "cve": [
      "CVE-2025-32711"
     ]
@@ -10067,6 +10614,11 @@
    ],
    "confidence": "high",
    "basis": "Three assigned CVEs with published advisories, named discovering parties and shipped fixes. Recorded from the CVE records rather than from aggregate counts.",
+   "atlas": [
+    "AML.T0010.005",
+    "AML.T0109",
+    "AML.T0081"
+   ],
    "summary": "Model Context Protocol went from novelty to default integration layer, and a vulnerability class followed it. mcp-remote (CVE-2025-6514, CVSS 9.6, JFrog) achieved OS command injection on the client merely by connecting to a malicious server, in versions 0.0.5 to 0.1.15 and with over 437,000 downloads at disclosure. MCP Inspector (CVE-2025-49596, CVSS 9.4, Oligo) allowed unauthenticated RCE between client and proxy, fixed in 0.14.1. MCPoison (CVE-2025-54136, CVSS 7.2, Check Point) allowed an approved MCP server configuration in Cursor to be silently redefined after approval and never re-validated - the rug-pull - fixed in Cursor 1.3.",
    "iocs": [
     {
@@ -10235,8 +10787,9 @@
    "date_range": "Dec 2025 to Feb 2026 (observation window)",
    "disclosed": "2026-02-10",
    "affects": "Assistant memory stores - no catalogued endpoint tool",
-   "confidence": "high",
-   "basis": "Vendor security research published by Microsoft's Defender Security Research team with counts, an observation window and an ATLAS technique mapping, and picked up independently in trade press.",
+   "confidence": "medium",
+   "basis": "One reporting party for what was measured. Microsoft's Defender Security Research team published the counts and the observation window; the trade press repeats them and the ATLAS case study cites the Microsoft post alone, so neither is a second observation. This entry was rated high until November 2026 on the strength of that coverage and should not have been. What is independently documented is narrower: the technique and ready-made tooling for it were published by the tools' own authors from mid-2025, seven months before Microsoft's report, including a package that tells site owners to ask the assistant to remember their brand. That shows the mechanism is real and deployed. It does not show that any assistant stored a memory, and Microsoft notes that some behaviours it had seen could no longer be reproduced.",
+   "contested": "The source disagrees with itself on the count. Its introduction gives over 50 unique prompts from 31 companies across 14 industries, and its scope section gives 50 distinct examples from 31 companies across more than a dozen industries. Treat the figures as approximate.",
    "atlas": [
     "AML.T0080"
    ],
@@ -10279,6 +10832,11 @@
     {
      "title": "Microsoft Security Blog - Manipulating AI memory for profit: The rise of AI Recommendation Poisoning",
      "url": "https://www.microsoft.com/en-us/security/blog/2026/02/10/ai-recommendation-poisoning/"
+    },
+    {
+     "title": "npm - citemet package, the share-button generator named in the ATLAS case study",
+     "url": "https://www.npmjs.com/package/citemet",
+     "accessed": "2026-11-17"
     },
     {
      "title": "Help Net Security - That summarize with AI button might be manipulating you",
@@ -10450,8 +11008,16 @@
    "disclosed": "2024-03-26",
    "affects": "Ray (distributed compute) - no catalogued endpoint tool",
    "confidence": "high",
-   "basis": "Vendor research by Oligo Security with in-the-wild exploitation observed across two campaigns, widely corroborated in trade press. CVE-2023-48022 is a published CVE record.",
-   "contested": "CVE-2023-48022 is disputed. Anyscale's position is that unauthenticated job submission is intended behaviour for a framework meant to run inside a trusted network, so the CVE was never directly fixed. That disagreement is why exposure persists and why this is an exposure-management finding rather than a patching one.",
+   "basis": "Vendor research by Oligo Security, which observed the exploitation in both campaigns and is the only party to have published doing so. What supports it from outside is acknowledgement, not a second observation. Anyscale wrote in March 2024 that it had been shown evidence of malicious exploitation and shipped a checking tool in response, and for the 2025 campaign told the press that unauthorised jobs were submitted through exposed endpoints while disputing that the fault lay in Ray. GitHub said it removed the accounts that hosted the second campaign's payloads. The affected vendor and the hosting platform accepting that it happened is why this stays high. The ATT&CK campaign and the ATLAS case study both cite Oligo and add nothing first-hand, and the trade press this entry used to lean on repeats Oligo. The indicators below are from the second campaign and from Oligo alone.",
+   "contested": "CVE-2023-48022 is disputed. Anyscale's position is that unauthenticated job submission is intended behaviour for a framework meant to run inside a trusted network, so the CVE was never directly fixed. That disagreement is why exposure persists and why this is an exposure-management finding rather than a patching one. The actor link covers the second campaign only. In August 2026 Oligo assessed that the group later known as TeamPCP ran ShadowRay 2.0, on shared infrastructure and on sign-in records it says the code-hosting platform provided, and added that whether this is a rebrand, a shared set of operators or collaboration cannot be determined with certainty. Nobody else has published that link, and nothing ties the 2024 campaign to the group. CVE-2023-48022 is not on CISA's KEV catalog. A different and later Ray flaw was added to it in August 2026, and the two should not be read as one.",
+   "atlas": [
+    "AML.T0006",
+    "AML.T0049",
+    "AML.T0055",
+    "AML.T0035",
+    "AML.T0025",
+    "AML.T0048.000"
+   ],
    "summary": "Ray's Jobs API accepts job submissions without authentication. Internet-exposed clusters therefore give an attacker code execution on machines holding models, training data and cloud credentials. Oligo disclosed ShadowRay in March 2024 as the first known attack campaign against AI workloads in the wild, with thousands of exposed servers already compromised. In November 2025 Oligo documented ShadowRay 2.0, a global campaign turning exposed clusters into a self-propagating cryptomining botnet - multi-stage Bash and Python payloads that abuse Ray's own orchestration to deploy across every node and to spread cluster to cluster, running XMRig.",
    "iocs": [
     {
@@ -10483,6 +11049,96 @@
      "type": "pattern",
      "value": "Ray dashboard reachable from the internet",
      "description": "The precondition; the exposure is the vulnerability here"
+    },
+    {
+     "type": "ip",
+     "value": "18.228.3[.]224",
+     "description": "Primary command-and-control server for reverse shells in the second campaign, ports 48331 and 3876"
+    },
+    {
+     "type": "ip",
+     "value": "18.230.118[.]147",
+     "description": "Secondary command-and-control server and mining endpoint, ports 443 and 40331"
+    },
+    {
+     "type": "ip",
+     "value": "67.217.57[.]240",
+     "description": "File server for the netsh reverse-shell binary, port 666. Reverse shells to it ran from September to November 2025, and it is the address the later report ties to TeamPCP"
+    },
+    {
+     "type": "ip",
+     "value": "103.127.134[.]124",
+     "description": "Received reverse shells on ports 30654 and 30987. The later report says the same address signed in to the accounts that hosted the payloads"
+    },
+    {
+     "type": "ip",
+     "value": "45.61.150[.]83",
+     "description": "File server for the second-phase dropper, port 80"
+    },
+    {
+     "type": "ip",
+     "value": "45.95.168[.]100",
+     "description": "File server for downloaded binaries, port 8000"
+    },
+    {
+     "type": "ip",
+     "value": "185.215.180[.]70",
+     "description": "File server for downloaded binaries, port 8000"
+    },
+    {
+     "type": "ip",
+     "value": "162.248.53[.]119",
+     "description": "Payload server, port 8000"
+    },
+    {
+     "type": "url",
+     "value": "hxxp://45[.]61[.]150[.]83/1mmy/xd.sh",
+     "description": "Second-phase dropper"
+    },
+    {
+     "type": "hash",
+     "value": "1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b",
+     "description": "SHA-256 of the second-phase dropper xd.sh. The source also lists a hash for the miner, which is the legitimate XMRig release and proves nothing alone"
+    },
+    {
+     "type": "domain",
+     "value": "masscan[.]cloud",
+     "description": "With matrix.masscan[.]cloud, staging infrastructure the later report links to this campaign. A compromised cluster fetched /ep9TS2/ndt.sh from it in July 2025"
+    },
+    {
+     "type": "domain",
+     "value": "pool.supportxmr.com",
+     "description": "Primary mining pool, port 443 over TLS. A public pool that other miners also use; gulf.moneroocean.stream on 20128 and eu.zano.k1pool.com on 8866 were the others"
+    },
+    {
+     "type": "file",
+     "value": "/usr/lib/dev/systemdev/dns-filter",
+     "description": "The miner under a name chosen to look like a DNS service. /tmp/dns is the alternative location"
+    },
+    {
+     "type": "file",
+     "value": "/var/tmp/.ddns.sh",
+     "description": "Persistence script"
+    },
+    {
+     "type": "file",
+     "value": "/etc/init.d/dns-filter",
+     "description": "Persistence through init.d"
+    },
+    {
+     "type": "config",
+     "value": "authorized_keys entry ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHy6WMgqslpdUCaumLmlUcBjBjuAk4KspADxbcAKrzYd root@archtop",
+     "description": "Key appended by the payload for SSH access. Match the key material; the comment is trivially changed"
+    },
+    {
+     "type": "config",
+     "value": "User crontab entry every 15 minutes piping a script named mon.sh from a code-hosting raw URL into bash",
+     "description": "Persistence and update channel. The hosting project and its replacement were removed in November 2025, so the entry now fails and is still evidence"
+    },
+    {
+     "type": "process",
+     "value": "kworker/0:0 or [kworker/0:0] as the name of a userland process",
+     "description": "The miner renames itself by writing to /proc/$$/comm. A real kernel worker has no executable path and no command line"
     }
    ],
    "response_actions": [
@@ -10509,8 +11165,38 @@
      "url": "https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet"
     },
     {
+     "title": "Oligo Security - New Intelligence Links TeamPCP to ShadowRay 2.0 and Traces Activity back to 2020 (5 Aug 2026)",
+     "url": "https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Anyscale - Update on Ray CVE-2023-48022: New Verification Tooling Available (27 Mar 2024)",
+     "url": "https://www.anyscale.com/blog/update-on-ray-cve-2023-48022-new-verification-tooling-available",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "The Register - Self-replicating botnet attacks Ray clusters, with Anyscale's statement (18 Nov 2025)",
+     "url": "https://www.theregister.com/security/2025/11/18/self-replicating-botnet-attacks-ray-clusters/2390013",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "CyberScoop - Hackers turn open-source AI framework into global cryptojacking operation, with GitHub's statement (18 Nov 2025)",
+     "url": "https://cyberscoop.com/ray-ai-cryptojacking-vulnerability-exposed-clusters-attack-oligo-security/",
+     "accessed": "2026-11-17"
+    },
+    {
      "title": "NVD - CVE-2023-48022",
      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-48022"
+    }
+   ],
+   "actors": [
+    {
+     "ref": "AIRT-TA-0005",
+     "role": "suspected",
+     "link_confidence": "medium",
+     "attributed_by": "Oligo Security",
+     "stated_confidence": "\"We also assess that TeamPCP was responsible for the ShadowRay 2.0 campaign based on our evidence\"; whether that reflects a rebrand, shared operators or collaboration \"cannot be determined with 100% certainty\"",
+     "reference": "https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020"
     }
    ],
    "external_ids": {
@@ -11871,8 +12557,9 @@
    "date_range": "29 Oct 2026, about 02:27 to 13:35 PDT, as Cursor reported it",
    "disclosed": "2026-10-30",
    "affects": "AIRT-0002",
-   "confidence": "medium",
-   "basis": "One reporting party, read twice from the page itself. Microsoft Security Research published the analysis and the indicators; the live window and the observation that SSH access was blocked on most macOS and Windows hosts are Cursor's, relayed in that post. Cursor's own security notice could not be fetched for this entry, so nothing here corroborates Microsoft independently. The source does not say how the tampered builds came to be published, and that question is left open rather than filled in. The model was not involved at any stage: this is conventional malware delivered through an AI tool's extension channel, recorded because the extension directory of a catalogued tool is where the evidence sits.",
+   "confidence": "high",
+   "basis": "Three parties from their own evidence, each read from the page. Cursor, whose marketplace served the builds, published a security notice with the package hashes and a later update giving the cause. Microsoft Security Research analysed the extension and published the host indicators. A supply-chain security vendor compared the tampered bundle byte for byte against the clean build it had downloaded itself. The three agree on the versions, the window, the destination address and the artifacts. What rests on Cursor alone is the cause and the ceiling on affected users, and no party reports an operator using the access. The model was not involved at any stage: this is conventional malware delivered through an AI tool's extension channel, recorded because the extension directory of a catalogued tool is where the evidence sits.",
+   "contested": "Where the tampering happened was misreported at first. Early accounts pointed at Open VSX, the registry Cursor's marketplace mirrors, and were withdrawn. Cursor's update of 13 November says an attacker used a credential stolen from data exposed in an internal system to place the tampered copies directly on the cache that serves its marketplace, and that the upstream registry never held them. That is Cursor's account of its own systems and nobody outside can check it. The same update puts the ceiling at 5,000 users, a count of who could have received a build and not of hosts where the backdoor worked. Only two platform builds were tampered, Apple-silicon macOS and 64-bit Windows, so a Linux or Intel Mac host on the affected version numbers is not evidence of compromise.",
    "atlas": [
     "AML.T0010.001"
    ],
@@ -11886,12 +12573,32 @@
    "owasp_agentic": [
     "ASI04"
    ],
-   "summary": "On 29 October 2026, from about 02:27 to 13:35 PDT by Cursor's account, Cursor's extension marketplace served tampered builds 2.1.312 and 2.1.313 of the extension published as anthropic.claude-code. Microsoft reports that on load the extension profiled the host and reported to a remote address, added an SSH key to the user's authorized keys, tried to enable the SSH service, opened a reverse tunnel to the same address and wrote persistence for the tunnel: a LaunchAgent on macOS, a crontab entry on Linux, a scheduled task or Startup-folder script on Windows. The Visual Studio Marketplace listing and the npm package @anthropic-ai/claude-code were not affected, and Anthropic told Microsoft its systems were not compromised and that it did not build the package. Cursor reported that errors and the need for administrator rights stopped SSH access on most macOS and Windows hosts. Microsoft attributes the activity to no one.",
+   "summary": "On 29 October 2026, from about 02:27 to 13:35 PDT by Cursor's account, Cursor's extension marketplace served tampered builds 2.1.312 and 2.1.313 of the extension published as anthropic.claude-code. Microsoft reports that on load the extension profiled the host and reported to a remote address, added an SSH key to the user's authorized keys, tried to enable the SSH service, opened a reverse tunnel to the same address and wrote persistence for the tunnel: a LaunchAgent on macOS, a crontab entry on Linux, a scheduled task or Startup-folder script on Windows. The Visual Studio Marketplace listing and the npm package @anthropic-ai/claude-code were not affected, and Anthropic told Microsoft its systems were not compromised and that it did not build the package. Cursor reported that errors and the need for administrator rights stopped SSH access on most macOS and Windows hosts. Cursor later gave the cause as a stolen credential used to write to the cache that serves its marketplace, with at most 5,000 users exposed and the last attacker activity on 1 November. An independent comparison found the tampered file to be the clean 2.1.312 bundle with one unobfuscated loader of about 7 KB placed in front of it, and the build labelled 2.1.313 still identifying itself internally as 2.1.312, so the version a host reports is not a reliable test. Nobody attributes the activity.",
    "iocs": [
     {
      "type": "package",
      "value": "anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",
-     "description": "The tampered builds. The same extension id from the Visual Studio Marketplace is not affected, so the installed version and its source are what to check"
+     "description": "The tampered builds, for Apple-silicon macOS and 64-bit Windows only. The same extension id from the Visual Studio Marketplace is not affected. The bundle inside the 2.1.313 package still reports 2.1.312, so match on file content and not on the version"
+    },
+    {
+     "type": "hash",
+     "value": "fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364",
+     "description": "SHA-256 of the tampered VSIX package, 2.1.312 for darwin-arm64, as Cursor published it. A hash of the download, so it finds a cached or archived package and not an installed extension"
+    },
+    {
+     "type": "hash",
+     "value": "3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081",
+     "description": "SHA-256 of the tampered VSIX package, 2.1.312 for win32-x64"
+    },
+    {
+     "type": "hash",
+     "value": "80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c",
+     "description": "SHA-256 of the tampered VSIX package, 2.1.313 for darwin-arm64"
+    },
+    {
+     "type": "hash",
+     "value": "6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731",
+     "description": "SHA-256 of the tampered VSIX package, 2.1.313 for win32-x64"
     },
     {
      "type": "ip",
@@ -11906,12 +12613,17 @@
     {
      "type": "hash",
      "value": "ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
-     "description": "SHA-256 of the extension's JavaScript entry point. Not a hash of the VSIX package"
+     "description": "SHA-256 of the extension's JavaScript entry point, extension.js, 3,692,922 bytes. The same in all four tampered packages, which makes it the one hash to sweep installed extensions for"
     },
     {
      "type": "hash",
      "value": "7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
      "description": "SHA-256 of the decoded tunnel private-key file"
+    },
+    {
+     "type": "config",
+     "value": "Tunnel identity key, fingerprint SHA256:KOAU57+ZG6u3MG4WwzPzPX2O5YEe9qdOC1Bl+6MVyDQ, connecting as the remote account tunnel",
+     "description": "The key the host used to open the reverse tunnel, distinct from the key added to authorized_keys. Useful where SSH client or server logs record the fingerprint"
     },
     {
      "type": "config",
@@ -11921,7 +12633,7 @@
     {
      "type": "pattern",
      "value": ".stk_[0-9a-f]{10}",
-     "description": "Hidden temporary file holding the tunnel identity; a pattern, not a literal name"
+     "description": "Hidden temporary file holding the tunnel identity, in the user's temporary directory. The suffix is derived from the host name and home path, so it is stable per host and differs between hosts"
     },
     {
      "type": "file",
@@ -11957,7 +12669,7 @@
    "response_actions": [
     {
      "phase": "contain",
-     "action": "List installed Cursor extensions with their versions on every host that ran Cursor on 29 October 2026, and find anthropic.claude-code at 2.1.312 or 2.1.313, recording where each copy was installed from. On those hosts, before removing anything, collect the extension folder, the authorized_keys files, the persistence artifacts and the .stk_ file, then block the remote address and stop any ssh or autossh process carrying the reverse-forward arguments."
+     "action": "List installed Cursor extensions with their versions on every host that ran Cursor on 29 October 2026, and find anthropic.claude-code at 2.1.312 or 2.1.313, recording where each copy was installed from. Then hash extension.js in each copy and compare it with the published value, because the version alone clears nothing and condemns nothing. On those hosts, before removing anything, collect the extension folder, the authorized_keys files, the persistence artifacts and the .stk_ file, then block the remote address and stop any ssh or autossh process carrying the reverse-forward arguments."
     },
     {
      "phase": "eradicate",
@@ -11969,19 +12681,38 @@
     },
     {
      "phase": "harden",
-     "action": "Pin or allow-list editor extensions and their marketplaces on managed hosts, and alert on a code editor's process tree adding an SSH key or creating autostart entries."
+     "action": "Pin or allow-list editor extensions and their marketplaces on managed hosts, and alert on a code editor's process tree adding an SSH key or creating autostart entries. Cursor documents an extension allowlist and an install delay for new versions; a delay of a day would have outlasted this window."
     }
    ],
-   "lesson": "An AI coding tool's extension folder is a software supply chain of its own, with a marketplace that is not the one the vendor of the extension publishes to. The same extension id was clean in one marketplace and tampered in another, so the id proves nothing and the version and install source decide it. The catalog has no row for Cursor's extension directory yet, and no rule in this repository alerts on an editor adding an SSH key; both gaps are why this case is here.",
-   "detections": [],
+   "lesson": "An AI coding tool's extension folder is a software supply chain of its own, with a marketplace that is not the one the vendor of the extension publishes to. The same extension id was clean in one marketplace and tampered in another, so the id proves nothing and the version and install source decide it, and here not even the version did, since one build misreported its own. The catalog has no row for Cursor's extension directory yet, because the vendor documents no path for it and none has been confirmed on a host. The rule this case links to matches the reverse tunnel it opened; it was written for this case and has not been fired against real events.",
+   "detections": [
+    "reverse_ssh_tunnel_exposing_local_sshd.yml"
+   ],
    "references": [
     {
      "title": "Microsoft Security Research - Inside a malicious Claude Code-branded extension and its persistent SSH backdoor (30 Oct 2026)",
-     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/"
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/",
+     "accessed": "2026-11-17"
     },
     {
-     "title": "Cursor - Claude Code extension security notice (cited by Microsoft; not retrieved for this entry)",
-     "url": "https://cursor.com/blog/claude-code-extension-security-notice"
+     "title": "Cursor - Claude Code extension security notice (29 Oct 2026)",
+     "url": "https://cursor.com/blog/claude-code-extension-security-notice",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Cursor - Security incident update (13 Nov 2026)",
+     "url": "https://cursor.com/blog/security-incident-update",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "StepSecurity - Trojanized Claude Code Extension Delivered Persistent SSH Backdoor to Developer Machines (updated 30 Oct 2026)",
+     "url": "https://www.stepsecurity.io/blog/claude-code-extension-trojanized",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Cursor - Extensions help page: marketplace, allowlists and install delay",
+     "url": "https://cursor.com/help/customization/extensions",
+     "accessed": "2026-11-17"
     }
    ],
    "affects_ids": [
@@ -11991,12 +12722,12 @@
   {
    "id": "AIRT-CS-0024",
    "title": "Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants",
-   "date_range": "Sep 2026 (first ARTEX use Microsoft reports) to 16 Oct 2026; password spray 10 to 14 Oct 2026",
-   "disclosed": "2026-10-21",
+   "date_range": "Sep 2026 (first ARTEX use Microsoft reports) to 18 Oct 2026; password spray 10 to 14 Oct, application sign-ins 15 Oct, vendor identities disabled 17 Oct 07:00 UTC",
+   "disclosed": "2026-10-16",
    "affects": "Microsoft Entra ID tenants reached through a vendor's multitenant applications - no catalogued endpoint tool",
    "confidence": "medium",
-   "basis": "One reporting party, read from the page itself. Every figure is Microsoft's own telemetry. The post cites ConnectWise's advisories and one third-party write-up, none of which was read for this entry, so nothing here corroborates Microsoft independently, and those sources would bear on the application compromise, not on the AI. The post names no model, does not say where the framework ran, and describes the split between agent and operator only as \"little needed human interaction\". The AI ran on the actor's side, so a victim tenant holds sign-in and audit records and nothing that shows a model was involved.",
-   "contested": "The post is careful about outcome and the reader should be too. It says most of the targeting failed, that the password spray produced no successful authentication, and that a successful application sign-in \"does not necessarily indicate that customer data was accessed or exfiltrated\". Count attempted tenants, authenticated tenants and tenants with post-sign-in activity as three different numbers. The post is also inconsistent with itself on one point - its text and infographic refer to four application credentials and it lists three application ids - so the published list may be incomplete.",
+   "basis": "Two layers with different support. That a vendor's application identities were used to sign in to its customers' tenants is established by four parties writing from their own data: the vendor's advisory, two managed security providers who watched it in their customers' sign-in logs, and Microsoft. A cloud security vendor separately reports the same addresses and tooling against other software vendors. That an AI agent drove it, and that the operator was Storm-0940, rests on Microsoft alone: the vendor says its attribution relies on intelligence Microsoft shared, and both providers say their telemetry is consistent with Microsoft's account and does not confirm it. The entry stays medium for that reason, because the AI is why the case is in this catalog. No source names a model or says where the framework ran. The AI ran on the actor's side, so a victim tenant holds sign-in and audit records and nothing that shows a model was involved.",
+   "contested": "How much of this an agent did. Microsoft describes little human interaction. One responder puts an LLM's involvement at low-to-medium confidence on its own telemetry, medium-to-high given Microsoft's attribution, and reads the activity as scripted tooling steered by an operator. Its strongest evidence against full autonomy is that after one service principal was deleted, requests using it kept arriving every few seconds for 22 minutes, were rejected every time and never changed. It also notes that Microsoft does not say how it identified ARTEX or what ties the earlier password spray to the actor. The numbers measure different things and should not be added: Microsoft counts more than 2,250 tenants attempted; one provider counts almost 1,000 tenants with sign-in activity and over 300 successful among its own customers; the vendor gives no count. On outcome, Microsoft says a successful sign-in does not show data was taken, one provider saw tokens issued and nothing visibly taken, and another advises treating the application's data as exposed. The sources also disagree on which addresses did what: Microsoft lists three for application sign-ins, while one responder saw application sign-ins from 144.172.64[.]128 only and user password spraying from the others. Microsoft lists three application ids, the vendor disabled seven and names an eighth, and the root cause at the vendor was still under investigation when its advisory was last updated.",
    "atlas": [
     "AML.T0124",
     "AML.T0116",
@@ -12039,29 +12770,44 @@
      "information-technology",
      "ngo-think-tank"
     ],
-    "basis": "Microsoft lists the industries the actor targets and counts \"hundreds of organizations globally\" for the ARTEX-driven activity, more than 2,250 tenants for sign-in attempts through the vendor's applications, and 327 accounts in eight organisations for the password spray. It names no country and gives no count of organisations compromised."
+    "basis": "Microsoft lists the industries the actor targets and counts \"hundreds of organizations globally\" for the ARTEX-driven activity, more than 2,250 tenants for sign-in attempts through the vendor's applications, and 327 accounts in eight organisations for the password spray. One managed security provider counts almost 1,000 tenants with sign-in activity and over 300 with a successful sign-in among its own customers. Nobody names a country or gives a count of organisations compromised."
    },
-   "summary": "Microsoft reports that Storm-0940, which it describes as a China-state aligned actor, has used ARTEX since at least September 2026 to automate attacks on hundreds of organisations. ARTEX is described as an open-source, multi-agent penetration-testing framework that can drive any model and runs a test from reconnaissance to exfiltration with little human input. In October the actor took control of the identities of several ConnectWise cloud applications, among them Cloud Backup, and used the trust customers had already granted those applications to attempt sign-ins to more than 2,250 tenants. Where a sign-in succeeded, the reported follow-on was reconnaissance through Microsoft Graph, credentials added to applications for persistence, changes to roles and groups including an application assigning itself Global Administrator, bulk reads of Key Vault secrets and mail access. A password spray from one of the same addresses on 10 to 14 October hit 327 accounts in eight organisations and, by Microsoft's account, authenticated to none. Microsoft says some intrusions went from first targeting to privileged access in under three hours.",
+   "summary": "Microsoft reports that Storm-0940, which it describes as a China-state aligned actor, has used ARTEX since at least September 2026 to automate attacks on hundreds of organisations. ARTEX is described as an open-source, multi-agent penetration-testing framework that can drive any model and runs a test from reconnaissance to exfiltration with little human input. In October the actor obtained credentials for several ConnectWise cloud applications, among them Cloud Backup, and used the consent customers had already granted those applications to sign in to their tenants. The vendor dates its discovery to 14 October and disabled the affected identities on 17 October at 07:00 UTC. Responders watching customer tenants saw the application sign-ins on 15 October between about 06:13 and 08:34 UTC, from one address, presenting a client assertion, and arriving in ascending order of tenant id one to six minutes apart, which is what a script walking a sorted list looks like. Where a sign-in succeeded, the reported follow-on was reconnaissance through Microsoft Graph, credentials added to applications for persistence, an application assigning itself Global Administrator, bulk reads of Key Vault secrets and mail access. One responder saw the persistence steps come from private Azure addresses, not from the published ones. A password spray on 10 to 14 October hit 327 accounts in eight organisations and, by Microsoft's account, authenticated to none. Microsoft says some intrusions went from first targeting to privileged access in under three hours.",
    "iocs": [
     {
      "type": "ip",
      "value": "144.172.64[.]128",
-     "description": "Sign-ins and Graph API activity in customer tenants through the vendor's applications"
+     "description": "Application sign-ins and Graph API activity in customer tenants. Named by the vendor on 16 October, and the only address one responder saw produce application sign-ins"
     },
     {
      "type": "ip",
      "value": "144.172.64[.]99",
-     "description": "Same activity, and the source of the 10 to 14 October password spray"
+     "description": "Listed by Microsoft for the same activity and as the source of the 10 to 14 October password spray. One responder saw it only in failed user sign-ins. The vendor added it on 18 October from downstream monitoring"
     },
     {
      "type": "ip",
      "value": "144.172.64[.]60",
-     "description": "Same activity"
+     "description": "Listed by Microsoft for the same activity. One responder saw a few failed sign-ins from it on 18 October, after the identities were disabled"
+    },
+    {
+     "type": "ip",
+     "value": "144.172.94[.]243",
+     "description": "Broad failed password spraying, reported by one responder and not by Microsoft. A different /24 from the three above"
+    },
+    {
+     "type": "ip",
+     "value": "104.194.150[.]21",
+     "description": "Published by a cloud security vendor for activity against other software vendors that overlaps this actor's addresses and tooling. Not reported in the customer-tenant sign-ins"
+    },
+    {
+     "type": "ip",
+     "value": "167.88.172[.]97",
+     "description": "As above"
     },
     {
      "type": "ip",
      "value": "187.15.88[.]186",
-     "description": "Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October"
+     "description": "Graph API access through the compromised applications. A VPN address Microsoft calls transient and relevant only for 15 and 16 October"
     },
     {
      "type": "ip",
@@ -12076,60 +12822,132 @@
     {
      "type": "account",
      "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-     "description": "Labelled ConnectWise Cloud Backup in the post. Search by application id, not display name, and record the local service principal object id in each tenant"
+     "description": "ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant"
+    },
+    {
+     "type": "account",
+     "value": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+     "description": "ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list"
     },
     {
      "type": "account",
      "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
-     "description": "Labelled ConnectWise - MS Teams in the post"
+     "description": "ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others"
+    },
+    {
+     "type": "account",
+     "value": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+     "description": "ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list"
     },
     {
      "type": "account",
      "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
-     "description": "Labelled ConnectWise - MS Graph in the post"
+     "description": "ConnectWise Cloud Management - MS Graph"
+    },
+    {
+     "type": "account",
+     "value": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+     "description": "ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list"
+    },
+    {
+     "type": "account",
+     "value": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+     "description": "ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list"
+    },
+    {
+     "type": "account",
+     "value": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+     "description": "Named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised"
+    },
+    {
+     "type": "account",
+     "value": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+     "description": "The vendor's tenant as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids"
     },
     {
      "type": "pattern",
-     "value": "User agents Python-urllib/3.12, python-requests/2.31.0, python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0 on application sign-ins and Graph requests",
-     "description": "Published as seen with the vendor's applications. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone"
+     "value": "User agents Python-urllib/3.12 and python-requests/2.31 on application sign-ins; Microsoft adds python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0",
+     "description": "The first two are the vendor's own findings. One responder did not see azure-toolkit/1.0 at all. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone"
+    },
+    {
+     "type": "pattern",
+     "value": "User agent norma/0.4",
+     "description": "Seen by a cloud security vendor in the overlapping activity against other software vendors, in a list it warns is otherwise noisy. The one string in that list with no ordinary sender"
+    },
+    {
+     "type": "pattern",
+     "value": "The applications' normal sign-ins present a kiota-dotnet user agent from private Azure IPv6 addresses",
+     "description": "The baseline the vendor published. A sign-in for one of these applications from a public address with a Python client is outside it"
+    },
+    {
+     "type": "behavior",
+     "value": "One application signing in to many tenants in ascending order of tenant id, one to six minutes apart",
+     "description": "Reported by a provider with sight of many customer tenants. A single tenant sees one sign-in; the ordering is visible only across tenants"
+    },
+    {
+     "type": "behavior",
+     "value": "An application adding a credential to itself or to another application, or being added to a directory role, with an application as the initiator",
+     "description": "The persistence and privilege steps reported after a successful sign-in. In the audit log these are the operations the vendor lists - credential and secret management on an application, added service principal credentials, added owners, role members, app role assignments, delegated permission grants and consent"
     },
     {
      "type": "behavior",
      "value": "One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults",
-     "description": "The shape of the bulk secret reads, as the post's own hunting guidance frames it"
-    },
-    {
-     "type": "behavior",
-     "value": "An application adding a credential to itself or assigning itself a directory role after signing in from an unfamiliar address",
-     "description": "The persistence and privilege steps reported after a successful sign-in"
+     "description": "The shape of the bulk secret reads, as Microsoft's hunting guidance frames it"
     }
    ],
    "response_actions": [
     {
      "phase": "contain",
-     "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications first - deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory the application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
+     "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications as the first step - the vendor's own guidance says the same, because deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory all eight application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
     },
     {
      "phase": "eradicate",
-     "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and remove the ones nobody can account for once they are recorded."
+     "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses - the persistence activity one responder saw came from private Azure addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and to any other application in the tenant on the same days, and remove the ones nobody can account for once they are recorded."
     },
     {
      "phase": "recover",
-     "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that rotation removed the old credentials before re-enabling the connection, and check that backup and restore still work."
+     "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that the replacement identities no longer use a shared secret before re-enabling the connection - it reports moving to federated credentials - and check that backup and restore still work."
     },
     {
      "phase": "harden",
      "action": "Review what each multitenant vendor application is permitted to do in the tenant and reduce it, alert on credential additions and role assignments made by applications, and restrict application sign-ins by location where the licence allows."
     }
    ],
-   "lesson": "The AI in this case ran on the actor's infrastructure, so there is no agent transcript, config file or token on a victim host to collect, and the catalog has no row for it. What the victim holds is identity-provider logging with a short retention clock, which is why the telemetry tab lists it as a source of its own. The agentic part shows only as tempo and breadth: thousands of tenants tried through one trusted identity, and privileged access inside three hours where it worked.",
+   "lesson": "The AI in this case ran on the actor's infrastructure, so there is no agent transcript, config file or token on a victim host to collect, and the catalog has no row for it. What the victim holds is identity-provider logging with a short retention clock, which is why the telemetry tab lists it as a source of its own. It is also the case to read before repeating a headline about autonomous attacks: the parties who watched it in tenant logs could confirm the intrusion and could not confirm the agent, and the one detail that speaks to autonomy cuts against it. Evidence in the tenant answers what was done and when. Whether a model chose to do it is on the actor's server.",
    "detections": [
-    "entra_app_signin_scripted_client.yml"
+    "entra_app_signin_scripted_client.yml",
+    "entra_role_member_added_by_app.yml",
+    "entra_app_credential_added_by_app.yml"
    ],
    "references": [
     {
      "title": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)",
      "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "ConnectWise - Trust Center security advisories, Cloud Backup and Cloud Management (last updated 4 Nov 2026)",
+     "url": "https://www.connectwise.com/company/trust/advisories",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Huntress - Vendor credential enables unauthorized access (16 Oct 2026, updated to 27 Oct 2026)",
+     "url": "https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Huntress - AI, Scripts, Operator: Inside the ConnectWise Attack (26 Oct 2026)",
+     "url": "https://www.huntress.com/blog/connectwise-attack-ai",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Todyl - Investigation: unauthorized access through the ConnectWise Cloud Backup Microsoft 365 app (16 Oct 2026, updated 27 Oct 2026)",
+     "url": "https://www.todyl.com/blog/investigation-unauthorized-access-through-the-connectwise-cloud-backup-microsoft-365-app",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Wiz Research - ARTEX in the Wild: Storm-0940 Expands Targeting of IT and Software Vendors (22 Oct 2026)",
+     "url": "https://www.wiz.io/blog/artex-in-the-wild-storm-0940-expands-targeting-of-it-and-software-vendors",
      "accessed": "2026-11-17"
     }
    ],
@@ -12143,11 +12961,12 @@
   {
    "id": "AIRT-CS-0025",
    "title": "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application",
-   "date_range": "Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026",
-   "disclosed": "2026-11-05",
+   "date_range": "Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026, still under way on 3 Nov 2026",
+   "disclosed": "2026-11-03",
    "affects": "Application secrets and AI service keys exposed in public repositories, and the Entra ID and Azure resources they unlock - no catalogued endpoint tool",
    "confidence": "medium",
-   "basis": "One reporting party, read from the page itself. Microsoft attributes the activity to no one: it calls the network indicators unattributed and two of the addresses only \"potentially associated\" with the campaign, and one of the four is a Tor exit node. The post gives no victim count, sector or country, names no model and does not say where the framework ran. It credits one other vendor with reporting a similar campaign from the same addresses; that report was not read for this entry.",
+   "basis": "Two parties writing from their own data, both read from the page. A managed security provider published the campaign on 3 November from what it saw in its customers' tenants, and Microsoft's post two days later credits that report and adds the repository searches and the framework. The intrusion, its scale and the data taken are the provider's first-hand account. That an agentic framework drove it is Microsoft's: the provider first put AI involvement at low confidence and then said Microsoft's findings matched its assessment, which is agreement and not a second observation. Nobody attributes the activity to an actor. Microsoft calls the network indicators unattributed and two of the addresses only \"potentially associated\", and no source names a model or says where the framework ran.",
+   "contested": "Whether this is the same operation as the October compromise of a backup vendor's applications (AIRT-CS-0024). The provider that saw both assesses them as unrelated. Microsoft places both under the same framework and attributes this one to nobody, and a shared open-source tool is not a shared operator. The two sources also describe one address differently: Microsoft flags 199.19.77[.]18 as a Tor exit node, and the provider reports password spraying through the Azure command-line client from it and from 65.87.223[.]26, linked to the operator with low to moderate confidence.",
    "atlas": [
     "AML.T0095.000",
     "AML.T0055",
@@ -12156,6 +12975,22 @@
     "AML.T0124",
     "AML.T0025"
    ],
+   "victims": {
+    "sectors": [
+     "government",
+     "energy",
+     "food-agriculture",
+     "transportation",
+     "legal-professional-services",
+     "education",
+     "ngo-think-tank"
+    ],
+    "org_count": {
+     "value": 27,
+     "qualifier": "approx"
+    },
+    "basis": "One provider's count among its own customers: about 45 application registrations in about 18 organisations targeted, more than 33 authenticated, and 27 organisations reached once downstream tenants are included. It lists government, energy, food and agriculture, transportation, construction and engineering, legal, education and nonprofits; construction has no term in this vocabulary and is left out. Microsoft gives no count, sector or country. Neither figure is the size of the campaign."
+   },
    "attack": [
     "T1593.003",
     "T1552.001",
@@ -12165,27 +13000,42 @@
     "T1651",
     "T1580"
    ],
-   "summary": "Microsoft reports that from August 2026 an agentic offensive framework, ARTEX, sent large volumes of searches to GitHub for secrets, combining a target organisation's name with secret, cloud-service and AI-provider keywords. It looked for application credentials and for API keys to AI services, which the post says the agents sought out repeatedly. From 28 October the harvested application credentials were used for service principal sign-ins to Entra ID across dozens of applications in several tenants, followed by discovery of subscriptions, permissions and AI model deployments, reads of storage keys, connection strings and Key Vault secrets, searches of Azure DevOps, SharePoint and mailbox access, and scripts run on virtual machines through Run Command. In one tenant a vendor-owned multitenant application's credential, compromised at the vendor, gave access to downstream tenants. Microsoft describes one run that went from searching GitHub for a client secret to exfiltrating from a Key Vault in five minutes, and requests that failed and were reissued against a different API version within about half a minute.",
+   "summary": "Microsoft reports that from August 2026 an agentic offensive framework, ARTEX, sent large volumes of searches to GitHub for secrets, combining a target organisation's name with secret, cloud-service and AI-provider keywords. It looked for application credentials and for API keys to AI services, which the post says the agents sought out repeatedly. From 28 October the harvested application credentials were used for service principal sign-ins to Entra ID across dozens of applications in several tenants, followed by discovery of subscriptions, permissions and AI model deployments, reads of storage keys, connection strings and Key Vault secrets, searches of Azure DevOps, SharePoint and mailbox access, and scripts run on virtual machines through Run Command. In one tenant a vendor-owned multitenant application's credential, compromised at the vendor, gave access to downstream tenants. Microsoft describes one run that went from searching GitHub for a client secret to exfiltrating from a Key Vault in five minutes, and requests that failed and were reissued against a different API version within about half a minute. A managed security provider that watched the same addresses in its customers' tenants reports what was taken: searches of SharePoint and mail in about 25 tenants, 81 files downloaded and roughly 2,279 mailbox items read, with one address making 412 sign-in attempts in seven days from 1 November. One of its partners was billed thousands of dollars of AI service usage in about ten minutes.",
    "iocs": [
     {
      "type": "ip",
      "value": "199.19.77[.]84",
-     "description": "Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026"
+     "description": "Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026. One provider attributes it to the operator with high confidence and counts 412 sign-in attempts from it between 1 and 3 November"
     },
     {
      "type": "ip",
      "value": "199.19.77[.]18",
-     "description": "A Tor exit node, which the post warns may carry unrelated activity from unrelated sources. Use to pivot, not to conclude"
+     "description": "A Tor exit node by Microsoft's account, which warns it may carry unrelated activity. One provider reports password spraying through the Azure command-line client from it. Use to pivot, not to conclude"
     },
     {
      "type": "ip",
      "value": "65.87.223[.]26",
-     "description": "Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent. One of two addresses the post calls potentially associated"
+     "description": "Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent, by Microsoft's account, and Azure command-line password spraying by one provider's. Both sources hold the link to the campaign loosely"
     },
     {
      "type": "ip",
      "value": "157.22.126[.]128",
      "description": "Reconnaissance against AI workloads the victims run on Azure AI services"
+    },
+    {
+     "type": "pattern",
+     "value": "Network 199.19.77.0/24",
+     "description": "The range the first two addresses sit in, published by one provider. A range on a hosting network, so it widens a hunt and identifies nothing"
+    },
+    {
+     "type": "pattern",
+     "value": "User agents task177-f2267/1.0 and sait-tenant-deep/37346",
+     "description": "Published by one provider as unique to this operator. Unlike the Python and curl strings in the related case, nothing legitimate is known to send these"
+    },
+    {
+     "type": "behavior",
+     "value": "Password-grant sign-ins through the Azure command-line client (application id 04b07795-8ddb-461a-bbee-02f9e1bf7b46) from the addresses above",
+     "description": "That id is Microsoft's own client and every tenant sees it daily. The indicator is the password grant from these addresses, never the application id alone"
     },
     {
      "type": "behavior",
@@ -12214,7 +13064,7 @@
     },
     {
      "phase": "recover",
-     "action": "Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Managed service providers should also review partner access and customer tenants."
+     "action": "Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Check the bill for AI services on the days in question - one affected organisation was charged thousands of dollars in about ten minutes - and treat mail and files the application could search as read. Managed service providers should also review partner access and customer tenants."
     },
     {
      "phase": "harden",
@@ -12224,12 +13074,18 @@
    "lesson": "The catalog lists where AI tools keep API keys on a host because those files are what gets copied into a repository. This case is the other end of that: an agent that searches public code for exactly those keys and for application secrets, and uses one within minutes. No catalogued tool ran on the victim's side, so the evidence is the provider's sign-in and resource logs, and the AI is visible only in the speed and in the way failed requests were corrected.",
    "detections": [
     "entra_app_signin_invalid_or_expired_secret.yml",
-    "entra_app_signin_scripted_client.yml"
+    "entra_app_signin_scripted_client.yml",
+    "entra_app_credential_added_by_app.yml"
    ],
    "references": [
     {
      "title": "Microsoft Threat Intelligence and Microsoft Security Research - Threat actors use agentic AI tooling to find and abuse exposed secrets (5 Nov 2026)",
      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Todyl - Stolen app credentials, real access: an actor is signing into Entra ID and Azure DevOps as your workloads (3 Nov 2026, updated 6 Nov 2026)",
+     "url": "https://www.todyl.com/blog/stolen-app-credentials-real-access-an-actor-is-signing-into-entra-id-and-azure-devops-as-your-workloads",
      "accessed": "2026-11-17"
     }
    ],
@@ -12242,8 +13098,8 @@
    "disclosed": "2026-11-06",
    "affects": "Internet-facing web applications of the targeted organisations - no catalogued endpoint tool",
    "confidence": "medium",
-   "basis": "One reporting party, read from the page itself, and a short account. The post gives no victim count, no outcome, no vulnerability identifier and no host artifact for any of the three remote-access tools it names. It names no model and says only that some published addresses are ARTEX servers. Its figure showing the download commands is an image whose text could not be read for this entry. Several of its statements describe ARTEX-related attacks in general, not this actor, and are kept out of the indicators for that reason.",
-   "contested": "The post's indicator table and its own hunting query disagree on one address: the table lists 178.16.54[.]129 and the query lists 178.15.54[.]129. Nothing in the post says which is right, so both are recorded here and neither should be dropped from a search. The post does not say whether Storm-3358 is connected to Storm-0940, the other actor Microsoft reports using the same framework.",
+   "basis": "One reporting party for the actor and the intrusions, read from the page itself, and a short account. No second party has reported on Storm-3358 from its own data: an FBI FLASH of 13 November reprints these indicators and credits them to Microsoft, which is distribution and not corroboration. Other parties do report on the framework, from operator consoles and from intrusions by other users of it, and the framework artefacts listed below come from those reports and were not observed for this actor. The post gives no victim count, no outcome, no vulnerability identifier and no host artifact for any of the three remote-access tools it names. It names no model and says only that some published addresses are ARTEX servers. Its figure showing the download commands is an image whose text could not be read for this entry. Several of its statements describe ARTEX-related attacks in general, not this actor, and are kept out of the indicators for that reason.",
+   "contested": "The post's indicator table and its own hunting query disagree on one address: the table lists 178.16.54[.]129 and the query lists 178.15.54[.]129. Nothing in the post says which is right, so both are recorded here and neither should be dropped from a search. The post does not say whether Storm-3358 is connected to Storm-0940, the other actor Microsoft reports using the same framework. The FBI FLASH carries the table's form of the address, which shows which line it copied and settles nothing. A research team that read exposed operator consoles of the framework found criminal operators prompting it for theft with no reported success in the campaigns it examined, including findings the agents invented, so a framework server in the logs is evidence of an attempt and the outcome has to be established on the victim's own systems.",
    "atlas": [
     "AML.T0116",
     "AML.T0124",
@@ -12318,6 +13174,16 @@
      "description": "ARTEX server, first seen 28 Oct 2026"
     },
     {
+     "type": "pattern",
+     "value": "Files named artex-probe- followed by a five-digit number, with various extensions",
+     "description": "A default artefact of the framework, reported by an incident response team in an intrusion by a different user of it. Not reported for this actor, and an operator can change it"
+    },
+    {
+     "type": "pattern",
+     "value": "Accounts created with ArtexProbe in the name, and web shells with short incrementing names of the form cl1217.jsp, f1219a.jsp, z1219.jsp",
+     "description": "As above. The framework numbers what it creates, so one find points to its neighbours"
+    },
+    {
      "type": "malware",
      "value": "WISP",
      "description": "Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash"
@@ -12361,12 +13227,29 @@
      "action": "Require authentication on file upload endpoints, restrict what internet-facing applications may request on the server's behalf, and alert when a web server process starts a download tool or a shell."
     }
    ],
-   "lesson": "This is the case the guide's \"where did the AI run\" section exists for. The agent was on the actor's server and what reached the victim was scanning, an exploited web application and a conventional remote-access tool, so the catalog has no row and the investigation is an ordinary web server compromise run faster. The published indicators are all network addresses with a short life, and one of them is printed two ways in the source.",
-   "detections": [],
+   "lesson": "This is the case the guide's \"where did the AI run\" section exists for. The agent was on the actor's server and what reached the victim was scanning, an exploited web application and a conventional remote-access tool, so the catalog has no row and the investigation is an ordinary web server compromise run faster. The published indicators are all network addresses with a short life, and one of them is printed two ways in the source. The one rule linked here matches a default file name the framework leaves, taken from another party's intrusion report, which makes it a tripwire for a careless operator and nothing more.",
+   "detections": [
+    "artex_default_probe_file_created.yml"
+   ],
    "references": [
     {
      "title": "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)",
      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "FBI - FLASH: Threat Overview of ARTEX Autonomous Penetration Testing Framework (13 Nov 2026)",
+     "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "Check Point Research - Hacking on Autopilot: Inside ARTEX Cybercrime Campaigns (5 Nov 2026)",
+     "url": "https://research.checkpoint.com/2026/hacking-on-autopilot-inside-artex-cybercrime-campaigns/",
+     "accessed": "2026-11-17"
+    },
+    {
+     "title": "GTIG - ARTEX and Friends: Enter Agentic Offensive Frameworks (30 Oct 2026)",
+     "url": "https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks",
      "accessed": "2026-11-17"
     }
    ],
@@ -14069,6 +14952,12 @@
     "label": "ASI06 Memory and Context Poisoning"
    },
    {
+    "id": "atlas:AML.T0006",
+    "type": "technique",
+    "label": "AML.T0006 Active Scanning",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0008",
     "type": "technique",
     "label": "AML.T0008 Acquire Infrastructure",
@@ -14090,6 +14979,12 @@
     "id": "atlas:AML.T0010.001",
     "type": "technique",
     "label": "AML.T0010.001 Software",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0010.005",
+    "type": "technique",
+    "label": "AML.T0010.005 AI Agent Tool",
     "framework": "ATLAS"
    },
    {
@@ -14150,6 +15045,18 @@
     "id": "atlas:AML.T0034",
     "type": "technique",
     "label": "AML.T0034 Cost Harvesting",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0035",
+    "type": "technique",
+    "label": "AML.T0035 AI Artifact Collection",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0048.000",
+    "type": "technique",
+    "label": "AML.T0048.000 Financial Harm",
     "framework": "ATLAS"
    },
    {
@@ -14240,6 +15147,12 @@
     "id": "atlas:AML.T0103",
     "type": "technique",
     "label": "AML.T0103 Deploy AI Agent",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0109",
+    "type": "technique",
+    "label": "AML.T0109 AI Supply Chain Rug Pull",
     "framework": "ATLAS"
    },
    {
@@ -14537,7 +15450,7 @@
     "type": "case",
     "label": "AI Recommendation Poisoning - Memory Manipulation for Profit",
     "case_id": "AIRT-CS-0011",
-    "confidence": "high"
+    "confidence": "medium"
    },
    {
     "id": "case:AIRT-CS-0012",
@@ -14621,7 +15534,7 @@
     "type": "case",
     "label": "Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel",
     "case_id": "AIRT-CS-0023",
-    "confidence": "medium"
+    "confidence": "high"
    },
    {
     "id": "case:AIRT-CS-0024",
@@ -14758,15 +15671,51 @@
     "ioc_type": "account"
    },
    {
+    "id": "ioc:account:Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "type": "ioc",
+    "label": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "ioc_type": "account"
+   },
+   {
     "id": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
     "type": "ioc",
     "label": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
     "ioc_type": "account"
    },
    {
+    "id": "ioc:account:Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "type": "ioc",
+    "label": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "ioc_type": "account"
+   },
+   {
     "id": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
     "type": "ioc",
     "label": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+    "type": "ioc",
+    "label": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+    "type": "ioc",
+    "label": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+    "type": "ioc",
+    "label": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "type": "ioc",
+    "label": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
     "ioc_type": "account"
    },
    {
@@ -14986,6 +15935,12 @@
     "ioc_type": "domain"
    },
    {
+    "id": "ioc:domain:masscan[.]cloud",
+    "type": "ioc",
+    "label": "masscan[.]cloud",
+    "ioc_type": "domain"
+   },
+   {
     "id": "ioc:domain:meridian-protocol[.]org",
     "type": "ioc",
     "label": "meridian-protocol[.]org",
@@ -15073,6 +16028,12 @@
     "id": "ioc:domain:policenationale[.]cc",
     "type": "ioc",
     "label": "policenationale[.]cc",
+    "ioc_type": "domain"
+   },
+   {
+    "id": "ioc:domain:pool.supportxmr.com",
+    "type": "ioc",
+    "label": "pool.supportxmr.com",
     "ioc_type": "domain"
    },
    {
@@ -15232,9 +16193,33 @@
     "ioc_type": "file"
    },
    {
+    "id": "ioc:file:.system_idle",
+    "type": "ioc",
+    "label": ".system_idle",
+    "ioc_type": "file"
+   },
+   {
+    "id": "ioc:file:/etc/init.d/dns-filter",
+    "type": "ioc",
+    "label": "/etc/init.d/dns-filter",
+    "ioc_type": "file"
+   },
+   {
     "id": "ioc:file:/tmp/inventory.txt",
     "type": "ioc",
     "label": "/tmp/inventory.txt",
+    "ioc_type": "file"
+   },
+   {
+    "id": "ioc:file:/usr/lib/dev/systemdev/dns-filter",
+    "type": "ioc",
+    "label": "/usr/lib/dev/systemdev/dns-filter",
+    "ioc_type": "file"
+   },
+   {
+    "id": "ioc:file:/var/tmp/.ddns.sh",
+    "type": "ioc",
+    "label": "/var/tmp/.ddns.sh",
     "ioc_type": "file"
    },
    {
@@ -15346,9 +16331,45 @@
     "ioc_type": "file"
    },
    {
+    "id": "ioc:hash:1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b",
+    "type": "ioc",
+    "label": "1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081",
+    "type": "ioc",
+    "label": "3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3",
+    "type": "ioc",
+    "label": "64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731",
+    "type": "ioc",
+    "label": "6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731",
+    "ioc_type": "hash"
+   },
+   {
     "id": "ioc:hash:7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
     "type": "ioc",
     "label": "7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c",
+    "type": "ioc",
+    "label": "80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee",
+    "type": "ioc",
+    "label": "912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee",
     "ioc_type": "hash"
    },
    {
@@ -15364,15 +16385,33 @@
     "ioc_type": "hash"
    },
    {
+    "id": "ioc:hash:ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec",
+    "type": "ioc",
+    "label": "ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec",
+    "ioc_type": "hash"
+   },
+   {
     "id": "ioc:hash:ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
     "type": "ioc",
     "label": "ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
     "ioc_type": "hash"
    },
    {
+    "id": "ioc:hash:fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364",
+    "type": "ioc",
+    "label": "fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364",
+    "ioc_type": "hash"
+   },
+   {
     "id": "ioc:ip:103.124.165[.]199",
     "type": "ioc",
     "label": "103.124.165[.]199",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:103.127.134[.]124",
+    "type": "ioc",
+    "label": "103.127.134[.]124",
     "ioc_type": "ip"
    },
    {
@@ -15403,6 +16442,12 @@
     "id": "ioc:ip:104.194.149[.]228",
     "type": "ioc",
     "label": "104.194.149[.]228",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:104.194.150[.]21",
+    "type": "ioc",
+    "label": "104.194.150[.]21",
     "ioc_type": "ip"
    },
    {
@@ -15484,6 +16529,12 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:144.172.94[.]243",
+    "type": "ioc",
+    "label": "144.172.94[.]243",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:146.103.101[.]253",
     "type": "ioc",
     "label": "146.103.101[.]253",
@@ -15538,6 +16589,12 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:162.248.53[.]119",
+    "type": "ioc",
+    "label": "162.248.53[.]119",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:163.172.157[.]53",
     "type": "ioc",
     "label": "163.172.157[.]53",
@@ -15547,6 +16604,12 @@
     "id": "ioc:ip:167.250.111[.]136",
     "type": "ioc",
     "label": "167.250.111[.]136",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:167.88.172[.]97",
+    "type": "ioc",
+    "label": "167.88.172[.]97",
     "ioc_type": "ip"
    },
    {
@@ -15574,6 +16637,18 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:18.228.3[.]224",
+    "type": "ioc",
+    "label": "18.228.3[.]224",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:18.230.118[.]147",
+    "type": "ioc",
+    "label": "18.230.118[.]147",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:185.198.234[.]101",
     "type": "ioc",
     "label": "185.198.234[.]101",
@@ -15583,6 +16658,12 @@
     "id": "ioc:ip:185.198.234[.]26",
     "type": "ioc",
     "label": "185.198.234[.]26",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:185.215.180[.]70",
+    "type": "ioc",
+    "label": "185.215.180[.]70",
     "ioc_type": "ip"
    },
    {
@@ -15613,6 +16694,12 @@
     "id": "ioc:ip:187.15.90[.]217",
     "type": "ioc",
     "label": "187.15.90[.]217",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:188.166.68[.]21",
+    "type": "ioc",
+    "label": "188.166.68[.]21",
     "ioc_type": "ip"
    },
    {
@@ -15706,6 +16793,12 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:206.71.149[.]179",
+    "type": "ioc",
+    "label": "206.71.149[.]179",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:213.145.86[.]112",
     "type": "ioc",
     "label": "213.145.86[.]112",
@@ -15772,9 +16865,39 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:45.61.137[.]226",
+    "type": "ioc",
+    "label": "45.61.137[.]226",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:45.61.150[.]83",
+    "type": "ioc",
+    "label": "45.61.150[.]83",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:45.95.168[.]100",
+    "type": "ioc",
+    "label": "45.95.168[.]100",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:65.87.223[.]26",
     "type": "ioc",
     "label": "65.87.223[.]26",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:67.217.57[.]240",
+    "type": "ioc",
+    "label": "67.217.57[.]240",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:80.66.75[.]121",
+    "type": "ioc",
+    "label": "80.66.75[.]121",
     "ioc_type": "ip"
    },
    {
@@ -15856,6 +16979,12 @@
     "ioc_type": "process"
    },
    {
+    "id": "ioc:process:kworker/0:0 or [kworker/0:0] as the name of a userland process",
+    "type": "ioc",
+    "label": "kworker/0:0 or [kworker/0:0] as the name of a userland process",
+    "ioc_type": "process"
+   },
+   {
     "id": "ioc:process:ssh or autossh with -N -R '*:0:localhost:22'",
     "type": "ioc",
     "label": "ssh or autossh with -N -R '*:0:localhost:22'",
@@ -15877,6 +17006,18 @@
     "id": "ioc:url:hxxp://134[.]209[.]82[.]225:8099/beacon",
     "type": "ioc",
     "label": "hxxp://134[.]209[.]82[.]225:8099/beacon",
+    "ioc_type": "url"
+   },
+   {
+    "id": "ioc:url:hxxp://45[.]61[.]150[.]83/1mmy/xd.sh",
+    "type": "ioc",
+    "label": "hxxp://45[.]61[.]150[.]83/1mmy/xd.sh",
+    "ioc_type": "url"
+   },
+   {
+    "id": "ioc:url:hxxp://80[.]66[.]75[.]121:25565/docker",
+    "type": "ioc",
+    "label": "hxxp://80[.]66[.]75[.]121:25565/docker",
     "ioc_type": "url"
    },
    {
@@ -15995,6 +17136,11 @@
     "label": "ai_service_api_c2.rules"
    },
    {
+    "id": "rule:artex_default_probe_file_created.yml",
+    "type": "rule",
+    "label": "artex_default_probe_file_created.yml"
+   },
+   {
     "id": "rule:azure_openai_injection.yml",
     "type": "rule",
     "label": "azure_openai_injection.yml"
@@ -16040,6 +17186,11 @@
     "label": "cursor_settings_db_modification.yml"
    },
    {
+    "id": "rule:entra_app_credential_added_by_app.yml",
+    "type": "rule",
+    "label": "entra_app_credential_added_by_app.yml"
+   },
+   {
     "id": "rule:entra_app_signin_invalid_or_expired_secret.yml",
     "type": "rule",
     "label": "entra_app_signin_invalid_or_expired_secret.yml"
@@ -16048,6 +17199,11 @@
     "id": "rule:entra_app_signin_scripted_client.yml",
     "type": "rule",
     "label": "entra_app_signin_scripted_client.yml"
+   },
+   {
+    "id": "rule:entra_role_member_added_by_app.yml",
+    "type": "rule",
+    "label": "entra_role_member_added_by_app.yml"
    },
    {
     "id": "rule:github_copilot_yolo_mode_enabled.yml",
@@ -16215,6 +17371,11 @@
     "label": "ray_jobs_api_rce.rules"
    },
    {
+    "id": "rule:reverse_ssh_tunnel_exposing_local_sshd.yml",
+    "type": "rule",
+    "label": "reverse_ssh_tunnel_exposing_local_sshd.yml"
+   },
+   {
     "id": "rule:runtime_ai_malware_correlation.yml",
     "type": "rule",
     "label": "runtime_ai_malware_correlation.yml"
@@ -16323,6 +17484,11 @@
     "id": "sector:financial-services",
     "type": "sector",
     "label": "financial-services"
+   },
+   {
+    "id": "sector:food-agriculture",
+    "type": "sector",
+    "label": "food-agriculture"
    },
    {
     "id": "sector:government",
@@ -16662,6 +17828,12 @@
     "source": "actor:AIRT-TA-0005",
     "target": "atlas:AML.T0055",
     "rel": "uses"
+   },
+   {
+    "source": "actor:AIRT-TA-0005",
+    "target": "case:AIRT-CS-0014",
+    "rel": "attributed-to",
+    "confidence": "medium"
    },
    {
     "source": "actor:AIRT-TA-0005",
@@ -17012,6 +18184,11 @@
     "rel": "uses"
    },
    {
+    "source": "atlas:AML.T0006",
+    "target": "tactic:AML.TA0002",
+    "rel": "in-tactic"
+   },
+   {
     "source": "atlas:AML.T0008",
     "target": "tactic:AML.TA0003",
     "rel": "in-tactic"
@@ -17028,6 +18205,11 @@
    },
    {
     "source": "atlas:AML.T0010.001",
+    "target": "tactic:AML.TA0004",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0010.005",
     "target": "tactic:AML.TA0004",
     "rel": "in-tactic"
    },
@@ -17088,6 +18270,16 @@
    },
    {
     "source": "atlas:AML.T0034",
+    "target": "tactic:AML.TA0011",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0035",
+    "target": "tactic:AML.TA0009",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0048.000",
     "target": "tactic:AML.TA0011",
     "rel": "in-tactic"
    },
@@ -17184,6 +18376,11 @@
    {
     "source": "atlas:AML.T0103",
     "target": "tactic:AML.TA0005",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0109",
+    "target": "tactic:AML.TA0007",
     "rel": "in-tactic"
    },
    {
@@ -17325,6 +18522,51 @@
     "source": "case:AIRT-CS-0003",
     "target": "atlas:AML.T0011",
     "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:file:.system_idle",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:hash:64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:hash:912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:hash:ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:ip:188.166.68[.]21",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:ip:206.71.149[.]179",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:ip:45.61.137[.]226",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:ip:80.66.75[.]121",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0003",
+    "target": "ioc:url:hxxp://80[.]66[.]75[.]121:25565/docker",
+    "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0003",
@@ -17628,6 +18870,21 @@
    },
    {
     "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0010.005",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0081",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0109",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
     "target": "rule:ai_agent_mcp_config_modification.yml",
     "rel": "detected-by"
    },
@@ -17823,12 +19080,122 @@
    },
    {
     "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0006",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0025",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0035",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0048.000",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0049",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0055",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
     "target": "campaign:C0045",
     "rel": "same-as"
    },
    {
     "source": "case:AIRT-CS-0014",
+    "target": "ioc:domain:masscan[.]cloud",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:domain:pool.supportxmr.com",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:file:/etc/init.d/dns-filter",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:file:/usr/lib/dev/systemdev/dns-filter",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:file:/var/tmp/.ddns.sh",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:hash:1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:103.127.134[.]124",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:162.248.53[.]119",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:18.228.3[.]224",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:18.230.118[.]147",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:185.215.180[.]70",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:45.61.150[.]83",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:45.95.168[.]100",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:ip:67.217.57[.]240",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
     "target": "ioc:process:XMRig or equivalent miner on a GPU host",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:process:kworker/0:0 or [kworker/0:0] as the name of a userland process",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "ioc:url:hxxp://45[.]61[.]150[.]83/1mmy/xd.sh",
     "rel": "indicator"
    },
    {
@@ -19018,12 +20385,32 @@
    },
    {
     "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
     "target": "ioc:hash:7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
     "target": "ioc:hash:ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364",
     "rel": "indicator"
    },
    {
@@ -19045,6 +20432,11 @@
     "source": "case:AIRT-CS-0023",
     "target": "ioc:url:hxxp://134[.]209[.]82[.]225:8099/beacon",
     "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "rule:reverse_ssh_tunnel_exposing_local_sshd.yml",
+    "rel": "detected-by"
    },
    {
     "source": "case:AIRT-CS-0023",
@@ -19133,12 +20525,47 @@
    },
    {
     "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
     "target": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
     "target": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:104.194.150[.]21",
     "rel": "indicator"
    },
    {
@@ -19158,6 +20585,16 @@
    },
    {
     "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:144.172.94[.]243",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:167.88.172[.]97",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
     "target": "ioc:ip:187.15.88[.]186",
     "rel": "indicator"
    },
@@ -19173,7 +20610,17 @@
    },
    {
     "source": "case:AIRT-CS-0024",
+    "target": "rule:entra_app_credential_added_by_app.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
     "target": "rule:entra_app_signin_scripted_client.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "rule:entra_role_member_added_by_app.yml",
     "rel": "detected-by"
    },
    {
@@ -19313,6 +20760,11 @@
    },
    {
     "source": "case:AIRT-CS-0025",
+    "target": "rule:entra_app_credential_added_by_app.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
     "target": "rule:entra_app_signin_invalid_or_expired_secret.yml",
     "rel": "detected-by"
    },
@@ -19320,6 +20772,41 @@
     "source": "case:AIRT-CS-0025",
     "target": "rule:entra_app_signin_scripted_client.yml",
     "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:education",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:energy",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:food-agriculture",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:government",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:legal-professional-services",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:ngo-think-tank",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "sector:transportation",
+    "rel": "targets"
    },
    {
     "source": "case:AIRT-CS-0026",
@@ -19410,6 +20897,11 @@
     "source": "case:AIRT-CS-0026",
     "target": "malware:wisp",
     "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "rule:artex_default_probe_file_created.yml",
+    "rel": "detected-by"
    },
    {
     "source": "case:AIRT-CS-0026",
@@ -19522,6 +21014,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:artex_default_probe_file_created.yml",
+    "target": "atlas:AML.T0116",
+    "rel": "detects"
+   },
+   {
     "source": "rule:azure_openai_injection.yml",
     "target": "atlas:AML.T0051",
     "rel": "detects"
@@ -19562,6 +21059,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:claude_desktop_config_modify.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:claude_session_jsonl_unexpected_access.yml",
     "target": "atlas:AML.T0086",
     "rel": "detects"
@@ -19577,6 +21079,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:copilot_rules_file_backdoor.yar",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -19584,6 +21091,16 @@
    {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:cursor_settings_db_modification.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:entra_app_credential_added_by_app.yml",
+    "target": "atlas:AML.T0012",
     "rel": "detects"
    },
    {
@@ -19602,6 +21119,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:entra_role_member_added_by_app.yml",
+    "target": "atlas:AML.T0012",
+    "rel": "detects"
+   },
+   {
     "source": "rule:github_copilot_yolo_mode_enabled.yml",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -19609,6 +21131,11 @@
    {
     "source": "rule:github_copilot_yolo_mode_enabled.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:github_copilot_yolo_mode_enabled.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19624,6 +21151,11 @@
    {
     "source": "rule:huggingface_cache_unexpected_writer.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:huggingface_cache_unexpected_writer.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19684,6 +21216,11 @@
    {
     "source": "rule:mcp_config_tampering.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mcp_config_tampering.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19753,6 +21290,11 @@
    },
    {
     "source": "rule:mlflow_path_traversal.rules",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mlflow_path_traversal.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -19777,6 +21319,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:model_file_hash_mismatch.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:ollama_vllm_unauth_exposure.rules",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -19784,6 +21331,11 @@
    {
     "source": "rule:ollama_vllm_unauth_exposure.rules",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:ollama_vllm_unauth_exposure.rules",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19809,6 +21361,11 @@
    {
     "source": "rule:pip_install_typosquat.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:pip_install_typosquat.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19854,6 +21411,11 @@
    {
     "source": "rule:ray_jobs_api_rce.rules",
     "target": "atlas:AML.T0086",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:reverse_ssh_tunnel_exposing_local_sshd.yml",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -19913,6 +21475,11 @@
    },
    {
     "source": "rule:torchserve_shelltorch.rules",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:torchserve_shelltorch.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -19924,6 +21491,11 @@
    {
     "source": "rule:triton_inference_server_exploit.rules",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:triton_inference_server_exploit.rules",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {

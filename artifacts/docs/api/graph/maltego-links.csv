@@ -29,6 +29,7 @@ maltego.Phrase,actor:AIRT-TA-0004,maltego.Phrase,tool:AIRT-0001,abuses
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,asi:ASI04,maps-to
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,atlas:AML.T0010,uses
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,atlas:AML.T0055,uses
+maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,case:AIRT-CS-0014,attributed-to
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,case:AIRT-CS-0016,attributed-to
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,malware:dustmaker,uses
 maltego.Phrase,actor:AIRT-TA-0005,maltego.Phrase,malware:sandclock,uses
@@ -97,10 +98,12 @@ maltego.Phrase,actor:AIRT-TA-0022,maltego.Phrase,case:AIRT-CS-0026,attributed-to
 maltego.Phrase,actor:AIRT-TA-0022,maltego.Phrase,malware:adaptixc2,uses
 maltego.Phrase,actor:AIRT-TA-0022,maltego.Phrase,malware:vshell,uses
 maltego.Phrase,actor:AIRT-TA-0022,maltego.Phrase,malware:wisp,uses
+maltego.Phrase,atlas:AML.T0006,maltego.Phrase,tactic:AML.TA0002,in-tactic
 maltego.Phrase,atlas:AML.T0008,maltego.Phrase,tactic:AML.TA0003,in-tactic
 maltego.Phrase,atlas:AML.T0008.000,maltego.Phrase,tactic:AML.TA0003,in-tactic
 maltego.Phrase,atlas:AML.T0010,maltego.Phrase,tactic:AML.TA0004,in-tactic
 maltego.Phrase,atlas:AML.T0010.001,maltego.Phrase,tactic:AML.TA0004,in-tactic
+maltego.Phrase,atlas:AML.T0010.005,maltego.Phrase,tactic:AML.TA0004,in-tactic
 maltego.Phrase,atlas:AML.T0011,maltego.Phrase,tactic:AML.TA0005,in-tactic
 maltego.Phrase,atlas:AML.T0012,maltego.Phrase,tactic:AML.TA0004,in-tactic
 maltego.Phrase,atlas:AML.T0012,maltego.Phrase,tactic:AML.TA0012,in-tactic
@@ -113,6 +116,8 @@ maltego.Phrase,atlas:AML.T0017.002,maltego.Phrase,tactic:AML.TA0003,in-tactic
 maltego.Phrase,atlas:AML.T0024,maltego.Phrase,tactic:AML.TA0010,in-tactic
 maltego.Phrase,atlas:AML.T0025,maltego.Phrase,tactic:AML.TA0010,in-tactic
 maltego.Phrase,atlas:AML.T0034,maltego.Phrase,tactic:AML.TA0011,in-tactic
+maltego.Phrase,atlas:AML.T0035,maltego.Phrase,tactic:AML.TA0009,in-tactic
+maltego.Phrase,atlas:AML.T0048.000,maltego.Phrase,tactic:AML.TA0011,in-tactic
 maltego.Phrase,atlas:AML.T0049,maltego.Phrase,tactic:AML.TA0004,in-tactic
 maltego.Phrase,atlas:AML.T0051,maltego.Phrase,tactic:AML.TA0005,in-tactic
 maltego.Phrase,atlas:AML.T0053,maltego.Phrase,tactic:AML.TA0005,in-tactic
@@ -132,6 +137,7 @@ maltego.Phrase,atlas:AML.T0095.000,maltego.Phrase,tactic:AML.TA0002,in-tactic
 maltego.Phrase,atlas:AML.T0096,maltego.Phrase,tactic:AML.TA0014,in-tactic
 maltego.Phrase,atlas:AML.T0102,maltego.Phrase,tactic:AML.TA0001,in-tactic
 maltego.Phrase,atlas:AML.T0103,maltego.Phrase,tactic:AML.TA0005,in-tactic
+maltego.Phrase,atlas:AML.T0109,maltego.Phrase,tactic:AML.TA0007,in-tactic
 maltego.Phrase,atlas:AML.T0115.002,maltego.Phrase,tactic:AML.TA0003,in-tactic
 maltego.Phrase,atlas:AML.T0116,maltego.Phrase,tactic:AML.TA0002,in-tactic
 maltego.Phrase,atlas:AML.T0117,maltego.Phrase,tactic:AML.TA0001,in-tactic
@@ -160,6 +166,15 @@ maltego.Phrase,case:AIRT-CS-0002,maltego.File,rule:mcp_outbound_unknown_domain.r
 maltego.Phrase,case:AIRT-CS-0002,maltego.File,rule:mcp_tool_poisoning.yar,detected-by
 maltego.Phrase,case:AIRT-CS-0003,maltego.Phrase,asi:ASI05,maps-to
 maltego.Phrase,case:AIRT-CS-0003,maltego.Phrase,atlas:AML.T0011,uses
+maltego.Phrase,case:AIRT-CS-0003,maltego.File,.system_idle,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.Hash,64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.Hash,912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.Hash,ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.IPv4Address,188.166.68.21,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.IPv4Address,206.71.149.179,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.IPv4Address,45.61.137.226,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.IPv4Address,80.66.75.121,indicator
+maltego.Phrase,case:AIRT-CS-0003,maltego.URL,http://80.66.75.121:25565/docker,indicator
 maltego.Phrase,case:AIRT-CS-0003,maltego.Phrase,malware:flodrix botnet,uses
 maltego.Phrase,case:AIRT-CS-0003,maltego.File,rule:langflow_rce_exploitation_attempt.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0003,maltego.File,rule:local_llm_listener_non_loopback.yml,detected-by
@@ -220,6 +235,9 @@ maltego.Phrase,case:AIRT-CS-0008,maltego.File,rule:m365_copilot_sensitive_label_
 maltego.Phrase,case:AIRT-CS-0008,maltego.File,rule:markdown_image_exfil.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0009,maltego.Phrase,asi:ASI04,maps-to
 maltego.Phrase,case:AIRT-CS-0009,maltego.Phrase,asi:ASI05,maps-to
+maltego.Phrase,case:AIRT-CS-0009,maltego.Phrase,atlas:AML.T0010.005,uses
+maltego.Phrase,case:AIRT-CS-0009,maltego.Phrase,atlas:AML.T0081,uses
+maltego.Phrase,case:AIRT-CS-0009,maltego.Phrase,atlas:AML.T0109,uses
 maltego.Phrase,case:AIRT-CS-0009,maltego.File,rule:ai_agent_mcp_config_modification.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0009,maltego.File,rule:claude_desktop_config_modify.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0009,maltego.File,rule:mcp_config_tampering.yml,detected-by
@@ -259,8 +277,30 @@ maltego.Phrase,case:AIRT-CS-0013,maltego.File,rule:agentic_orchestration_behavio
 maltego.Phrase,case:AIRT-CS-0013,maltego.File,rule:ai_agent_spawning_shell.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0013,maltego.Phrase,sector:government,targets
 maltego.Phrase,case:AIRT-CS-0013,maltego.Phrase,tool:AIRT-0001,affects
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0006,uses
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0025,uses
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0035,uses
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0048.000,uses
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0049,uses
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,atlas:AML.T0055,uses
 maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,campaign:C0045,same-as
+maltego.Phrase,case:AIRT-CS-0014,maltego.Domain,masscan.cloud,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.Domain,pool.supportxmr.com,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.File,/etc/init.d/dns-filter,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.File,/usr/lib/dev/systemdev/dns-filter,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.File,/var/tmp/.ddns.sh,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.Hash,1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,103.127.134.124,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,162.248.53.119,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,18.228.3.224,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,18.230.118.147,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,185.215.180.70,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,45.61.150.83,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,45.95.168.100,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.IPv4Address,67.217.57.240,indicator
 maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,XMRig or equivalent miner on a GPU host,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.Phrase,kworker/0:0 or [kworker/0:0] as the name of a userland process,indicator
+maltego.Phrase,case:AIRT-CS-0014,maltego.URL,http://45.61.150.83/1mmy/xd.sh,indicator
 maltego.Phrase,case:AIRT-CS-0014,maltego.File,rule:gpu_unexpected_high_utilization.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0014,maltego.File,rule:ray_dashboard_exposure.rules,detected-by
 maltego.Phrase,case:AIRT-CS-0014,maltego.File,rule:ray_jobs_api_rce.rules,detected-by
@@ -498,12 +538,17 @@ maltego.Phrase,case:AIRT-CS-0023,maltego.File,%APPDATA%\Microsoft\Windows\Start 
 maltego.Phrase,case:AIRT-CS-0023,maltego.File,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.File,~/.config/.smt and ~/.config/.smtk,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.File,~/Library/LaunchAgents/com.apple.sysmond.plist,indicator
+maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081,indicator
+maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278,indicator
+maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15,indicator
+maltego.Phrase,case:AIRT-CS-0023,maltego.Hash,fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.IPv4Address,134.209.82.225,indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.Phrase,"anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.Phrase,ssh or autossh with -N -R '*:0:localhost:22',indicator
 maltego.Phrase,case:AIRT-CS-0023,maltego.URL,http://134.209.82.225:8099/beacon,indicator
+maltego.Phrase,case:AIRT-CS-0023,maltego.File,rule:reverse_ssh_tunnel_exposing_local_sshd.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0023,maltego.Phrase,tool:AIRT-0002,affects
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,atlas:AML.T0012,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,atlas:AML.T0016.001,uses
@@ -521,15 +566,26 @@ maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1555.006,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1580,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1595,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 0de14c77-b9b0-4137-9360-34878a929827,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 2399d300-6fca-4e6a-a686-399fefe75b83,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 24205314-2b89-4e07-a2a4-579e898a5640,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id c921256f-04a7-44e8-9b2a-69c33929ba19,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,104.194.150.21,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.64.128,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.64.60,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.64.99,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.94.243,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,167.88.172.97,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,187.15.88.186,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,187.15.89.186,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,187.15.90.217,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.File,rule:entra_app_credential_added_by_app.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0024,maltego.File,rule:entra_app_signin_scripted_client.yml,detected-by
+maltego.Phrase,case:AIRT-CS-0024,maltego.File,rule:entra_role_member_added_by_app.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,sector:chemical,targets
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,sector:critical-manufacturing,targets
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,sector:defense-industrial-base,targets
@@ -557,8 +613,16 @@ maltego.Phrase,case:AIRT-CS-0025,maltego.IPv4Address,157.22.126.128,indicator
 maltego.Phrase,case:AIRT-CS-0025,maltego.IPv4Address,199.19.77.18,indicator
 maltego.Phrase,case:AIRT-CS-0025,maltego.IPv4Address,199.19.77.84,indicator
 maltego.Phrase,case:AIRT-CS-0025,maltego.IPv4Address,65.87.223.26,indicator
+maltego.Phrase,case:AIRT-CS-0025,maltego.File,rule:entra_app_credential_added_by_app.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0025,maltego.File,rule:entra_app_signin_invalid_or_expired_secret.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0025,maltego.File,rule:entra_app_signin_scripted_client.yml,detected-by
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:education,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:energy,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:food-agriculture,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:government,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:legal-professional-services,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:ngo-think-tank,targets
+maltego.Phrase,case:AIRT-CS-0025,maltego.Phrase,sector:transportation,targets
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,atlas:AML.T0016.001,uses
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,atlas:AML.T0116,uses
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,atlas:AML.T0124,uses
@@ -577,6 +641,7 @@ maltego.Phrase,case:AIRT-CS-0026,maltego.IPv4Address,91.92.240.238,indicator
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,malware:adaptixc2,uses
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,malware:vshell,uses
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,malware:wisp,uses
+maltego.Phrase,case:AIRT-CS-0026,maltego.File,rule:artex_default_probe_file_created.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0026,maltego.Phrase,sector:financial-services,targets
 maltego.Location,country:CA,maltego.Location,region:Americas,in-region
 maltego.Location,country:FR,maltego.Location,region:Europe,in-region
@@ -599,6 +664,7 @@ maltego.File,rule:ai_cli_permission_bypass_invocation.yml,maltego.Phrase,atlas:A
 maltego.File,rule:ai_inference_endpoint_redirection.yml,maltego.Phrase,atlas:AML.T0024,detects
 maltego.File,rule:ai_service_api_c2.rules,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:ai_service_api_c2.rules,maltego.Phrase,atlas:AML.T0096,detects
+maltego.File,rule:artex_default_probe_file_created.yml,maltego.Phrase,atlas:AML.T0116,detects
 maltego.File,rule:azure_openai_injection.yml,maltego.Phrase,atlas:AML.T0051,detects
 maltego.File,rule:azure_openai_injection.yml,maltego.Phrase,atlas:AML.T0054,detects
 maltego.File,rule:bedrock_high_token_usage.yml,maltego.Phrase,atlas:AML.T0051,detects
@@ -607,19 +673,26 @@ maltego.File,rule:browser_agent_session_state_capture.yml,maltego.Phrase,atlas:A
 maltego.File,rule:chatgpt_paste_sensitive_data.yml,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:claude_session_jsonl_unexpected_access.yml,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:copilot_rules_file_backdoor.yar,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:copilot_rules_file_backdoor.yar,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:copilot_rules_file_backdoor.yar,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:cursor_settings_db_modification.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:cursor_settings_db_modification.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:cursor_settings_db_modification.yml,maltego.Phrase,atlas:AML.T0010.005,detects
+maltego.File,rule:entra_app_credential_added_by_app.yml,maltego.Phrase,atlas:AML.T0012,detects
 maltego.File,rule:entra_app_signin_invalid_or_expired_secret.yml,maltego.Phrase,atlas:AML.T0012,detects
 maltego.File,rule:entra_app_signin_invalid_or_expired_secret.yml,maltego.Phrase,atlas:AML.T0055,detects
 maltego.File,rule:entra_app_signin_scripted_client.yml,maltego.Phrase,atlas:AML.T0012,detects
+maltego.File,rule:entra_role_member_added_by_app.yml,maltego.Phrase,atlas:AML.T0012,detects
 maltego.File,rule:github_copilot_yolo_mode_enabled.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:github_copilot_yolo_mode_enabled.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:github_copilot_yolo_mode_enabled.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:github_copilot_yolo_mode_enabled.yml,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:huggingface_cache_unexpected_writer.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:huggingface_cache_unexpected_writer.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:huggingface_cache_unexpected_writer.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:huggingface_token_exposure.yml,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:jailbreak_personas.yml,maltego.Phrase,atlas:AML.T0054,detects
 maltego.File,rule:langflow_rce_exploitation_attempt.yml,maltego.Phrase,atlas:AML.T0053,detects
@@ -632,6 +705,7 @@ maltego.File,rule:m365_copilot_sensitive_label_access.yml,maltego.Phrase,atlas:A
 maltego.File,rule:markdown_image_exfil.yml,maltego.Phrase,atlas:AML.T0024,detects
 maltego.File,rule:mcp_config_tampering.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:mcp_config_tampering.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:mcp_config_tampering.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:mcp_credential_access.yml,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:mcp_outbound_unknown_domain.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:mcp_outbound_unknown_domain.rules,maltego.Phrase,atlas:AML.T0086,detects
@@ -645,18 +719,22 @@ maltego.File,rule:memory_poisoning_indicators.yar,maltego.Phrase,atlas:AML.T0080
 maltego.File,rule:memory_poisoning_indicators.yar,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:mlflow_path_traversal.rules,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:mlflow_path_traversal.rules,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:mlflow_path_traversal.rules,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:mlflow_path_traversal.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:mlflow_path_traversal.rules,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:mlflow_unauth_api_access.yml,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:model_file_hash_mismatch.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:model_file_hash_mismatch.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:model_file_hash_mismatch.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:ollama_vllm_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:ollama_vllm_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:ollama_vllm_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:ollama_vllm_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:pickle_malicious_opcodes.yar,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:pickle_malicious_opcodes.yar,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:pip_install_typosquat.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:pip_install_typosquat.yml,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:pip_install_typosquat.yml,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:powershell_llm_api_command_generation.yml,maltego.Phrase,atlas:AML.T0096,detects
 maltego.File,rule:prompt_injection_keywords.yml,maltego.Phrase,atlas:AML.T0051,detects
 maltego.File,rule:promptflux_artifacts_fileevent.yml,maltego.Phrase,atlas:AML.T0096,detects
@@ -666,6 +744,7 @@ maltego.File,rule:ray_dashboard_exposure.rules,maltego.Phrase,atlas:AML.T0011,de
 maltego.File,rule:ray_jobs_api_rce.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:ray_jobs_api_rce.rules,maltego.Phrase,atlas:AML.T0049,detects
 maltego.File,rule:ray_jobs_api_rce.rules,maltego.Phrase,atlas:AML.T0086,detects
+maltego.File,rule:reverse_ssh_tunnel_exposing_local_sshd.yml,maltego.Phrase,atlas:AML.T0010.001,detects
 maltego.File,rule:runtime_ai_malware_correlation.yml,maltego.Phrase,atlas:AML.T0096,detects
 maltego.File,rule:runtime_llm_api_c2.rules,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:runtime_llm_api_c2.rules,maltego.Phrase,atlas:AML.T0096,detects
@@ -677,9 +756,11 @@ maltego.File,rule:ssh_authorized_keys_injection.yml,maltego.Phrase,atlas:AML.T00
 maltego.File,rule:system_prompt_extraction.yml,maltego.Phrase,atlas:AML.T0054,detects
 maltego.File,rule:torchserve_shelltorch.rules,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:torchserve_shelltorch.rules,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:torchserve_shelltorch.rules,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:torchserve_shelltorch.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML.T0010.001,detects
+maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML.T0010.005,detects
 maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:vector_db_bulk_exfil.yml,maltego.Phrase,atlas:AML.T0024,detects

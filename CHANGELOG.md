@@ -10,6 +10,18 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Added
 
+- **Four Sigma rules from the case-study audit.** In
+  `08-agentic-orchestration/`: `entra_role_member_added_by_app.yml` (a directory
+  role assigned by an application, Privileged Identity Management filtered),
+  `entra_app_credential_added_by_app.yml` (a secret or certificate added to an
+  application by an application) and `artex_default_probe_file_created.yml` (the
+  default file name the ARTEX framework leaves on a target). In
+  `artifacts/detections/sigma/`: `reverse_ssh_tunnel_exposing_local_sshd.yml`,
+  the tunnel the tampered editor extension of AIRT-CS-0023 opened. All four
+  convert to two backends and none has been fired against real events. The two
+  audit-log rules assume the pipeline flattens the nested `InitiatedBy` column.
+  The pack is now 76 rule files / 171 signatures.
+
 - **Two Sigma rules for application credentials used by somebody else**, in
   `08-agentic-orchestration/`. `entra_app_signin_invalid_or_expired_secret.yml`
   fires on a Microsoft Entra application sign-in that fails with a wrong or
@@ -43,6 +55,33 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Changed
 
+- **Eight case studies were audited against their sources and rewritten where
+  the sourcing was thin.** The three ARTEX cases and the Cursor extension case
+  each rested on one Microsoft post.
+  - AIRT-CS-0024 now draws on the vendor's own advisory, two managed security
+    providers who watched the sign-ins in customer tenants, and a cloud security
+    vendor. It lists eight application ids where it listed three, says which
+    address did what according to whom, and records in `contested` that the
+    responders could confirm the intrusion and not the AI agent.
+  - AIRT-CS-0025 gains the provider report Microsoft's post credits, with what
+    was actually taken, two user agents unique to the operator and a victim
+    count. That provider assesses the campaign as unrelated to AIRT-CS-0024.
+  - AIRT-CS-0023 is raised to `high` on three parties, and gains Cursor's stated
+    cause, the four package hashes and the finding that one tampered build
+    misreports its own version.
+  - AIRT-CS-0026 stays single-source for the actor and says so. An FBI FLASH
+    that reprints Microsoft's indicators is recorded as distribution, not
+    corroboration.
+  - AIRT-CS-0011 is lowered from `high` to `medium`: the measurement is
+    Microsoft's alone, and the trade press it leaned on repeats Microsoft.
+  - AIRT-CS-0005 and AIRT-CS-0014 keep `high`, each with a basis that now names
+    what supports it instead of "trade press".
+  - AIRT-CS-0014 (ShadowRay) and AIRT-CS-0003 (Langflow) had no atomic
+    indicators although their sources publish them. Both now carry the addresses, hashes and file paths their sources list.
+    AIRT-CS-0014 is linked to AIRT-TA-0005 as `suspected`, for the second
+    campaign only, on one party's assessment.
+  - Totals: 316 indicators (233 atomic) where there were 267 (195).
+
 - **`AIRT-0022` was renamed and changed shape.**
   `oobabooga/text-generation-webui` is now `oobabooga/textgen` — the same
   repository object under a new name — and it ships a native Electron desktop app
@@ -57,6 +96,10 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   PyPI package names, so `pip install` may not put Microsoft's AutoGen on disk.
 
 ### Fixed
+
+- **AIRT-CS-0003 cited a Trend Micro URL that is not the article.** The
+  reference pointed at a path that differs from the published one; it now
+  carries the URL the article is served from, read on 2026-11-17.
 
 - **Two Sigma rules that could not match.**
   `ssh_authorized_keys_injection.yml` was a file-event rule that tested

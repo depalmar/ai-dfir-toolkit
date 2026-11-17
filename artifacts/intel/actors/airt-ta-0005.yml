@@ -16,8 +16,12 @@ summary: 'GTIG''s cluster for a financially motivated supply-chain operator. In 
   forks of MCP servers. Its DUSTMAKER stealer writes into the workspace directories AI coding
   assistants read.'
 confidence: medium
-basis: One reporting party across two reports. The actor claimed responsibility for some compromises,
-  which corroborates the link but not the details.
+basis: One reporting party across two reports for the supply-chain activity. The actor claimed
+  responsibility for some compromises, which corroborates the link but not the details. A
+  second party, Oligo Security, writes about the group under its self-chosen name and assesses
+  that it ran the 2025 ShadowRay 2.0 campaign against Ray clusters. That is one party's
+  assessment, it does not use GTIG's cluster name, and it rests on the name the two reports
+  share, so the case is linked as suspected.
 external_ids:
   vendor_cluster:
   - UNC6780
@@ -44,6 +48,9 @@ sightings:
     basis: GTIG.
   reference: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access
 references:
+- title: Oligo Security - New Intelligence Links TeamPCP to ShadowRay 2.0 and Traces Activity
+    back to 2020 (5 Aug 2026)
+  url: https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020
 - title: GTIG - Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations,
     and Initial Access (11 May 2026)
   url: https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access

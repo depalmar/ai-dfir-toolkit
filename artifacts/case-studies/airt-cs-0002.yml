@@ -45,3 +45,6 @@ references:
 
 owasp_agentic:
   - ASI04
+external_ids:
+  atlas_case_study:
+    - AML.CS0053

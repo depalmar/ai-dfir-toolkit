@@ -3,30 +3,45 @@
 
 id: AIRT-CS-0024
 title: "Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants"
-date_range: Sep 2026 (first ARTEX use Microsoft reports) to 16 Oct 2026; password spray 10 to 14 Oct 2026
-disclosed: "2026-10-21"
+date_range: Sep 2026 (first ARTEX use Microsoft reports) to 18 Oct 2026; password spray 10 to 14 Oct, application sign-ins 15 Oct, vendor identities disabled 17 Oct 07:00 UTC
+disclosed: "2026-10-16"
 affects: Microsoft Entra ID tenants reached through a vendor's multitenant applications - no catalogued endpoint tool
 confidence: medium
 basis: >-
-  One reporting party, read from the page itself. Every figure is Microsoft's
-  own telemetry. The post cites ConnectWise's advisories and one third-party
-  write-up, none of which was read for this entry, so nothing here corroborates
-  Microsoft independently, and those sources would bear on the application
-  compromise, not on the AI. The post names no model, does not say where the
-  framework ran, and describes the split between agent and operator only as
-  "little needed human interaction". The AI ran on the actor's side, so a
-  victim tenant holds sign-in and audit records and nothing that shows a model
-  was involved.
+  Two layers with different support. That a vendor's application identities
+  were used to sign in to its customers' tenants is established by four
+  parties writing from their own data: the vendor's advisory, two managed
+  security providers who watched it in their customers' sign-in logs, and
+  Microsoft. A cloud security vendor separately reports the same addresses and
+  tooling against other software vendors. That an AI agent drove it, and that
+  the operator was Storm-0940, rests on Microsoft alone: the vendor says its
+  attribution relies on intelligence Microsoft shared, and both providers say
+  their telemetry is consistent with Microsoft's account and does not confirm
+  it. The entry stays medium for that reason, because the AI is why the case
+  is in this catalog. No source names a model or says where the framework ran.
+  The AI ran on the actor's side, so a victim tenant holds sign-in and audit
+  records and nothing that shows a model was involved.
 contested: >-
-  The post is careful about outcome and the reader should be too. It says most
-  of the targeting failed, that the password spray produced no successful
-  authentication, and that a successful application sign-in "does not
-  necessarily indicate that customer data was accessed or exfiltrated". Count
-  attempted tenants, authenticated tenants and tenants with post-sign-in
-  activity as three different numbers. The post is also inconsistent with
-  itself on one point - its text and infographic refer to four application
-  credentials and it lists three application ids - so the published list may
-  be incomplete.
+  How much of this an agent did. Microsoft describes little human interaction.
+  One responder puts an LLM's involvement at low-to-medium confidence on its
+  own telemetry, medium-to-high given Microsoft's attribution, and reads the
+  activity as scripted tooling steered by an operator. Its strongest evidence
+  against full autonomy is that after one service principal was deleted,
+  requests using it kept arriving every few seconds for 22 minutes, were
+  rejected every time and never changed. It also notes that Microsoft does not
+  say how it identified ARTEX or what ties the earlier password spray to the
+  actor. The numbers measure different things and should not be added:
+  Microsoft counts more than 2,250 tenants attempted; one provider counts
+  almost 1,000 tenants with sign-in activity and over 300 successful among its
+  own customers; the vendor gives no count. On outcome, Microsoft says a
+  successful sign-in does not show data was taken, one provider saw tokens
+  issued and nothing visibly taken, and another advises treating the
+  application's data as exposed. The sources also disagree on which addresses
+  did what: Microsoft lists three for application sign-ins, while one
+  responder saw application sign-ins from 144.172.64[.]128 only and user
+  password spraying from the others. Microsoft lists three application ids,
+  the vendor disabled seven and names an eighth, and the root cause at the
+  vendor was still under investigation when its advisory was last updated.
 atlas:
   - AML.T0124
   - AML.T0116
@@ -67,38 +82,55 @@ victims:
     Microsoft lists the industries the actor targets and counts "hundreds of
     organizations globally" for the ARTEX-driven activity, more than 2,250
     tenants for sign-in attempts through the vendor's applications, and 327
-    accounts in eight organisations for the password spray. It names no
-    country and gives no count of organisations compromised.
+    accounts in eight organisations for the password spray. One managed
+    security provider counts almost 1,000 tenants with sign-in activity and
+    over 300 with a successful sign-in among its own customers. Nobody names a
+    country or gives a count of organisations compromised.
 summary: >-
   Microsoft reports that Storm-0940, which it describes as a China-state
   aligned actor, has used ARTEX since at least September 2026 to automate
   attacks on hundreds of organisations. ARTEX is described as an open-source,
   multi-agent penetration-testing framework that can drive any model and runs
   a test from reconnaissance to exfiltration with little human input. In
-  October the actor took control of the identities of several ConnectWise
-  cloud applications, among them Cloud Backup, and used the trust customers
-  had already granted those applications to attempt sign-ins to more than
-  2,250 tenants. Where a sign-in succeeded, the reported follow-on was
-  reconnaissance through Microsoft Graph, credentials added to applications
-  for persistence, changes to roles and groups including an application
-  assigning itself Global Administrator, bulk reads of Key Vault secrets and
-  mail access. A password spray from one of the same addresses on 10 to 14
-  October hit 327 accounts in eight organisations and, by Microsoft's account,
-  authenticated to none. Microsoft says some intrusions went from first
-  targeting to privileged access in under three hours.
+  October the actor obtained credentials for several ConnectWise cloud
+  applications, among them Cloud Backup, and used the consent customers had
+  already granted those applications to sign in to their tenants. The vendor
+  dates its discovery to 14 October and disabled the affected identities on
+  17 October at 07:00 UTC. Responders watching customer tenants saw the
+  application sign-ins on 15 October between about 06:13 and 08:34 UTC, from
+  one address, presenting a client assertion, and arriving in ascending order
+  of tenant id one to six minutes apart, which is what a script walking a
+  sorted list looks like. Where a sign-in succeeded, the reported follow-on
+  was reconnaissance through Microsoft Graph, credentials added to
+  applications for persistence, an application assigning itself Global
+  Administrator, bulk reads of Key Vault secrets and mail access. One
+  responder saw the persistence steps come from private Azure addresses, not
+  from the published ones. A password spray on 10 to 14 October hit 327
+  accounts in eight organisations and, by Microsoft's account, authenticated
+  to none. Microsoft says some intrusions went from first targeting to
+  privileged access in under three hours.
 iocs:
   - type: ip
     value: 144.172.64[.]128
-    description: Sign-ins and Graph API activity in customer tenants through the vendor's applications
+    description: Application sign-ins and Graph API activity in customer tenants. Named by the vendor on 16 October, and the only address one responder saw produce application sign-ins
   - type: ip
     value: 144.172.64[.]99
-    description: Same activity, and the source of the 10 to 14 October password spray
+    description: Listed by Microsoft for the same activity and as the source of the 10 to 14 October password spray. One responder saw it only in failed user sign-ins. The vendor added it on 18 October from downstream monitoring
   - type: ip
     value: 144.172.64[.]60
-    description: Same activity
+    description: Listed by Microsoft for the same activity. One responder saw a few failed sign-ins from it on 18 October, after the identities were disabled
+  - type: ip
+    value: 144.172.94[.]243
+    description: Broad failed password spraying, reported by one responder and not by Microsoft. A different /24 from the three above
+  - type: ip
+    value: 104.194.150[.]21
+    description: Published by a cloud security vendor for activity against other software vendors that overlaps this actor's addresses and tooling. Not reported in the customer-tenant sign-ins
+  - type: ip
+    value: 167.88.172[.]97
+    description: As above
   - type: ip
     value: 187.15.88[.]186
-    description: Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October
+    description: Graph API access through the compromised applications. A VPN address Microsoft calls transient and relevant only for 15 and 16 October
   - type: ip
     value: 187.15.90[.]217
     description: As above; VPN address, 15 and 16 October only
@@ -107,29 +139,56 @@ iocs:
     description: As above; VPN address, 15 and 16 October only
   - type: account
     value: Application id 506e08f9-6e9a-4da4-942b-a099a03644ae
-    description: Labelled ConnectWise Cloud Backup in the post. Search by application id, not display name, and record the local service principal object id in each tenant
+    description: ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant
+  - type: account
+    value: Application id 2399d300-6fca-4e6a-a686-399fefe75b83
+    description: ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list
   - type: account
     value: Application id 24205314-2b89-4e07-a2a4-579e898a5640
-    description: Labelled ConnectWise - MS Teams in the post
+    description: ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others
+  - type: account
+    value: Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519
+    description: ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list
   - type: account
     value: Application id 0de14c77-b9b0-4137-9360-34878a929827
-    description: Labelled ConnectWise - MS Graph in the post
+    description: ConnectWise Cloud Management - MS Graph
+  - type: account
+    value: Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e
+    description: ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list
+  - type: account
+    value: Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb
+    description: ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list
+  - type: account
+    value: Application id c921256f-04a7-44e8-9b2a-69c33929ba19
+    description: Named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised
+  - type: account
+    value: Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7
+    description: The vendor's tenant as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids
   - type: pattern
-    value: "User agents Python-urllib/3.12, python-requests/2.31.0, python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0 on application sign-ins and Graph requests"
-    description: Published as seen with the vendor's applications. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone
+    value: "User agents Python-urllib/3.12 and python-requests/2.31 on application sign-ins; Microsoft adds python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0"
+    description: The first two are the vendor's own findings. One responder did not see azure-toolkit/1.0 at all. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone
+  - type: pattern
+    value: "User agent norma/0.4"
+    description: Seen by a cloud security vendor in the overlapping activity against other software vendors, in a list it warns is otherwise noisy. The one string in that list with no ordinary sender
+  - type: pattern
+    value: The applications' normal sign-ins present a kiota-dotnet user agent from private Azure IPv6 addresses
+    description: The baseline the vendor published. A sign-in for one of these applications from a public address with a Python client is outside it
+  - type: behavior
+    value: One application signing in to many tenants in ascending order of tenant id, one to six minutes apart
+    description: Reported by a provider with sight of many customer tenants. A single tenant sees one sign-in; the ordering is visible only across tenants
+  - type: behavior
+    value: An application adding a credential to itself or to another application, or being added to a directory role, with an application as the initiator
+    description: The persistence and privilege steps reported after a successful sign-in. In the audit log these are the operations the vendor lists - credential and secret management on an application, added service principal credentials, added owners, role members, app role assignments, delegated permission grants and consent
   - type: behavior
     value: One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults
-    description: The shape of the bulk secret reads, as the post's own hunting guidance frames it
-  - type: behavior
-    value: An application adding a credential to itself or assigning itself a directory role after signing in from an unfamiliar address
-    description: The persistence and privilege steps reported after a successful sign-in
+    description: The shape of the bulk secret reads, as Microsoft's hunting guidance frames it
 response_actions:
   - phase: contain
-    action: Keep the affected vendor connections disabled, and do not delete the enterprise applications first - deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory the application ids in every tenant where they were ever consented to, including tenants that no longer use the product.
+    action: Keep the affected vendor connections disabled, and do not delete the enterprise applications as the first step - the vendor's own guidance says the same, because deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory all eight application ids in every tenant where they were ever consented to, including tenants that no longer use the product.
   - phase: eradicate
-    action: Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and remove the ones nobody can account for once they are recorded.
+    action: Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses - the persistence activity one responder saw came from private Azure addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and to any other application in the tenant on the same days, and remove the ones nobody can account for once they are recorded.
   - phase: recover
-    action: Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that rotation removed the old credentials before re-enabling the connection, and check that backup and restore still work.
+    action: Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that the replacement identities no longer use a shared secret before re-enabling the connection - it reports moving to federated credentials - and check that backup and restore still work.
   - phase: harden
     action: Review what each multitenant vendor application is permitted to do in the tenant and reduce it, alert on credential additions and role assignments made by applications, and restrict application sign-ins by location where the licence allows.
 lesson: >-
@@ -137,14 +196,34 @@ lesson: >-
   transcript, config file or token on a victim host to collect, and the
   catalog has no row for it. What the victim holds is identity-provider
   logging with a short retention clock, which is why the telemetry tab lists
-  it as a source of its own. The agentic part shows only as tempo and breadth:
-  thousands of tenants tried through one trusted identity, and privileged
-  access inside three hours where it worked.
+  it as a source of its own. It is also the case to read before repeating a
+  headline about autonomous attacks: the parties who watched it in tenant logs
+  could confirm the intrusion and could not confirm the agent, and the one
+  detail that speaks to autonomy cuts against it. Evidence in the tenant
+  answers what was done and when. Whether a model chose to do it is on the
+  actor's server.
 detections:
   - entra_app_signin_scripted_client.yml
+  - entra_role_member_added_by_app.yml
+  - entra_app_credential_added_by_app.yml
 references:
   - title: "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)"
     url: https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/
+    accessed: "2026-11-17"
+  - title: "ConnectWise - Trust Center security advisories, Cloud Backup and Cloud Management (last updated 4 Nov 2026)"
+    url: https://www.connectwise.com/company/trust/advisories
+    accessed: "2026-11-17"
+  - title: "Huntress - Vendor credential enables unauthorized access (16 Oct 2026, updated to 27 Oct 2026)"
+    url: https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access
+    accessed: "2026-11-17"
+  - title: "Huntress - AI, Scripts, Operator: Inside the ConnectWise Attack (26 Oct 2026)"
+    url: https://www.huntress.com/blog/connectwise-attack-ai
+    accessed: "2026-11-17"
+  - title: "Todyl - Investigation: unauthorized access through the ConnectWise Cloud Backup Microsoft 365 app (16 Oct 2026, updated 27 Oct 2026)"
+    url: https://www.todyl.com/blog/investigation-unauthorized-access-through-the-connectwise-cloud-backup-microsoft-365-app
+    accessed: "2026-11-17"
+  - title: "Wiz Research - ARTEX in the Wild: Storm-0940 Expands Targeting of IT and Software Vendors (22 Oct 2026)"
+    url: https://www.wiz.io/blog/artex-in-the-wild-storm-0940-expands-targeting-of-it-and-software-vendors
     accessed: "2026-11-17"
 external_ids:
   vendor_cluster:

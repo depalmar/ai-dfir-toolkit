@@ -1,0 +1,52 @@
+title: Entra ID - Directory Role Member Added by an Application
+name: entra_role_member_added_by_app
+id: 4e91ffc6-d597-48e1-8777-eaf61a445187
+status: experimental
+description: |
+    Detects a directory role assignment in Microsoft Entra ID whose initiator is an application (service
+    principal) and not a user. In the October 2026 compromise of a vendor's multitenant applications, a
+    responder watching customer tenants saw one of the vendor's applications add itself to Global
+    Administrator within minutes of signing in, and Microsoft reports the same step. Applications rarely
+    assign directory roles. The ones that do are few and known: Privileged Identity Management, which is
+    filtered here, and provisioning or governance tooling that an estate can list.
+    The rule does not test which role was granted, because the role name sits inside the nested
+    TargetResources structure and is flattened differently by every pipeline. Read the role from the event
+    and treat Global Administrator, Privileged Role Administrator, Application Administrator and Cloud
+    Application Administrator as urgent.
+    The AI in that campaign ran on the actor's infrastructure. This rule reads what the victim tenant
+    records, and says nothing about whether a model was involved.
+    Not fired against real events. Reasoned from the documented schema of the audit log.
+references:
+    - https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access
+    - https://www.connectwise.com/company/trust/advisories
+    - https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/
+    - https://learn.microsoft.com/azure/azure-monitor/reference/tables/auditlogs
+    - https://atlas.mitre.org/techniques/AML.T0012
+author: Raymond DePalma (@depalmar)
+date: 2026-11-17
+tags:
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.t1098.003      # Account Manipulation: Additional Cloud Roles
+    - atlas.aml-t0012
+logsource:
+    product: azure
+    service: auditlogs
+    definition: 'Microsoft Entra audit logs (Azure Monitor table AuditLogs, diagnostic category AuditLogs). InitiatedBy is a nested object that holds either a user or an app key; the field names below assume the pipeline flattens it with dots.'
+detection:
+    selection_operation:
+        OperationName: 'Add member to role'
+    selection_initiated_by_app:
+        InitiatedBy.app.servicePrincipalId|exists: true
+    filter_pim:
+        InitiatedBy.app.displayName: 'MS-PIM'
+    condition: all of selection_* and not 1 of filter_*
+fields:
+    - InitiatedBy.app.displayName
+    - InitiatedBy.app.servicePrincipalId
+    - TargetResources
+    - Result
+    - CorrelationId
+falsepositives:
+    - Identity governance, provisioning and infrastructure-as-code tooling that assigns roles with its own application identity. List those applications and exclude them by service principal id, not by display name.
+level: high

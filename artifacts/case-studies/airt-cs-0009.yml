@@ -14,6 +14,10 @@ confidence: high
 basis: >-
   Three assigned CVEs with published advisories, named discovering parties and
   shipped fixes. Recorded from the CVE records rather than from aggregate counts.
+atlas:
+  - AML.T0010.005
+  - AML.T0109
+  - AML.T0081
 summary: >-
   Model Context Protocol went from novelty to default integration layer, and a
   vulnerability class followed it. mcp-remote (CVE-2025-6514, CVSS 9.6, JFrog)
