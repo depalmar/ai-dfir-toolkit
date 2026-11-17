@@ -8,6 +8,7 @@ re-fetched and every derived file regenerated. Exit codes:
 
     0  auto-merge: only pinned reference data and files derived from it changed
     2  needs review: something else changed, or a guard tripped
+    3  nothing changed: the pins are already current, so there is no PR to open
     1  error
 
 Why this is the whole policy. A refresh that only moves ids and names inside
@@ -130,8 +131,12 @@ def main() -> int:
     outside = [f for f in files if not f.startswith(ALLOWED)]
     reasons = []
     if not files:
+        # Its own code, not 0. Returning 0 here sent the workflow on to open a
+        # pull request from a summary file this branch never writes, so a re-run
+        # on the day of a refresh failed and was reported as a permissions
+        # problem.
         print("no changes")
-        return 0
+        return 3
     if outside:
         reasons.append("changes outside pinned reference data: " + ", ".join(outside[:20]))
     if not (set(files) & PINS):
