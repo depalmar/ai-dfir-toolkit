@@ -5,6 +5,15 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-CS-0023: a tampered Claude Code extension in Cursor's marketplace.**
+  On 29 October 2026 Cursor's extension marketplace served two tampered builds
+  of `anthropic.claude-code` that added an SSH key, opened a reverse tunnel and
+  wrote persistence. Thirteen indicators as published by the one reporting
+  party, read twice from the page; `medium`, with the unanswered question of
+  how the builds were published left open. No model was involved: it is here
+  because the evidence sits in a catalogued tool's extension directory, which
+  the Cursor entry does not yet list. It came out of the first triage of the
+  watcher's backlog, which closed 80 of 133 candidates.
 - **The intel watcher follows the catalogued tools' releases.** A new
   `tool-releases` source derives each active entry's GitHub repository from
   its references - 37 repositories, none listed by hand - and raises one

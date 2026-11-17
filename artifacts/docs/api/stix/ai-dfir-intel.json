@@ -6,8 +6,8 @@
    "type": "identity",
    "spec_version": "2.1",
    "id": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
-   "created": "2026-09-10T00:00:00.000Z",
-   "modified": "2026-09-10T00:00:00.000Z",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
    "name": "ai-dfir-toolkit",
    "identity_class": "organization",
    "description": "Open AI-agent artifact catalog and detection content."
@@ -16,7 +16,7 @@
    "type": "marking-definition",
    "spec_version": "2.1",
    "id": "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6",
-   "created": "2026-09-10T00:00:00.000Z",
+   "created": "2026-10-30T00:00:00.000Z",
    "definition_type": "statement",
    "name": "CC BY 4.0",
    "definition": {
@@ -9098,6 +9098,221 @@
     {
      "source_name": "Anthropic - Threat Intelligence Report, September 2026: GTG-50021",
      "url": "https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-50021-indicators-of-compromise"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--e64f010e-57ac-56ed-a889-52d44fe61bdd",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "Software",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0010.001",
+     "url": "https://atlas.mitre.org/techniques/AML.T0010.001"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--fbb49197-d02d-583a-b633-9e997e1f2cf3",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "SSH Authorized Keys",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1098.004",
+     "url": "https://attack.mitre.org/techniques/T1098/004/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--a2b1aab3-d2a7-5dda-83f0-57e3fa3161f4",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "Protocol Tunneling",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1572",
+     "url": "https://attack.mitre.org/techniques/T1572/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--8693d833-c06a-51b3-b8e2-50a3c75df60a",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "Cron",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1053.003",
+     "url": "https://attack.mitre.org/techniques/T1053/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--d5317a12-c09f-5ccf-b892-a0dd41a47476",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "Scheduled Task",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1053.005",
+     "url": "https://attack.mitre.org/techniques/T1053/005/"
+    }
+   ]
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--3ea4545c-64fe-5ec6-8eb9-5986414ca669",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "134.209.82.225",
+   "description": "Configured remote SSH and HTTP destination",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[ipv4-addr:value = '134.209.82.225']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-30T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--55cd2f6f-1e56-5c90-9b4d-a437d263db78",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "http://134.209.82.225:8099/beacon",
+   "description": "Host-profiling endpoint; correlate with the address above",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[url:value = 'http://134.209.82.225:8099/beacon']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-30T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--bfb9c002-6a34-5537-980a-439f117c99f5",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
+   "description": "SHA-256 of the extension's JavaScript entry point. Not a hash of the VSIX package",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[file:hashes.'SHA-256' = 'ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-30T00:00:00.000Z"
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "indicator--86f98859-d826-52ad-a4cd-1d986068f477",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+   "description": "SHA-256 of the decoded tunnel private-key file",
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "pattern": "[file:hashes.'SHA-256' = '7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-30T00:00:00.000Z"
+  },
+  {
+   "type": "report",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "report--48846a2e-a3a2-531a-96d7-c8e0924924a9",
+   "created": "2026-10-30T00:00:00.000Z",
+   "modified": "2026-10-30T00:00:00.000Z",
+   "name": "Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel",
+   "description": "On 29 October 2026, from about 02:27 to 13:35 PDT by Cursor's account, Cursor's extension marketplace served tampered builds 2.1.312 and 2.1.313 of the extension published as anthropic.claude-code. Microsoft reports that on load the extension profiled the host and reported to a remote address, added an SSH key to the user's authorized keys, tried to enable the SSH service, opened a reverse tunnel to the same address and wrote persistence for the tunnel: a LaunchAgent on macOS, a crontab entry on Linux, a scheduled task or Startup-folder script on Windows. The Visual Studio Marketplace listing and the npm package @anthropic-ai/claude-code were not affected, and Anthropic told Microsoft its systems were not compromised and that it did not build the package. Cursor reported that errors and the need for administrator rights stopped SSH access on most macOS and Windows hosts. Microsoft attributes the activity to no one.",
+   "published": "2026-10-30T00:00:00.000Z",
+   "report_types": [
+    "threat-report"
+   ],
+   "object_refs": [
+    "attack-pattern--751a75d6-e12e-5a99-9e9c-0c1883bb882c",
+    "attack-pattern--8693d833-c06a-51b3-b8e2-50a3c75df60a",
+    "attack-pattern--a2b1aab3-d2a7-5dda-83f0-57e3fa3161f4",
+    "attack-pattern--d5317a12-c09f-5ccf-b892-a0dd41a47476",
+    "attack-pattern--e64f010e-57ac-56ed-a889-52d44fe61bdd",
+    "attack-pattern--fbb49197-d02d-583a-b633-9e997e1f2cf3",
+    "indicator--3ea4545c-64fe-5ec6-8eb9-5986414ca669",
+    "indicator--55cd2f6f-1e56-5c90-9b4d-a437d263db78",
+    "indicator--86f98859-d826-52ad-a4cd-1d986068f477",
+    "indicator--bfb9c002-6a34-5537-980a-439f117c99f5",
+    "tool--81278db8-20de-540c-9afc-2303c5262729"
+   ],
+   "external_references": [
+    {
+     "source_name": "ai-dfir-toolkit",
+     "external_id": "AIRT-CS-0023"
+    },
+    {
+     "source_name": "Microsoft Security Research - Inside a malicious Claude Code-branded extension and its persistent SSH backdoor (30 Oct 2",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/"
+    },
+    {
+     "source_name": "Cursor - Claude Code extension security notice (cited by Microsoft; not retrieved for this entry)",
+     "url": "https://cursor.com/blog/claude-code-extension-security-notice"
     }
    ]
   }
