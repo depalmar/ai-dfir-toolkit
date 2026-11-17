@@ -346,9 +346,11 @@ files whose correlation rule sets the level the loader reports. `HUNT_LEVELS`
 still includes `informational`, so one would appear if a rule file carried it.
 
 **The "closed card under 260px" target is not met.** Closed hunting-rule cards
-are 269 to 408px at 1280. The same ticket puts the telemetry-source buttons on
+are 303 to 442px at 1280. The same ticket puts the telemetry-source buttons on
 the closed card, and a rule with a long description and several sources cannot
-have both. They were 630 to 836px.
+have both. They were 630 to 836px. Batch 3 measured 269 to 408px; H08's named
+chips then added a row to most cards, which is the same cost recorded for the
+Detections view below.
 
 **Reads lists Sigma log sources only.** The loader keeps a description string
 in `logsource` for YARA and Suricata rules. That is not something to filter

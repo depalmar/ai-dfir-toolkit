@@ -858,6 +858,7 @@ th .pick.all{vertical-align:middle}
 .hcasedet>.hdetbody{padding-top:11px}
 .hrule{margin-top:12px}
 .hpills{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px}
+.hunt .rfile{margin-top:6px}
 /* A closed rule card is a summary. The whole description is one click away. */
 .hunt:not(:has(details.hrule[open])) .huntlook{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .htune{margin-top:11px}
@@ -1107,7 +1108,7 @@ details.src[open]>summary{border-bottom:1px solid var(--line-soft)}
 .exportgrp[hidden],#pickAllBtn[hidden]{display:none}
 .rule .rtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 
-.rule .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
+.rule .rfile,.hunt .rfile{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
   word-break:break-all}
 .rule p{margin:0;font-size:12.5px;color:var(--muted)}
 .rule p.rdesc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
