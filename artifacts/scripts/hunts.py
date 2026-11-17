@@ -45,6 +45,11 @@ def build(rules, cases, sources):
         for f in s.get("rules") or []:
             sources_by_rule.setdefault(f, []).append({"id": s["id"], "name": s["name"]})
 
+    # What a case's hunts read, through the detections it links. Sigma only: a
+    # YARA or Suricata rule has no log source, and the string the loader keeps
+    # in that field for them is a description, not something to filter on.
+    logsource_of = {r["file"]: r.get("logsource", "") for r in rules if r.get("format") == "Sigma"}
+
     rule_hunts = []
     for r in rules:
         if r.get("format") != "Sigma" or r.get("level") not in HUNT_LEVELS:
@@ -85,6 +90,9 @@ def build(rules, cases, sources):
                 "disclosed": str(c.get("disclosed", "")),
                 "confidence": c.get("confidence", ""),
                 "rules": list(c.get("detections") or []),
+                # Derived, for the Reads filter. Not published in any feed.
+                "logsources": sorted({logsource_of[f] for f in (c.get("detections") or [])
+                                      if logsource_of.get(f)}),
                 "items": items,
             })
 
@@ -125,7 +133,11 @@ def check(hunts, rules, cases):
                 problems.append(f"[HUNT]    {h['file']} names case {cid}, which does not exist")
         if not h["look_for"]:
             problems.append(f"[HUNT]    {h['file']} has no description, so the hunt says nothing")
+    known_ls = {r.get("logsource") for r in rules if r.get("format") == "Sigma" and r.get("logsource")}
     for g in hunts["behaviours"]:
+        for ls in g.get("logsources", []):
+            if ls not in known_ls:
+                problems.append(f"[HUNT]    {g['case']} lists log source {ls!r}, which no loaded Sigma rule reads")
         for i in g["items"]:
             if not i["look_for"]:
                 problems.append(f"[HUNT]    {g['case']} has a behaviour with no text")
