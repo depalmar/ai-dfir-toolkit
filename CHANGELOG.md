@@ -90,6 +90,25 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Changed
 
+- **The Hunts tab and the tab strip were reworked from a second design
+  assessment** (15 findings, four pull requests; `artifacts/docs/HANDOFF_REVIEW.md`,
+  round 4, has every outcome and the places the assessment was wrong).
+  The tab opens on the behaviours, which are the content no other tab has, with
+  a switch to the hunting rules. Hunting-rule cards are closed until opened, a
+  case shows three behaviours until expanded, and a Reads row filters both
+  sections by the log source a rule reads. Filtering no longer rebuilds the
+  view, so the box keeps focus and an opened rule stays open. A rule opens in
+  the drawer over Hunts instead of on another tab. A filtered view is a link
+  (`#hunts?show=rules&q=...&reads=a,b`), each behaviour has a copy-link control
+  and each case a copy-checklist control, hunting rules appear under Hunts in
+  search, and an empty result names the filter and clears it. Collection plan
+  is pinned to the right edge of the tab strip, where an eleventh tab had
+  pushed it out of view at laptop width. Technique chips on Hunts and
+  Detections cards are focusable buttons that show the technique's name.
+  Under 620px every control on the tab is at least 44px tall. The hardening
+  tile now counts hunting rules (7) rather than every hunt (45), and a hunting
+  rule's level reads "Sigma level low" instead of a severity badge.
+
 - **Eight case studies were audited against their sources and rewritten where
   the sourcing was thin.** The three ARTEX cases and the Cursor extension case
   each rested on one Microsoft post.

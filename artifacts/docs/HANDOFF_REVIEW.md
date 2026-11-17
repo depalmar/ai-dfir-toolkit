@@ -322,3 +322,62 @@ flowchart left-to-right is the content fix if it is ever wanted inline.
 The harness selectors were adapted where a ticket changed the markup they read
 (volatility group rows are `<tr>` without `data-a`; the plan header's `.acts`
 box became `.pcrow`), as the handoff's README asked.
+
+## Round 4 - Hunts tab and tab strip, November 2026
+
+A second assessment covered the Hunts tab, which was built after round 3, and
+the tab strip it lengthened (`design_handoff_hunts_fixes`: 15 findings, four
+batches, one pull request per batch). The owner approved the findings as
+drawn. All fifteen are applied. No catalog, rule or case data changed.
+
+| Batch | Findings | Outcome |
+|---|---|---|
+| 1 | H05 H04 | **Applied.** The hardening tile counts hunting rules (7), not every hunt (45), because only a hunting rule is the baseline case. A hunting rule's level is a neutral "Sigma level low" pill instead of a severity badge that read as priority. |
+| 2 | H06 | **Applied.** Collection plan is pinned to the right edge of the tab strip, still the last tab in the same tablist and arrow-key order. "Plan" under 620px; the accessible name is unchanged. Measured 0px of it beyond the strip edge at 1280, 1440 and 390. |
+| 3 | H01 H02 H03 H07 H10 | **Applied.** Behaviours first, with a switch to Hunting rules; hunting-rule cards closed by default; a Reads filter by log source; filtering toggles `hidden` instead of rebuilding the view; three behaviours per case until expanded; copy link per behaviour and copy checklist per case. Behaviours section 9,259px to 3,683px at 1280 and 11,760px to 8,030px at 390. |
+| 4 | H08 H09 H13 H11 H12 H14 H15 | **Applied.** Named, focusable technique chips on Hunts and Detections cards; `.huntk` labels at 5.55:1 light and 7.02:1 dark (was 2.77:1); 44px targets under 620px; a rule opens in the drawer over Hunts and closing it leaves scroll, filter and open disclosures as they were; `#hunts?show=rules&q=...&reads=a,b`; hunting rules in the search palette's Hunts group; an empty state that names the filter and clears it. |
+
+### Corrections to the assessment
+
+**There are 7 hunting rules, not "at least ten", and none is informational.**
+The two informational rules the assessment counted are the base rules inside
+`mlflow_unauth_api_access.yml` and `vector_db_bulk_exfil.yml`, multi-document
+files whose correlation rule sets the level the loader reports. `HUNT_LEVELS`
+still includes `informational`, so one would appear if a rule file carried it.
+
+**The "closed card under 260px" target is not met.** Closed hunting-rule cards
+are 269 to 408px at 1280. The same ticket puts the telemetry-source buttons on
+the closed card, and a rule with a long description and several sources cannot
+have both. They were 630 to 836px.
+
+**Reads lists Sigma log sources only.** The loader keeps a description string
+in `logsource` for YARA and Suricata rules. That is not something to filter
+on, so `hunts.py` takes the value from Sigma rules only and its check fails a
+case group whose value no loaded Sigma rule reads.
+
+**H13's selector was applied more narrowly than written, and wider in one
+place.** `.srcstat{min-height:44px}` would also have grown the non-interactive
+pills on the Data sources tab. What shipped: every `button.srcstat` on the
+site, plus the one flat pill on a hunting-rule card so its row lines up.
+
+**H12 needed one thing the ticket did not ask for.** `writeHash()` leaves an
+in-page anchor alone when it belongs to the current view, so arriving by a
+`#hunt-...` link and then filtering kept an anchor that no longer described
+the page. A filter the reader changes now forces the view's own link.
+
+**H08 needed two.** The chip menu was scoped to the drawer. On a card that is
+itself a button, a press inside the menu also opened the card, so the menu
+stops its own clicks; and with chips now outside the drawer, a press anywhere
+else closes an open menu.
+
+**H08 has a cost the ticket did not weigh.** A chip that carries the
+technique's name is wider than one that carries its id, and a Detections card
+holds ATLAS, OWASP, Agentic and ATT&CK chips together. At 1280 the median card
+went from 194px to 255px and the unfiltered Detections view from 7,665px to
+10,349px. It shipped as approved. If the length is a problem, the fix that
+keeps the finding's point is an id-only button on Detections cards with the
+name as its accessible name, not a return to a span.
+
+The acceptance figures were measured with this repository's own Playwright
+script, using the selectors `tests/measure.html` uses. The handoff's harness
+page was read, not run.

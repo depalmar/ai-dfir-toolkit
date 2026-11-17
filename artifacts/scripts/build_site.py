@@ -892,13 +892,26 @@ details.hdet>summary:focus-visible{outline:2px solid var(--accent);outline-offse
 .hunthead h4{margin:0;font-size:13.5px;line-height:1.35;min-width:0}
 .hunthead .cardbtn:hover{color:var(--accent)}
 .huntlook{margin:9px 0 0;font-size:12.5px;color:var(--muted)}
-.huntk{font-size:11.5px;color:var(--faint)}
+.huntk{font-size:11.5px;color:var(--muted)}
 .huntlist{list-style:none;margin:11px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
 .huntlist li{padding:9px 11px;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel-2);
   font-size:12.5px;scroll-margin-top:calc(var(--hdrh,120px) + 12px)}
 .huntlist li b{display:block;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
 .huntlist li span{display:block;margin-top:3px;color:var(--muted)}
 .hunt{scroll-margin-top:calc(var(--hdrh,120px) + 12px)}
+@media(max-width:620px){
+  .huntseg{display:flex;flex:1 1 100%}
+  .huntseg .segbtn{flex:1 1 0;min-height:44px}
+  .huntctl input{flex:1 1 100%;max-width:none;min-height:44px}
+  .huntreads{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}
+  .huntreads>*{flex:none}
+  .hread,.huntreads .lnk,.huntmore{min-height:44px}
+  .hunt .minibtn,.huntcase .minibtn,.hlink{min-height:44px;min-width:44px}
+  button.srcstat{min-height:44px}
+  .hunt .srcstat.flat{min-height:44px;display:inline-flex;align-items:center}
+  #huntAll,#huntCopy,#huntClear{min-height:44px}
+  .hunt details.hdet>summary,.huntcase details.hdet>summary{min-height:44px}
+}
 .hunt:target,.huntlist li:target,.hunt.hit,.huntlist li.hit{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 .srcintro{margin:0;font-size:13.5px;color:var(--muted);max-width:70ch}
 .vollegend{display:grid;gap:7px;margin-top:12px}
@@ -2367,7 +2380,7 @@ function huntsHTML(){
   const linked=new Set(HUNTS.behaviours.flatMap(g=>g.rules)).size;
   const op=id=>huntOpen.has(id)?' open':'';
   const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
-  const techs=r=>[...r.atlas,...(r.attack||[])].map(x=>`<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('');
+  const techs=r=>[...r.atlas,...(r.attack||[])].map(techChip).join('');
   const det=(g,f)=>{
     const r=RULEFILE[f];
     if(!r)return `<div class="hdet"><div class="hdetbody"><p class="hdesc">${esc(f)} is named by this case and is not a rule on this page.</p></div></div>`;
@@ -2442,7 +2455,8 @@ function huntsHTML(){
     detections the case links. A rule belongs to the case, not to one behaviour: nothing here says a
     given rule matches a given behaviour, so read its logic before relying on it.</p>`}
     <div class="huntgrid" id="huntSec">${rulesOn?ruleCards():caseCards()}</div>
-    <div class="empty" id="huntEmpty" hidden>No hunt matches that filter.</div></section>`;
+    <div class="empty" id="huntEmpty" hidden><p id="huntEmptyMsg"></p><div class="emptyacts">
+      <button class="btn" type="button" id="huntClear">Clear filter</button></div></div></section>`;
 }
 // Filtering shows and hides what is already on the page. It never rebuilds the
 // view, so the box keeps focus, a rule opened by hand stays open, and the status
@@ -2469,6 +2483,11 @@ function applyHuntFilter(){
   }
   $('.huntn').textContent=`${shown} of ${total} shown`;
   $('#huntEmpty').hidden=!!shown;
+  if(!shown){
+    const rd=[...huntReads].join(' or '), what=huntShow==='rules'?'hunting rule':'behaviour';
+    $('#huntEmptyMsg').textContent=huntQ?`No hunt matches "${huntQ}"${rd?`, among those that read ${rd}`:''}.`
+      :`No ${what} reads ${rd}.`;
+  }
 }
 // The button says what pressing it will do, read from the page as it is.
 function syncHuntAll(){
@@ -2791,7 +2810,9 @@ function closeDrawer(){
   // drill started from inside a drawer - so the jump happened and Back had
   // nothing to go to.
   if(!navStack.length)history.replaceState(null,'',location.pathname+location.search);
-  if(!markSel())renderMain();
+  // Hunts has no selected row to redraw, and rebuilding it would move focus
+  // off the button that opened the drawer.
+  if(view!=='hunts'&&!markSel())renderMain();
   const el=back?document.querySelector(`[data-a="${CSS.escape(back)}"],[data-f="${CSS.escape(back)}"]`):null;
   // Cards are articles now; focus lands on the button inside them.
   const tgt=x=>x&&(x.matches('button,[tabindex],a[href],input,select')?x:(x.querySelector('.cardbtn')||x));
@@ -2989,8 +3010,7 @@ function rulesHTML(rules){
         ${r.level?badge(r.level,r.level==='critical'):''}</div>
       ${r.description?`<p class="rdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
       <div class="rfoot">${oneFmt?'':`<span class="fmt">${esc(r.format)}</span>`}
-        ${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(x=>
-          `<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('')}</div>
+        ${[...r.atlas,...r.owasp,...(r.asi||[]),...(r.attack||[])].map(techChip).join('')}</div>
     </article>`).join('')+'</div>';
 }
 function ruleDrawerHTML(r){
@@ -3182,15 +3202,18 @@ function techChip(id){
     aria-expanded="false">${esc(id)}${n?` &middot; ${esc(n)}`:''}</button>`:`<i>${esc(id)}</i>`;
 }
 function closeTechMenu(){
-  const m=$('#drawer .tmenu'); if(!m)return;
+  const m=$('.tmenu'); if(!m)return;
   const c=m.previousElementSibling; if(c)c.setAttribute('aria-expanded','false'); m.remove();
 }
 function techMenu(c){
-  const open=$('#drawer .tmenu');
+  const open=$('.tmenu');
   if(open){const same=open.previousElementSibling===c;closeTechMenu();if(same)return}
   const m=document.createElement('span'); m.className='tmenu'; m.setAttribute('role','menu');
   m.innerHTML='<button type="button" role="menuitem" data-act="filter">Filter detections to this technique</button>'
     +'<button type="button" role="menuitem" data-act="map">Open in Mappings</button>';
+  // A chip can sit on a card that is itself a button. A press inside the menu
+  // is for the menu and must not also open the card.
+  m.addEventListener('click',e=>e.stopPropagation());
   c.after(m); c.setAttribute('aria-expanded','true');
   const items=[...m.querySelectorAll('button')]; items[0].focus();
   m.onkeydown=e=>{const i=items.indexOf(document.activeElement);
@@ -3199,7 +3222,7 @@ function techMenu(c){
     else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeTechMenu();c.focus()}};
   items.forEach(b=>b.onclick=()=>{
     const id=c.dataset.tid, k=c.dataset.tk;
-    closeTechMenu(); pushNav(); closeDrawer();
+    closeTechMenu(); pushNav(); if(!$('#drawer').hidden)closeDrawer();
     if(b.dataset.act==='filter'){resetRuleFilters();rfilters[k]=[id];view='rules';update();window.scrollTo(0,0)}
     else{view='mappings';update();
       // Index rows carry data-x; the ATLAS coverage table keys by data-t and
@@ -3209,9 +3232,12 @@ function techMenu(c){
       if(row){row.scrollIntoView({block:'center'});row.classList.add('flash')}else window.scrollTo(0,0)}
   });
 }
-function wireTechChips(){
-  $$('#drawer .tchip[data-tid]').forEach(c=>c.onclick=e=>{e.stopPropagation();techMenu(c)});
+function wireTechChips(root){
+  $$((root||'#drawer')+' .tchip[data-tid]').forEach(c=>c.onclick=e=>{e.stopPropagation();techMenu(c)});
 }
+// A press anywhere else puts the menu away. Chips and the menu stop their own
+// clicks, so whatever reaches the document was aimed at something else.
+document.addEventListener('click',closeTechMenu);
 function resetRuleFilters(){for(const g of Object.keys(rfilters))rfilters[g]=[];
   ruleSet=null;query='';$('#q').value=''}
 
@@ -3987,6 +4013,7 @@ function renderMain(){
     main.innerHTML=rulesHTML(rules);
     wireEmpty();
     $$('#main .rule').forEach(el=>el.onclick=()=>openRuleDrawer(el.dataset.f,el));
+    wireTechChips('#main');
     renderTabs();renderToast();renderBack();return;
   }
   if(view==='mappings'){
@@ -4080,21 +4107,23 @@ function renderMain(){
     main.innerHTML=huntsHTML();
     applyHuntFilter();
     const hq=$('#huntQ');
-    hq.oninput=()=>{huntQ=hq.value;applyHuntFilter()};
+    hq.oninput=()=>{huntQ=hq.value;applyHuntFilter();writeHash(true)};
     // A section switch and the "more" control re-render; open disclosures come
     // back from huntOpen, and focus returns to the control that was pressed.
     $$('#main [data-show]').forEach(b=>b.onclick=()=>{
       if(huntShow===b.dataset.show)return;
-      huntShow=b.dataset.show;renderMain();
+      huntShow=b.dataset.show;renderMain();writeHash(true);
       const n=$(`#main [data-show="${huntShow}"]`);if(n)n.focus()});
     $$('#main [data-reads]').forEach(b=>b.onclick=()=>{
       const v=b.dataset.reads;
       if(huntReads.has(v))huntReads.delete(v);else huntReads.add(v);
-      b.setAttribute('aria-pressed',String(huntReads.has(v)));applyHuntFilter()});
+      b.setAttribute('aria-pressed',String(huntReads.has(v)));applyHuntFilter();writeHash(true)});
     const rm=$('#huntReadsMore');
     if(rm)rm.onclick=()=>{huntReadsMore=!huntReadsMore;renderMain();const n=$('#huntReadsMore');if(n)n.focus()};
-    $$('#main button[data-rule]').forEach(b=>b.onclick=()=>{
-      pushNav();resetRuleFilters();view='rules';update();openRuleDrawer(b.dataset.rule,null)});
+    // The rule opens over the hunts, not instead of them: comparing three
+    // rules is three drawers, not three round trips to another tab.
+    $$('#main button[data-rule]').forEach(b=>b.onclick=()=>openRuleDrawer(b.dataset.rule,b));
+    wireTechChips('#main');
     $$('#main [data-src]').forEach(b=>b.onclick=()=>{
       pushNav();view='sources';update();
       const el=document.getElementById('src-'+b.dataset.src);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
@@ -4112,6 +4141,10 @@ function renderMain(){
       const t=li&&li.querySelector('.hlink');if(t)t.focus()});
     $$('#main details[data-oid]').forEach(d=>d.addEventListener('toggle',()=>{
       if(d.open)huntOpen.add(d.dataset.oid);else huntOpen.delete(d.dataset.oid);syncHuntAll()}));
+    $('#huntClear').onclick=()=>{
+      huntQ='';huntReads.clear();hq.value='';
+      $$('#main [data-reads]').forEach(b=>b.setAttribute('aria-pressed','false'));
+      applyHuntFilter();writeHash(true);hq.focus()};
     const hc=$('#huntCopy');hc.onclick=()=>copy(huntChecklist(),hc);
     $('#huntAll').onclick=()=>{
       const ds=$$('#huntSec details.hdet'), open=!ds.every(d=>d.open);
@@ -4390,16 +4423,26 @@ function viewHash(){
     if(view==='catalog'&&unvOnly)p.set('unv','1');
     const qs=p.toString(); return '#'+view+(qs?'?'+qs:'');
   }
+  if(view==='hunts'){
+    // Defaults are left out, so an unfiltered view is still plain '#hunts'.
+    const p=new URLSearchParams();
+    if(huntShow==='rules')p.set('show','rules');
+    if(huntQ)p.set('q',huntQ);
+    if(huntReads.size)p.set('reads',[...huntReads].join(','));
+    const qs=p.toString(); return '#hunts'+(qs?'?'+qs:'');
+  }
   return view==='guide'?'':'#'+view;
 }
 // In-page anchors that belong to the current view are left alone. Rule and
 // actor links are drawer links: once the drawer closes they are replaced.
 const DEEP={'g-':'guide','cs-':'cases','src-':'sources','hunt-':'hunts','graph':'graph'};
-function writeHash(){
+// `force` is for a filter the reader just changed: an anchor in the address
+// bar no longer describes what is on the page, so the view's own link wins.
+function writeHash(force){
   if(routing||!$('#drawer').hidden)return;
   const cur=location.hash.slice(1);
   const pre=Object.keys(DEEP).find(p=>cur.startsWith(p));
-  if(pre&&DEEP[pre]===view)return;
+  if(!force&&pre&&DEEP[pre]===view)return;
   const h=viewHash();
   if(h==='#'+cur||(!h&&!cur))return;
   history.replaceState(history.state,'',h||location.pathname+location.search);
@@ -4418,6 +4461,14 @@ function applyHash0(){
       const q=p.get('q')||''; query=q.toLowerCase(); $('#q').value=q;
       if(base==='catalog'){unvOnly=p.get('unv')==='1';$('#unvBtn').setAttribute('aria-pressed',String(unvOnly))}
       view=base; update(); return;
+    }
+    if(base==='hunts'){
+      $('#deadLink').hidden=true;
+      huntShow=p.get('show')==='rules'?'rules':'behaviours';
+      huntQ=p.get('q')||'';
+      huntReads.clear();
+      (p.get('reads')||'').split(',').filter(v=>HUNT_READS.includes(v)).forEach(v=>huntReads.add(v));
+      view='hunts'; update(); return;
     }
   }
   const h=decodeURIComponent(qi>0?raw.slice(0,qi):raw);
@@ -4480,6 +4531,13 @@ function palIndex(){
   RULES.forEach(r=>add('Detections',r.title,`${r.file} · ${r.format}`,
     [r.file,r.description,r.format,r.category,(r.atlas||[]).join(' '),(r.attack||[]).join(' '),(r.owasp||[]).join(' ')].join(' '),
     ()=>{view='rules';update();openRuleDrawer(r.path,null)}));
+  // A hunting rule is listed under Detections too. Here it lands on its card
+  // in Hunts, opened, which is where a search for a hunt should end.
+  HUNTS.rules.forEach(h=>add('Hunts',h.title,`${h.file} · hunting rule`,
+    [h.file,h.look_for,h.logsource].join(' '),
+    ()=>{view='hunts';huntReveal(h.anchor);huntOpen.add('r:'+h.file);update();
+      const el=document.getElementById(h.anchor);
+      if(el){el.classList.add('hit');el.scrollIntoView({block:'center'})}}));
   HUNTS.behaviours.forEach(g=>g.items.forEach(i=>add('Hunts',i.look_for,`${g.case} · behaviour`,
     [g.case,g.title,i.why].join(' '),
     ()=>{view='hunts';huntReveal(i.anchor);update();const el=document.getElementById(i.anchor);
