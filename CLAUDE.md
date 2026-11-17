@@ -325,11 +325,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-52 entries, 636 artifacts, 169 credential locations, 68 MCP config
+52 entries, 638 artifacts, 169 credential locations, 68 MCP config
 locations, 14 endpoint Sigma rules, 23 case studies, 26 telemetry sources.
 Validation clean.
 
-Volatility across the 636 site rows: live 115 · rotating 55 · stable 466
+Volatility across the 638 site rows: live 115 · rotating 55 · stable 468
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
