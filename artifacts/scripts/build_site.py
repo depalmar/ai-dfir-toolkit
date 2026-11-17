@@ -822,10 +822,10 @@ th .pick.all{vertical-align:middle}
 .hardcases li>a{font-weight:600;font-size:13px;color:var(--ink);text-decoration:none}
 .hardcases li>a:hover{color:var(--accent);text-decoration:underline}
 .hardcases li p{margin:5px 0 0;font-size:12.5px;color:var(--muted);max-width:none}
-.huntbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 4px}
-.huntbar input{flex:1 1 260px;max-width:420px;min-width:0;padding:8px 11px;font:inherit;font-size:13px;
+.huntctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 4px}
+.huntctl input{flex:1 1 260px;max-width:420px;min-width:0;padding:8px 11px;font:inherit;font-size:13px;
   color:var(--ink);background:var(--panel);border:1px solid var(--field-line);border-radius:8px}
-.huntbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.huntctl input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .huntn{font-size:12px;color:var(--muted)}
 .hlevel{flex:none;border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:1px 8px;font-size:11px;white-space:nowrap}
 .huntsec{margin-top:22px}
@@ -834,7 +834,32 @@ th .pick.all{vertical-align:middle}
 .huntgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(460px,100%),1fr));gap:14px;align-items:start}
 .hlh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:13px 0 6px}
 .hlh h5,.htune h5,.hsub{margin:0;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.hunt pre.yaml,.hdet pre.yaml{max-height:280px;overflow:auto;font-size:11.5px}
+/* Open means open: no inner vertical scrollbar on a rule's logic. */
+.hunt pre.yaml,.hdet pre.yaml{max-height:none;overflow-x:auto;overflow-y:visible;font-size:11.5px}
+.hunt .minibtn,.huntcase .minibtn{white-space:nowrap}
+.huntseg .segbtn{font-size:12.5px;padding:7px 13px;display:inline-flex;gap:7px;align-items:center;justify-content:center}
+.huntseg .segbtn.on{font-weight:600}
+.segn{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+.huntreads{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 4px}
+.huntreadsl{font-size:12.5px;color:var(--muted);margin-right:2px}
+.hread{cursor:pointer;font-family:ui-monospace,Menlo,monospace}
+.hread[aria-pressed=true]{border-color:var(--accent-border);background:var(--accent-soft);color:var(--accent)}
+.huntgrid .huntcase{margin:0}
+.huntsub{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:3px;font-size:12px;color:var(--muted)}
+.huntli{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.huntli b{min-width:0}
+.hlink{flex:none;border:1px solid var(--accent);color:var(--accent);background:var(--panel);border-radius:6px;
+  padding:2px 8px;font-size:11px;white-space:nowrap;cursor:pointer;min-height:24px;font-family:inherit}
+.hlink:hover{background:var(--accent-soft)}
+.huntmore,.huntreads .lnk{background:none;border:0;padding:2px 4px;color:var(--accent);cursor:pointer;
+  font:inherit;font-size:12.5px;text-decoration:underline;text-underline-offset:2px;min-height:24px}
+.huntmore{margin-top:9px}
+.hcasedet{margin-top:12px}
+.hcasedet>.hdetbody{padding-top:11px}
+.hrule{margin-top:12px}
+.hpills{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px}
+/* A closed rule card is a summary. The whole description is one click away. */
+.hunt:not(:has(details.hrule[open])) .huntlook{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .htune{margin-top:11px}
 .htune .fplist{margin:6px 0 0}
 .htune p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
@@ -2248,16 +2273,39 @@ function toolsHTML(){
 /* ---------- hunts ---------- */
 // Derived in hunts.py from the rules and the case studies. No queries: a
 // hunting rule is Sigma and converts to any backend, and a behaviour is prose.
-let huntQ='';
-function huntsShown(){
-  const m=hay=>qMatch(hay,huntQ);
-  const rules=HUNTS.rules.filter(h=>m([h.title,h.file,h.look_for,h.logsource,h.category,
-    h.sources.map(s=>s.name).join(' '),h.cases.join(' ')].join(' ')));
-  const groups=HUNTS.behaviours.map(g=>{
-    const head=m([g.case,g.title,g.rules.join(' '),g.rules.map(f=>(RULEFILE[f]||{}).title||'').join(' ')].join(' '));
-    return {...g,items:g.items.filter(i=>head||m([i.look_for,i.why].join(' ')))};
-  }).filter(g=>g.items.length);
-  return {rules,groups,n:rules.length+groups.reduce((a,g)=>a+g.items.length,0)};
+// The state below is not persisted. huntOpen and huntMore exist so a re-render
+// - a section switch, a drawer closing - puts back what the reader had opened.
+let huntShow='behaviours', huntQ='', huntReadsMore=false;
+const huntReads=new Set(), huntOpen=new Set(), huntMore=new Set();
+const HUNT_CAP=3, HUNT_READS_FIRST=6;
+const readsOK=ls=>!huntReads.size||ls.some(x=>huntReads.has(x));
+const huntRuleHay=h=>[h.title,h.file,h.look_for,h.logsource,h.category,
+  h.sources.map(s=>s.name).join(' '),h.cases.join(' ')].join(' ');
+const huntRuleOK=h=>readsOK(h.logsource?[h.logsource]:[])&&qMatch(huntRuleHay(h),huntQ);
+const huntGroupHead=g=>[g.case,g.title,g.rules.join(' '),
+  g.rules.map(f=>(RULEFILE[f]||{}).title||'').join(' ')].join(' ');
+// The behaviours of one case that pass the filters. A case matches Reads
+// through the detections it links; a text hit on the case shows all of it.
+function huntGroupItems(g){
+  if(!readsOK(g.logsources||[]))return [];
+  const head=qMatch(huntGroupHead(g),huntQ);
+  return g.items.filter(i=>head||qMatch(i.look_for+' '+i.why,huntQ));
+}
+// Every log source a hunt reads, most used first. A hunting rule counts once
+// and a case once per behaviour, so the order follows what is on the tab.
+const HUNT_READS=(()=>{
+  const n={};
+  for(const h of HUNTS.rules)if(h.logsource)n[h.logsource]=(n[h.logsource]||0)+1;
+  for(const g of HUNTS.behaviours)for(const ls of g.logsources||[])n[ls]=(n[ls]||0)+g.items.length;
+  return Object.keys(n).sort((a,b)=>n[b]-n[a]||a.localeCompare(b));
+})();
+// Make a hunt reachable by its anchor: the section that holds it, no filter
+// hiding it, and its case expanded if it sits past the first three.
+function huntReveal(a){
+  huntShow=HUNTS.rules.some(h=>h.anchor===a)?'rules':'behaviours';
+  huntQ=''; huntReads.clear();
+  const g=HUNTS.behaviours.find(g=>g.items.some(i=>i.anchor===a));
+  if(g)huntMore.add(g.case);
 }
 // What a rule matches, without the prose around it: logsource and detection
 // for Sigma, the whole body for YARA and Suricata, which are their own logic.
@@ -2295,33 +2343,77 @@ function huntRuleBody(r){
       ${fields.length?`<div class="hfields"><span class="huntk">review in a match</span>${fields.map(f=>`<code>${esc(f)}</code>`).join('')}</div>`:''}
     </div>`;
 }
+function huntCaseChecklist(g,items){
+  const out=[`### ${g.case} ${g.title}`,''];
+  for(const i of items)out.push(`- [ ] ${i.look_for}`);
+  for(const f of g.rules){const r=RULEFILE[f];out.push(`- [ ] Detection: ${r?r.title:f} (${f})`)}
+  return out;
+}
+// The selected section, as filtered: what is on screen is what is copied.
 function huntChecklist(){
-  const {rules,groups}=huntsShown(), out=[`# Hunts - AI DFIR Toolkit, ${stamp()}`,''];
-  if(rules.length){out.push('## Hunting rules','');
-    for(const h of rules)out.push(`- [ ] ${h.title} (${h.file}) - reads ${h.logsource||'see the rule'}`);
-    out.push('')}
-  if(groups.length){out.push('## Behaviours reported in case studies','');
-    for(const g of groups){out.push(`### ${g.case} ${g.title}`,'');
-      for(const i of g.items)out.push(`- [ ] ${i.look_for}`);
-      for(const f of g.rules){const r=RULEFILE[f];out.push(`- [ ] Detection: ${r?r.title:f} (${f})`)}
-      out.push('')}}
+  const out=[`# Hunts - AI DFIR Toolkit, ${stamp()}`,''];
+  if(huntShow==='rules'){
+    out.push('## Hunting rules','');
+    for(const h of HUNTS.rules.filter(huntRuleOK))
+      out.push(`- [ ] ${h.title} (${h.file}) - reads ${h.logsource||'see the rule'}`);
+  }else{
+    out.push('## Behaviours reported in case studies','');
+    for(const g of HUNTS.behaviours){const it=huntGroupItems(g);if(it.length)out.push(...huntCaseChecklist(g,it),'')}
+  }
   return out.join('\n');
 }
 function huntsHTML(){
-  const S=HUNTS.stats, {rules,groups,n}=huntsShown();
+  const S=HUNTS.stats, rulesOn=huntShow==='rules';
   const linked=new Set(HUNTS.behaviours.flatMap(g=>g.rules)).size;
+  const op=id=>huntOpen.has(id)?' open':'';
+  const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
   const techs=r=>[...r.atlas,...(r.attack||[])].map(x=>`<span class="tchip" title="${esc(techName(x))}">${esc(x)}</span>`).join('');
-  const det=f=>{
+  const det=(g,f)=>{
     const r=RULEFILE[f];
     if(!r)return `<div class="hdet"><div class="hdetbody"><p class="hdesc">${esc(f)} is named by this case and is not a rule on this page.</p></div></div>`;
-    const fp=(r.falsepositives||[]).length;
-    return `<details class="hdet">
+    const fp=(r.falsepositives||[]).length, oid=`d:${g.case}:${f}`;
+    return `<details class="hdet" data-oid="${esc(oid)}"${op(oid)}>
       <summary><span class="hdt">${esc(r.title)}</span>${r.level?`<span title="The rule author's ${r.format==='Sigma'?'Sigma ':''}level for an alert on this rule.">${badge(r.level,r.level==='critical')}</span>`:'<span></span>'}
         <span class="hdm">${esc(r.format)} &middot; <span class="mono">${esc(r.file)}</span>${r.logsource&&r.format==='Sigma'?` &middot; reads ${esc(r.logsource)}`:''}${
-          fp?` &middot; ${fp} tuning note${fp>1?'s':''}`:''}</span></summary>
+          fp?` &middot; ${plural(fp,'tuning note')}`:''}</span></summary>
       <div class="hdetbody">${r.description?`<p class="hdesc">${esc(r.description.replace(/\s+/g,' ').trim())}</p>`:''}
         ${huntRuleBody(r)}</div></details>`;
   };
+  // A selected value stays visible even past the first six, or a pressed chip
+  // could be filtering the list from behind the "more" control.
+  const reads=HUNT_READS.filter((v,i)=>huntReadsMore||i<HUNT_READS_FIRST||huntReads.has(v));
+  const hidden=HUNT_READS.length-reads.length;
+  const ruleCards=()=>HUNTS.rules.map((h,i)=>{
+    const r=RULEFILE[h.file], fp=r?(r.falsepositives||[]).length:0, oid='r:'+h.file;
+    return `<article class="hunt" id="${esc(h.anchor)}" data-i="${i}">
+      <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4></div>
+      <div class="hpills"><span class="hlevel" title="The rule author's Sigma level. Low and informational mean a match is not an alert.">Sigma level ${esc(h.level)}</span>${r?techs(r):''}</div>
+      <div class="rfile">${esc(h.file)}${r&&r.status?` &middot; ${esc(r.status)}`:''}</div>
+      <p class="huntlook">${esc(h.look_for)}</p>
+      <div class="srcfoot">${h.logsource?`<span class="huntk">reads</span><span class="srcstat flat">${esc(h.logsource)}</span>`:''}
+        ${h.sources.map(s=>`<button type="button" class="srcstat" data-src="${esc(s.id)}" title="How to switch this source on">${esc(s.name)}</button>`).join('')}
+        ${fp?`<span class="huntk">&middot; ${plural(fp,'tuning note')}</span>`:''}</div>
+      ${r?`<details class="hdet hrule" data-oid="${esc(oid)}"${op(oid)}><summary><span class="hdt">Logic and tuning</span></summary>
+        <div class="hdetbody">${huntRuleBody(r)}</div></details>`:''}
+      ${h.cases.length?`<div class="huntfoot"><span class="huntk">from</span>${h.cases.map(c=>
+        `<button type="button" class="srcstat" data-case="${esc(c)}" title="The case study this rule came from">${esc(c)}</button>`).join('')}</div>`:''}
+      </article>`}).join('');
+  const caseCards=()=>HUNTS.behaviours.map((g,gi)=>{
+    const oid='c:'+g.case, n=g.rules.length;
+    return `<article class="huntcase" data-i="${gi}">
+      <div class="hunthead"><h4><button type="button" class="cardbtn" data-case="${esc(g.case)}">${esc(g.title)}</button></h4>${confBadge(g.confidence)}</div>
+      <div class="huntsub"><span>${esc(g.case)} &middot; disclosed ${esc(g.disclosed)}</span>
+        <button type="button" class="minibtn" data-casecopy="${gi}" title="Copy this case's behaviours and detections as a Markdown checklist">copy checklist</button></div>
+      <ul class="huntlist">${g.items.map(i=>`<li id="${esc(i.anchor)}" data-a="${esc(i.anchor)}">
+        <div class="huntli"><b>${esc(i.look_for)}</b><button type="button" class="hlink" data-link="${esc(i.anchor)}"
+          title="Copy a link to this behaviour">copy link</button></div>${i.why?`<span>${esc(i.why)}</span>`:''}</li>`).join('')}</ul>
+      <button type="button" class="lnk huntmore" data-more="${esc(g.case)}" hidden></button>
+      ${n?`<details class="hdet hcasedet" data-oid="${esc(oid)}"${op(oid)}>
+        <summary><span class="hdt">${plural(n,'detection')} for this case</span><span></span>
+          <span class="hdm">A rule belongs to the case, not to one behaviour.</span></summary>
+        <div class="hdetbody"><div class="hdets">${g.rules.map(f=>det(g,f)).join('')}</div></div></details>`
+        :`<p class="huntnote">No rule in this repository. These behaviours are hunted by hand.</p>`}
+    </article>`}).join('');
   return `<div class="gtop"><div><h2>Hunts</h2>
     <p>What to go looking for where an alert would be wrong, or where nobody has
     written a rule. Each hunt shows its detection: the logic it matches and how its
@@ -2329,39 +2421,61 @@ function huntsHTML(){
     is Sigma, YARA or Suricata, and a behaviour is a description to turn into a
     search of your own logs.</p>
     <p class="csconf">${S.rule_hunts} hunting rules &middot; ${S.behaviours} behaviours from ${S.cases} case studies &middot; ${linked} detections linked to those cases</p></div>
-    <div class="badgerow"><button class="btn" id="huntAll" data-open="0" title="Open or close the logic of every detection below">Expand all logic</button>
+    <div class="badgerow"><button class="btn" id="huntAll" title="Open or close the logic of every detection in this section">Expand all logic</button>
     <button class="btn" id="huntCopy" title="Copy the hunts shown as a Markdown checklist">Copy as checklist</button></div></div>
-  <div class="huntbar"><input id="huntQ" type="search" placeholder="Filter hunts: a log source, a rule, a case id..."
-    aria-label="Filter hunts" value="${esc(huntQ)}"><span class="huntn" role="status">${n} of ${S.total} shown</span></div>
-  ${!n?`<div class="empty">No hunt matches that filter.</div>`:''}
-  ${rules.length?`<section class="huntsec"><h3>Hunting rules</h3>
+  <div class="huntctl">
+    <div class="seg huntseg" role="group" aria-label="Which hunts to show">
+      <button type="button" class="segbtn${rulesOn?'':' on'}" data-show="behaviours" aria-pressed="${!rulesOn}">Behaviours <span class="segn">${S.behaviours}</span></button>
+      <button type="button" class="segbtn${rulesOn?' on':''}" data-show="rules" aria-pressed="${rulesOn}">Hunting rules <span class="segn">${S.rule_hunts}</span></button></div>
+    <input id="huntQ" type="search" placeholder="Filter hunts: a log source, a rule, a case id..."
+      aria-label="Filter hunts" value="${esc(huntQ)}"><span class="huntn" role="status"></span></div>
+  ${HUNT_READS.length?`<div class="huntreads" role="group" aria-label="Filter by the log source a hunt reads"
+      title="Filter to hunts whose rules read a log source you collect."><span class="huntreadsl">Reads</span>
+    ${reads.map(v=>`<button type="button" class="srcstat hread" data-reads="${esc(v)}" aria-pressed="${huntReads.has(v)}">${esc(v)}</button>`).join('')}
+    ${hidden>0||huntReadsMore?`<button type="button" class="lnk" id="huntReadsMore" aria-expanded="${huntReadsMore}">${huntReadsMore?'fewer':'more'}</button>`:''}</div>`:''}
+  <section class="huntsec">${rulesOn?`<h3>Hunting rules</h3>
     <p class="huntnote">Sigma rules whose own level is low or informational. That is the author saying a match is not
     an alert: baseline it first, then run it on a schedule and read the results. The other
-    ${RULES.length-S.rule_hunts} rules are on the Detections tab.</p>
-    <div class="huntgrid">${rules.map(h=>{const r=RULEFILE[h.file];return `<article class="hunt" id="${esc(h.anchor)}">
-      <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4><span class="hlevel" title="The rule author's Sigma level. Low and informational mean a match is not an alert.">Sigma level ${esc(h.level)}</span></div>
-      <div class="rfile">${esc(h.file)}${r&&r.status?` &middot; ${esc(r.status)}`:''}</div>
-      <p class="huntlook">${esc(h.look_for)}</p>
-      <div class="srcfoot">${h.logsource?`<span class="huntk">reads</span><span class="srcstat flat">${esc(h.logsource)}</span>`:''}
-        ${h.sources.map(s=>`<button class="srcstat" data-src="${esc(s.id)}" title="How to switch this source on">${esc(s.name)}</button>`).join('')}</div>
-      ${r?huntRuleBody(r):''}
-      ${h.cases.length||(r&&(r.atlas.length||(r.attack||[]).length))?`<div class="huntfoot">
-        ${h.cases.length?`<span class="huntk">from</span>${h.cases.map(c=>`<button class="srcstat" data-case="${esc(c)}" title="The case study this rule came from">${esc(c)}</button>`).join('')}`:''}
-        ${r?techs(r):''}</div>`:''}
-      </article>`}).join('')}</div></section>`:''}
-  ${groups.length?`<section class="huntsec"><h3>Behaviours reported in case studies</h3>
+    ${RULES.length-S.rule_hunts} rules are on the Detections tab.</p>`
+    :`<h3>Behaviours reported in case studies</h3>
     <p class="huntnote">What the activity looked like, in the words of the case, newest first, with the
     detections the case links. A rule belongs to the case, not to one behaviour: nothing here says a
-    given rule matches a given behaviour, so read its logic before relying on it.</p>
-    ${groups.map(g=>`<article class="huntcase">
-      <div class="hunthead"><h4><button type="button" class="cardbtn" data-case="${esc(g.case)}">${esc(g.title)}</button></h4>${confBadge(g.confidence)}</div>
-      <div class="srcsub">${esc(g.case)} &middot; disclosed ${esc(g.disclosed)}</div>
-      <h5 class="hsub">Behaviours <span class="n">${g.items.length}</span></h5>
-      <ul class="huntlist">${g.items.map(i=>`<li id="${esc(i.anchor)}"><b>${esc(i.look_for)}</b>${i.why?`<span>${esc(i.why)}</span>`:''}</li>`).join('')}</ul>
-      <h5 class="hsub">Detections for this case <span class="n">${g.rules.length}</span></h5>
-      ${g.rules.length?`<div class="hdets">${g.rules.map(det).join('')}</div>`
-        :`<p class="huntnote">No rule in this repository. These behaviours are hunted by hand.</p>`}
-    </article>`).join('')}</section>`:''}`;
+    given rule matches a given behaviour, so read its logic before relying on it.</p>`}
+    <div class="huntgrid" id="huntSec">${rulesOn?ruleCards():caseCards()}</div>
+    <div class="empty" id="huntEmpty" hidden>No hunt matches that filter.</div></section>`;
+}
+// Filtering shows and hides what is already on the page. It never rebuilds the
+// view, so the box keeps focus, a rule opened by hand stays open, and the status
+// line is the same node before and after - which is what gets announced.
+function applyHuntFilter(){
+  const sec=$('#huntSec'); if(!sec)return;
+  let shown=0,total=0;
+  if(huntShow==='rules'){
+    $$('#huntSec .hunt').forEach(c=>{
+      total++; const ok=huntRuleOK(HUNTS.rules[+c.dataset.i]); c.hidden=!ok; if(ok)shown++});
+  }else{
+    $$('#huntSec .huntcase').forEach(c=>{
+      const g=HUNTS.behaviours[+c.dataset.i], ok=new Set(huntGroupItems(g).map(i=>i.anchor));
+      // With a text filter on, every match is shown: a hit hidden behind
+      // "more" would look like no hit at all.
+      const all=huntMore.has(g.case)||!!huntQ; let n=0;
+      c.querySelectorAll('.huntlist li').forEach(li=>{
+        total++; const hit=ok.has(li.dataset.a); if(hit)n++;
+        li.hidden=!hit||(!all&&n>HUNT_CAP)});
+      const more=c.querySelector('.huntmore'), extra=n-HUNT_CAP;
+      more.hidden=all||extra<=0;
+      more.textContent=`${extra} more behaviour${extra===1?'':'s'}`;
+      c.hidden=!n; shown+=n});
+  }
+  $('.huntn').textContent=`${shown} of ${total} shown`;
+  $('#huntEmpty').hidden=!!shown;
+}
+// The button says what pressing it will do, read from the page as it is.
+function syncHuntAll(){
+  const b=$('#huntAll'); if(!b)return;
+  const ds=$$('#huntSec details.hdet');
+  b.hidden=!ds.length;
+  b.textContent=ds.length&&ds.every(d=>d.open)?'Collapse all logic':'Expand all logic';
 }
 function sourcesHTML(){
   const list=[...SOURCES].sort((a,b)=>
@@ -3964,23 +4078,46 @@ function renderMain(){
   }
   if(view==='hunts'){
     main.innerHTML=huntsHTML();
+    applyHuntFilter();
     const hq=$('#huntQ');
-    if(hq)hq.oninput=()=>{huntQ=hq.value;const pos=hq.selectionStart;renderMain();
-      const n=$('#huntQ');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}};
-    $$('#main [data-rule]').forEach(b=>b.onclick=()=>{
+    hq.oninput=()=>{huntQ=hq.value;applyHuntFilter()};
+    // A section switch and the "more" control re-render; open disclosures come
+    // back from huntOpen, and focus returns to the control that was pressed.
+    $$('#main [data-show]').forEach(b=>b.onclick=()=>{
+      if(huntShow===b.dataset.show)return;
+      huntShow=b.dataset.show;renderMain();
+      const n=$(`#main [data-show="${huntShow}"]`);if(n)n.focus()});
+    $$('#main [data-reads]').forEach(b=>b.onclick=()=>{
+      const v=b.dataset.reads;
+      if(huntReads.has(v))huntReads.delete(v);else huntReads.add(v);
+      b.setAttribute('aria-pressed',String(huntReads.has(v)));applyHuntFilter()});
+    const rm=$('#huntReadsMore');
+    if(rm)rm.onclick=()=>{huntReadsMore=!huntReadsMore;renderMain();const n=$('#huntReadsMore');if(n)n.focus()};
+    $$('#main button[data-rule]').forEach(b=>b.onclick=()=>{
       pushNav();resetRuleFilters();view='rules';update();openRuleDrawer(b.dataset.rule,null)});
     $$('#main [data-src]').forEach(b=>b.onclick=()=>{
       pushNav();view='sources';update();
       const el=document.getElementById('src-'+b.dataset.src);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
-    $$('#main [data-case]').forEach(b=>b.onclick=()=>{
+    $$('#main button[data-case]').forEach(b=>b.onclick=()=>{
       pushNav();caseOnly=null;view='cases';update();
       const el=document.getElementById('cs-'+b.dataset.case);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
-    const hc=$('#huntCopy');if(hc)hc.onclick=()=>copy(huntChecklist(),hc);
     $$('#main [data-copyrule]').forEach(b=>b.onclick=()=>{const r=RULEFILE[b.dataset.copyrule];if(r)copy(r.body,b)});
-    const ha=$('#huntAll');
-    if(ha)ha.onclick=()=>{const open=ha.dataset.open!=='1';
-      $$('#main details.hdet').forEach(d=>{d.open=open});
-      ha.dataset.open=open?'1':'0';ha.textContent=open?'Collapse all logic':'Expand all logic'};
+    $$('#main [data-link]').forEach(b=>b.onclick=()=>copy(location.href.split('#')[0]+'#'+b.dataset.link,b));
+    $$('#main [data-casecopy]').forEach(b=>b.onclick=()=>{
+      const g=HUNTS.behaviours[+b.dataset.casecopy];copy(huntCaseChecklist(g,g.items).join('\n'),b)});
+    $$('#main [data-more]').forEach(b=>b.onclick=()=>{
+      const card=b.closest('.huntcase');huntMore.add(b.dataset.more);applyHuntFilter();
+      // Focus moves to the first behaviour that just appeared, not to nowhere.
+      const li=card.querySelectorAll('.huntlist li:not([hidden])')[HUNT_CAP];
+      const t=li&&li.querySelector('.hlink');if(t)t.focus()});
+    $$('#main details[data-oid]').forEach(d=>d.addEventListener('toggle',()=>{
+      if(d.open)huntOpen.add(d.dataset.oid);else huntOpen.delete(d.dataset.oid);syncHuntAll()}));
+    const hc=$('#huntCopy');hc.onclick=()=>copy(huntChecklist(),hc);
+    $('#huntAll').onclick=()=>{
+      const ds=$$('#huntSec details.hdet'), open=!ds.every(d=>d.open);
+      ds.forEach(d=>{d.open=open;if(open)huntOpen.add(d.dataset.oid);else huntOpen.delete(d.dataset.oid)});
+      syncHuntAll()};
+    syncHuntAll();
     renderTabs();renderToast();renderBack();return;
   }
   if(view==='sources'){
@@ -4303,7 +4440,7 @@ function applyHash0(){
     if(el){el.open=true;el.scrollIntoView({block:'start'})}else deadLink(h);
     return}
   if(h==='sources'){view='sources';update();return}
-  if(h.startsWith('hunt-')){view='hunts';huntQ='';update();
+  if(h.startsWith('hunt-')){view='hunts';huntReveal(h);update();
     const el=document.getElementById(h);
     if(el){el.classList.add('hit');el.scrollIntoView({block:'center'})}else deadLink(h);
     return}
@@ -4345,7 +4482,7 @@ function palIndex(){
     ()=>{view='rules';update();openRuleDrawer(r.path,null)}));
   HUNTS.behaviours.forEach(g=>g.items.forEach(i=>add('Hunts',i.look_for,`${g.case} · behaviour`,
     [g.case,g.title,i.why].join(' '),
-    ()=>{huntQ='';view='hunts';update();const el=document.getElementById(i.anchor);
+    ()=>{view='hunts';huntReveal(i.anchor);update();const el=document.getElementById(i.anchor);
       if(el){el.classList.add('hit');el.scrollIntoView({block:'center'})}})));
   CASES.forEach(c=>add('Case studies',c.title,`${c.id} · disclosed ${c.disclosed}`,
     [c.id,c.summary,c.affects,(c.iocs||[]).map(i=>i.value).join(' '),JSON.stringify(c.external_ids||{})].join(' '),
