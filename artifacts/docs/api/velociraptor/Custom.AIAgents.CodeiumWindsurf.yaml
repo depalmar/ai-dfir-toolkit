@@ -1,6 +1,6 @@
 name: Custom.AIAgents.CodeiumWindsurf
 description: |
-  Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.
+  The desktop IDE with the Cascade agent, and the Codeium plugins for other editors. Downloads its own language-server binary. Cognition renamed the standalone ed
 
   Generated from the AI agent artifact catalog (AIRT-0006). Every glob below is
   derived from a location the catalog has already verified.
@@ -16,7 +16,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'windows'
     query: |
-      LET Globs = ['C:\Users\*\.codeium\**', 'C:\Users\*\.codeium\windsurf\mcp_config.json', 'C:\Users\*\.codeium\*\language_server_*', 'C:\Users\*\.codeium\config.json', 'C:\Users\*\AppData\Roaming\Windsurf\User\globalStorage\state.vscdb', 'C:\Users\*\.codeium\mcp_config.json']
+      LET Globs = ['C:\Users\*\.codeium\**', 'C:\Users\*\.codeium\windsurf\mcp_config.json', 'C:\Users\*\.codeium\*\language_server_*', 'C:\Users\*\.codeium\windsurf-next\**', 'C:\Users\*\.codeium\windsurf-insiders\**', 'C:\Users\*\.codeium\config.json', 'C:\Users\*\AppData\Roaming\Windsurf\User\globalStorage\state.vscdb', 'C:\Users\*\.codeium\mcp_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.codeium/**', '/Users/*/.codeium/windsurf/mcp_config.json', '/Users/*/.codeium/*/language_server_*', '/Users/*/.codeium/config.json', '/Users/*/Library/Application Support/Windsurf/User/globalStorage/state.vscdb', '/Users/*/.codeium/mcp_config.json']
+      LET Globs = ['/Users/*/.codeium/**', '/Users/*/.codeium/windsurf/mcp_config.json', '/Users/*/.codeium/*/language_server_*', '/Users/*/.codeium/windsurf-next/**', '/Users/*/.codeium/windsurf-insiders/**', '/Applications/Devin.app/Contents/Resources/app/policies/**', '/Users/*/.codeium/config.json', '/Users/*/Library/Application Support/Windsurf/User/globalStorage/state.vscdb', '/Users/*/.codeium/mcp_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir
@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.codeium/**', '/home/*/.codeium/windsurf/mcp_config.json', '/home/*/.codeium/*/language_server_*', '/home/*/.codeium/config.json', '/home/*/.config/Windsurf/User/globalStorage/state.vscdb', '/home/*/.codeium/mcp_config.json']
+      LET Globs = ['/home/*/.codeium/**', '/home/*/.codeium/windsurf/mcp_config.json', '/home/*/.codeium/*/language_server_*', '/home/*/.codeium/windsurf-next/**', '/home/*/.codeium/windsurf-insiders/**', '/etc/windsurf/policies/policy.json', '/home/*/.codeium/config.json', '/home/*/.config/Windsurf/User/globalStorage/state.vscdb', '/home/*/.codeium/mcp_config.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

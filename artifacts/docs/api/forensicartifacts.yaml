@@ -321,8 +321,13 @@ urls:
 - https://github.com/cline/cline
 ---
 name: CodeiumWindsurfArtifacts
-doc: Codeium / Windsurf (AIRT-0006) - Windsurf IDE with Cascade agentic flow; Codeium
-  plugins for other editors. Downloads its own language-server binary.
+doc: 'Codeium / Windsurf (AIRT-0006) - The desktop IDE with the Cascade agent, and
+  the Codeium plugins for other editors. Downloads its own language-server binary.
+  Cognition renamed the standalone editor Devin Desktop in June 2026, and the name
+  on a host now depends on where you look: the macOS bundle is Devin.app, while the
+  state directory is still ~/.codeium/windsurf/ and the Windows and Linux policy locations
+  still say Windsurf. A sweep keyed on either name alone misses half of it. The plugins
+  are in maintenance mode. Devin CLI and the Devin cloud agent are AIRT-0007.'
 sources:
 - type: FILE
   attributes:
@@ -447,6 +452,59 @@ supported_os:
 - Windows
 urls:
 - https://cursor.com/docs
+---
+name: DevinArtifacts
+doc: 'Devin (AIRT-0007) - Two products under one name and one account. Devin is a
+  cloud-hosted software engineer that runs in the vendor''s virtual machine and is
+  reached through a web UI, Slack or an API. Devin CLI is a local coding agent that
+  runs in the user''s terminal with the user''s files, shell and credentials, and
+  is what leaves artifacts on a host. The desktop IDE that Cognition renamed from
+  Windsurf to Devin Desktop is AIRT-0006, not this entry: it still keeps its state
+  under ~/.codeium/, and the two meet only where the CLI imports that directory''s
+  MCP config.'
+sources:
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/devin/config.json'
+    - '%%users.homedir%%/.config/devin/mcp_config.json'
+    - '%%users.homedir%%/.local/share/devin/cli/logs/'
+    - '%%users.homedir%%/.local/share/devin/credentials.toml'
+    - /etc/devin/system.json
+    separator: /
+  supported_os:
+  - Linux
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.homedir%%/.config/devin/config.json'
+    - '%%users.homedir%%/.config/devin/mcp_config.json'
+    - '%%users.homedir%%/.local/share/devin/cli/logs/'
+    - '%%users.homedir%%/.local/share/devin/credentials.toml'
+    - /Library/Application Support/Devin/system.json
+    separator: /
+  supported_os:
+  - Darwin
+- type: FILE
+  attributes:
+    paths:
+    - '%%users.appdata%%\devin\cli\logs\'
+    - '%%users.appdata%%\devin\config.json'
+    - '%%users.appdata%%\devin\credentials.toml'
+    - '%%users.appdata%%\devin\mcp_config.json'
+    - '%%users.homedir%%/.config/devin/mcp_config.json'
+    - C:\ProgramData\Devin\system.json
+    separator: \
+  supported_os:
+  - Windows
+supported_os:
+- Darwin
+- Linux
+- Windows
+urls:
+- https://docs.devin.ai/get-started/devin-intro
+- https://docs.devin.ai/cli/enterprise/devin-auth
+- https://github.com/CognitionAI/devin-cli
 ---
 name: FlowiseArtifacts
 doc: Flowise (AIRT-0030) - Drag-and-drop LangChain flow builder. Default port 3000,

@@ -37,6 +37,10 @@ Targets:
         Category: AIAgents
         Path: 'Cursor.tkape'
     -
+        Name: 'Devin'
+        Category: AIAgents
+        Path: 'Devin.tkape'
+    -
         Name: 'GPT4All'
         Category: AIAgents
         Path: 'GPT4All.tkape'

@@ -45,6 +45,9 @@ sources:
   - name: Cursor
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Cursor(Upload=Upload)
+  - name: Devin
+    query: |
+      SELECT * FROM Artifact.Custom.AIAgents.Devin(Upload=Upload)
   - name: Flowise
     query: |
       SELECT * FROM Artifact.Custom.AIAgents.Flowise(Upload=Upload)

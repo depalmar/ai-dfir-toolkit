@@ -35,9 +35,9 @@ every field carries a `confidence` rating tied to how it was sourced.
 | | Count |
 |---|---|
 | Catalogued tools | **52** |
-| Documented artifacts | **638** |
-| Credential locations | **169** |
-| MCP config locations | **68** |
+| Documented artifacts | **661** |
+| Credential locations | **173** |
+| MCP config locations | **72** |
 | Sigma detection rules | **14** |
 | Case studies | **26** |
 
@@ -46,11 +46,11 @@ Artifacts counts every row the catalog yields, so it matches the site and
 root README's larger figure counts YARA and Suricata across the `0N-*`
 directories as well. Both are right about different things.
 
-**Risk:** 11 critical · 28 high · 12 medium · 1 low
+**Risk:** 11 critical · 29 high · 11 medium · 1 low
 
-**Confidence:** 28 high · 20 medium · 4 low
+**Confidence:** 29 high · 19 medium · 4 low
 
-Categories: llm-runtime (11), coding-agent-ide (10), agent-framework (9), coding-agent-cli (6), workflow-engine (4), browser-agent (3), computer-use-agent (2), mcp-host (2), cloud-agent (2), code-completion (2), code-execution-agent (1)
+Categories: llm-runtime (11), coding-agent-ide (10), agent-framework (9), coding-agent-cli (7), workflow-engine (4), browser-agent (3), computer-use-agent (2), mcp-host (2), code-completion (2), cloud-agent (1), code-execution-agent (1)
 
 <!-- counts:end -->
 

@@ -751,9 +751,12 @@ maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/credential/config-
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/credential/library-application-support-windsurf-user-globalstorage-,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/credential/nvim-stdpath-cache-codeium-config-json,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/credential/userprofile-codeium-windsurf-mcp-config-json,leaves
+maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/applications-devin-app-contents-resources-app-policies,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/codeium,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/codeium-version-language-server,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/codeium-windsurf-mcp-config-json,leaves
+maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/codeium-windsurf-next-codeium-windsurf-insiders,leaves
+maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/etc-windsurf-policies-policy-json,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/repo-windsurf-settings-json,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/repo-windsurfrules,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/disk/userprofile-codeium-windsurf-mcp-config-json,leaves

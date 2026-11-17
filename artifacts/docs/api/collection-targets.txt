@@ -10,6 +10,10 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 %APPDATA%\Windsurf\User\globalStorage\state.vscdb
 %APPDATA%\Zed\settings.json
 %APPDATA%\com.LangflowDesktop\data\database.db
+%APPDATA%\devin\cli\logs\
+%APPDATA%\devin\config.json
+%APPDATA%\devin\credentials.toml
+%APPDATA%\devin\mcp_config.json
 %APPDATA%\goose\config.yaml
 %APPDATA%\open-webui\
 %APPDATA%\open-webui\config.json
@@ -29,6 +33,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 *.mcpb / *.dxt bundle files
 --storage-state <file.json>
 .env (deployment directory)
+/Library/Application Support/Devin/system.json
 /app/backend/data/
 /app/backend/data/.webui_secret_key
 /app/backend/data/config.json
@@ -36,6 +41,7 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 /app/backend/data/webui.db
 /data/credential_vault
 /etc/codex/config.toml
+/etc/devin/system.json
 /etc/gemini-cli/settings.json
 /home/node/.flowise/encryption.key
 /tmp/outputs/screenshot_<uuid4hex>.png
@@ -84,6 +90,9 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <repo>/.codex/config.toml
 <repo>/.continue/.env
 <repo>/.cursor/mcp.json
+<repo>/.devin/
+<repo>/.devin/mcp_config.json
+<repo>/.devin/mcp_config.local.json
 <repo>/.gemini/settings.json
 <repo>/.kiro/agents/
 <repo>/.kiro/hooks/*.kiro.hook
@@ -102,6 +111,7 @@ AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
 Azure Key Vault named per computer-use tool, by subscription, resource group and vault name
 BROWSER_USE_API_KEY
 Browser Local Storage, key "agentgpt-settings-storage-v2" (browser profile Local Storage LevelDB, AgentGPT origin - http://localhost:3000 self-hosted)
+C:\ProgramData\Devin\system.json
 CLAUDE_CODE_OAUTH_TOKEN
 CONTINUE_API_KEY
 COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN
@@ -165,6 +175,7 @@ VLLM_API_KEY
 VS Code SecretStorage -> OS keychain (state.vscdb)
 VS Code SecretStorage -> OS keychain, backed by state.vscdb (SQLite)
 WEBUI_ADMIN_EMAIL / WEBUI_ADMIN_PASSWORD / WEBUI_ADMIN_NAME
+WINDSURF_API_KEY or DEVIN_API_KEY in the environment, usually exported from a shell profile
 Workflow JSON in database.sqlite containing node type n8n-nodes-langchain.toolmcp or n8n-nodes-langchain.mcptrigger
 claude_desktop_config.json -> mcpServers.<name>.env
 docker-compose.yml / docker run invocation
@@ -218,6 +229,9 @@ webui.db (user and API key tables)
 ~/.config/browseruse/gmail_credentials.json  |  ~/.config/browseruse/gmail_token.json
 ~/.config/browseruse/profiles/default
 ~/.config/cursor/auth.json
+~/.config/devin/config.json
+~/.config/devin/mcp_config.json
+~/.config/devin/mcp_config.json -> mcpServers.<name>.env / .headers
 ~/.config/gcloud/application_default_credentials.json
 ~/.config/github-copilot/apps.json
 ~/.config/github-copilot/hosts.json
@@ -262,6 +276,8 @@ webui.db (user and API key tables)
 ~/.lmstudio/mcp.json
 ~/.lmstudio/settings.json
 ~/.local/share/amazon-q/data.sqlite3
+~/.local/share/devin/cli/logs/
+~/.local/share/devin/credentials.toml
 ~/.local/state/warp-terminal/warp.sqlite
 ~/.mcp_auth/
 ~/.n8n/database.sqlite
