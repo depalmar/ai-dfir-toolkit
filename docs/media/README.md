@@ -18,10 +18,14 @@ and does not play a committed video. The MP4s are the same clips at full size.
 python3 artifacts/scripts/build_site.py
 node docs/media/record-demo.js artifacts/docs/site/index.html /tmp/rec
 for n in alert plan; do
-  ffmpeg -y -i /tmp/rec/$n.webm -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart -an -r 25 /tmp/rec/$n.mp4
-  ffmpeg -y -i /tmp/rec/$n.webm -vf "fps=6,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle" /tmp/rec/$n.gif
+  ffmpeg -y -i /tmp/rec/$n.webm -ss 0.4 -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart -an -r 25 /tmp/rec/$n.mp4
+  ffmpeg -y -i /tmp/rec/$n.webm -ss 0.4 -vf "fps=6,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle" /tmp/rec/$n.gif
 done
 ```
 
 `alert` becomes `start-from-the-alert`, and `plan` becomes `collection-plan`.
-Recorded on 2026-11-17 against the build that added the Hunts tab.
+`-ss 0.4` drops the frames before the page has rendered, which otherwise open
+the clip on the "Loading the toolkit" placeholder.
+
+Recorded on 2026-11-17 against the build with the reworked Hunts tab and the
+pinned Collection plan tab.
