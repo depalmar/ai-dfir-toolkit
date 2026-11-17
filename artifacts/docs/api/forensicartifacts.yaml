@@ -44,7 +44,9 @@ urls:
 name: AmazonQDeveloperExCodewhispererArtifacts
 doc: Amazon Q Developer (ex-CodeWhisperer) (AIRT-0008) - AWS coding assistant. Node-based
   language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE
-  plugins EOL 2027-04-30.
+  plugins EOL 2027-04-30. The open-source command-line client is in maintenance only
+  and has been superseded by the closed-source Kiro CLI; v1.19.7 is its last open
+  release, so the CLI rows here describe hosts still running it.
 sources:
 - type: FILE
   attributes:
@@ -64,6 +66,7 @@ sources:
     - '%%users.homedir%%/.aws/amazonq/default.json'
     - '%%users.homedir%%/.aws/amazonq/mcp.json'
     - '%%users.homedir%%/.aws/sso/cache/*.json'
+    - '%%users.homedir%%/Library/Application Support/amazon-q/data.sqlite3'
     separator: /
   supported_os:
   - Darwin
@@ -84,6 +87,7 @@ supported_os:
 urls:
 - https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/
 - https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html
+- https://github.com/aws/amazon-q-developer-cli
 ---
 name: AutogenArtifacts
 doc: AutoGen (AIRT-0027) - Multi-agent conversation framework with LocalCommandLineCodeExecutor

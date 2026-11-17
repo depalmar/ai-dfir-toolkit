@@ -1,6 +1,6 @@
 name: Custom.AIAgents.AmazonQDeveloper
 description: |
-  AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.
+  AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30. The open-source comman
 
   Generated from the AI agent artifact catalog (AIRT-0008). Every glob below is
   derived from a location the catalog has already verified.
@@ -26,7 +26,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'darwin'
     query: |
-      LET Globs = ['/Users/*/.aws/amazonq/cli-agents/*.json', '/Users/*/.aws/sso/cache/*.json', '/Users/*/.aws/amazonq/mcp.json', '/Users/*/.aws/amazonq/default.json']
+      LET Globs = ['/Users/*/.aws/amazonq/cli-agents/*.json', '/Users/*/.aws/sso/cache/*.json', '/Users/*/Library/Application Support/amazon-q/data.sqlite3', '/Users/*/.aws/amazonq/mcp.json', '/Users/*/.aws/amazonq/default.json']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

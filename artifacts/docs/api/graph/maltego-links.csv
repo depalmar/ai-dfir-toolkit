@@ -676,6 +676,8 @@ maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/mcp-config/codeium
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/network/server-codeium-com-codeium-com-windsurf-com-443-tcp,leaves
 maltego.Phrase,tool:AIRT-0006,maltego.File,artifact:AIRT-0006/process/windsurf-exe-language-server-windows-x64-exe,leaves
 maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/credential/aws-sso-cache-json,leaves
+maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/credential/library-application-support-amazon-q-data-sqlite3,leaves
+maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/credential/local-share-amazon-q-data-sqlite3,leaves
 maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/disk/aws-amazonq-cli-agents-json,leaves
 maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-data-sqlite3,leaves
 maltego.Phrase,tool:AIRT-0008,maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-settings-json,leaves

@@ -95,6 +95,8 @@ maltego.File,artifact:AIRT-0006/mcp-config/codeium-windsurf-mcp-config-json-mcps
 maltego.File,artifact:AIRT-0006/network/server-codeium-com-codeium-com-windsurf-com-443-tcp,artifact,"server.codeium.com, *.codeium.com, *.windsurf.com :443/TCP"
 maltego.File,artifact:AIRT-0006/process/windsurf-exe-language-server-windows-x64-exe,artifact,"Windsurf.exe, language_server_windows_x64.exe"
 maltego.File,artifact:AIRT-0008/credential/aws-sso-cache-json,artifact,~/.aws/sso/cache/*.json
+maltego.File,artifact:AIRT-0008/credential/library-application-support-amazon-q-data-sqlite3,artifact,~/Library/Application Support/amazon-q/data.sqlite3
+maltego.File,artifact:AIRT-0008/credential/local-share-amazon-q-data-sqlite3,artifact,~/.local/share/amazon-q/data.sqlite3
 maltego.File,artifact:AIRT-0008/disk/aws-amazonq-cli-agents-json,artifact,~/.aws/amazonq/cli-agents/*.json
 maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-data-sqlite3,artifact,~/.local/share/amazon-q/data.sqlite3
 maltego.File,artifact:AIRT-0008/disk/local-share-amazon-q-settings-json,artifact,~/.local/share/amazon-q/settings.json
