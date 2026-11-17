@@ -1203,3 +1203,54 @@ script now hashes it instead of copying it, the same as Cursor's `state.vscdb`.
 `.cli_bash_history`, `cli-checkouts`, `knowledge_bases`, a `Q_CLI_DATA_DIR`
 override and a `**/*.md` rules glob. Those were not read line by line here and
 need a Linux or WSL host with the CLI installed.
+
+## 2026-11-17 - AIRT-0006 and AIRT-0007: the Devin/Windsurf split, from the vendor's bundled documentation
+
+The owner made the scoping call the handover had been waiting on. AIRT-0006 is
+the desktop IDE under both names plus the legacy plugins; AIRT-0007 is the Devin
+cloud agent plus Devin CLI. Nothing here was run on a host.
+
+**Source.** docs.devin.ai is blocked from this runner. The vendor publishes
+Devin CLI on npm (`devin`, repository `CognitionAI/devin-cli`), and the
+package `devin@3000.13.4-linux-x64`, published 2026-11-17, ships the CLI
+documentation pages as `share/devin/docs/*.mdx`. Those 42 pages were read
+directly. That is the vendor's text, not a summary of it.
+
+**AIRT-0007, read from those pages and stamped 2026-11-17:**
+
+| Row | Where it is stated |
+|---|---|
+| `~/.config/devin/config.json`, `%APPDATA%\devin\config.json` | hooks, MCP and configuration pages |
+| `~/.local/share/devin/cli/logs/`, `%APPDATA%\devin\cli\logs\`, 48-hour gzip | troubleshooting page |
+| `system.json` at three machine-wide paths | enterprise system-config page |
+| `.devin/` project files, hook discovery up to the repository root | hooks page |
+| `mcp_config.json` at user and project scope, moved out of `config.json` in v3000.3 | MCP configuration page |
+| Background process, `devin daemon` | stable changelog, v3000.13.3, 16 Nov 2026 |
+| `WINDSURF_API_KEY`, `DEVIN_API_KEY` | commands and partner-builds pages |
+| `cli.devin.ai`, `static.devin.ai`, `api.devin.ai` | troubleshooting and partner-builds pages |
+
+**Not re-read, and dated accordingly.** The `credentials.toml` rows rest on the
+vendor page fetched on 2026-08-14 (`docs/RESEARCH-2026-08-14.md`). The bundled
+copy of that page keeps the "credentials file" section and imports a snippet
+the package does not ship, so the path table could not be read again. Those two
+rows carry `last_verified: 2026-08-14`.
+
+**Deliberately left out.** The default location of the session history
+database and of MCP OAuth tokens is not documented; the changelog names only
+the `DEVIN_SESSIONS_DIR` override. Strings in the binary suggest `sessions.db`
+and `daemon.sock`, which is inference and is not in the entry.
+
+**AIRT-0006.** Added the alias Devin Desktop, the `windsurf-next` and
+`windsurf-insiders` channel directories (bundled CLI documentation, stamped
+2026-11-17), and two policy locations from the vendor's enterprise-policies
+page as read on 2026-08-14: `/Applications/Devin.app/Contents/Resources/app/policies/`
+and `/etc/windsurf/policies/policy.json`. The Windows policy registry key is
+not added because the vendor's text gives the key under `Software\Policies`
+without naming a hive. The entry's own `last_verified` is unchanged at
+2026-08-14, since no existing row was re-checked.
+
+**Needs a host.** `Windsurf.exe` after the rename; whether desktop state moved
+from `%APPDATA%\Windsurf` to `\Devin` and from `~/.config/Windsurf` to `Devin`,
+and whether the old directory survives an update; which product owns `~/.devin`;
+the session database, MCP OAuth token store and daemon socket of the CLI.
+

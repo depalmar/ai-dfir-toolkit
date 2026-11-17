@@ -1,0 +1,25 @@
+Description: 'Devin - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: fbe0a7e5-e7aa-56f5-8db2-49643afb15cb
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'Windows location of the Devin CLI user config. Same content as...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\devin\'
+        FileMask: 'config.json'
+        Comment: 'AIRT-0007 | Windows location of the Devin CLI user config. Same content as ~/.config/devin/config.json.'
+    -
+        Name: 'Windows location of the Devin CLI process logs. Same naming and gzip...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\devin\cli\logs\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0007 | Windows location of the Devin CLI process logs. Same naming and gzip behaviour as ~/.local/share/devin/cli/logs/.'
+    -
+        Name: 'Windows location of the machine-wide Devin CLI policy. Same content as the...'
+        Category: AIAgents
+        Path: 'C:\ProgramData\Devin\'
+        FileMask: 'system.json'
+        Comment: 'AIRT-0007 | Windows location of the machine-wide Devin CLI policy. Same content as the macOS file.'

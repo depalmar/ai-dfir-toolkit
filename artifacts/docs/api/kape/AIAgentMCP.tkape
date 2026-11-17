@@ -72,6 +72,18 @@ Targets:
         FileMask: 'mcp.json'
         Comment: 'AIRT-0002 | Cursor: mcpServers'
     -
+        Name: 'Devin: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.config\devin\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0007 | Devin: mcpServers'
+    -
+        Name: 'Devin: mcpServers'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\devin\'
+        FileMask: 'mcp_config.json'
+        Comment: 'AIRT-0007 | Devin: mcpServers'
+    -
         Name: 'GitHub Copilot (Agent Mode / CLI): mcpServers'
         Category: AIAgents
         Path: 'C:\Users\%user%\.copilot\'

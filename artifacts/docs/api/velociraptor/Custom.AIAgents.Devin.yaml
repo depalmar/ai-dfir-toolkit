@@ -1,0 +1,44 @@
+name: Custom.AIAgents.Devin
+description: |
+  Two products under one name and one account. Devin is a cloud-hosted software engineer that runs in the vendor's virtual machine and is reached through a web UI
+
+  Generated from the AI agent artifact catalog (AIRT-0007). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\AppData\Roaming\devin\config.json', 'C:\Users\*\AppData\Roaming\devin\cli\logs\**', 'C:\ProgramData\Devin\system.json', 'C:\Users\*\AppData\Roaming\devin\credentials.toml', 'C:\Users\*\.config\devin\mcp_config.json', 'C:\Users\*\AppData\Roaming\devin\mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.config/devin/config.json', '/Users/*/.local/share/devin/cli/logs/**', '/Users/*/.config/devin/skills/**', '/Library/Application Support/Devin/system.json', '/Users/*/.local/share/devin/cli/_versions/*/**', '/Users/*/.local/share/devin/credentials.toml', '/Users/*/.config/devin/mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.config/devin/config.json', '/home/*/.local/share/devin/cli/logs/**', '/home/*/.config/devin/skills/**', '/etc/devin/system.json', '/home/*/.local/share/devin/cli/_versions/*/**', '/home/*/.local/share/devin/credentials.toml', '/home/*/.config/devin/mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits

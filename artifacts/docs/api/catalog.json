@@ -2780,11 +2780,12 @@
     "aliases": [
       "Codeium",
       "Windsurf",
+      "Devin Desktop",
       "codeium-windsurf"
     ],
     "vendor": "Cognition (formerly Codeium / Exafunction)",
     "category": "coding-agent-ide",
-    "description": "Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.",
+    "description": "The desktop IDE with the Cascade agent, and the Codeium plugins for other editors. Downloads its own language-server binary. Cognition renamed the standalone editor Devin Desktop in June 2026, and the name on a host now depends on where you look: the macOS bundle is Devin.app, while the state directory is still ~/.codeium/windsurf/ and the Windows and Linux policy locations still say Windsurf. A sweep keyed on either name alone misses half of it. The plugins are in maintenance mode. Devin CLI and the Devin cloud agent are AIRT-0007.",
     "supported_os": [
       "windows",
       "macos",
@@ -2899,6 +2900,54 @@
           ],
           "install_method": "n/a",
           "confidence": "medium"
+        },
+        {
+          "path": "~/.codeium/windsurf-next/ | ~/.codeium/windsurf-insiders/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "State directories for the next and insiders release channels, laid out like ~/.codeium/windsurf/ with their own mcp_config.json and skills. A host on a pre-release channel has nothing under the stable path.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration",
+            "program-presence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "/Applications/Devin.app/Contents/Resources/app/policies/",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Enterprise policy location inside the macOS bundle, which is named Devin.app since the rename. Read from the vendor's enterprise-policies page on 2026-08-14 and not checked on a host.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-08-14"
+        },
+        {
+          "path": "/etc/windsurf/policies/policy.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Enterprise policy file on Linux, still under the Windsurf name. Read from the vendor's enterprise-policies page on 2026-08-14 and not checked on a host.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-08-14"
         }
       ],
       "network": [
@@ -3027,7 +3076,7 @@
         "secrets_location": "env block",
         "persistence_trigger": "Every IDE start",
         "triage_priority": "p1",
-        "notes": "Under the Codeium directory rather than a windsurf one, which is where the path is most often looked for and not found. This is the standalone editor path; the IDE plugin uses a different file, below."
+        "notes": "Under the Codeium directory rather than a windsurf one, which is where the path is most often looked for and not found. This is the standalone editor path; the IDE plugin uses a different file, below. The next and insiders channels use ~/.codeium/windsurf-next/ and ~/.codeium/windsurf-insiders/ instead. Devin CLI (AIRT-0007) imports this file by default, so a server defined here also runs in CLI sessions on the same host."
       },
       {
         "mechanism": "config-file",
@@ -3073,10 +3122,20 @@
         "title": "Cascade MCP Integration - Windsurf plugin for VS Code and JetBrains",
         "url": "https://docs.devin.ai/windsurf/plugins/cascade/mcp",
         "accessed": "2026-08-14"
+      },
+      {
+        "title": "Enterprise policies - Devin Desktop (policy locations per OS, read 2026-08-14)",
+        "url": "https://docs.devin.ai/desktop/enterprise-policies",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "CognitionAI/devin-cli - CLI documentation bundled in the npm package devin@3000.13.4 (which Windsurf directories each channel reads)",
+        "url": "https://github.com/CognitionAI/devin-cli",
+        "accessed": "2026-11-17"
       }
     ],
     "last_verified": "2026-08-14",
-    "last_modified": "2026-08-14"
+    "last_modified": "2026-11-17"
   },
   {
     "id": "AIRT-0005",
@@ -3949,24 +4008,198 @@
   {
     "id": "AIRT-0007",
     "name": "Devin",
+    "aliases": [
+      "Devin CLI",
+      "Devin Local",
+      "devin-cli"
+    ],
     "vendor": "Cognition",
-    "category": "cloud-agent",
-    "description": "Cloud-hosted autonomous software engineer accessed via web UI, Slack, or API. Minimal endpoint footprint.",
+    "category": "coding-agent-cli",
+    "description": "Two products under one name and one account. Devin is a cloud-hosted software engineer that runs in the vendor's virtual machine and is reached through a web UI, Slack or an API. Devin CLI is a local coding agent that runs in the user's terminal with the user's files, shell and credentials, and is what leaves artifacts on a host. The desktop IDE that Cognition renamed from Windsurf to Devin Desktop is AIRT-0006, not this entry: it still keeps its state under ~/.codeium/, and the two meet only where the CLI imports that directory's MCP config.",
+    "status": "active",
     "supported_os": [
+      "windows",
+      "macos",
+      "linux",
       "cloud"
     ],
-    "execution_model": "Fully cloud-hosted",
+    "execution_model": "Cloud-hosted agent, plus a local CLI agent with cloud inference",
     "capabilities": {
-      "local_code_execution": false,
+      "local_code_execution": true,
       "local_listener": false,
-      "plaintext_credentials": false,
+      "plaintext_credentials": true,
       "mcp_capable": true
     },
-    "risk": "medium",
-    "confidence": "medium",
-    "abuse_potential": "Repo access tokens live in Cognition cloud. Endpoint indicator is outbound DNS only. Thin public sourcing.",
+    "risk": "high",
+    "confidence": "high",
+    "abuse_potential": "The CLI's login token sits in a plaintext file, does not expire by default and works from any machine it is copied to. Hooks in .devin/hooks.v1.json run shell commands on agent lifecycle events and travel with a git clone, and the CLI also runs hooks it finds in Claude Code's settings files. By default it imports MCP servers and rules written for Cursor, Windsurf, Claude Code and other tools, so a server planted in another tool's config is live here too. A machine-wide system.json can force all CLI traffic through a proxy.",
     "artifacts": {
       "disk": [
+        {
+          "path": "~/.config/devin/config.json",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "User config for Devin CLI, JSON with comments. Holds a hooks key, the read_config_from switches that control what is imported from other tools, proxy settings and the process model. Versions before v3000.3 also kept mcpServers here; they are moved to mcp_config.json on startup.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "persistence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "%APPDATA%\\devin\\config.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Windows location of the Devin CLI user config. Same content as ~/.config/devin/config.json.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "persistence"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "~/.local/share/devin/cli/logs/",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "log",
+          "description": "One log per CLI process, named devin_<timestamp>_<pid>.log. Logs from finished processes left untouched for 48 hours are gzipped at the next startup, so older ones are .log.gz and are not deleted. At trace level they can contain Authorization headers and tokens, so handle the directory as credential-bearing.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "timeline",
+            "user-activity"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "%APPDATA%\\devin\\cli\\logs\\",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "log",
+          "description": "Windows location of the Devin CLI process logs. Same naming and gzip behaviour as ~/.local/share/devin/cli/logs/.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "execution",
+            "timeline",
+            "user-activity"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "<repo>/.devin/",
+          "os": [
+            "windows",
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "config-dir",
+          "description": "Project config for Devin CLI. Config.json and the gitignored config.local.json, hooks.v1.json, mcp_config.json and mcp_config.local.json, plus rules/ and skills/. Hook files are discovered in the working directory and every ancestor up to the repository root, so check parent directories too.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration",
+            "persistence",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "~/.config/devin/skills/",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "agent-definition",
+          "description": "User-level skills, one folder per skill with a SKILL.md. Loaded in every session. The Windows location is %APPDATA%\\devin\\skills\\.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "configuration",
+            "prompt-injection-surface"
+          ],
+          "install_method": "n/a",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "/Library/Application Support/Devin/system.json",
+          "os": [
+            "macos"
+          ],
+          "artifact_type": "config-file",
+          "description": "Machine-wide policy for Devin CLI, normally pushed by MDM. Pins the enterprise host and account and can force an outbound proxy that overrides the user's own. The same directory holds Devin Desktop's system-level rules and hooks. Strict JSON; a user-writable copy defeats the policy.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "/etc/devin/system.json",
+          "os": [
+            "linux"
+          ],
+          "artifact_type": "config-file",
+          "description": "Linux location of the machine-wide Devin CLI policy. Same content as the macOS file.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "C:\\ProgramData\\Devin\\system.json",
+          "os": [
+            "windows"
+          ],
+          "artifact_type": "config-file",
+          "description": "Windows location of the machine-wide Devin CLI policy. Same content as the macOS file.",
+          "forensic_value": "high",
+          "evidence_type": [
+            "configuration"
+          ],
+          "install_method": "MDM",
+          "confidence": "high",
+          "last_verified": "2026-11-17"
+        },
+        {
+          "path": "~/.local/share/devin/cli/_versions/<version>/",
+          "os": [
+            "macos",
+            "linux"
+          ],
+          "artifact_type": "install-dir",
+          "description": "Where the installer places each CLI version. Documented for partner builds; the directory names give the versions that were installed on the host.",
+          "forensic_value": "medium",
+          "evidence_type": [
+            "program-presence"
+          ],
+          "install_method": "install script",
+          "confidence": "medium",
+          "last_verified": "2026-11-17"
+        },
         {
           "path": "Browser session / cookies for app.devin.ai",
           "os": [
@@ -3975,7 +4208,7 @@
             "linux"
           ],
           "artifact_type": "session-artifact",
-          "description": "Thin sourcing - primary indicator is outbound DNS",
+          "description": "The cloud agent's only trace on a host that never ran the CLI. Thin sourcing - the primary indicator there is outbound DNS.",
           "forensic_value": "low",
           "evidence_type": [
             "program-presence"
@@ -3990,7 +4223,7 @@
           "direction": "egress",
           "indicator": "app.devin.ai, *.cognition.ai",
           "port": "443/TCP",
-          "description": "Primary and often only endpoint indicator",
+          "description": "Web UI of the cloud agent. Often the only endpoint indicator where the CLI is not installed.",
           "confidence": "low",
           "unverified": true
         },
@@ -4000,26 +4233,138 @@
           "port": "443/TCP + WSS",
           "description": "corrected: workstations must reach *.devinapps.com - this is the primary network IOC",
           "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "api.devin.ai",
+          "port": "443/TCP",
+          "description": "Devin API. The CLI's cloud commands and the partner-build installer call it with the stored login or a DEVIN_API_KEY.",
+          "confidence": "high"
+        },
+        {
+          "direction": "egress",
+          "indicator": "cli.devin.ai, static.devin.ai",
+          "port": "443/TCP",
+          "description": "Install and update hosts for the CLI - the install script on macOS and Linux, setup.ps1 and the signed updater on Windows. Homebrew, npm and the copy bundled with Devin Desktop touch neither, so their absence from proxy logs does not clear a host.",
+          "confidence": "high"
         }
       ],
       "process": [
         {
-          "name": "devin (CLI); VS Code Remote-SSH child",
+          "name": "devin",
           "os": [
             "windows",
             "macos",
             "linux"
           ],
-          "typical_parent": "shell / Code.exe",
-          "typical_children": "ssh",
-          "service_or_daemon": "No",
+          "typical_parent": "shell, or an editor over the Agent Client Protocol",
+          "typical_children": "shell commands, MCP servers, hook commands, ssh for cloud sessions",
+          "service_or_daemon": "Background process since v3000.13.3 (devin daemon); it exits about ten minutes after its last session and client are gone",
           "persistence": "None",
-          "confidence": "medium"
+          "confidence": "high"
         }
       ]
     },
-    "credentials": [],
+    "credentials": [
+      {
+        "location": "~/.local/share/devin/credentials.toml",
+        "os": [
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "API token written by devin auth login. The vendor says it is persistent, does not expire by default, and that anyone holding the file can authenticate as the user. Under $XDG_DATA_HOME/devin/ when that variable is set. Read from the vendor's page on 2026-08-14; the copy of that page bundled with the CLI on 2026-11-17 keeps the section and omits the path table, so the path was not re-read.",
+        "confidence": "high",
+        "last_verified": "2026-08-14"
+      },
+      {
+        "location": "%APPDATA%\\devin\\credentials.toml",
+        "os": [
+          "windows"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "Windows location of the same token file. Same sourcing as the macOS and Linux row.",
+        "confidence": "high",
+        "last_verified": "2026-08-14"
+      },
+      {
+        "location": "WINDSURF_API_KEY or DEVIN_API_KEY in the environment, usually exported from a shell profile",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "api-key",
+        "description": "The CLI's editor-integration server reads WINDSURF_API_KEY ahead of the stored login, and the partner-build installer needs DEVIN_API_KEY. Service-user keys carry the prefix cog_, which makes a leaked one attributable.",
+        "confidence": "high",
+        "last_verified": "2026-11-17"
+      },
+      {
+        "location": "~/.config/devin/mcp_config.json -> mcpServers.<name>.env / .headers",
+        "os": [
+          "windows",
+          "macos",
+          "linux"
+        ],
+        "storage": "plaintext",
+        "secret_type": "embedded-credentials",
+        "description": "Environment values and HTTP headers for MCP servers, in plaintext. Same for the project files under <repo>/.devin/ and for %APPDATA%\\devin\\mcp_config.json on Windows. OAuth tokens for MCP servers are stored locally in a place the vendor does not name.",
+        "confidence": "high",
+        "last_verified": "2026-11-17"
+      }
+    ],
     "mcp": [
+      {
+        "mechanism": "config-file",
+        "config_path": "~/.config/devin/mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process (stdio) or HTTP connection when a session starts",
+        "secrets_location": "mcpServers.<name>.env and .headers",
+        "persistence_trigger": "Every CLI session for the user",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "last_verified": "2026-11-17",
+        "notes": "User scope on macOS and Linux, since v3000.3. Older versions kept the same key in ~/.config/devin/config.json and migrate it on startup, so an old host may show either."
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "%APPDATA%\\devin\\mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process (stdio) or HTTP connection when a session starts",
+        "secrets_location": "mcpServers.<name>.env and .headers",
+        "persistence_trigger": "Every CLI session for the user",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "last_verified": "2026-11-17",
+        "notes": "User scope on Windows"
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "<repo>/.devin/mcp_config.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process (stdio) or HTTP connection when a session starts in the project",
+        "secrets_location": "mcpServers.<name>.env and .headers",
+        "persistence_trigger": "Every CLI session in the project",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "last_verified": "2026-11-17",
+        "notes": "Project scope, committed with the repository, so it arrives with a clone"
+      },
+      {
+        "mechanism": "config-file",
+        "config_path": "<repo>/.devin/mcp_config.local.json",
+        "config_key": "mcpServers",
+        "spawn_mechanism": "Child process (stdio) or HTTP connection when a session starts in the project",
+        "secrets_location": "mcpServers.<name>.env and .headers",
+        "persistence_trigger": "Every CLI session in the project",
+        "triage_priority": "p1",
+        "confidence": "high",
+        "last_verified": "2026-11-17",
+        "notes": "Local override and the default target when a server is added from the CLI. Gitignored, so it is on the host and not in the repository history."
+      },
       {
         "mechanism": "cloud",
         "indicator": "Tenant-side configuration in the Devin web UI and API - not present on the endpoint",
@@ -4029,27 +4374,45 @@
         "triage_priority": "p3",
         "confidence": "medium",
         "unverified": true,
-        "notes": "Recorded so a responder stops looking on disk. Everything that matters here comes from the account, under whatever preservation process applies to a third-party service."
+        "notes": "The cloud agent's servers. Recorded so a responder stops looking on disk for those. Everything that matters there comes from the account, under whatever preservation process applies to a third-party service."
       }
     ],
     "collection": {
-      "triage_priority": "p2",
-      "guidance": "Collect config and credential paths before any reboot or agent restart; several agents rotate or truncate session logs. Capture the MCP config before remediation - it records what the agent was authorised to run."
+      "triage_priority": "p1",
+      "guidance": "Decide first which Devin was in use. The cloud agent leaves nothing on a host but a browser session and DNS, and its evidence is in the account. The CLI leaves a token file, logs, config and hooks. Hash credentials.toml and record its timestamps; do not open it, and revoke the token from the account, because it does not expire. Take the logs directory before the next CLI start, which gzips older files. Collect .devin/ from every clone and its parent directories, and compare hooks and MCP servers with the repository history. The CLI also imports MCP servers, rules and hooks from other tools' directories unless read_config_from turns that off, so collect ~/.codeium/, .cursor/ and .claude/ on the same host and read config.json to see which imports were on. Where the session history database lives by default is not documented; DEVIN_SESSIONS_DIR moves it, so check the environment.",
+      "kape_target": "Devin",
+      "velociraptor_artifact": "Custom.AIAgents.Devin"
     },
     "atlas_techniques": [
-      "AML.T0024"
+      "AML.T0024",
+      "AML.T0051",
+      "AML.T0053",
+      "AML.T0081"
     ],
     "attack_techniques": [
-      "T1071.001"
+      "T1071.001",
+      "T1059",
+      "T1552.001"
     ],
     "references": [
       {
         "title": "Devin documentation",
         "url": "https://docs.devin.ai/get-started/devin-intro",
         "accessed": "2026-08-13"
+      },
+      {
+        "title": "Devin CLI - enterprise authentication and the credentials file (read 2026-08-14)",
+        "url": "https://docs.devin.ai/cli/enterprise/devin-auth",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "CognitionAI/devin-cli - the vendor's CLI repository; its npm package devin@3000.13.4 bundles the CLI documentation pages read for this entry",
+        "url": "https://github.com/CognitionAI/devin-cli",
+        "accessed": "2026-11-17"
       }
     ],
-    "last_modified": "2026-08-11"
+    "last_verified": "2026-11-17",
+    "last_modified": "2026-11-17"
   },
   {
     "id": "AIRT-0029",

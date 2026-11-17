@@ -879,6 +879,39 @@ targets:
     paths:
       - "%USERPROFILE%\\.codeium\\windsurf\\mcp_config.json"
     notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0007_appdata_devin_credentials_toml
+    name: "Devin credential store (AIRT-0007)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "%APPDATA%\\devin\\credentials.toml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0007_config_devin_mcp_config_json_mcpservers
+    name: "Devin credential store (AIRT-0007)"
+    repo_cat: "cred"
+    cosai: []
+    os: [windows, macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.config/devin/mcp_config.json"
+    notes: "plaintext/embedded-credentials, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0007_local_share_devin_credentials_toml
+    name: "Devin credential store (AIRT-0007)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.local/share/devin/credentials.toml"
+    notes: "plaintext/api-key, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0008_aws_sso_cache_json
     name: "Amazon Q Developer (ex-CodeWhisperer) credential store (AIRT-0008)"
     repo_cat: "cred"
@@ -1700,6 +1733,50 @@ targets:
     paths:
       - "~/.continue/config.ts"
     notes: "config-file, forensic_value high, catalog confidence medium."
+  - id: art_airt_0007_config_devin_config_json
+    name: "Devin artifact (AIRT-0007)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.config/devin/config.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0007_etc_devin_system_json
+    name: "Devin artifact (AIRT-0007)"
+    repo_cat: "art"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/etc/devin/system.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0007_library_application_support_devin_system
+    name: "Devin artifact (AIRT-0007)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "/Library/Application Support/Devin/system.json"
+    notes: "config-file, forensic_value high, catalog confidence high."
+  - id: art_airt_0007_local_share_devin_cli_logs
+    name: "Devin artifact (AIRT-0007)"
+    repo_cat: "art"
+    cosai: []
+    os: [macos, linux]
+    scope: user
+    type: file
+    sensitivity: normal
+    paths:
+      - "~/.local/share/devin/cli/logs/"
+    notes: "log, forensic_value high, catalog confidence high."
   - id: art_airt_0008_aws_amazonq_cli_agents_json
     name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
     repo_cat: "art"

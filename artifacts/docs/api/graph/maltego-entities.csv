@@ -85,9 +85,12 @@ maltego.File,artifact:AIRT-0006/credential/config-windsurf-user-globalstorage-st
 maltego.File,artifact:AIRT-0006/credential/library-application-support-windsurf-user-globalstorage-,artifact,~/Library/Application Support/Windsurf/User/globalStorage/state.vscdb
 maltego.File,artifact:AIRT-0006/credential/nvim-stdpath-cache-codeium-config-json,artifact,<nvim stdpath('cache')>/codeium/config.json
 maltego.File,artifact:AIRT-0006/credential/userprofile-codeium-windsurf-mcp-config-json,artifact,%USERPROFILE%\.codeium\windsurf\mcp_config.json
+maltego.File,artifact:AIRT-0006/disk/applications-devin-app-contents-resources-app-policies,artifact,/Applications/Devin.app/Contents/Resources/app/policies/
 maltego.File,artifact:AIRT-0006/disk/codeium,artifact,~/.codeium/
 maltego.File,artifact:AIRT-0006/disk/codeium-version-language-server,artifact,~/.codeium/<version>/language_server_*
 maltego.File,artifact:AIRT-0006/disk/codeium-windsurf-mcp-config-json,artifact,~/.codeium/windsurf/mcp_config.json
+maltego.File,artifact:AIRT-0006/disk/codeium-windsurf-next-codeium-windsurf-insiders,artifact,~/.codeium/windsurf-next/ | ~/.codeium/windsurf-insiders/
+maltego.File,artifact:AIRT-0006/disk/etc-windsurf-policies-policy-json,artifact,/etc/windsurf/policies/policy.json
 maltego.File,artifact:AIRT-0006/disk/repo-windsurf-settings-json,artifact,<repo>/.windsurf/settings.json
 maltego.File,artifact:AIRT-0006/disk/repo-windsurfrules,artifact,<repo>/.windsurfrules
 maltego.File,artifact:AIRT-0006/disk/userprofile-codeium-windsurf-mcp-config-json,artifact,%USERPROFILE%\.codeium\windsurf\mcp_config.json

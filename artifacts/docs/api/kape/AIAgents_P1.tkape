@@ -33,6 +33,10 @@ Targets:
         Category: AIAgents
         Path: 'Cursor.tkape'
     -
+        Name: 'Devin'
+        Category: AIAgents
+        Path: 'Devin.tkape'
+    -
         Name: 'GitHubCopilot'
         Category: AIAgents
         Path: 'GitHubCopilot.tkape'

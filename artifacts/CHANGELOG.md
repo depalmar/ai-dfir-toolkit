@@ -5,6 +5,13 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-0007 Devin now covers Devin CLI.** The entry was cloud-only and the
+  last one never verified. It gains the CLI's config, logs, machine-wide
+  policy file, project `.devin/` directory, the plaintext login token file,
+  four MCP config locations and a background process, read from the vendor's
+  documentation as bundled in its npm package. Risk moves from medium to high:
+  the token does not expire by default, and hooks and imported MCP servers run
+  with the user's shell.
 - **AIRT-CS-0024 to 0026: three ARTEX cases, and actors AIRT-TA-0021 and
   0022.** Microsoft reported an open-source multi-agent penetration-testing
   framework in three campaigns between 21 October and 6 November 2026: a
@@ -174,6 +181,10 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   copyable canvas links and degree-scaled nodes.
 
 ### Changed
+- **AIRT-0006 is the desktop IDE under both names.** Cognition renamed the
+  Windsurf editor Devin Desktop; the entry gains that alias, the pre-release
+  channel directories and two policy locations, and says which name appears
+  where. The split between the two entries was the owner's call on 17 November.
 - **The SANS wordmark now comes from SANS's own masters.** The first files
   were taken from a public logo directory; SANS has since supplied its logo
   masters, and the three files in `docs/brand/` are converted from those. The

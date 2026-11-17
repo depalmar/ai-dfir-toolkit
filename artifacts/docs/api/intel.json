@@ -12993,6 +12993,14 @@
     "vol": "stable"
    },
    {
+    "id": "artifact:AIRT-0006/disk/applications-devin-app-contents-resources-app-policies",
+    "type": "artifact",
+    "label": "/Applications/Devin.app/Contents/Resources/app/policies/",
+    "anchor": "AIRT-0006/disk/applications-devin-app-contents-resources-app-policies",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
     "id": "artifact:AIRT-0006/disk/codeium",
     "type": "artifact",
     "label": "~/.codeium/",
@@ -13013,6 +13021,22 @@
     "type": "artifact",
     "label": "~/.codeium/windsurf/mcp_config.json",
     "anchor": "AIRT-0006/disk/codeium-windsurf-mcp-config-json",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0006/disk/codeium-windsurf-next-codeium-windsurf-insiders",
+    "type": "artifact",
+    "label": "~/.codeium/windsurf-next/ | ~/.codeium/windsurf-insiders/",
+    "anchor": "AIRT-0006/disk/codeium-windsurf-next-codeium-windsurf-insiders",
+    "cls": "disk",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0006/disk/etc-windsurf-policies-policy-json",
+    "type": "artifact",
+    "label": "/etc/windsurf/policies/policy.json",
+    "anchor": "AIRT-0006/disk/etc-windsurf-policies-policy-json",
     "cls": "disk",
     "vol": "stable"
    },
@@ -20157,6 +20181,11 @@
    },
    {
     "source": "tool:AIRT-0006",
+    "target": "artifact:AIRT-0006/disk/applications-devin-app-contents-resources-app-policies",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0006",
     "target": "artifact:AIRT-0006/disk/codeium",
     "rel": "leaves"
    },
@@ -20168,6 +20197,16 @@
    {
     "source": "tool:AIRT-0006",
     "target": "artifact:AIRT-0006/disk/codeium-windsurf-mcp-config-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0006",
+    "target": "artifact:AIRT-0006/disk/codeium-windsurf-next-codeium-windsurf-insiders",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0006",
+    "target": "artifact:AIRT-0006/disk/etc-windsurf-policies-policy-json",
     "rel": "leaves"
    },
    {

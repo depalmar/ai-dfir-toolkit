@@ -8,10 +8,19 @@ name: Codeium / Windsurf
 aliases:
   - Codeium
   - Windsurf
+  - Devin Desktop
   - codeium-windsurf
 vendor: Cognition (formerly Codeium / Exafunction)
 category: coding-agent-ide
-description: Windsurf IDE with Cascade agentic flow; Codeium plugins for other editors. Downloads its own language-server binary.
+description: >-
+  The desktop IDE with the Cascade agent, and the Codeium plugins for other
+  editors. Downloads its own language-server binary. Cognition renamed the
+  standalone editor Devin Desktop in June 2026, and the name on a host now
+  depends on where you look: the macOS bundle is Devin.app, while the state
+  directory is still ~/.codeium/windsurf/ and the Windows and Linux policy
+  locations still say Windsurf. A sweep keyed on either name alone misses
+  half of it. The plugins are in maintenance mode. Devin CLI and the Devin
+  cloud agent are AIRT-0007.
 supported_os:
   - windows
   - macos
@@ -101,6 +110,42 @@ artifacts:
         - prompt-injection-surface
       install_method: n/a
       confidence: medium
+    - path: "~/.codeium/windsurf-next/ | ~/.codeium/windsurf-insiders/"
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: State directories for the next and insiders release channels, laid out like ~/.codeium/windsurf/ with their own mcp_config.json and skills. A host on a pre-release channel has nothing under the stable path.
+      forensic_value: medium
+      evidence_type:
+        - configuration
+        - program-presence
+      install_method: n/a
+      confidence: high
+      last_verified: "2026-11-17"
+    - path: /Applications/Devin.app/Contents/Resources/app/policies/
+      os:
+        - macos
+      artifact_type: config-dir
+      description: Enterprise policy location inside the macOS bundle, which is named Devin.app since the rename. Read from the vendor's enterprise-policies page on 2026-08-14 and not checked on a host.
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: MDM
+      confidence: high
+      last_verified: "2026-08-14"
+    - path: /etc/windsurf/policies/policy.json
+      os:
+        - linux
+      artifact_type: config-file
+      description: Enterprise policy file on Linux, still under the Windsurf name. Read from the vendor's enterprise-policies page on 2026-08-14 and not checked on a host.
+      forensic_value: medium
+      evidence_type:
+        - configuration
+      install_method: MDM
+      confidence: high
+      last_verified: "2026-08-14"
   network:
     - direction: egress
       indicator: "server.codeium.com, *.codeium.com, *.windsurf.com"
@@ -215,7 +260,10 @@ mcp:
     notes: >-
       Under the Codeium directory rather than a windsurf one, which is where the
       path is most often looked for and not found. This is the standalone editor
-      path; the IDE plugin uses a different file, below.
+      path; the IDE plugin uses a different file, below. The next and insiders
+      channels use ~/.codeium/windsurf-next/ and ~/.codeium/windsurf-insiders/
+      instead. Devin CLI (AIRT-0007) imports this file by default, so a server
+      defined here also runs in CLI sessions on the same host.
   - mechanism: config-file
     config_path: "~/.codeium/mcp_config.json"
     config_key: mcpServers
@@ -253,5 +301,11 @@ references:
   - title: "Cascade MCP Integration - Windsurf plugin for VS Code and JetBrains"
     url: https://docs.devin.ai/windsurf/plugins/cascade/mcp
     accessed: "2026-08-14"
+  - title: "Enterprise policies - Devin Desktop (policy locations per OS, read 2026-08-14)"
+    url: https://docs.devin.ai/desktop/enterprise-policies
+    accessed: "2026-08-14"
+  - title: "CognitionAI/devin-cli - CLI documentation bundled in the npm package devin@3000.13.4 (which Windsurf directories each channel reads)"
+    url: https://github.com/CognitionAI/devin-cli
+    accessed: "2026-11-17"
 last_verified: "2026-08-14"
-last_modified: "2026-08-14"
+last_modified: "2026-11-17"

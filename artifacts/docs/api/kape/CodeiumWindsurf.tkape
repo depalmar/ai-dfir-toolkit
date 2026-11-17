@@ -23,3 +23,17 @@ Targets:
         Path: 'C:\Users\%user%\.codeium\*\'
         FileMask: 'language_server_*'
         Comment: 'AIRT-0006 | [confidence: medium] Remote binary download - verify hash'
+    -
+        Name: 'State directories for the next and insiders release channels, laid out like...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\windsurf-next\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0006 | State directories for the next and insiders release channels, laid out like ~/.codeium/windsurf/ with their own mcp_config.json and skills. A host on a pre-release channel has noth'
+    -
+        Name: 'State directories for the next and insiders release channels, laid out like...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.codeium\windsurf-insiders\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0006 | State directories for the next and insiders release channels, laid out like ~/.codeium/windsurf/ with their own mcp_config.json and skills. A host on a pre-release channel has noth'

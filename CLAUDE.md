@@ -296,7 +296,7 @@ you cannot open.
 
 ## When verifying paths on a real machine
 
-This is the highest-value work available, because 20 entries are `medium` and 4
+This is the highest-value work available, because 19 entries are `medium` and 4
 are `low` purely because they were sourced from documentation rather than from a
 live host. `verification_worklist.py --summary` is the live count; the figures
 in this sentence are a convenience copy and will drift.
@@ -325,11 +325,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-52 entries, 638 artifacts, 169 credential locations, 68 MCP config
+52 entries, 661 artifacts, 173 credential locations, 72 MCP config
 locations, 14 endpoint Sigma rules, 26 case studies, 26 telemetry sources.
 Validation clean.
 
-Volatility across the 638 site rows: live 115 · rotating 55 · stable 468
+Volatility across the 661 site rows: live 117 · rotating 57 · stable 487
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
@@ -351,18 +351,17 @@ Threat intel: 22 actor profiles, 26 case studies (267 indicators, 195 atomic),
 34 ATLAS techniques observed. 16 have a rule, 13 are off-host by nature, and the
 detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
 
-Confidence: 28 high, 20 medium, 4 low.
+Confidence: 29 high, 19 medium, 4 low.
 Provenance: 52/52 entries carry a reference. AIRT-0034 was the last holdout and
 sourcing it turned up a correction rather than a citation - Operator is EOL and
-its only network indicator was a domain that had been sunset. 31/52 carry aliases.
-51/52 carry `last_verified`, and `validate.py` lists the remaining one as never
-verified rather than letting it look fresh.
+its only network indicator was a domain that had been sunset. 32/52 carry aliases.
+52/52 carry `last_verified`.
 
-That holdout is **AIRT-0007 Devin**, and `verification_worklist.py` annotates it
-"cloud-hosted, no endpoint paths to check" - its three claims are a browser
-session and two network indicators. So the never-verified count is structural
-rather than a backlog, and driving it to zero is blocked on the Devin/Windsurf
-scoping call below, not on effort.
+The last holdout was **AIRT-0007 Devin**, which sat as "cloud-hosted, no endpoint
+paths to check" until the Devin/Windsurf scoping call was made on 2026-11-17.
+It now carries the Devin CLI's rows and a date. That date means the vendor's
+documentation was read, not that a host was checked: nothing in AIRT-0007 has
+been confirmed on a machine.
 
 Do not restore the framing this section used to carry, which described the
 unverified set as entries that "could not be checked through a repository API".
@@ -395,7 +394,7 @@ copy wins on a clean packaged install. Collect **both**, plus the manifest from
 uninstall. Reasoning from `unvirtualizedResources` to "writes are not
 virtualized" is the specific trap here - it was refuted five times over in
 verification, and it is the error this catalog made first.
-Risk: 11 critical, 28 high, 12 medium, 1 low.
+Risk: 11 critical, 29 high, 11 medium, 1 low.
 
 ## Site generation
 
@@ -474,15 +473,24 @@ For counts, run `python artifacts/scripts/verification_worklist.py --summary`.
 Numbers are not written down here on purpose - this section and issue #8 both
 carried hardcoded totals that had silently drifted before anyone noticed.
 
-**One decision is blocked on a human, not on effort.** It should not be
-resolved by whoever picks this up next without asking.
+**Nothing is blocked on a human decision at the moment.** Two were, and both
+are recorded here so nobody reopens them by accident.
 
-1. **AIRT-0007 Devin now overlaps AIRT-0006 Windsurf.** Cognition rebranded
-   Windsurf's desktop app as Devin Desktop and `docs.windsurf.com` redirects to
-   `docs.devin.ai`, so the two entries describe partly the same binary. Entry IDs
-   are permanent, so how the two are split is a scoping call. Do not add rows to
-   either until it is made. AIRT-0007 is the last never-verified entry and this
-   is why.
+**The Devin/Windsurf split is decided (owner, 2026-11-17).** AIRT-0006 is the
+desktop IDE under both names - Windsurf and Devin Desktop - plus the legacy
+Codeium plugins: everything under `~/.codeium/`, the `Devin.app` bundle and the
+Windsurf-named policy locations. AIRT-0007 is the Devin cloud agent plus Devin
+CLI: `~/.config/devin`, `~/.local/share/devin`, `%APPDATA%\devin`, `system.json`
+and a project's `.devin/`. The two path sets are disjoint, the CLI installs
+without the desktop app, and the entries cross-reference where the CLI imports
+`~/.codeium/<channel>/mcp_config.json`. The CLI rows were read from the vendor's
+own documentation as bundled in its npm package, because docs.devin.ai is
+blocked from this runner. Still needing a host: the Windows executable name
+after the rename, whether desktop state moved from `%APPDATA%\Windsurf` to
+`\Devin` (and the Linux equivalent), which product owns `~/.devin`, and the
+default location of the CLI's session database and MCP OAuth tokens. The
+`HKLM` or `HKCU` hive of the `Software\Policies\Windsurf\<ProductName>` policy
+key is not stated by the vendor, so that row is not in the catalog.
 
 **AIRT-0008's log-path contradiction is closed.** This section listed the
 `%TEMP%\qlog\` versus `%TEMP%\amazon-q\logs` question as blocked on a human
