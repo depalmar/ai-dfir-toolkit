@@ -13,7 +13,13 @@ Targets:
     -
         Name: 'Headless control CLI'
         Category: AIAgents
-        Path: 'C:\Users\%user%\.lmstudio\bin\lms  |  ~\.lmstudio\bin\'
+        Path: 'C:\Users\%user%\.lmstudio\bin\'
+        FileMask: 'lms'
+        Comment: 'AIRT-0018 | Headless control CLI'
+    -
+        Name: 'Headless control CLI'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.lmstudio\bin\'
         FileMask: 'lms.exe'
         Comment: 'AIRT-0018 | Headless control CLI'
     -

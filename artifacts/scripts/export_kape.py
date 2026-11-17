@@ -24,6 +24,11 @@ Design notes
 * A path ending in a separator is a directory: it becomes Path + FileMask '*' with Recursive true.
 * Catalog entries carry per-artifact `confidence`; anything not `high` is emitted but tagged in the
   Comment so an examiner can see what they are trusting.
+* What a locator means - `a | b` compound fields, `<version>`-style placeholders, prose - is decided
+  by locators.py, the rule the triage scripts and the other exporters share. A per-install segment
+  such as `<version>` becomes `*` in the Path itself: KAPE matches `*` in a directory segment
+  (KapeFiles' TargetGuide documents it, and Chrome's `User Data\\*\\` target relies on it), so no
+  fallback to a recursive parent is needed. A `<repo>` root has no fixed location and is skipped.
 """
 from __future__ import annotations
 
@@ -34,6 +39,8 @@ import uuid
 from pathlib import Path
 
 import yaml
+
+from locators import clean, locator_paths, split_paths
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "api" / "kape"
@@ -63,18 +70,11 @@ MACHINE_PREFIX = re.compile(r"^(?:%PROGRAMDATA%|%PROGRAMFILES%|C:\\|/)", re.I)
 NON_WINDOWS = re.compile(
     r"(?:/Library/|Application Support|^/etc/|^/usr/|^/opt/|^/var/|^/Applications/|\.app/)", re.I)
 
-
-PROSE = re.compile(r"[A-Za-z]{3,}\s+[A-Za-z]{3,}\s")  # two+ spaced words = prose, not a path
-
-
-def path_like(value: str) -> str:
-    """Return the value only if it is a bare path. Catalog prose such as
-    'macOS login Keychain (~/Library/...)' describes a location rather than being one, and must not
-    be emitted as a collection target."""
-    v = (value or "").strip()
-    if not v or PROSE.search(v) or v.startswith("<"):
-        return ""
-    return v
+# Windows reserves < > | in file names, so none can appear in a real Path or FileMask, and a
+# spaced ` ; ` only ever separates two catalog locations. Any of them here is a placeholder
+# (`<version>`) or an unsplit compound locator (`a | b`, `a ; b`) that leaked past locators.py,
+# and KAPE would search for it as a literal folder name and match nothing.
+UNRESOLVED = re.compile(r"[<>|]| ; ")
 
 
 def to_windows(path: str) -> str:
@@ -148,18 +148,20 @@ def target_name(entry: dict) -> str:
     return re.sub(r"[^A-Za-z0-9]", "", entry["name"].split("(")[0].strip()) or entry["id"]
 
 
+def windows_paths(value: str) -> list[tuple[str, str]]:
+    """Every (kape_path, scope) one catalog field names on Windows, after the shared locator rule."""
+    return [c for c in (classify(p) for p in locator_paths(value)) if c]
+
+
 def windows_artifacts(entry: dict) -> list[dict]:
-    """Every Windows-applicable disk artifact for an entry."""
+    """Every Windows-applicable disk artifact for an entry, one row per Windows path it names."""
     out = []
     for art in (entry.get("artifacts") or {}).get("disk") or []:
         oses = [o.lower() for o in (art.get("os") or [])]
         if oses and "windows" not in oses:
             continue
-        c = classify(str(art.get("path", "")))
-        if not c:
-            continue
-        kp, scope = c
-        out.append({**art, "_kape_path": kp, "_scope": scope})
+        for kp, scope in windows_paths(str(art.get("path", ""))):
+            out.append({**art, "_kape_path": kp, "_scope": scope})
     return out
 
 
@@ -283,6 +285,9 @@ def audit(files: dict[str, str]) -> list[str]:
                 problems.append(f"[KAPE] {name}.tkape Path is not absolute: {path}")
             if NON_WINDOWS.search(path):
                 problems.append(f"[KAPE] {name}.tkape Path is not a Windows path: {path}")
+            if UNRESOLVED.search(path) or UNRESOLVED.search(mask):
+                problems.append(f"[KAPE] {name}.tkape row for {path} | {mask} carries an unresolved "
+                                f"placeholder or an unsplit compound locator")
             if not mask:
                 problems.append(f"[KAPE] {name}.tkape row for {path} has an empty FileMask")
     for gid, names in ids.items():
@@ -337,9 +342,7 @@ def main() -> int:
             oses = [o.lower() for o in (c.get("os") or [])]
             if oses and "windows" not in oses:
                 continue
-            cp = classify(path_like(str(c.get("location", ""))))
-            if cp:
-                kp, scope = cp
+            for kp, scope in windows_paths(str(c.get("location", ""))):
                 full = ("C:\\Users\\%user%\\" if scope == "user" else "") + kp
                 cred_rows.append((e["id"], full, f"{e['name']}: {c.get('description', 'credential store')}"))
         # themed: mcp configs (field is `config_path`; repo-relative paths cannot be templated)
@@ -349,12 +352,9 @@ def main() -> int:
             if m.get("mechanism", "config-file") != "config-file":
                 continue
             raw = str(m.get("config_path", ""))
-            if raw.startswith("<") or "<repo>" in raw:
-                stats["mcp_repo_relative"] += 1
-                continue
-            mp = classify(path_like(raw))
-            if mp:
-                kp, scope = mp
+            stats["mcp_repo_relative"] += sum(1 for one in split_paths(raw)
+                                              if clean(one).startswith("<"))
+            for kp, scope in windows_paths(raw):
                 full = ("C:\\Users\\%user%\\" if scope == "user" else "") + kp
                 mcp_rows.append((e["id"], full, f"{e['name']}: {m.get('config_key', 'MCP config')}"))
 
@@ -380,7 +380,7 @@ def main() -> int:
     print(f"P1 tools in fast-triage compound   : {len(p1)}")
     print(f"credential rows                    : {len(cred_rows)}")
     print(f"MCP config rows                    : {len(mcp_rows)}")
-    print(f"MCP configs repo-relative (skipped): {stats['mcp_repo_relative']}")
+    print(f"MCP config paths with no fixed root: {stats['mcp_repo_relative']} (skipped)")
     print(f"\nCATALOG GAP - declare Windows support but expose no Windows disk path: "
           f"{stats['windows_declared_no_paths']}")
     for g in gaps:

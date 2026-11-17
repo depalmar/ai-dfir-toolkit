@@ -47,7 +47,14 @@ Targets:
     -
         Name: 'Uploaded documents and the vector store'
         Category: AIAgents
-        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\uploads\  |  %APPDATA%\open-webui\data\vector_db\'
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\uploads\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0042 | Uploaded documents and the vector store'
+    -
+        Name: 'Uploaded documents and the vector store'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\AppData\Roaming\open-webui\data\vector_db\'
         FileMask: '*'
         Recursive: true
         Comment: 'AIRT-0042 | Uploaded documents and the vector store'

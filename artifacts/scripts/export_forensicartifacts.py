@@ -7,12 +7,20 @@ GRR, and Timesketch. Emitting that format means this catalog plugs into
 collection tooling people already run, instead of asking them to adopt a new one.
 
     python scripts/export_forensicartifacts.py   # writes docs/api/forensicartifacts.yaml
+
+What a locator means - `a | b` compound fields, `<version>`-style placeholders,
+prose - is decided by locators.py, the rule the triage scripts and the KAPE and
+Velociraptor exporters share. Before it, this export dropped any path holding a
+placeholder rather than widening it, and shipped environment variable names and
+`$VAR/...` strings as FILE paths.
 """
 import glob
 import re
 from pathlib import Path
 
 import yaml
+
+from locators import applies, locator_paths
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "api" / "forensicartifacts.yaml"
@@ -50,11 +58,15 @@ def main() -> int:
                 continue
             for os_name in artifact.get("os", []):
                 if os_name in SUPPORTED_OS:
-                    paths_by_os.setdefault(os_name, []).append(normalise(artifact["path"]))
+                    paths_by_os.setdefault(os_name, []).extend(
+                        normalise(p) for p in locator_paths(artifact["path"])
+                        if applies(p, os_name))
         for cred in entry.get("credentials", []):
             for os_name in cred.get("os", []):
                 if os_name in SUPPORTED_OS:
-                    paths_by_os.setdefault(os_name, []).append(normalise(cred["location"]))
+                    paths_by_os.setdefault(os_name, []).extend(
+                        normalise(p) for p in locator_paths(cred["location"])
+                        if applies(p, os_name))
         for mcp in entry.get("mcp", []):
             # config-file rows only. This format collects paths, and the other
             # four mechanisms have none to give - a database row wants a query,
@@ -65,7 +77,9 @@ def main() -> int:
             if mcp.get("mechanism", "config-file") != "config-file":
                 continue
             for os_name in ("windows", "macos", "linux"):
-                paths_by_os.setdefault(os_name, []).append(normalise(mcp["config_path"]))
+                paths_by_os.setdefault(os_name, []).extend(
+                    normalise(p) for p in locator_paths(mcp["config_path"])
+                    if applies(p, os_name))
 
         if not paths_by_os:
             continue

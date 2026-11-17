@@ -26,6 +26,10 @@ Design notes
 * Collection is metadata-only by default. `Upload` is a parameter the responder
   opts into, because several of these paths are credential stores and pulling
   them back is a decision, not a default.
+* What a locator means - `a | b` and `a ; b` compound fields, placeholders,
+  prose - is decided by locators.py, the rule the triage scripts and the other
+  exporters share. This used to widen *every* `<...>` to `*`, so a placeholder
+  only a person can resolve became a glob that looked authoritative.
 """
 from __future__ import annotations
 
@@ -35,6 +39,8 @@ import re
 from pathlib import Path
 
 import yaml
+
+from locators import DRIVE, applies, locator_paths
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "api" / "velociraptor"
@@ -59,35 +65,18 @@ WIN_ENV = [
     (r"^%PROGRAMFILES%[\\/]?", r"C:\Program Files" + "\\"),
 ]
 
-# Prose that describes a location rather than being one. Same guard as the KAPE
-# exporter: 'macOS login Keychain (~/Library/...)' must never become a glob.
-PROSE = re.compile(r"[A-Za-z]{3,}\s+[A-Za-z]{3,}\s")
-
-
-def path_like(value: str) -> str:
-    v = (value or "").strip()
-    if not v or PROSE.search(v) or v.startswith("<"):
-        return ""
-    return v
-
-
-def split_paths(value: str) -> list[str]:
-    """Some path fields carry two locations separated by ' | '. Emit both."""
-    return [p.strip() for p in re.split(r"\s+\|\s+", str(value or "")) if p.strip()]
+# A glob that still carries one of these is a placeholder or an unsplit
+# compound locator that leaked past locators.py, and matches nothing.
+UNRESOLVED = re.compile(r"[<>|]| ; ")
 
 
 def to_glob(path: str, os_name: str) -> str:
-    """Render one catalog path as a Velociraptor glob for one OS, or ''."""
+    """Render one resolved path (from locators.locator_paths) as a glob for one OS, or ''."""
     p = (path or "").strip()
-    if not p:
-        return ""
-    # A <version> segment is a wildcard the catalog wrote in prose. A <repo>
-    # segment is not - it is an arbitrary checkout location, and templating it
-    # to * would glob the entire filesystem. Widen the first, refuse the second.
-    if re.search(r"<(repo|project|install|home\|gitroot\|cwd)[^>]*>", p, re.I):
-        return ""
-    p = re.sub(r"<[^>]+>", "*", p)
-    if "<" in p or ">" in p:
+    # Which OS a path can exist on is shared with the triage scripts. This used
+    # to exclude only root-level /Users, /Library and /Applications from Linux,
+    # so a ~/Library/ row that also listed Linux globbed /home/*/Library/.
+    if not p or not applies(p, os_name):
         return ""
     windows = os_name == "windows"
     recursive = p.endswith(("/", "\\"))
@@ -97,8 +86,6 @@ def to_glob(path: str, os_name: str) -> str:
         base = HOME[os_name]
         p = (base + "\\" + body.replace("/", "\\")) if windows else (base + "/" + body)
     elif p.startswith("%"):
-        if not windows:
-            return ""
         # Sliced, not re.sub: a Windows replacement starts "C:\Users", and re
         # reads "\U" in a replacement template as an escape and raises. Same
         # family of bug as putting a Windows path in a double-quoted YAML scalar.
@@ -109,17 +96,9 @@ def to_glob(path: str, os_name: str) -> str:
                 break
         else:
             return ""
-    elif re.match(r"^[A-Za-z]:[\\/]", p):
-        if not windows:
-            return ""
+    elif DRIVE.match(p):
         p = p.replace("/", "\\")
-    elif p.startswith("/"):
-        if windows:
-            return ""
-        # A macOS-only path under /Users or /Library is not a Linux path.
-        if os_name == "linux" and re.match(r"^/(Users|Library|Applications)/", p):
-            return ""
-    else:
+    elif not p.startswith("/"):
         return ""           # relative or repo-scoped: cannot be templated
 
     sep = "\\" if windows else "/"
@@ -153,17 +132,15 @@ def collect(entry: dict) -> dict[str, list[tuple[str, str]]]:
     for art in (entry.get("artifacts") or {}).get("disk") or []:
         rows.append((art.get("path", ""), art, art.get("description", "")))
     for cred in entry.get("credentials") or []:
-        rows.append((path_like(str(cred.get("location", ""))), cred,
-                     cred.get("description", "")))
+        rows.append((cred.get("location", ""), cred, cred.get("description", "")))
     for mcp in entry.get("mcp") or []:
         # config-file rows only - the other four mechanisms have no path to
         # collect. See export_forensicartifacts.py for the full reasoning.
         if mcp.get("mechanism", "config-file") != "config-file":
             continue
-        rows.append((path_like(str(mcp.get("config_path", ""))), mcp,
-                     mcp.get("description", "")))
+        rows.append((mcp.get("config_path", ""), mcp, mcp.get("description", "")))
     for raw, holder, note in rows:
-        for one in split_paths(raw):
+        for one in locator_paths(str(raw or "")):
             for os_name in artifact_os(holder, entry):
                 g = to_glob(one, os_name)
                 if g:
@@ -294,7 +271,7 @@ def audit(files: dict[str, str]) -> list[str]:
             if "glob(globs=" not in q:
                 problems.append(f"[VR] {fname}: source {src.get('name', '?')} globs nothing")
             for g in re.findall(r"'([^']+)'", q):
-                if g.startswith("~") or g.startswith("%") or "<" in g:
+                if g.startswith("~") or g.startswith("%") or UNRESOLVED.search(g):
                     problems.append(f"[VR] {fname}: unexpanded glob {g}")
     # Every artifact the triage artifact calls must exist.
     triage = files.get("Custom.AIAgents.Triage", "")
@@ -338,7 +315,7 @@ def main() -> int:
             per_os_rows[os_name] += len(rows)
 
         for cred in e.get("credentials") or []:
-            for one in split_paths(path_like(str(cred.get("location", "")))):
+            for one in locator_paths(str(cred.get("location", ""))):
                 for os_name in artifact_os(cred, e):
                     g = to_glob(one, os_name)
                     if g:
@@ -346,7 +323,7 @@ def main() -> int:
         for mcp in e.get("mcp") or []:
             if mcp.get("mechanism", "config-file") != "config-file":
                 continue
-            for one in split_paths(path_like(str(mcp.get("config_path", "")))):
+            for one in locator_paths(str(mcp.get("config_path", ""))):
                 for os_name in artifact_os(mcp, e):
                     g = to_glob(one, os_name)
                     if g:

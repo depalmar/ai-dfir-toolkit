@@ -36,7 +36,7 @@ sources:
     precondition: |
       SELECT OS FROM info() WHERE OS = 'linux'
     query: |
-      LET Globs = ['/home/*/.config/Open Interpreter/**', '/home/*/.openinterpreter/auth.json', '/home/*/.openinterpreter/.credentials.json', '/home/*/.openinterpreter/secrets/codex_auth.age', '/home/*/.openinterpreter/secrets/mcp_oauth.age', '/home/*/.openinterpreter/secrets/local.age', '/home/*/.config/open-interpreter/profiles/default.yaml', '/home/*/Library/Application Support/open-interpreter/profiles/default.yaml', '/home/*/.openinterpreter/config.toml']
+      LET Globs = ['/home/*/.config/Open Interpreter/**', '/home/*/.openinterpreter/auth.json', '/home/*/.openinterpreter/.credentials.json', '/home/*/.openinterpreter/secrets/codex_auth.age', '/home/*/.openinterpreter/secrets/mcp_oauth.age', '/home/*/.openinterpreter/secrets/local.age', '/home/*/.config/open-interpreter/profiles/default.yaml', '/home/*/.openinterpreter/config.toml']
       LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
         FROM glob(globs=Globs)
         WHERE NOT IsDir

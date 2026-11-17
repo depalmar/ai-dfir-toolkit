@@ -47,6 +47,69 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **The native collector searched for folders named `<repo>`.** 38 generated
+  targets in `collectors/targets.yaml` kept catalog placeholders verbatim, and
+  `collect_ai_artifacts.py` only expands `~` and environment variables, so
+  `<repo>/.cursor/mcp.json` became `<project-dir>/<repo>/.cursor/mcp.json` and
+  matched nothing - credentials from `.env` files to Dify's per-tenant private
+  key were never acquired. `gen_credential_targets.py` now
+  resolves them when it writes the file, and the collector stays standalone. A
+  leading placeholder directory (`<repo>`, `<install>`, `<VS Code User dir>`)
+  becomes a path relative to `--project-dir`, with the root named in `notes`;
+  `<uuid4hex>` and `<tenant_id>` widen to `*` by the shared rule in
+  `locators.py`, which now treats `<…_id>` like `<id>`. Against a fixture with
+  four planted files, the old credential targets matched none of them and the
+  new ones match all four, hashed and not copied. Target ids are unchanged.
+- **Prose shipped as collector paths, and the drift check counted it as
+  coverage.** Four generated targets were descriptions that happened to hold a
+  slash - `AWS Builder ID / IAM Identity Center token cache`, `POWER.md /
+  plugin.json / dev.kiro/`, `docker-compose.yml / docker run invocation` and a
+  pair of container image names - resolved against the collector's working
+  directory. They are gone, and
+  the generator now refuses a placeholder or an unanchored path in a user-scoped
+  target. Kiro's `mcpServers.<name>.env inside ~/.kiro/settings/mcp.json` now
+  resolves to the file, because `locators.clean()` reads `key inside FILE` as it
+  already read `FILE -> key`; that also adds the file to the KAPE and
+  Velociraptor credential targets and to the site's plan for that row.
+  `check_target_drift.py` resolves catalog locations through the generator
+  instead of comparing raw prose, so it no longer reports the Kiro config's
+  embedded keys as nothing (two new MIXED findings) or two documented targets
+  as catalog gaps.
+- **The Sigma correlation check passed or failed depending on the runner.**
+  `validate.yml` converted each correlation directory with `sigma convert
+  <dir>`, which loads files in filesystem listing order, and pySigma converts a
+  collection in load order: a correlation converted after only some of the rules
+  it names fails with "Conversion result not available". The unchanged
+  `07-runtime-ai-malware` rules passed on one run and failed on two later ones.
+  The step now loads plain rules first and correlation rules last through
+  pySigma directly. It still fails on a correlation that names a missing rule,
+  and passes on pySigma 1.5.1 and 2.1.0.
+- **KAPE targets carried catalog placeholders as literal folder names.**
+  `CodeiumWindsurf.tkape` shipped `Path: 'C:\Users\%user%\.codeium\<version>\'`,
+  and KAPE searches for a folder literally named `<version>`, so the target matched
+  nothing. `export_kape.py` only rejected a value that *started* with `<`, while the
+  triage scripts already widened `<version>`, `<uuid…>`, `<name>` and similar to
+  `*`, refused `<repo>`, and dropped any other `<…>`, `...` or `$VAR`. That rule now
+  lives in `scripts/locators.py`, and `triage_spec.py` and all three path exporters
+  import it; the triage spec for every one of the 622 site rows is byte-identical
+  before and after. KAPE matches `*` in a Path directory segment - KapeFiles'
+  `TargetGuide.guide` documents it and its Chrome `User Data\*\` targets rely on it -
+  so the row is now `.codeium\*\` with FileMask `language_server_*`, and the site's
+  in-browser KAPE plan, which assumed the opposite and recursed from the parent, emits
+  the same row.
+- **Compound locators and non-paths reached all three path feeds.** Moving the rule
+  turned up more of the same failure: KAPE wrote ten `a  |  b` or `a ; b` fields as
+  a single Path or FileMask - one rendered `/home/node/` as `\home\node\` - and its
+  `--check` passed 11 broken rows across 10 files. Velociraptor globbed `a ; b` as
+  one string and globbed two macOS `~/Library/` paths under `/home/*` in four Linux
+  sources. ForensicArtifacts shipped 112 environment variable names, `$VAR` paths,
+  commands and prose as FILE paths, plus 20 unsplit compounds; four definitions held
+  nothing but environment variable names and are gone (38 to 34). Each locator is
+  now split, required to start at a path root, and sent only to the OS it can exist
+  on. Both `--check` audits fail on `<`, `>`, `|` or a spaced ` ; ` in an emitted
+  path. One deliberate loss: a bare sibling after a separator (`id_ed25519  |
+  id_ed25519.pub`) has no root, so the `.pub` half is dropped, as the triage script
+  already did.
 - **Both collection exporters could pass an entry that pointed at nothing.** The
   declared-vs-emitted check only ran for entries that produced output, so an
   entry could declare `kape_target` while emitting no target — a catalog entry

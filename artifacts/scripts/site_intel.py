@@ -1274,11 +1274,10 @@ function kapePlan(){
         if(t.startsWith('{REPO}')){skip.push([r,skipWhy.repo]);continue}
         any=true;
         const full=t.replace('{HOME}','C:\\Users\\%user%');
-        const segs=full.split('\\'), wild=segs.findIndex((x,i)=>i<segs.length-1&&x.includes('*'));
-        if(wild>0){ // a wildcard directory: KAPE's Path takes no wildcards, so stop above it and recurse
-          const tail=segs[segs.length-1];
-          add(segs.slice(0,wild).join('\\')+'\\',tail&&!tail.includes('\\')?tail||'*':'*',true,r);
-        }else if(full.endsWith('\\'))add(full,'*',true,r);
+        // A * directory segment (from <version> and similar) stays in Path: KAPE matches * in a
+        // folder name - KapeFiles' TargetGuide documents it and Chrome's User Data\*\ relies on
+        // it - and export_kape.py emits the same row, so the plan and the feed agree.
+        if(full.endsWith('\\'))add(full,'*',true,r);
         else{const i=full.lastIndexOf('\\');add(full.slice(0,i+1),full.slice(i+1)||'*',false,r)}
       }
       if(!any&&!skip.some(x=>x[0]===r))skip.push([r,skipWhy.repo]);

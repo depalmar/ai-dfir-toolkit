@@ -43,6 +43,12 @@ import re
 import sys
 from pathlib import Path
 
+# The generator decides what a catalog location becomes on the collector's side
+# - placeholder roots stripped, <version> widened, prose dropped. Comparing the
+# raw catalog string instead reported the Dify key and the Kiro config as
+# missed while targets.yaml covered both.
+from gen_credential_targets import resolve_location
+
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "artifacts" / "docs" / "api" / "catalog.json"
 TARGETS = Path(__file__).resolve().parent / "targets.yaml"
@@ -79,7 +85,11 @@ def location_kind(location: str) -> str:
     stripped = re.sub(r"\s*\([^)]*\)\s*$", "", text).strip()
     if re.fullmatch(r"[A-Z][A-Z0-9_]{2,}(\s*[/,|]\s*[A-Z][A-Z0-9_]{2,})*", stripped):
         return "env-var"
-    if text.startswith(("~", "/", "%", "$", "<", ".")) or "/" in text or "\\" in text:
+    # A path is what the generator can anchor - on the host, or under a
+    # directory the operator passes. A slash alone made prose such as "AWS
+    # Builder ID / IAM Identity Center token cache" a path the collector missed.
+    if any((r := resolve_location(p)) and r[1] != "relative"
+           for p in re.split(r"\s+\|\s+", text)):
         return "path"
     return "other"
 
@@ -95,7 +105,9 @@ def split_locations(location: str) -> list[str]:
     for part in re.split(r"\s+\|\s+", location):
         part = re.sub(r"\s*\([^)]*\)\s*$", "", part).strip()
         if part:
-            out.append(part)
+            # Compare the path the collector is handed, not the catalog prose.
+            r = resolve_location(part)
+            out.append(r[0] if r else part)
     return out or [location.strip()]
 
 
@@ -131,30 +143,34 @@ def main() -> int:
 
     catalog, targets = load()
 
+    def forms(value: str) -> set:
+        """Every normalised path one catalog field names, as the collector sees it."""
+        return {norm(p) for p in split_locations(value)}
+
     creds = []            # (entry_id, location, storage, secret_type)
     catalog_paths = set()
     for entry in catalog:
         for artifact in (entry.get("artifacts") or {}).get("disk", []):
             if artifact.get("path"):
-                catalog_paths.add(norm(artifact["path"]))
+                catalog_paths |= forms(artifact["path"])
         for mcp in entry.get("mcp", []):
             if mcp.get("config_path"):
-                catalog_paths.add(norm(mcp["config_path"]))
+                catalog_paths |= forms(mcp["config_path"])
         for cred in entry.get("credentials", []):
             if cred.get("location"):
                 creds.append((entry["id"], cred["location"],
                               cred.get("storage", ""), cred.get("secret_type", "")))
-                catalog_paths.add(norm(cred["location"]))
+                catalog_paths |= forms(cred["location"])
 
     non_credential_paths: dict[str, set] = {}
     for entry in catalog:
         s_ = set()
         for a in (entry.get("artifacts") or {}).get("disk", []):
             if a.get("path"):
-                s_.add(norm(a["path"]))
+                s_ |= forms(a["path"])
         for m in entry.get("mcp", []):
             if m.get("config_path"):
-                s_.add(norm(m["config_path"]))
+                s_ |= forms(m["config_path"])
         non_credential_paths[entry["id"]] = s_
 
     target_paths = []     # (target_id, normalised path, sensitivity)

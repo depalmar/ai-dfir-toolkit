@@ -25,7 +25,13 @@ Targets:
     -
         Name: 'Service-account cache under the default runtime identity'
         Category: AIAgents
-        Path: 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\Cache  |  C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\'
+        Path: 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\'
+        FileMask: 'Cache'
+        Comment: 'AIRT-0014 | Service-account cache under the default runtime identity'
+    -
+        Name: 'Service-account cache under the default runtime identity'
+        Category: AIAgents
+        Path: 'C:\Windows\ServiceProfiles\UIFlowService\AppData\Local\'
         FileMask: 'Users'
         Comment: 'AIRT-0014 | Service-account cache under the default runtime identity'
     -

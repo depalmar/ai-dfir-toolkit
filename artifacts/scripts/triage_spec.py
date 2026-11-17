@@ -4,9 +4,10 @@
 The collection plan used to end at a list of paths, and a responder then had to
 turn that list into a collection script by hand, under time pressure, on the
 platform in front of them. The site now generates that script. The browser only
-assembles it; every decision about what a locator means is made here, once, in
-Python, next to the exporters that already make the same decisions for KAPE and
-Velociraptor - so the three cannot disagree about what a path is.
+assembles it; every decision about how a row is collected is made here, once,
+in Python. What a locator means as a path - compound locators, placeholders,
+prose - comes from locators.py, the same rule the KAPE, Velociraptor and
+ForensicArtifacts exporters use, so they cannot disagree about what a path is.
 
 Each row gets a `spec`:
 
@@ -32,7 +33,7 @@ from __future__ import annotations
 
 import re
 
-from export_velociraptor import PROSE, split_paths
+from locators import DRIVE, applies, locator_paths
 
 WIN_ENV = [
     (r"^%APPDATA%", r"{HOME}\AppData\Roaming"),
@@ -42,59 +43,33 @@ WIN_ENV = [
     (r"^%PROGRAMFILES%", r"C:\Program Files"),
     (r"^%TEMP%", r"{HOME}\AppData\Local\Temp"),
 ]
-REPO_TOKEN = re.compile(r"^<(repo|project|gitroot)>", re.I)
-MAC_ONLY = re.compile(r"^/(Users|Library|Applications|System)/|^~/Library/")
-
-
-def _clean(p: str) -> str:
-    # "path → key" names a key inside the file; the file is what gets collected.
-    p = p.split(" → ")[0].split(" -> ")[0].strip()
-    # A trailing parenthetical is a note, not part of the path.
-    p = re.sub(r"\s+\(.*\)$", "", p).strip()
-    return p
 
 
 def _one(p: str, os_name: str) -> str:
-    """One catalog path to one template for one OS, or '' if it is not a path there."""
-    p = _clean(p)
-    # The prose guard exists for locators like "macOS login Keychain (~/...)".
-    # A locator that already starts at a path root is a path even when a
-    # directory name has spaces in it - "Power Automate Desktop" is a folder.
-    rooted = re.match(r"^(~|%|/|<(repo|project|gitroot)>|[A-Za-z]:[\\/])", p, re.I)
-    if not p or (PROSE.search(p) and not rooted):
-        return ""
-    if REPO_TOKEN.match(p):
-        p = REPO_TOKEN.sub("{REPO}", p)
-    # <version>, <uuid>, <name> and similar are wildcards the catalog wrote in
-    # prose. Anything else in angle brackets is a location only a person knows.
-    p = re.sub(r"<(version|ver|uuid[^>]*|hash|id|name|user|profile|workspace[^>]*|n)>", "*", p, flags=re.I)
-    if re.search(r"[<>]", p) or "..." in p or "$" in p:
+    """One resolved path to one template for one OS, or '' if it is not a path there.
+
+    `p` comes from locators.locator_paths(), which has already split, cleaned
+    and resolved placeholders, and locators.applies() decides which OS it can
+    exist on - the rules the KAPE, Velociraptor and ForensicArtifacts exporters
+    share. Only the per-OS rendering lives here.
+    """
+    if not applies(p, os_name):
         return ""
     win = os_name == "win"
     if p.startswith("{REPO}"):
         return p.replace("/", "\\") if win else p.replace("\\", "/")
     if p.startswith("~"):
         body = p[1:].lstrip("/\\")
-        if win:
-            return "{HOME}\\" + body.replace("/", "\\")
-        if os_name == "linux" and MAC_ONLY.match(p):
-            return ""
-        return "{HOME}/" + body.replace("\\", "/")
+        return ("{HOME}\\" + body.replace("/", "\\")) if win else ("{HOME}/" + body.replace("\\", "/"))
     if p.startswith("%"):
-        if not win:
-            return ""
         for pat, repl in WIN_ENV:
             m = re.match(pat, p, flags=re.I)
             if m:
                 return (repl + p[m.end():]).replace("/", "\\")
         return ""
-    if re.match(r"^[A-Za-z]:[\\/]", p):
-        return p.replace("/", "\\") if win else ""
+    if DRIVE.match(p):
+        return p.replace("/", "\\")
     if p.startswith("/"):
-        if win:
-            return ""
-        if os_name == "linux" and MAC_ONLY.match(p):
-            return ""
         return p
     return ""
 
@@ -131,7 +106,7 @@ def spec(row: dict) -> dict:
                 "event_id": m.group(2) if m else ""}
     out = {"kind": "path", "win": [], "mac": [], "linux": [], "secret": secret}
     want = _oses(row)
-    for one in split_paths(loc.replace(" ; ", " | ").replace("  |  ", " | ")):
+    for one in locator_paths(loc, repo="{REPO}"):
         for os_name in ("win", "mac", "linux"):
             if not want[os_name]:
                 continue
