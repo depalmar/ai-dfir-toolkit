@@ -11852,6 +11852,22 @@
     "vol": "stable"
    },
    {
+    "id": "artifact:AIRT-0008/credential/library-application-support-amazon-q-data-sqlite3",
+    "type": "artifact",
+    "label": "~/Library/Application Support/amazon-q/data.sqlite3",
+    "anchor": "AIRT-0008/credential/library-application-support-amazon-q-data-sqlite3",
+    "cls": "credential",
+    "vol": "stable"
+   },
+   {
+    "id": "artifact:AIRT-0008/credential/local-share-amazon-q-data-sqlite3",
+    "type": "artifact",
+    "label": "~/.local/share/amazon-q/data.sqlite3",
+    "anchor": "AIRT-0008/credential/local-share-amazon-q-data-sqlite3",
+    "cls": "credential",
+    "vol": "stable"
+   },
+   {
     "id": "artifact:AIRT-0008/disk/aws-amazonq-cli-agents-json",
     "type": "artifact",
     "label": "~/.aws/amazonq/cli-agents/*.json",
@@ -18226,6 +18242,16 @@
    {
     "source": "tool:AIRT-0008",
     "target": "artifact:AIRT-0008/credential/aws-sso-cache-json",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0008",
+    "target": "artifact:AIRT-0008/credential/library-application-support-amazon-q-data-sqlite3",
+    "rel": "leaves"
+   },
+   {
+    "source": "tool:AIRT-0008",
+    "target": "artifact:AIRT-0008/credential/local-share-amazon-q-data-sqlite3",
     "rel": "leaves"
    },
    {

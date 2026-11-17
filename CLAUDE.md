@@ -325,11 +325,11 @@ run rather than at install time. Install the tool, run it once, then re-check.
 
 ## Current state
 
-52 entries, 636 artifacts, 167 credential locations, 68 MCP config
+52 entries, 638 artifacts, 169 credential locations, 68 MCP config
 locations, 14 endpoint Sigma rules, 23 case studies, 26 telemetry sources.
 Validation clean.
 
-Volatility across the 636 site rows: live 115 · rotating 55 · stable 466
+Volatility across the 638 site rows: live 115 · rotating 55 · stable 468
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
@@ -474,7 +474,7 @@ For counts, run `python artifacts/scripts/verification_worklist.py --summary`.
 Numbers are not written down here on purpose - this section and issue #8 both
 carried hardcoded totals that had silently drifted before anyone noticed.
 
-**Two decisions are blocked on a human, not on effort.** Neither should be
+**One decision is blocked on a human, not on effort.** It should not be
 resolved by whoever picks this up next without asking.
 
 1. **AIRT-0007 Devin now overlaps AIRT-0006 Windsurf.** Cognition rebranded
@@ -483,12 +483,18 @@ resolved by whoever picks this up next without asking.
    are permanent, so how the two are split is a scoping call. Do not add rows to
    either until it is made. AIRT-0007 is the last never-verified entry and this
    is why.
-2. **AIRT-0008 has vendor documentation contradicting vendor source.** The
-   troubleshooting page gives the Windows CLI log directory as `%TEMP%\qlog\`;
-   the vendor's own `crates/chat-cli/src/util/paths.rs` builds
-   `%TEMP%\amazon-q\logs` on Windows and uses `qlog` only in the unix branch.
-   Both are vendor sources. Settle it on a live host - committing to either on
-   documentation alone is how a responder collects nothing.
+
+**AIRT-0008's log-path contradiction is closed.** This section listed the
+`%TEMP%\qlog\` versus `%TEMP%\amazon-q\logs` question as blocked on a human
+for three months after `docs/VERIFICATION.md` (2026-08-14, eighth pass) had
+settled it: the vendor never released a native Windows build of the
+command-line client, so neither path exists on any install, and on Windows the
+CLI runs in WSL. The open-source CLI is also in maintenance only - superseded
+by the closed-source Kiro CLI, last open release v1.19.7 - so its rows describe
+hosts still running it. What is left for a Linux or WSL host is ordinary
+verification, reported from the source on 2026-11-17 and not committed:
+`.cli_bash_history`, `cli-checkouts`, `knowledge_bases`, the `Q_CLI_DATA_DIR`
+override and whether the rules glob is `**/*.md`.
 
 **Then, in order of value:**
 

@@ -1167,3 +1167,39 @@ a directory-level credential row (`%APPDATA%\Claude\`, DPAPI-encrypted OAuth
 ciphertext) makes every file under it secret, so by default the Claude
 Desktop MCP config and its `mcp*.log` JSON-RPC transcripts are hashed, not
 copied, unless the operator passes `-CollectSecrets`.
+
+## 2026-11-17 - AIRT-0008: a stale handover item, and the CLI's own token store
+
+Read from `aws/amazon-q-developer-cli` at `15cc8f3` (v1.19.7), cloned, not
+from a summary. Nothing here was run on a host.
+
+**The Windows log-path question was already closed and the handover did not
+say so.** The eighth pass on 2026-08-14 settled it on a WSL host: there is no
+native Windows build, so neither `%TEMP%\qlog\` nor `%TEMP%\amazon-q\logs`
+exists on any install. `CLAUDE.md` went on listing it as blocked on a human for
+three months. Re-read against the source today - `scripts/rust.py` still
+builds Darwin and Linux targets only - and removed from that list. No row
+changed.
+
+**The CLI is superseded.** The repository's README states the project receives
+only critical security fixes and that the CLI is now Kiro CLI, a closed-source
+product. v1.19.7 is the last open release. The entry description says so; the
+CLI rows stay because hosts still run it.
+
+**Added: the CLI's sign-in token is in its own database.** `auth/builder_id.rs`
+stores the token and the client registration through `Table::Auth`, which
+migration `005_auth_table.sql` creates as `auth_kv (key TEXT, value TEXT)`,
+under the keys `codewhisperer:odic:token` and
+`codewhisperer:odic:device-registration`. The catalog carried only
+`~/.aws/sso/cache`, which the source uses for MCP OAuth tokens
+(`mcp_auth_dir`) and which the IDE plugins use for theirs. Two credential rows
+added for `data.sqlite3`: Linux at `high` on the vendor's source, macOS at
+`medium` because the path is derived from the platform's local data directory
+and no macOS host has confirmed it. Neither carries a row-level
+`last_verified`. The file was already catalogued as a disk row, so the triage
+script now hashes it instead of copying it, the same as Cursor's `state.vscdb`.
+
+**Reported and not committed.** A research pass also listed
+`.cli_bash_history`, `cli-checkouts`, `knowledge_bases`, a `Q_CLI_DATA_DIR`
+override and a `**/*.md` rules glob. Those were not read line by line here and
+need a Linux or WSL host with the CLI installed.

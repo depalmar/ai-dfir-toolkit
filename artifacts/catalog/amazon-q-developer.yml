@@ -12,7 +12,12 @@ aliases:
   - amazonq
 vendor: AWS
 category: coding-agent-ide
-description: AWS coding assistant. Node-based language server (aws-lsp-codewhisperer). CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30.
+description: >-
+  AWS coding assistant. Node-based language server (aws-lsp-codewhisperer).
+  CodeWhisperer folded in 2024-04-30; IDE plugins EOL 2027-04-30. The open-source
+  command-line client is in maintenance only and has been superseded by the
+  closed-source Kiro CLI; v1.19.7 is its last open release, so the CLI rows here
+  describe hosts still running it.
 supported_os:
   - windows
   - macos
@@ -230,6 +235,30 @@ credentials:
     secret_type: aws-sso-token
     description: SSO access tokens - credential-theft target
     confidence: high
+  - location: "~/.local/share/amazon-q/data.sqlite3"
+    os:
+      - linux
+    storage: sqlite
+    secret_type: aws-sso-token
+    description: >-
+      Command-line client sign-in. The auth_kv table holds the Builder ID or
+      IAM Identity Center token under the key codewhisperer:odic:token and the
+      client registration under codewhisperer:odic:device-registration, both as
+      unencrypted JSON text. The CLI does not write its own token to
+      ~/.aws/sso/cache, which holds the IDE plugins' tokens and the CLI's MCP
+      OAuth tokens, so collecting only that directory misses the CLI session.
+      Hash the file and list the table's keys; do not export the values.
+    confidence: high
+  - location: "~/Library/Application Support/amazon-q/data.sqlite3"
+    os:
+      - macos
+    storage: sqlite
+    secret_type: aws-sso-token
+    description: >-
+      macOS location of the same database and auth_kv table. Derived from the
+      vendor source, which builds the path from the platform's local data
+      directory, and not confirmed on a macOS host.
+    confidence: medium
 mcp:
   - mechanism: config-file
     config_path: "~/.aws/amazonq/mcp.json"
@@ -299,5 +328,8 @@ references:
   - title: "Amazon Q Developer in the AWS Toolkit for VS Code"
     url: https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/amazonq.html
     accessed: "2026-08-13"
+  - title: "aws/amazon-q-developer-cli - source at v1.19.7 (paths.rs, auth/builder_id.rs, database migrations, README maintenance notice)"
+    url: https://github.com/aws/amazon-q-developer-cli
+    accessed: "2026-11-17"
 last_verified: "2026-08-14"
-last_modified: "2026-08-14"
+last_modified: "2026-11-17"

@@ -890,6 +890,28 @@ targets:
     paths:
       - "~/.aws/sso/cache/*.json"
     notes: "plaintext/aws-sso-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0008_library_application_support_amazon_q_dat
+    name: "Amazon Q Developer (ex-CodeWhisperer) credential store (AIRT-0008)"
+    repo_cat: "cred"
+    cosai: []
+    os: [macos]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/Library/Application Support/amazon-q/data.sqlite3"
+    notes: "sqlite/aws-sso-token, catalog confidence medium. Existence and mode are the finding; the body is not copied unless --collect-secrets."
+  - id: cred_airt_0008_local_share_amazon_q_data_sqlite3
+    name: "Amazon Q Developer (ex-CodeWhisperer) credential store (AIRT-0008)"
+    repo_cat: "cred"
+    cosai: []
+    os: [linux]
+    scope: user
+    type: file
+    sensitivity: secret
+    paths:
+      - "~/.local/share/amazon-q/data.sqlite3"
+    notes: "sqlite/aws-sso-token, catalog confidence high. Existence and mode are the finding; the body is not copied unless --collect-secrets."
   - id: cred_airt_0009_config_tabnine_refresh_token_v2
     name: "Tabnine credential store (AIRT-0009)"
     repo_cat: "cred"
@@ -1689,17 +1711,6 @@ targets:
     paths:
       - "~/.aws/amazonq/cli-agents/*.json"
     notes: "agent-definition, forensic_value high, catalog confidence high."
-  - id: art_airt_0008_local_share_amazon_q_data_sqlite3
-    name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
-    repo_cat: "art"
-    cosai: []
-    os: [linux]
-    scope: user
-    type: file
-    sensitivity: normal
-    paths:
-      - "~/.local/share/amazon-q/data.sqlite3"
-    notes: "database, forensic_value high, catalog confidence high."
   - id: art_airt_0008_repo_amazonq_cli_agents_json
     name: "Amazon Q Developer (ex-CodeWhisperer) artifact (AIRT-0008)"
     repo_cat: "art"

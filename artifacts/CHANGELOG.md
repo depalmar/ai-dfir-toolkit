@@ -5,6 +5,14 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **AIRT-0008: the command-line client's own token store.** The CLI keeps its
+  Builder ID or Identity Center token in the `auth_kv` table of
+  `data.sqlite3`, not in `~/.aws/sso/cache`, so a collection that took only the
+  cache directory missed the CLI session. Two credential rows, read from the
+  vendor's source; the macOS path is `medium` until a host confirms it. The
+  entry now also says the open-source CLI is superseded by the closed-source
+  Kiro CLI. The Windows log-path question is off the handover list: it was
+  settled on 14 August and the project notes had kept calling it open.
 - **AIRT-CS-0023: a tampered Claude Code extension in Cursor's marketplace.**
   On 29 October 2026 Cursor's extension marketplace served two tampered builds
   of `anthropic.claude-code` that added an SSH key, opened a reverse tunnel and
