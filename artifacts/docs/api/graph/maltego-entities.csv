@@ -205,6 +205,7 @@ maltego.Phrase,asi:ASI06,asi,ASI06 Memory and Context Poisoning
 maltego.Phrase,atlas:AML.T0008,technique,AML.T0008 Acquire Infrastructure
 maltego.Phrase,atlas:AML.T0008.000,technique,AML.T0008.000 AI Development Workspaces
 maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 Supply Chain Compromise
+maltego.Phrase,atlas:AML.T0010.001,technique,AML.T0010.001 Software
 maltego.Phrase,atlas:AML.T0011,technique,AML.T0011 User Execution
 maltego.Phrase,atlas:AML.T0016.002,technique,AML.T0016.002 Generative AI
 maltego.Phrase,atlas:AML.T0016.004,technique,AML.T0016.004 AI Agent Tools
@@ -231,8 +232,11 @@ maltego.Phrase,atlas:AML.T0116,technique,AML.T0116 Autonomous Reconnaissance
 maltego.Phrase,atlas:AML.T0117,technique,AML.T0117 Autonomous Attack-Path Adaptation
 maltego.Phrase,atlas:AML.T0124,technique,AML.T0124 Autonomous Attack Orchestration
 maltego.Phrase,atlas:AML.T0126,technique,AML.T0126 Automated Collection
+maltego.Phrase,attack:T1053.003,technique,T1053.003 Cron
+maltego.Phrase,attack:T1053.005,technique,T1053.005 Scheduled Task
 maltego.Phrase,attack:T1059,technique,T1059 Command and Scripting Interpreter
 maltego.Phrase,attack:T1070,technique,T1070 Indicator Removal
+maltego.Phrase,attack:T1098.004,technique,T1098.004 SSH Authorized Keys
 maltego.Phrase,attack:T1190,technique,T1190 Exploit Public-Facing Application
 maltego.Phrase,attack:T1195.002,technique,T1195.002 Compromise Software Supply Chain
 maltego.Phrase,attack:T1505.003,technique,T1505.003 Web Shell
@@ -242,6 +246,7 @@ maltego.Phrase,attack:T1552.001,technique,T1552.001 Credentials In Files
 maltego.Phrase,attack:T1557,technique,T1557 Adversary-in-the-Middle
 maltego.Phrase,attack:T1566,technique,T1566 Phishing
 maltego.Phrase,attack:T1567,technique,T1567 Exfiltration Over Web Service
+maltego.Phrase,attack:T1572,technique,T1572 Protocol Tunneling
 maltego.Phrase,campaign:C0045,attack-campaign,C0045 ShadowRay
 maltego.Phrase,campaign:C0062,attack-campaign,C0062 Anthropic AI-orchestrated Campaign
 maltego.Phrase,case:AIRT-CS-0001,case,GPT Pilot core/telemetry Supply-Chain Credential Stealer
@@ -266,6 +271,7 @@ maltego.Phrase,case:AIRT-CS-0019,case,GTG-50014 - ShinyHunters Affiliates Vibe-H
 maltego.Phrase,case:AIRT-CS-0020,case,GTG-50020 - From Hotel Booking Fraud to Probing AI Companies
 maltego.Phrase,case:AIRT-CS-0021,case,GTG-50029 - A Single Hacktivist Against European Political Targets
 maltego.Phrase,case:AIRT-CS-0022,case,GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
+maltego.Phrase,case:AIRT-CS-0023,case,Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel
 maltego.Location,country:CA,country,CA
 maltego.Location,country:FR,country,FR
 maltego.Location,country:MX,country,MX
@@ -360,7 +366,9 @@ maltego.Domain,wa-meeting.com,ioc,wa-meeting[.]com
 maltego.EmailAddress,anna.manager@russianearabroad.net,ioc,anna.manager@russianearabroad[.]net
 maltego.EmailAddress,events@embassy-protocol.int,ioc,events@embassy-protocol[.]int
 maltego.EmailAddress,phan@giftshop.club,ioc,phan@giftshop[.]club
+maltego.File,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd,ioc,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd
 maltego.File,%TEMP%\thinking_robot_log.txt,ioc,%TEMP%\thinking_robot_log.txt
+maltego.File,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk,ioc,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk
 maltego.File,/tmp/inventory.txt,ioc,/tmp/inventory.txt
 maltego.File,<host>.exe.config containing appDomainManagerAssembly,ioc,<host>.exe.config containing appDomainManagerAssembly
 maltego.File,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)",ioc,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)"
@@ -377,9 +385,13 @@ maltego.File,core/telemetry/_hooks.py,ioc,core/telemetry/_hooks.py
 maltego.File,core/telemetry/_runtime.bin,ioc,core/telemetry/_runtime.bin
 maltego.File,fix_network.apk,ioc,fix_network.apk
 maltego.File,msedgeupdate_v3.exe,ioc,msedgeupdate_v3.exe
+maltego.File,~/.config/.smt and ~/.config/.smtk,ioc,~/.config/.smt and ~/.config/.smtk
+maltego.File,~/Library/LaunchAgents/com.apple.sysmond.plist,ioc,~/Library/LaunchAgents/com.apple.sysmond.plist
 maltego.File,Додаток.pdf.zip,ioc,Додаток.pdf.zip
+maltego.Hash,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278,ioc,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278
 maltego.Hash,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593,ioc,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593
 maltego.Hash,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c,ioc,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c
+maltego.Hash,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15,ioc,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15
 maltego.IPv4Address,103.124.165.199,ioc,103.124.165[.]199
 maltego.IPv4Address,103.141.60.144,ioc,103.141.60[.]144
 maltego.IPv4Address,103.216.220.19,ioc,103.216.220[.]19
@@ -389,6 +401,7 @@ maltego.IPv4Address,104.194.149.228,ioc,104.194.149[.]228
 maltego.IPv4Address,104.194.151.133,ioc,104.194.151[.]133
 maltego.IPv4Address,104.194.159.55,ioc,104.194.159[.]55
 maltego.IPv4Address,104.36.50.54,ioc,104.36.50[.]54
+maltego.IPv4Address,134.209.82.225,ioc,134.209.82[.]225
 maltego.IPv4Address,136.144.242.56,ioc,136.144.242[.]56
 maltego.IPv4Address,138.199.60.29,ioc,138.199.60[.]29
 maltego.IPv4Address,138.199.6.208,ioc,138.199.6[.]208
@@ -435,13 +448,16 @@ maltego.IPv4Address,91.171.138.169,ioc,91.171.138[.]169
 maltego.IPv4Address,92.118.39.3,ioc,92.118.39[.]3
 maltego.Phrase,Netapi64,ioc,Netapi64
 maltego.Phrase,OpenAI APIS,ioc,OpenAI APIS
+maltego.Phrase,"anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",ioc,"anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace"
 maltego.Phrase,"nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0",ioc,"nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0"
 maltego.Phrase,postmark-mcp@1.0.16,ioc,postmark-mcp@1.0.16
 maltego.Phrase,tiktoken_mcp (PyPI),ioc,tiktoken_mcp (PyPI)
 maltego.Phrase,OpenAIAgent.Netapi64,ioc,OpenAIAgent.Netapi64
 maltego.Phrase,XMRig or equivalent miner on a GPU host,ioc,XMRig or equivalent miner on a GPU host
+maltego.Phrase,ssh or autossh with -N -R '*:0:localhost:22',ioc,ssh or autossh with -N -R '*:0:localhost:22'
 maltego.URL,Assistant URL carrying a pre-filled prompt in a query parameter,ioc,Assistant URL carrying a pre-filled prompt in a query parameter
 maltego.URL,https://s3.eu-central-1.s4.mega.io/fuckyoubasil/,ioc,https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/
+maltego.URL,http://134.209.82.225:8099/beacon,ioc,hxxp://134[.]209[.]82[.]225:8099/beacon
 maltego.Phrase,malware:dustmaker,malware,DUSTMAKER
 maltego.Phrase,malware:flodrix botnet,malware,Flodrix botnet
 maltego.Phrase,malware:lamehug,malware,LAMEHUG

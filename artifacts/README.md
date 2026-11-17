@@ -39,7 +39,7 @@ every field carries a `confidence` rating tied to how it was sourced.
 | Credential locations | **167** |
 | MCP config locations | **68** |
 | Sigma detection rules | **14** |
-| Case studies | **22** |
+| Case studies | **23** |
 
 Artifacts counts every row the catalog yields, so it matches the site and
 `build_site.py --check`. Sigma rules counts `detections/sigma/` only - the

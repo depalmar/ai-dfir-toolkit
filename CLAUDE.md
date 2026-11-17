@@ -326,7 +326,7 @@ run rather than at install time. Install the tool, run it once, then re-check.
 ## Current state
 
 52 entries, 636 artifacts, 167 credential locations, 68 MCP config
-locations, 12 endpoint Sigma rules, 14 case studies, 26 telemetry sources.
+locations, 14 endpoint Sigma rules, 23 case studies, 26 telemetry sources.
 Validation clean.
 
 Volatility across the 636 site rows: live 115 · rotating 55 · stable 466
@@ -347,8 +347,8 @@ Those values are this project's assessment, because OWASP maps no detection
 content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.0, CISA KEV 2026.11.09,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
-Threat intel: 20 actor profiles, 22 case studies (221 indicators, 163 atomic),
-29 ATLAS techniques observed. 14 have a rule, 11 are off-host by nature, and the
+Threat intel: 20 actor profiles, 23 case studies (234 indicators, 173 atomic),
+30 ATLAS techniques observed. 15 have a rule, 11 are off-host by nature, and the
 detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest.
 
 Confidence: 28 high, 20 medium, 4 low.

@@ -2,11 +2,11 @@
  "atlas_release": "2026.10",
  "stats": {
   "actors": 20,
-  "cases": 22,
-  "iocs": 221,
-  "atomic_iocs": 163,
-  "techniques_observed": 29,
-  "techniques_covered": 14,
+  "cases": 23,
+  "iocs": 234,
+  "atomic_iocs": 173,
+  "techniques_observed": 30,
+  "techniques_covered": 15,
   "techniques_off_host": 11,
   "by_kind": {
    "state-nexus": 13,
@@ -78,21 +78,21 @@
   },
   "by_ioc_type": {
    "domain": 64,
-   "ip": 53,
+   "ip": 54,
    "behavior": 29,
-   "pattern": 19,
-   "file": 18,
+   "file": 22,
+   "pattern": 20,
    "account": 9,
-   "config": 5,
+   "config": 7,
+   "hash": 4,
+   "package": 4,
    "directory": 3,
    "email": 3,
    "malware": 3,
-   "package": 3,
+   "process": 3,
+   "url": 3,
    "endpoint": 2,
-   "hash": 2,
    "mutex": 2,
-   "process": 2,
-   "url": 2,
    "binary": 1,
    "commit": 1
   },
@@ -104,7 +104,8 @@
    "2025-Q4": 3,
    "2026-Q1": 2,
    "2026-Q2": 1,
-   "2026-Q3": 7
+   "2026-Q3": 7,
+   "2026-Q4": 1
   },
   "link_confidence": {
    "medium": 9
@@ -133,6 +134,26 @@
      "AIRT-CS-0002",
      "AIRT-CS-0015",
      "AIRT-CS-0016"
+    ],
+    "rules": [
+     "claude_desktop_config_modify.yml",
+     "copilot_rules_file_backdoor.yar",
+     "cursor_settings_db_modification.yml",
+     "github_copilot_yolo_mode_enabled.yml",
+     "huggingface_cache_unexpected_writer.yml",
+     "mcp_config_tampering.yml",
+     "mlflow_path_traversal.rules",
+     "model_file_hash_mismatch.yml",
+     "ollama_vllm_unauth_exposure.rules",
+     "pip_install_typosquat.yml",
+     "torchserve_shelltorch.rules",
+     "triton_inference_server_exploit.rules"
+    ]
+   },
+   "AML.T0010.001": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0023"
     ],
     "rules": [
      "claude_desktop_config_modify.yml",
@@ -507,7 +528,7 @@
   "method": {
    "similarity": "IDF-weighted Jaccard over techniques (0.4), tools (0.2), sectors (0.2), ai_services (0.1), motivation (0.1); facets neither side reports are skipped",
    "clusters": "average-linkage agglomerative, stopped below similarity 0.3",
-   "cooccurrence": "40 observations (case studies and sightings); pairs seen at least twice",
+   "cooccurrence": "41 observations (case studies and sightings); pairs seen at least twice",
    "backlog": "score = 2 x actors + cases using the technique, rule-less techniques only"
   },
   "similarity": {
@@ -1980,7 +2001,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 1.0,
-    "lift": 20.0
+    "lift": 20.5
    },
    {
     "a": "AML.T0103",
@@ -1988,7 +2009,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 1.0,
-    "lift": 10.0
+    "lift": 10.25
    },
    {
     "a": "AML.T0116",
@@ -1996,7 +2017,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 1.0,
-    "lift": 10.0
+    "lift": 10.25
    },
    {
     "a": "AML.T0010",
@@ -2004,7 +2025,7 @@
     "support": 2,
     "confidence_ab": 0.4,
     "confidence_ba": 1.0,
-    "lift": 8.0
+    "lift": 8.2
    },
    {
     "a": "AML.T0103",
@@ -2012,7 +2033,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.5,
-    "lift": 5.0
+    "lift": 5.12
    },
    {
     "a": "AML.T0010",
@@ -2020,7 +2041,7 @@
     "support": 3,
     "confidence_ab": 0.6,
     "confidence_ba": 0.429,
-    "lift": 3.43
+    "lift": 3.51
    },
    {
     "a": "AML.T0054",
@@ -2028,7 +2049,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.286,
-    "lift": 2.86
+    "lift": 2.93
    },
    {
     "a": "AML.T0055",
@@ -2036,7 +2057,7 @@
     "support": 2,
     "confidence_ab": 0.286,
     "confidence_ba": 0.5,
-    "lift": 2.86
+    "lift": 2.93
    }
   ],
   "events": [
@@ -2453,6 +2474,15 @@
      "AML.T0124",
      "AML.T0116"
     ]
+   },
+   {
+    "date": "2026-10-30",
+    "actor": "",
+    "kind": "case",
+    "ref": "AIRT-CS-0023",
+    "techniques": [
+     "AML.T0010.001"
+    ]
    }
   ],
   "cadence": {
@@ -2680,7 +2710,7 @@
    }
   ],
   "tactic_observations": {
-   "AML.TA0004": 7,
+   "AML.TA0004": 8,
    "AML.TA0003": 21,
    "AML.TA0005": 9,
    "AML.TA0001": 5,
@@ -2695,7 +2725,7 @@
    "AML.TA0009": 2,
    "AML.TA0011": 2
   },
-  "observations": 40
+  "observations": 41
  },
  "actors": [
   {
@@ -10946,6 +10976,129 @@
     "AIRT-0001",
     "AIRT-0041"
    ]
+  },
+  {
+   "id": "AIRT-CS-0023",
+   "title": "Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel",
+   "date_range": "29 Oct 2026, about 02:27 to 13:35 PDT, as Cursor reported it",
+   "disclosed": "2026-10-30",
+   "affects": "AIRT-0002",
+   "confidence": "medium",
+   "basis": "One reporting party, read twice from the page itself. Microsoft Security Research published the analysis and the indicators; the live window and the observation that SSH access was blocked on most macOS and Windows hosts are Cursor's, relayed in that post. Cursor's own security notice could not be fetched for this entry, so nothing here corroborates Microsoft independently. The source does not say how the tampered builds came to be published, and that question is left open rather than filled in. The model was not involved at any stage: this is conventional malware delivered through an AI tool's extension channel, recorded because the extension directory of a catalogued tool is where the evidence sits.",
+   "atlas": [
+    "AML.T0010.001"
+   ],
+   "attack": [
+    "T1195.002",
+    "T1098.004",
+    "T1572",
+    "T1053.003",
+    "T1053.005"
+   ],
+   "owasp_agentic": [
+    "ASI04"
+   ],
+   "summary": "On 29 October 2026, from about 02:27 to 13:35 PDT by Cursor's account, Cursor's extension marketplace served tampered builds 2.1.312 and 2.1.313 of the extension published as anthropic.claude-code. Microsoft reports that on load the extension profiled the host and reported to a remote address, added an SSH key to the user's authorized keys, tried to enable the SSH service, opened a reverse tunnel to the same address and wrote persistence for the tunnel: a LaunchAgent on macOS, a crontab entry on Linux, a scheduled task or Startup-folder script on Windows. The Visual Studio Marketplace listing and the npm package @anthropic-ai/claude-code were not affected, and Anthropic told Microsoft its systems were not compromised and that it did not build the package. Cursor reported that errors and the need for administrator rights stopped SSH access on most macOS and Windows hosts. Microsoft attributes the activity to no one.",
+   "iocs": [
+    {
+     "type": "package",
+     "value": "anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",
+     "description": "The tampered builds. The same extension id from the Visual Studio Marketplace is not affected, so the installed version and its source are what to check"
+    },
+    {
+     "type": "ip",
+     "value": "134.209.82[.]225",
+     "description": "Configured remote SSH and HTTP destination"
+    },
+    {
+     "type": "url",
+     "value": "hxxp://134[.]209[.]82[.]225:8099/beacon",
+     "description": "Host-profiling endpoint; correlate with the address above"
+    },
+    {
+     "type": "hash",
+     "value": "ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
+     "description": "SHA-256 of the extension's JavaScript entry point. Not a hash of the VSIX package"
+    },
+    {
+     "type": "hash",
+     "value": "7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+     "description": "SHA-256 of the decoded tunnel private-key file"
+    },
+    {
+     "type": "config",
+     "value": "authorized_keys entry with the comment svc-telemetry, fingerprint SHA256:0Z6R+DF64Do2nwQic8a7kkfDLNNk4IiK+2U2Rci4htk",
+     "description": "The added key. Check ~/.ssh/authorized_keys, %USERPROFILE%\\.ssh\\authorized_keys and C:\\ProgramData\\ssh\\administrators_authorized_keys, and verify the key material, not only the comment"
+    },
+    {
+     "type": "pattern",
+     "value": ".stk_[0-9a-f]{10}",
+     "description": "Hidden temporary file holding the tunnel identity; a pattern, not a literal name"
+    },
+    {
+     "type": "file",
+     "value": "~/Library/LaunchAgents/com.apple.sysmond.plist",
+     "description": "macOS persistence; inspect its launch action"
+    },
+    {
+     "type": "file",
+     "value": "~/.config/.smt and ~/.config/.smtk",
+     "description": "macOS and Linux tunnel script and key"
+    },
+    {
+     "type": "file",
+     "value": "%USERPROFILE%\\.config\\smt.cmd and %USERPROFILE%\\.config\\smtk",
+     "description": "Windows tunnel script and key"
+    },
+    {
+     "type": "file",
+     "value": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\sysmon.cmd",
+     "description": "Windows fallback persistence"
+    },
+    {
+     "type": "config",
+     "value": "Scheduled task named SysMon; user crontab @reboot entry",
+     "description": "Windows and Linux persistence for the tunnel. The names imitate monitoring components"
+    },
+    {
+     "type": "process",
+     "value": "ssh or autossh with -N -R '*:0:localhost:22'",
+     "description": "The reverse tunnel. The identity-file path is redacted in the source"
+    }
+   ],
+   "response_actions": [
+    {
+     "phase": "contain",
+     "action": "List installed Cursor extensions with their versions on every host that ran Cursor on 29 October 2026, and find anthropic.claude-code at 2.1.312 or 2.1.313, recording where each copy was installed from. On those hosts, before removing anything, collect the extension folder, the authorized_keys files, the persistence artifacts and the .stk_ file, then block the remote address and stop any ssh or autossh process carrying the reverse-forward arguments."
+    },
+    {
+     "phase": "eradicate",
+     "action": "Remove the added key by fingerprint, the LaunchAgent, crontab entry, scheduled task and Startup script, the .smt and .smtk files, and the tampered extension. Check whether the SSH service was enabled by the extension and was not on before."
+    },
+    {
+     "phase": "recover",
+     "action": "Treat every credential reachable from that user's session as exposed on any host where the tunnel connected, and rotate them. Where the SSH step failed, the profiling beacon still ran, so the host's details were disclosed."
+    },
+    {
+     "phase": "harden",
+     "action": "Pin or allow-list editor extensions and their marketplaces on managed hosts, and alert on a code editor's process tree adding an SSH key or creating autostart entries."
+    }
+   ],
+   "lesson": "An AI coding tool's extension folder is a software supply chain of its own, with a marketplace that is not the one the vendor of the extension publishes to. The same extension id was clean in one marketplace and tampered in another, so the id proves nothing and the version and install source decide it. The catalog has no row for Cursor's extension directory yet, and no rule in this repository alerts on an editor adding an SSH key; both gaps are why this case is here.",
+   "detections": [],
+   "references": [
+    {
+     "title": "Microsoft Security Research - Inside a malicious Claude Code-branded extension and its persistent SSH backdoor (30 Oct 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/"
+    },
+    {
+     "title": "Cursor - Claude Code extension security notice (cited by Microsoft; not retrieved for this entry)",
+     "url": "https://cursor.com/blog/claude-code-extension-security-notice"
+    }
+   ],
+   "affects_ids": [
+    "AIRT-0002"
+   ]
   }
  ],
  "graph": {
@@ -12555,6 +12708,12 @@
     "framework": "ATLAS"
    },
    {
+    "id": "atlas:AML.T0010.001",
+    "type": "technique",
+    "label": "AML.T0010.001 Software",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0011",
     "type": "technique",
     "label": "AML.T0011 User Execution",
@@ -12711,6 +12870,18 @@
     "framework": "ATLAS"
    },
    {
+    "id": "attack:T1053.003",
+    "type": "technique",
+    "label": "T1053.003 Cron",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1053.005",
+    "type": "technique",
+    "label": "T1053.005 Scheduled Task",
+    "framework": "ATT&CK"
+   },
+   {
     "id": "attack:T1059",
     "type": "technique",
     "label": "T1059 Command and Scripting Interpreter",
@@ -12720,6 +12891,12 @@
     "id": "attack:T1070",
     "type": "technique",
     "label": "T1070 Indicator Removal",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1098.004",
+    "type": "technique",
+    "label": "T1098.004 SSH Authorized Keys",
     "framework": "ATT&CK"
    },
    {
@@ -12774,6 +12951,12 @@
     "id": "attack:T1567",
     "type": "technique",
     "label": "T1567 Exfiltration Over Web Service",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1572",
+    "type": "technique",
+    "label": "T1572 Protocol Tunneling",
     "framework": "ATT&CK"
    },
    {
@@ -12938,6 +13121,13 @@
     "type": "case",
     "label": "GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials",
     "case_id": "AIRT-CS-0022",
+    "confidence": "medium"
+   },
+   {
+    "id": "case:AIRT-CS-0023",
+    "type": "case",
+    "label": "Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel",
+    "case_id": "AIRT-CS-0023",
     "confidence": "medium"
    },
    {
@@ -13492,9 +13682,21 @@
     "ioc_type": "email"
    },
    {
+    "id": "ioc:file:%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\sysmon.cmd",
+    "type": "ioc",
+    "label": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\sysmon.cmd",
+    "ioc_type": "file"
+   },
+   {
     "id": "ioc:file:%TEMP%\\thinking_robot_log.txt",
     "type": "ioc",
     "label": "%TEMP%\\thinking_robot_log.txt",
+    "ioc_type": "file"
+   },
+   {
+    "id": "ioc:file:%USERPROFILE%\\.config\\smt.cmd and %USERPROFILE%\\.config\\smtk",
+    "type": "ioc",
+    "label": "%USERPROFILE%\\.config\\smt.cmd and %USERPROFILE%\\.config\\smtk",
     "ioc_type": "file"
    },
    {
@@ -13594,10 +13796,28 @@
     "ioc_type": "file"
    },
    {
+    "id": "ioc:file:~/.config/.smt and ~/.config/.smtk",
+    "type": "ioc",
+    "label": "~/.config/.smt and ~/.config/.smtk",
+    "ioc_type": "file"
+   },
+   {
+    "id": "ioc:file:~/Library/LaunchAgents/com.apple.sysmond.plist",
+    "type": "ioc",
+    "label": "~/Library/LaunchAgents/com.apple.sysmond.plist",
+    "ioc_type": "file"
+   },
+   {
     "id": "ioc:file:Додаток.pdf.zip",
     "type": "ioc",
     "label": "Додаток.pdf.zip",
     "ioc_type": "file"
+   },
+   {
+    "id": "ioc:hash:7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+    "type": "ioc",
+    "label": "7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+    "ioc_type": "hash"
    },
    {
     "id": "ioc:hash:918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593",
@@ -13609,6 +13829,12 @@
     "id": "ioc:hash:be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c",
     "type": "ioc",
     "label": "be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c",
+    "ioc_type": "hash"
+   },
+   {
+    "id": "ioc:hash:ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
+    "type": "ioc",
+    "label": "ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
     "ioc_type": "hash"
    },
    {
@@ -13663,6 +13889,12 @@
     "id": "ioc:ip:104.36.50[.]54",
     "type": "ioc",
     "label": "104.36.50[.]54",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:134.209.82[.]225",
+    "type": "ioc",
+    "label": "134.209.82[.]225",
     "ioc_type": "ip"
    },
    {
@@ -13942,6 +14174,12 @@
     "ioc_type": "mutex"
    },
    {
+    "id": "ioc:package:anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",
+    "type": "ioc",
+    "label": "anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",
+    "ioc_type": "package"
+   },
+   {
     "id": "ioc:package:nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0",
     "type": "ioc",
     "label": "nx 20.9.0-20.12.0 and 21.5.0-21.8.0; @nx/devkit, @nx/js, @nx/workspace, @nx/node 21.5.0 and 20.9.0; @nx/eslint 21.5.0; @nx/key and @nx/enterprise-cloud 3.2.0",
@@ -13972,6 +14210,12 @@
     "ioc_type": "process"
    },
    {
+    "id": "ioc:process:ssh or autossh with -N -R '*:0:localhost:22'",
+    "type": "ioc",
+    "label": "ssh or autossh with -N -R '*:0:localhost:22'",
+    "ioc_type": "process"
+   },
+   {
     "id": "ioc:url:Assistant URL carrying a pre-filled prompt in a query parameter",
     "type": "ioc",
     "label": "Assistant URL carrying a pre-filled prompt in a query parameter",
@@ -13981,6 +14225,12 @@
     "id": "ioc:url:https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/",
     "type": "ioc",
     "label": "https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/",
+    "ioc_type": "url"
+   },
+   {
+    "id": "ioc:url:hxxp://134[.]209[.]82[.]225:8099/beacon",
+    "type": "ioc",
+    "label": "hxxp://134[.]209[.]82[.]225:8099/beacon",
     "ioc_type": "url"
    },
    {
@@ -15070,6 +15320,11 @@
    },
    {
     "source": "atlas:AML.T0010",
+    "target": "tactic:AML.TA0004",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0010.001",
     "target": "tactic:AML.TA0004",
     "rel": "in-tactic"
    },
@@ -16974,6 +17229,96 @@
     "rel": "affects"
    },
    {
+    "source": "case:AIRT-CS-0023",
+    "target": "asi:ASI04",
+    "rel": "maps-to"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "atlas:AML.T0010.001",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "attack:T1053.003",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "attack:T1053.005",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "attack:T1098.004",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "attack:T1195.002",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "attack:T1572",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:file:%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\sysmon.cmd",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:file:%USERPROFILE%\\.config\\smt.cmd and %USERPROFILE%\\.config\\smtk",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:file:~/.config/.smt and ~/.config/.smtk",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:file:~/Library/LaunchAgents/com.apple.sysmond.plist",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:hash:ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:ip:134.209.82[.]225",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:package:anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:process:ssh or autossh with -N -R '*:0:localhost:22'",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "ioc:url:hxxp://134[.]209[.]82[.]225:8099/beacon",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0023",
+    "target": "tool:AIRT-0002",
+    "rel": "affects"
+   },
+   {
     "source": "country:CA",
     "target": "region:Americas",
     "rel": "in-region"
@@ -17114,6 +17459,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:claude_desktop_config_modify.yml",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
     "source": "rule:claude_session_jsonl_unexpected_access.yml",
     "target": "atlas:AML.T0086",
     "rel": "detects"
@@ -17124,13 +17474,28 @@
     "rel": "detects"
    },
    {
+    "source": "rule:copilot_rules_file_backdoor.yar",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010",
     "rel": "detects"
    },
    {
+    "source": "rule:cursor_settings_db_modification.yml",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
     "source": "rule:github_copilot_yolo_mode_enabled.yml",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:github_copilot_yolo_mode_enabled.yml",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -17141,6 +17506,11 @@
    {
     "source": "rule:huggingface_cache_unexpected_writer.yml",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:huggingface_cache_unexpected_writer.yml",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -17196,6 +17566,11 @@
    {
     "source": "rule:mcp_config_tampering.yml",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mcp_config_tampering.yml",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -17260,6 +17635,11 @@
    },
    {
     "source": "rule:mlflow_path_traversal.rules",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mlflow_path_traversal.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -17279,8 +17659,18 @@
     "rel": "detects"
    },
    {
+    "source": "rule:model_file_hash_mismatch.yml",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
     "source": "rule:ollama_vllm_unauth_exposure.rules",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:ollama_vllm_unauth_exposure.rules",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -17301,6 +17691,11 @@
    {
     "source": "rule:pip_install_typosquat.yml",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:pip_install_typosquat.yml",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
@@ -17400,12 +17795,22 @@
    },
    {
     "source": "rule:torchserve_shelltorch.rules",
+    "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:torchserve_shelltorch.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
    {
     "source": "rule:triton_inference_server_exploit.rules",
     "target": "atlas:AML.T0010",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:triton_inference_server_exploit.rules",
+    "target": "atlas:AML.T0010.001",
     "rel": "detects"
    },
    {
