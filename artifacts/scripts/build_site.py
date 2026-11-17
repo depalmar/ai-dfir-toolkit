@@ -486,6 +486,14 @@ main.content{min-width:0}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 .tabs .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--line-soft);
   border-radius:20px;padding:1px 7px;color:var(--muted)}
+/* The plan is where every task ends, and an eleventh tab pushed it off the
+   strip at laptop width. It stays the last tab in the same tablist and is pinned
+   to the right edge; tabs scrolling under it fade out. The strip's own right
+   fade is gone, because a mask on the strip would fade the pinned tab too. */
+.tabs [data-v=plan]{position:sticky;right:0;z-index:1;background:var(--bg);margin-left:auto;padding-left:14px}
+.tabs [data-v=plan]::before{content:"";position:absolute;right:100%;top:0;bottom:0;width:22px;
+  background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none}
+.tabs .tshort{display:none}
 /* Set apart visually - pushed right, no count - but it is a real tab, because a
    link inside role=tablist breaks arrow-key navigation. */
 .tabs .guidelink{margin-right:8px;font-size:12.5px;border:1px solid var(--accent-border);
@@ -1691,6 +1699,10 @@ footer p{margin:0}
   .prow .need{white-space:normal;margin-left:0;max-width:none}
   .pick{min-width:44px;min-height:44px}
   .tabs button{min-height:44px}
+  /* The short label is what a phone shows; the full name stays in the
+     accessible name, clipped like every other .sr text. */
+  .tabs .tfull{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tabs .tshort{display:inline}
   .fbtn{min-height:44px}
   .tablewrap{display:none}
   .cards{display:flex}
@@ -4145,17 +4157,20 @@ function renderBack(){
 function syncTabStrip(){
   const t=$('.tabs'); if(!t)return;
   const cur=t.querySelector('[aria-selected=true]');
-  if(cur){
+  const plan=t.querySelector('[data-v=plan]');
+  // The pinned plan tab is always on screen. Any other selected tab must clear
+  // it as well as the strip's edge, or it is selected and invisible.
+  if(cur&&cur!==plan){
+    const pw=plan&&t.scrollWidth>t.clientWidth?plan.offsetWidth+22:0;
     const l=cur.offsetLeft, r=l+cur.offsetWidth;
     if(l<t.scrollLeft)t.scrollLeft=Math.max(0,l-12);
-    else if(r>t.scrollLeft+t.clientWidth)t.scrollLeft=r-t.clientWidth+12;
+    else if(r>t.scrollLeft+t.clientWidth-pw)t.scrollLeft=r-t.clientWidth+pw;
   }
   syncTabFade();
 }
 function syncTabFade(){
   const t=$('.tabs'); if(!t)return;
   t.classList.toggle('fl',t.scrollLeft>2);
-  t.classList.toggle('fr',t.scrollLeft+t.clientWidth<t.scrollWidth-2);
 }
 function renderTabs(){
   setTimeout(syncTabStrip,0);
@@ -4886,7 +4901,7 @@ def main():
     <button role="tab" data-v="cases">Case studies <span class="n" title="{len(cases)} case studies">{len(cases)}<span class="sr"> case studies</span></span></button>
     <button role="tab" data-v="intel">Threat intel <span class="n" title="{len(intel["actors"])} actors">{len(intel["actors"])}<span class="sr"> actors</span></span></button>
     <button role="tab" data-v="graph">Graph <span class="n" title="{len(intel["graph"]["nodes"])} graph nodes">{len(intel["graph"]["nodes"])}<span class="sr"> graph nodes</span></span></button>
-    <button role="tab" data-v="plan">Collection plan <span class="n" hidden></span></button>
+    <button role="tab" data-v="plan"><span class="tfull">Collection plan</span><span class="tshort" aria-hidden="true">Plan</span> <span class="n" hidden></span></button>
   </nav>
 </div></div>
 
