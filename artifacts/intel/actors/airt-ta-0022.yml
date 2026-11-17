@@ -17,7 +17,8 @@ summary: Microsoft's designation for a financially motivated, Cambodia-based int
 confidence: medium
 basis: One reporting party and one report. Microsoft gives no aliases and no confidence level,
   and does not say whether the cluster is connected to the other actor it reports using the
-  same framework.
+  same framework. No second party has reported on the cluster from its own data; an FBI FLASH
+  of 13 November 2026 reprints Microsoft's indicators and credits them to Microsoft.
 external_ids:
   vendor_cluster:
   - Storm-3358

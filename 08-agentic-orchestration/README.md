@@ -33,6 +33,9 @@ This category is different in kind from 01–07. There, the malicious act is vis
 - `ai_service_api_c2.rules` — Suricata for Assistants-API C2 paths, beacon cadence, and large POST volume to provider endpoints
 - `entra_app_signin_invalid_or_expired_secret.yml` — Sigma for an application sign-in that fails on a wrong or expired client secret, the first trace of a harvested credential being tried
 - `entra_app_signin_scripted_client.yml` — Sigma hunt for a successful application sign-in from a bare scripting client; baseline per application before use
+- `entra_role_member_added_by_app.yml` — Sigma for a directory role assignment made by an application, not a user; reads the Entra audit log and filters Privileged Identity Management
+- `entra_app_credential_added_by_app.yml` — Sigma for a secret or certificate added to an application or service principal by an application; baseline the rotation jobs first
+- `artex_default_probe_file_created.yml` — Sigma tripwire for the default file name the ARTEX framework leaves on a target; one edited string defeats it
 
 ## Baseline before you alert
 

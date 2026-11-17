@@ -333,8 +333,14 @@ maltego.Phrase,8632748474,ioc,8632748474
 maltego.Phrase,8664033117,ioc,8664033117
 maltego.Phrase,8709258476,ioc,8709258476
 maltego.Phrase,Application id 0de14c77-b9b0-4137-9360-34878a929827,ioc,Application id 0de14c77-b9b0-4137-9360-34878a929827
+maltego.Phrase,Application id 2399d300-6fca-4e6a-a686-399fefe75b83,ioc,Application id 2399d300-6fca-4e6a-a686-399fefe75b83
 maltego.Phrase,Application id 24205314-2b89-4e07-a2a4-579e898a5640,ioc,Application id 24205314-2b89-4e07-a2a4-579e898a5640
+maltego.Phrase,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e,ioc,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e
 maltego.Phrase,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae,ioc,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae
+maltego.Phrase,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb,ioc,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb
+maltego.Phrase,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519,ioc,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519
+maltego.Phrase,Application id c921256f-04a7-44e8-9b2a-69c33929ba19,ioc,Application id c921256f-04a7-44e8-9b2a-69c33929ba19
+maltego.Phrase,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,ioc,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7
 maltego.Phrase,https://t.me/Soraki_Bot,ioc,https[:]//t[.]me/Soraki_Bot
 maltego.Phrase,phanpak,ioc,phanpak
 maltego.Phrase,bun,ioc,bun
@@ -371,6 +377,7 @@ maltego.Domain,itechx.tel,ioc,itechx[.]tel
 maltego.Domain,iymkjuzymkapovrntoxy.supabase.co,ioc,iymkjuzymkapovrntoxy.supabase[.]co
 maltego.Domain,kiro.cheap,ioc,kiro[.]cheap
 maltego.Domain,m365-owa.com,ioc,m365-owa[.]com
+maltego.Domain,masscan.cloud,ioc,masscan[.]cloud
 maltego.Domain,meridian-protocol.org,ioc,meridian-protocol[.]org
 maltego.Domain,meridiangroup-corp.com,ioc,meridiangroup-corp[.]com
 maltego.Domain,metricwave.org,ioc,metricwave[.]org
@@ -386,6 +393,7 @@ maltego.Domain,on-pssword.com,ioc,on-pssword[.]com
 maltego.Domain,owa-ms365.com,ioc,owa-ms365[.]com
 maltego.Domain,pdfviewer2024.b-cdn.net,ioc,pdfviewer2024.b-cdn[.]net
 maltego.Domain,policenationale.cc,ioc,policenationale[.]cc
+maltego.Domain,pool.supportxmr.com,ioc,pool.supportxmr.com
 maltego.Domain,prod-artfkt.com,ioc,prod-artfkt[.]com
 maltego.Domain,projectnightcrawler.dev,ioc,projectnightcrawler[.]dev
 maltego.Domain,russianearabroad.com,ioc,russianearabroad[.]com
@@ -412,7 +420,11 @@ maltego.EmailAddress,phan@giftshop.club,ioc,phan@giftshop[.]club
 maltego.File,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd,ioc,%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd
 maltego.File,%TEMP%\thinking_robot_log.txt,ioc,%TEMP%\thinking_robot_log.txt
 maltego.File,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk,ioc,%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk
+maltego.File,.system_idle,ioc,.system_idle
+maltego.File,/etc/init.d/dns-filter,ioc,/etc/init.d/dns-filter
 maltego.File,/tmp/inventory.txt,ioc,/tmp/inventory.txt
+maltego.File,/usr/lib/dev/systemdev/dns-filter,ioc,/usr/lib/dev/systemdev/dns-filter
+maltego.File,/var/tmp/.ddns.sh,ioc,/var/tmp/.ddns.sh
 maltego.File,<host>.exe.config containing appDomainManagerAssembly,ioc,<host>.exe.config containing appDomainManagerAssembly
 maltego.File,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)",ioc,"Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)"
 maltego.File,C:\Windows\Temp\*.Netapi64,ioc,C:\Windows\Temp\*.Netapi64
@@ -431,16 +443,26 @@ maltego.File,msedgeupdate_v3.exe,ioc,msedgeupdate_v3.exe
 maltego.File,~/.config/.smt and ~/.config/.smtk,ioc,~/.config/.smt and ~/.config/.smtk
 maltego.File,~/Library/LaunchAgents/com.apple.sysmond.plist,ioc,~/Library/LaunchAgents/com.apple.sysmond.plist
 maltego.File,Додаток.pdf.zip,ioc,Додаток.pdf.zip
+maltego.Hash,1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b,ioc,1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b
+maltego.Hash,3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081,ioc,3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081
+maltego.Hash,64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3,ioc,64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3
+maltego.Hash,6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731,ioc,6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731
 maltego.Hash,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278,ioc,7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278
+maltego.Hash,80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c,ioc,80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c
+maltego.Hash,912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee,ioc,912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee
 maltego.Hash,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593,ioc,918fa52ae45ed60ba7cc8bdc99c3cbe9ab92e0375ec31fc05d0d4513be11c593
 maltego.Hash,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c,ioc,be99857449d2856dd5a84e21c8a3d5e0e01456adb44062ddec5a6b4970d8d42c
+maltego.Hash,ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec,ioc,ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec
 maltego.Hash,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15,ioc,ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15
+maltego.Hash,fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364,ioc,fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364
 maltego.IPv4Address,103.124.165.199,ioc,103.124.165[.]199
+maltego.IPv4Address,103.127.134.124,ioc,103.127.134[.]124
 maltego.IPv4Address,103.141.60.144,ioc,103.141.60[.]144
 maltego.IPv4Address,103.216.220.19,ioc,103.216.220[.]19
 maltego.IPv4Address,104.145.210.184,ioc,104.145.210[.]184
 maltego.IPv4Address,104.193.135.207,ioc,104.193.135[.]207
 maltego.IPv4Address,104.194.149.228,ioc,104.194.149[.]228
+maltego.IPv4Address,104.194.150.21,ioc,104.194.150[.]21
 maltego.IPv4Address,104.194.151.133,ioc,104.194.151[.]133
 maltego.IPv4Address,104.194.159.55,ioc,104.194.159[.]55
 maltego.IPv4Address,104.36.50.54,ioc,104.36.50[.]54
@@ -454,6 +476,7 @@ maltego.IPv4Address,144.172.114.192,ioc,144.172.114[.]192
 maltego.IPv4Address,144.172.64.128,ioc,144.172.64[.]128
 maltego.IPv4Address,144.172.64.60,ioc,144.172.64[.]60
 maltego.IPv4Address,144.172.64.99,ioc,144.172.64[.]99
+maltego.IPv4Address,144.172.94.243,ioc,144.172.94[.]243
 maltego.IPv4Address,146.103.101.253,ioc,146.103.101[.]253
 maltego.IPv4Address,146.103.97.169,ioc,146.103.97[.]169
 maltego.IPv4Address,146.70.116.131,ioc,146.70.116[.]131
@@ -463,19 +486,25 @@ maltego.IPv4Address,149.54.42.106,ioc,149.54.42[.]106
 maltego.IPv4Address,157.22.126.128,ioc,157.22.126[.]128
 maltego.IPv4Address,158.173.46.118,ioc,158.173.46[.]118
 maltego.IPv4Address,162.128.129.106,ioc,162.128.129[.]106
+maltego.IPv4Address,162.248.53.119,ioc,162.248.53[.]119
 maltego.IPv4Address,163.172.157.53,ioc,163.172.157[.]53
 maltego.IPv4Address,167.250.111.136,ioc,167.250.111[.]136
+maltego.IPv4Address,167.88.172.97,ioc,167.88.172[.]97
 maltego.IPv4Address,176.177.12.62,ioc,176.177.12[.]62
 maltego.IPv4Address,178.15.54.129,ioc,178.15.54[.]129
 maltego.IPv4Address,178.16.54.129,ioc,178.16.54[.]129
 maltego.IPv4Address,178.16.54.141,ioc,178.16.54[.]141
+maltego.IPv4Address,18.228.3.224,ioc,18.228.3[.]224
+maltego.IPv4Address,18.230.118.147,ioc,18.230.118[.]147
 maltego.IPv4Address,185.198.234.101,ioc,185.198.234[.]101
 maltego.IPv4Address,185.198.234.26,ioc,185.198.234[.]26
+maltego.IPv4Address,185.215.180.70,ioc,185.215.180[.]70
 maltego.IPv4Address,185.65.134.199,ioc,185.65.134[.]199
 maltego.IPv4Address,185.65.134.246,ioc,185.65.134[.]246
 maltego.IPv4Address,187.15.88.186,ioc,187.15.88[.]186
 maltego.IPv4Address,187.15.89.186,ioc,187.15.89[.]186
 maltego.IPv4Address,187.15.90.217,ioc,187.15.90[.]217
+maltego.IPv4Address,188.166.68.21,ioc,188.166.68[.]21
 maltego.IPv4Address,193.32.249.161,ioc,193.32.249[.]161
 maltego.IPv4Address,193.32.249.164,ioc,193.32.249[.]164
 maltego.IPv4Address,193.32.249.170,ioc,193.32.249[.]170
@@ -491,6 +520,7 @@ maltego.IPv4Address,2001:ac8:27:89::a02d,ioc,2001:ac8:27[:]89::a02d
 maltego.IPv4Address,2001:ac8:29:84::a01d,ioc,2001:ac8:29[:]84::a01d
 maltego.IPv4Address,2001:bc8:711:5854:dc00:1ff:fe18:ba53,ioc,2001:bc8:711:5854:dc00:1ff:fe18[:]ba53
 maltego.IPv4Address,202.66.167.230,ioc,202.66.167[.]230
+maltego.IPv4Address,206.71.149.179,ioc,206.71.149[.]179
 maltego.IPv4Address,213.145.86.112,ioc,213.145.86[.]112
 maltego.IPv4Address,2a01:e0a:2e2:aa40:b15d:5d28:6f4a:8d53,ioc,2a01:e0a:2e2:aa40:b15d:5d28:6f4a[:]8d53
 maltego.IPv4Address,2a04:cec0:1185:34f2:a150:7081:caed:448e,ioc,2a04:cec0:1185:34f2:a150:7081:caed[:]448e
@@ -502,7 +532,12 @@ maltego.IPv4Address,37.27.103.22,ioc,37.27.103[.]22
 maltego.IPv4Address,38.146.28.132,ioc,38.146.28[.]132
 maltego.IPv4Address,38.146.28.75,ioc,38.146.28[.]75
 maltego.IPv4Address,45.148.10.242,ioc,45.148.10[.]242
+maltego.IPv4Address,45.61.137.226,ioc,45.61.137[.]226
+maltego.IPv4Address,45.61.150.83,ioc,45.61.150[.]83
+maltego.IPv4Address,45.95.168.100,ioc,45.95.168[.]100
 maltego.IPv4Address,65.87.223.26,ioc,65.87.223[.]26
+maltego.IPv4Address,67.217.57.240,ioc,67.217.57[.]240
+maltego.IPv4Address,80.66.75.121,ioc,80.66.75[.]121
 maltego.IPv4Address,85.11.167.52,ioc,85.11.167[.]52
 maltego.IPv4Address,85.11.168.45,ioc,85.11.168[.]45
 maltego.IPv4Address,91.171.138.169,ioc,91.171.138[.]169
@@ -516,10 +551,13 @@ maltego.Phrase,postmark-mcp@1.0.16,ioc,postmark-mcp@1.0.16
 maltego.Phrase,tiktoken_mcp (PyPI),ioc,tiktoken_mcp (PyPI)
 maltego.Phrase,OpenAIAgent.Netapi64,ioc,OpenAIAgent.Netapi64
 maltego.Phrase,XMRig or equivalent miner on a GPU host,ioc,XMRig or equivalent miner on a GPU host
+maltego.Phrase,kworker/0:0 or [kworker/0:0] as the name of a userland process,ioc,kworker/0:0 or [kworker/0:0] as the name of a userland process
 maltego.Phrase,ssh or autossh with -N -R '*:0:localhost:22',ioc,ssh or autossh with -N -R '*:0:localhost:22'
 maltego.URL,Assistant URL carrying a pre-filled prompt in a query parameter,ioc,Assistant URL carrying a pre-filled prompt in a query parameter
 maltego.URL,https://s3.eu-central-1.s4.mega.io/fuckyoubasil/,ioc,https[:]//s3.eu-central-1.s4.mega[.]io/fuckyoubasil/
 maltego.URL,http://134.209.82.225:8099/beacon,ioc,hxxp://134[.]209[.]82[.]225:8099/beacon
+maltego.URL,http://45.61.150.83/1mmy/xd.sh,ioc,hxxp://45[.]61[.]150[.]83/1mmy/xd.sh
+maltego.URL,http://80.66.75.121:25565/docker,ioc,hxxp://80[.]66[.]75[.]121:25565/docker
 maltego.Phrase,malware:adaptixc2,malware,AdaptixC2
 maltego.Phrase,malware:dustmaker,malware,DUSTMAKER
 maltego.Phrase,malware:flodrix botnet,malware,Flodrix botnet
@@ -543,6 +581,7 @@ maltego.File,rule:ai_assistant_outbound_to_camo_proxy.rules,rule,ai_assistant_ou
 maltego.File,rule:ai_cli_permission_bypass_invocation.yml,rule,ai_cli_permission_bypass_invocation.yml
 maltego.File,rule:ai_inference_endpoint_redirection.yml,rule,ai_inference_endpoint_redirection.yml
 maltego.File,rule:ai_service_api_c2.rules,rule,ai_service_api_c2.rules
+maltego.File,rule:artex_default_probe_file_created.yml,rule,artex_default_probe_file_created.yml
 maltego.File,rule:azure_openai_injection.yml,rule,azure_openai_injection.yml
 maltego.File,rule:bedrock_high_token_usage.yml,rule,bedrock_high_token_usage.yml
 maltego.File,rule:browser_agent_session_state_capture.yml,rule,browser_agent_session_state_capture.yml
@@ -552,8 +591,10 @@ maltego.File,rule:claude_desktop_config_modify.yml,rule,claude_desktop_config_mo
 maltego.File,rule:claude_session_jsonl_unexpected_access.yml,rule,claude_session_jsonl_unexpected_access.yml
 maltego.File,rule:copilot_rules_file_backdoor.yar,rule,copilot_rules_file_backdoor.yar
 maltego.File,rule:cursor_settings_db_modification.yml,rule,cursor_settings_db_modification.yml
+maltego.File,rule:entra_app_credential_added_by_app.yml,rule,entra_app_credential_added_by_app.yml
 maltego.File,rule:entra_app_signin_invalid_or_expired_secret.yml,rule,entra_app_signin_invalid_or_expired_secret.yml
 maltego.File,rule:entra_app_signin_scripted_client.yml,rule,entra_app_signin_scripted_client.yml
+maltego.File,rule:entra_role_member_added_by_app.yml,rule,entra_role_member_added_by_app.yml
 maltego.File,rule:github_copilot_yolo_mode_enabled.yml,rule,github_copilot_yolo_mode_enabled.yml
 maltego.File,rule:gpu_unexpected_high_utilization.yml,rule,gpu_unexpected_high_utilization.yml
 maltego.File,rule:huggingface_cache_unexpected_writer.yml,rule,huggingface_cache_unexpected_writer.yml
@@ -587,6 +628,7 @@ maltego.File,rule:promptsteal_lamehug.yar,rule,promptsteal_lamehug.yar
 maltego.File,rule:rag_document_hidden_text.yar,rule,rag_document_hidden_text.yar
 maltego.File,rule:ray_dashboard_exposure.rules,rule,ray_dashboard_exposure.rules
 maltego.File,rule:ray_jobs_api_rce.rules,rule,ray_jobs_api_rce.rules
+maltego.File,rule:reverse_ssh_tunnel_exposing_local_sshd.yml,rule,reverse_ssh_tunnel_exposing_local_sshd.yml
 maltego.File,rule:runtime_ai_malware_correlation.yml,rule,runtime_ai_malware_correlation.yml
 maltego.File,rule:runtime_llm_api_c2.rules,rule,runtime_llm_api_c2.rules
 maltego.File,rule:script_interpreter_llm_api_dns.yml,rule,script_interpreter_llm_api_dns.yml
@@ -609,6 +651,7 @@ maltego.Phrase,sector:education,sector,education
 maltego.Phrase,sector:emergency-services,sector,emergency-services
 maltego.Phrase,sector:energy,sector,energy
 maltego.Phrase,sector:financial-services,sector,financial-services
+maltego.Phrase,sector:food-agriculture,sector,food-agriculture
 maltego.Phrase,sector:government,sector,government
 maltego.Phrase,sector:healthcare,sector,healthcare
 maltego.Phrase,sector:information-technology,sector,information-technology

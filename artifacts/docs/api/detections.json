@@ -202,5 +202,22 @@
     "logsource": {
       "category": "process_creation"
     }
+  },
+  {
+    "file": "detections/sigma/reverse_ssh_tunnel_exposing_local_sshd.yml",
+    "id": "4ade8c81-5391-4d6a-aa74-c4185f858642",
+    "title": "Reverse SSH Tunnel Exposing the Local SSH Service",
+    "level": "high",
+    "tags": [
+      "attack.command-and-control",
+      "attack.t1572",
+      "attack.persistence",
+      "attack.t1133",
+      "attack.atlas.t0010.001",
+      "owasp.asi04"
+    ],
+    "logsource": {
+      "category": "process_creation"
+    }
   }
 ]

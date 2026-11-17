@@ -8,14 +8,31 @@ disclosed: "2024-03-26"
 affects: Ray (distributed compute) - no catalogued endpoint tool
 confidence: high
 basis: >-
-  Vendor research by Oligo Security with in-the-wild exploitation observed across
-  two campaigns, widely corroborated in trade press. CVE-2023-48022 is a published
-  CVE record.
+  Vendor research by Oligo Security, which observed the exploitation in both
+  campaigns and is the only party to have published doing so. What supports
+  it from outside is acknowledgement, not a second observation. Anyscale wrote
+  in March 2024 that it had been shown evidence of malicious exploitation and
+  shipped a checking tool in response, and for the 2025 campaign told the
+  press that unauthorised jobs were submitted through exposed endpoints while
+  disputing that the fault lay in Ray. GitHub said it removed the accounts
+  that hosted the second campaign's payloads. The affected vendor and the
+  hosting platform accepting that it happened is why this stays high. The
+  ATT&CK campaign and the ATLAS case study both cite Oligo and add nothing
+  first-hand, and the trade press this entry used to lean on repeats Oligo.
+  The indicators below are from the second campaign and from Oligo alone.
 contested: >-
   CVE-2023-48022 is disputed. Anyscale's position is that unauthenticated job
   submission is intended behaviour for a framework meant to run inside a trusted
   network, so the CVE was never directly fixed. That disagreement is why exposure
   persists and why this is an exposure-management finding rather than a patching one.
+  The actor link covers the second campaign only. In August 2026 Oligo assessed
+  that the group later known as TeamPCP ran ShadowRay 2.0, on shared
+  infrastructure and on sign-in records it says the code-hosting platform
+  provided, and added that whether this is a rebrand, a shared set of operators
+  or collaboration cannot be determined with certainty. Nobody else has
+  published that link, and nothing ties the 2024 campaign to the group. CVE-2023-48022
+  is not on CISA's KEV catalog. A different and later Ray flaw was added to it
+  in August 2026, and the two should not be read as one.
 atlas:
   - AML.T0006
   - AML.T0049
@@ -52,6 +69,60 @@ iocs:
   - type: pattern
     value: Ray dashboard reachable from the internet
     description: The precondition; the exposure is the vulnerability here
+  - type: ip
+    value: 18.228.3[.]224
+    description: Primary command-and-control server for reverse shells in the second campaign, ports 48331 and 3876
+  - type: ip
+    value: 18.230.118[.]147
+    description: Secondary command-and-control server and mining endpoint, ports 443 and 40331
+  - type: ip
+    value: 67.217.57[.]240
+    description: File server for the netsh reverse-shell binary, port 666. Reverse shells to it ran from September to November 2025, and it is the address the later report ties to TeamPCP
+  - type: ip
+    value: 103.127.134[.]124
+    description: Received reverse shells on ports 30654 and 30987. The later report says the same address signed in to the accounts that hosted the payloads
+  - type: ip
+    value: 45.61.150[.]83
+    description: File server for the second-phase dropper, port 80
+  - type: ip
+    value: 45.95.168[.]100
+    description: File server for downloaded binaries, port 8000
+  - type: ip
+    value: 185.215.180[.]70
+    description: File server for downloaded binaries, port 8000
+  - type: ip
+    value: 162.248.53[.]119
+    description: Payload server, port 8000
+  - type: url
+    value: hxxp://45[.]61[.]150[.]83/1mmy/xd.sh
+    description: Second-phase dropper
+  - type: hash
+    value: 1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b
+    description: SHA-256 of the second-phase dropper xd.sh. The source also lists a hash for the miner, which is the legitimate XMRig release and proves nothing alone
+  - type: domain
+    value: masscan[.]cloud
+    description: With matrix.masscan[.]cloud, staging infrastructure the later report links to this campaign. A compromised cluster fetched /ep9TS2/ndt.sh from it in July 2025
+  - type: domain
+    value: pool.supportxmr.com
+    description: Primary mining pool, port 443 over TLS. A public pool that other miners also use; gulf.moneroocean.stream on 20128 and eu.zano.k1pool.com on 8866 were the others
+  - type: file
+    value: /usr/lib/dev/systemdev/dns-filter
+    description: The miner under a name chosen to look like a DNS service. /tmp/dns is the alternative location
+  - type: file
+    value: /var/tmp/.ddns.sh
+    description: Persistence script
+  - type: file
+    value: /etc/init.d/dns-filter
+    description: Persistence through init.d
+  - type: config
+    value: "authorized_keys entry ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHy6WMgqslpdUCaumLmlUcBjBjuAk4KspADxbcAKrzYd root@archtop"
+    description: Key appended by the payload for SSH access. Match the key material; the comment is trivially changed
+  - type: config
+    value: User crontab entry every 15 minutes piping a script named mon.sh from a code-hosting raw URL into bash
+    description: Persistence and update channel. The hosting project and its replacement were removed in November 2025, so the entry now fails and is still evidence
+  - type: process
+    value: "kworker/0:0 or [kworker/0:0] as the name of a userland process"
+    description: The miner renames itself by writing to /proc/$$/comm. A real kernel worker has no executable path and no command line
 response_actions:
   - "Inventory exposure first. There is no patch to apply, so the finding is which clusters are reachable and from where."
   - Collect Ray dashboard and jobs API access logs, and the submitted job definitions - the definitions hold the payload and are the best evidence available.
@@ -76,9 +147,28 @@ references:
     url: https://www.oligo.security/blog/shadowray-attack-ai-workloads-actively-exploited-in-the-wild
   - title: "Oligo Security - ShadowRay 2.0: Active Global Campaign Hijacks Ray AI Infrastructure Into Self-Propagating Botnet"
     url: https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
+  - title: "Oligo Security - New Intelligence Links TeamPCP to ShadowRay 2.0 and Traces Activity back to 2020 (5 Aug 2026)"
+    url: https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020
+    accessed: "2026-11-17"
+  - title: "Anyscale - Update on Ray CVE-2023-48022: New Verification Tooling Available (27 Mar 2024)"
+    url: https://www.anyscale.com/blog/update-on-ray-cve-2023-48022-new-verification-tooling-available
+    accessed: "2026-11-17"
+  - title: "The Register - Self-replicating botnet attacks Ray clusters, with Anyscale's statement (18 Nov 2025)"
+    url: https://www.theregister.com/security/2025/11/18/self-replicating-botnet-attacks-ray-clusters/2390013
+    accessed: "2026-11-17"
+  - title: "CyberScoop - Hackers turn open-source AI framework into global cryptojacking operation, with GitHub's statement (18 Nov 2025)"
+    url: https://cyberscoop.com/ray-ai-cryptojacking-vulnerability-exposed-clusters-attack-oligo-security/
+    accessed: "2026-11-17"
   - title: "NVD - CVE-2023-48022"
     url: https://nvd.nist.gov/vuln/detail/CVE-2023-48022
 
+actors:
+  - ref: AIRT-TA-0005
+    role: suspected
+    link_confidence: medium
+    attributed_by: Oligo Security
+    stated_confidence: '"We also assess that TeamPCP was responsible for the ShadowRay 2.0 campaign based on our evidence"; whether that reflects a rebrand, shared operators or collaboration "cannot be determined with 100% certainty"'
+    reference: https://www.oligo.security/blog/new-intelligence-links-teampcp-to-shadowray-2-0-and-traces-activity-back-to-2020
 external_ids:
   attack_campaign:
     - C0045

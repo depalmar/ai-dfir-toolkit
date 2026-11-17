@@ -10,7 +10,13 @@ confidence: high
 basis: >-
   First-party incident response engagement by Microsoft's Detection and Response
   Team, published with named artifacts, mutex names, file paths and configuration
-  layout. Nothing here is inferred from a sample alone.
+  layout. Nothing here is inferred from a sample alone. OpenAI, whose API was
+  the relay, confirmed the misuse in a statement to the press and said it found
+  no evidence its models were used; Microsoft says OpenAI disabled the key and
+  account. That is the affected provider agreeing, which is why this stays
+  high. No second team has analysed the samples, Microsoft published no hashes
+  to make that possible, and the ATLAS case study cites the Microsoft post
+  alone.
 atlas:
   - AML.T0096
 summary: >-
@@ -77,6 +83,9 @@ detections:
 references:
   - title: "Microsoft Security Blog - SesameOp: Novel backdoor uses OpenAI Assistants API for command and control"
     url: https://www.microsoft.com/en-us/security/blog/2025/11/03/sesameop-novel-backdoor-uses-openai-assistants-api-for-command-and-control/
+  - title: "Infosecurity Magazine - OpenAI Assistants API Exploited in 'SesameOp' Backdoor (4 Nov 2025, updated 6 Nov with OpenAI's statement)"
+    url: https://www.infosecurity-magazine.com/news/openai-assistants-api-sesameop/
+    accessed: "2026-11-17"
   - title: "The Hacker News - Microsoft Detects SesameOp Backdoor Using OpenAI's API as a Stealth Command Channel"
     url: https://thehackernews.com/2025/11/microsoft-detects-sesameop-backdoor.html
 

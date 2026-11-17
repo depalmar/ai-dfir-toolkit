@@ -971,7 +971,7 @@ There is no single scanner that catches all AI/ML attacks. Defense requires laye
 
 ### 6.3 XDR/SIEM detection coverage
 
-This repository provides rules for most of what this guide describes; where it has none, the guide says so and gives the hunt to run by hand. It contains **72 rule files / 167 individual signatures** across three open formats: Sigma, YARA, and Suricata. Nine category directories cover this guide's sections 1 to 4, RAG and vector databases, runtime AI malware, agentic orchestration and agent memory, and a cross-tool endpoint set is scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends. The rules that read application telemetry - an LLM gateway's logs, GPU metrics, an MLflow access log - name log sources and fields no standard pipeline defines, so map them to your own field names before converting.
+This repository provides rules for most of what this guide describes; where it has none, the guide says so and gives the hunt to run by hand. It contains **76 rule files / 171 individual signatures** across three open formats: Sigma, YARA, and Suricata. Nine category directories cover this guide's sections 1 to 4, RAG and vector databases, runtime AI malware, agentic orchestration and agent memory, and a cross-tool endpoint set is scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends. The rules that read application telemetry - an LLM gateway's logs, GPU metrics, an MLflow access log - name log sources and fields no standard pipeline defines, so map them to your own field names before converting.
 
 Recommended ingestion priorities for any SIEM/XDR program, ordered by signal-to-noise:
 

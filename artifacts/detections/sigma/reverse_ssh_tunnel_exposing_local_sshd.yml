@@ -1,0 +1,62 @@
+title: Reverse SSH Tunnel Exposing the Local SSH Service
+id: 4ade8c81-5391-4d6a-aa74-c4185f858642
+status: experimental
+description: |
+  Detects an ssh or autossh client started with no remote command and a
+  reverse forward that points back at this host's own SSH port. That
+  combination hands a remote server a way to log in to the local machine from
+  outside, through any firewall that allows outbound SSH. It is what the
+  tampered builds of an AI coding extension served by one editor's marketplace
+  on 29 October 2026 did after adding a key to authorized_keys: they opened
+  ssh -N -R '*:0:localhost:22' to a fixed address and wrote a LaunchAgent,
+  crontab entry or scheduled task to reopen it. The parent is not tested,
+  because after the first run the tunnel is started by that persistence and
+  not by the editor. On a developer workstation almost nothing legitimate
+  forwards a remote port to local port 22, so the parent matters less than
+  the destination. Where the parent is an editor's extension host, treat the
+  extension folder as evidence and collect it before removing anything. Not
+  fired against real events; written from the command line three sources
+  published for that case.
+references:
+    - https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/
+    - https://cursor.com/blog/claude-code-extension-security-notice
+    - https://www.stepsecurity.io/blog/claude-code-extension-trojanized
+    - https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0023.yml
+author: AI DFIR Toolkit contributors
+date: 2026-11-17
+tags:
+    - attack.command-and-control
+    - attack.t1572
+    - attack.persistence
+    - attack.t1133
+    - attack.atlas.t0010.001
+    - owasp.asi04
+logsource:
+    category: process_creation
+detection:
+    selection_image:
+        Image|endswith:
+            - '/ssh'
+            - '/autossh'
+            - '\ssh.exe'
+            - '\autossh.exe'
+    selection_no_command:
+        CommandLine|contains: ' -N'
+    selection_reverse_forward:
+        CommandLine|contains: ' -R'
+    selection_local_sshd:
+        CommandLine|contains:
+            - ':localhost:22'
+            - ':127.0.0.1:22'
+            - ':[::1]:22'
+    condition: all of selection_*
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - ParentCommandLine
+    - User
+falsepositives:
+    - Administrators who reach a machine behind NAT through a jump host they control. Rare on a managed workstation, and the destination identifies it.
+    - Combined short flags such as -fNR are not matched; the published command line separates them.
+level: high

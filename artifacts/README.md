@@ -38,7 +38,7 @@ every field carries a `confidence` rating tied to how it was sourced.
 | Documented artifacts | **667** |
 | Credential locations | **173** |
 | MCP config locations | **72** |
-| Sigma detection rules | **14** |
+| Sigma detection rules | **15** |
 | Case studies | **26** |
 
 Artifacts counts every row the catalog yields, so it matches the site and
@@ -92,7 +92,7 @@ language anywhere:
 sigma convert -t splunk detections/sigma/     # or elasticsearch, sentinel, ...
 ```
 
-All 14 rules are verified in CI to compile against a real backend, so a rule that
+All 15 rules are verified in CI to compile against a real backend, so a rule that
 would not convert cannot merge. See `detections/README.md` for the rule table and
 honest notes on tuning — several rules are deliberately `level: low` because on a
 developer estate they describe the product working correctly.

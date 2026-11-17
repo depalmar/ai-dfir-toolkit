@@ -188,7 +188,7 @@ the one place those numbers are guaranteed current.
 
 ## Coverage overview
 
-72 rule files containing 167 individual signatures — nine attack-class categories
+76 rule files containing 171 individual signatures — nine attack-class categories
 plus a cross-tool endpoint set:
 
 | Category | Files | Signatures | ATLAS Techniques | OWASP LLM 2026 | OWASP Agentic |
@@ -200,10 +200,10 @@ plus a cross-tool endpoint set:
 | Copilot/Assistant Abuse | 8 | 19 | T0086, T0024 | LLM02, LLM03, LLM04 | ASI01, ASI02, ASI03, ASI04, ASI05 |
 | RAG / Vector DB | 5 | 19 | T0020 | LLM01, LLM02, LLM09 | ASI01, ASI06 |
 | Runtime AI-Malware | 8 | 16 | T0096, T0086 | LLM01, LLM03 | — |
-| Agentic Orchestration & AI-Service C2 | 5 | 14 | T0096, T0086, T0054, T0012, T0055 | LLM03 | ASI02 |
+| Agentic Orchestration & AI-Service C2 | 8 | 17 | T0096, T0086, T0054, T0012, T0055, T0116 | LLM03 | ASI02 |
 | Agent Memory & Context Poisoning | 2 | 5 | T0080, T0080.000, T0086 | LLM01, LLM02, LLM03 | ASI06 |
-| Endpoint (cross-tool) | 14 | 14 | T0053, T0081, T0083, T0098 | LLM02, LLM03, LLM04, LLM06 | ASI02, ASI03, ASI04, ASI05 |
-| **Total** | **72** | **167** | | | |
+| Endpoint (cross-tool) | 15 | 15 | T0053, T0081, T0083, T0098, T0010.001 | LLM02, LLM03, LLM04, LLM06 | ASI02, ASI03, ASI04, ASI05 |
+| **Total** | **76** | **171** | | | |
 
 The endpoint set lives in [`artifacts/detections/`](artifacts/detections/) and is
 scoped to agent behaviour on a host rather than to one attack class, so it applies
