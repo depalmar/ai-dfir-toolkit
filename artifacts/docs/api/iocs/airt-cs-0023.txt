@@ -1,0 +1,32 @@
+# AIRT-CS-0023 - Tampered Claude Code Extension in Cursor's Marketplace - An SSH Backdoor Through an AI Tool's Update Channel
+# Disclosed 2026-10-30; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0023.yml
+
+# file
+~/Library/LaunchAgents/com.apple.sysmond.plist
+~/.config/.smt and ~/.config/.smtk
+%USERPROFILE%\.config\smt.cmd and %USERPROFILE%\.config\smtk
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\sysmon.cmd
+
+# hash
+fcbb327e38e61c4fec795e0d0591f52cd1014b813d20a5912104953c3a17c364
+3de1722901165769893bef57c72594e9a54459faa23f3091b136b79966edd081
+80402fdcad8799285fd93044976973ca000da7995fb93363f819bb8e4f84ee6c
+6786ec90cbd45949695bd7805c9fbb26cfc91bc5fc897de0183d9bcb9cb21731
+ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15
+7e0a52885fadee05544a9e99eb18c792bec05900a5e1a66d68f8383decb0e278
+
+# ip
+134.209.82.225
+
+# package
+anthropic.claude-code 2.1.312 and 2.1.313, installed from Cursor's extension marketplace
+
+# process
+ssh or autossh with -N -R '*:0:localhost:22'
+
+# url
+http://134.209.82.225:8099/beacon

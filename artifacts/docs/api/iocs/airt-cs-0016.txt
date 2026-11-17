@@ -1,0 +1,12 @@
+# AIRT-CS-0016 - UNC6780 (TeamPCP) - DUSTMAKER and Trojanised MCP Servers
+# Disclosed 2026-09-08; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0016.yml
+
+# directory
+<repo>/.claude/, <repo>/.cursor/, <repo>/.vscode/
+
+# package
+tiktoken_mcp (PyPI)

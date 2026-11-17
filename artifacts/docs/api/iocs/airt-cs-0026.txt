@@ -1,0 +1,17 @@
+# AIRT-CS-0026 - Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations
+# Disclosed 2026-11-06; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0026.yml
+
+# ip
+199.19.95.66
+199.19.95.67
+199.19.95.68
+91.92.240.238
+85.11.168.45
+85.11.167.52
+178.16.54.129
+178.15.54.129
+31.77.229.35

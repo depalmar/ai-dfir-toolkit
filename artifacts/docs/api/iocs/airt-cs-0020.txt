@@ -1,0 +1,16 @@
+# AIRT-CS-0020 - GTG-50020 - From Hotel Booking Fraud to Probing AI Companies
+# Disclosed 2026-09-10; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0020.yml
+
+# ip
+141.133.125.208
+146.103.101.253
+146.103.97.169
+167.250.111.136
+178.16.54.141
+194.163.183.216
+202.66.167.230
+37.27.103.22

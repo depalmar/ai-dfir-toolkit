@@ -1,0 +1,12 @@
+# AIRT-CS-0025 - ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application
+# Disclosed 2026-11-03; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0025.yml
+
+# ip
+199.19.77.84
+199.19.77.18
+65.87.223.26
+157.22.126.128

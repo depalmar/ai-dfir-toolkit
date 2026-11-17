@@ -16,6 +16,18 @@ artifact catalog, the detection rules, the ATLAS/OWASP mappings, the case
 studies, and the investigation guide, rebuilt from this repository on every
 push so the page cannot drift from the content.
 
+### See it in use
+
+**Start from the alert.** Name the tool the alert mentioned, say where the AI ran and what role it played, and get its traces sorted by how fast each one disappears.
+
+![Screen recording: Cursor is typed into the landing page, a role is chosen, and its evidence appears grouped as live, rotating and stable](docs/media/start-from-the-alert.gif)
+
+**Collect in the right order.** Pick rows into a plan, group it by volatility, and export it for the collector your team already runs. Credentials are hashed, not copied.
+
+![Screen recording: a collection plan for Cursor grouped by volatility, with the export switched between a native script, Velociraptor and KAPE](docs/media/collection-plan.gif)
+
+Full-size video: [start from the alert](docs/media/start-from-the-alert.mp4) · [collection plan](docs/media/collection-plan.mp4). How they were recorded: [`docs/media/`](docs/media/README.md).
+
 For the companion investigation guide with attack background, forensic artifacts, Mermaid attack-chain diagrams, and hands-on investigation procedures, see [`docs/ai-dfir-investigation-guide.md`](./docs/ai-dfir-investigation-guide.md).
 
 License: Apache 2.0.

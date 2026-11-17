@@ -1,0 +1,14 @@
+# AIRT-CS-0022 - GTG-50021 - A Fraudulent AI Reseller Harvesting Customers' Credentials
+# Disclosed 2026-09-10; sourcing confidence medium.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0022.yml
+
+# domain
+aws-us-east-3.com
+awstore.cloud
+holdboost.store
+kiro.cheap
+sys-tools.cfd
+iymkjuzymkapovrntoxy.supabase.co

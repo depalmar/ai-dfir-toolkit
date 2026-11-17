@@ -10,6 +10,32 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Added
 
+- **A Hunts tab on the site**, derived by `artifacts/scripts/hunts.py` and never
+  authored. It lists the Sigma rules whose own level is low, each with the
+  telemetry source it reads and the cases it came from, and every `behavior`
+  indicator on a case study, grouped by case. There are no queries in any
+  vendor's language: a hunting rule is Sigma and a behaviour is prose. Each
+  hunt has a permalink, the list filters, and it copies as a Markdown
+  checklist. `build_site.py --check` gates its anchors and cross-references.
+
+- **A hardening section in the guide**, "Before the next one: prevent it, or
+  make it investigable", at the end of section 8. The prose is limited to what
+  a catalog row, a rule or a case supports. On the site a block is injected at
+  `<!-- site:hardening -->` with counts computed from the catalog - plaintext
+  credential locations, MCP config files, listeners documented with no
+  authentication - and the `harden` step from every case that records one.
+
+- **Case-study indicators can be copied and downloaded.** Each case on the site
+  has Copy values, Download .txt and Download .csv, and every indicator has its
+  own copy button. Two new feeds carry the same data: `docs/api/iocs.csv` (every
+  indicator, with its description) and `docs/api/iocs/<case-id>.txt` (one
+  case's atomic indicators, refanged, one per line). The text a case copies is
+  the feed file byte for byte. AIRT-CS-0024's application and tenant ids are
+  now bare values with the label in the description, so they paste cleanly.
+
+- **Two screen recordings in the README**, under `docs/media/`, with the script
+  that records them.
+
 - **A case-study authoring skill**, `skills/case-study-authoring/SKILL.md`. It
   carries the rule the November 2026 audit applied - count only parties who
   wrote from their own data - with the workflow for indicators, actor links,
@@ -101,6 +127,12 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   PyPI package names, so `pip install` may not put Microsoft's AutoGen on disk.
 
 ### Fixed
+
+- **Every permalink opened the guide on a fresh page load.** The first render
+  wrote the address bar before the link had been read, replacing `#cases`,
+  `#catalog?tool=Cursor`, a case anchor or a rule link with the guide's empty
+  hash. Links worked only when followed inside an already open page, which is
+  why it was not noticed. The first render no longer writes the address bar.
 
 - **AIRT-CS-0003 cited a Trend Micro URL that is not the article.** The
   reference pointed at a path that differs from the published one; it now

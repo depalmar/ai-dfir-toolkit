@@ -565,15 +565,15 @@ maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1528,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1555.006,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1580,uses
 maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,attack:T1595,uses
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 0de14c77-b9b0-4137-9360-34878a929827,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 2399d300-6fca-4e6a-a686-399fefe75b83,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 24205314-2b89-4e07-a2a4-579e898a5640,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id 506e08f9-6e9a-4da4-942b-a099a03644ae,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Application id c921256f-04a7-44e8-9b2a-69c33929ba19,indicator
-maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,0de14c77-b9b0-4137-9360-34878a929827,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,2399d300-6fca-4e6a-a686-399fefe75b83,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,24205314-2b89-4e07-a2a4-579e898a5640,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,3f9cd7a0-127a-4ed4-bf06-2f830d5616b7,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,412dcf96-176d-4b3a-a1b0-4981ad66971e,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,506e08f9-6e9a-4da4-942b-a099a03644ae,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,b2b55f5b-7758-4719-8d8f-88ae172e6bdb,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,b78f6a77-d4e5-46fb-87e5-d1648bd02519,indicator
+maltego.Phrase,case:AIRT-CS-0024,maltego.Phrase,c921256f-04a7-44e8-9b2a-69c33929ba19,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,104.194.150.21,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.64.128,indicator
 maltego.Phrase,case:AIRT-CS-0024,maltego.IPv4Address,144.172.64.60,indicator

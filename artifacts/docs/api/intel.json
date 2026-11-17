@@ -9448,56 +9448,56 @@
      },
      {
       "type": "account",
-      "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-      "description": "ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant",
+      "value": "506e08f9-6e9a-4da4-942b-a099a03644ae",
+      "description": "Application id of ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
-      "description": "ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list",
+      "value": "2399d300-6fca-4e6a-a686-399fefe75b83",
+      "description": "Application id of ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
-      "description": "ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others",
+      "value": "24205314-2b89-4e07-a2a4-579e898a5640",
+      "description": "Application id of ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
-      "description": "ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list",
+      "value": "b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+      "description": "Application id of ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
-      "description": "ConnectWise Cloud Management - MS Graph",
+      "value": "0de14c77-b9b0-4137-9360-34878a929827",
+      "description": "Application id of ConnectWise Cloud Management - MS Graph",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
-      "description": "ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list",
+      "value": "412dcf96-176d-4b3a-a1b0-4981ad66971e",
+      "description": "Application id of ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
-      "description": "ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list",
+      "value": "b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+      "description": "Application id of ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
-      "description": "Named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised",
+      "value": "c921256f-04a7-44e8-9b2a-69c33929ba19",
+      "description": "Application id named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised",
       "case": "AIRT-CS-0024"
      },
      {
       "type": "account",
-      "value": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
-      "description": "The vendor's tenant as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids",
+      "value": "3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+      "description": "Tenant id of the vendor's home tenant, as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids",
       "case": "AIRT-CS-0024"
      },
      {
@@ -12821,48 +12821,48 @@
     },
     {
      "type": "account",
-     "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-     "description": "ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant"
+     "value": "506e08f9-6e9a-4da4-942b-a099a03644ae",
+     "description": "Application id of ConnectWise Cloud Backup. Search by application id, not display name, and record the local service principal object id in each tenant"
     },
     {
      "type": "account",
-     "value": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
-     "description": "ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list"
+     "value": "2399d300-6fca-4e6a-a686-399fefe75b83",
+     "description": "Application id of ConnectWise Cloud Management. One of seven identities the vendor disabled; not in Microsoft's list"
     },
     {
      "type": "account",
-     "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
-     "description": "ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others"
+     "value": "24205314-2b89-4e07-a2a4-579e898a5640",
+     "description": "Application id of ConnectWise Cloud Management - MS Teams. The application one responder saw assign itself Global Administrator and add credentials to two others"
     },
     {
      "type": "account",
-     "value": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
-     "description": "ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list"
+     "value": "b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+     "description": "Application id of ConnectWise Cloud Management - Exchange Online. Disabled by the vendor; not in Microsoft's list"
     },
     {
      "type": "account",
-     "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
-     "description": "ConnectWise Cloud Management - MS Graph"
+     "value": "0de14c77-b9b0-4137-9360-34878a929827",
+     "description": "Application id of ConnectWise Cloud Management - MS Graph"
     },
     {
      "type": "account",
-     "value": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
-     "description": "ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list"
+     "value": "412dcf96-176d-4b3a-a1b0-4981ad66971e",
+     "description": "Application id of ConnectWise Cloud Management - Partner Center. Disabled by the vendor; not in Microsoft's list"
     },
     {
      "type": "account",
-     "value": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
-     "description": "ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list"
+     "value": "b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+     "description": "Application id of ConnectWise Cloud Management - SharePoint Online. Disabled by the vendor; not in Microsoft's list"
     },
     {
      "type": "account",
-     "value": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
-     "description": "Named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised"
+     "value": "c921256f-04a7-44e8-9b2a-69c33929ba19",
+     "description": "Application id named in the vendor's advisory outside the list of seven, and labelled as a partner portal application by one responder. Nobody states it was abused, so review it and do not count it as compromised"
     },
     {
      "type": "account",
-     "value": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
-     "description": "The vendor's tenant as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids"
+     "value": "3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+     "description": "Tenant id of the vendor's home tenant, as one responder published it. Service principal sign-in records carry the owning tenant, which finds the vendor's applications without a list of ids"
     },
     {
      "type": "pattern",
@@ -15635,6 +15635,42 @@
     "ioc_type": "account"
    },
    {
+    "id": "ioc:account:0de14c77-b9b0-4137-9360-34878a929827",
+    "type": "ioc",
+    "label": "0de14c77-b9b0-4137-9360-34878a929827",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:2399d300-6fca-4e6a-a686-399fefe75b83",
+    "type": "ioc",
+    "label": "2399d300-6fca-4e6a-a686-399fefe75b83",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:24205314-2b89-4e07-a2a4-579e898a5640",
+    "type": "ioc",
+    "label": "24205314-2b89-4e07-a2a4-579e898a5640",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "type": "ioc",
+    "label": "3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "type": "ioc",
+    "label": "412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "type": "ioc",
+    "label": "506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "ioc_type": "account"
+   },
+   {
     "id": "ioc:account:8179098353",
     "type": "ioc",
     "label": "8179098353",
@@ -15665,57 +15701,21 @@
     "ioc_type": "account"
    },
    {
-    "id": "ioc:account:Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "id": "ioc:account:b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
     "type": "ioc",
-    "label": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "label": "b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
     "ioc_type": "account"
    },
    {
-    "id": "ioc:account:Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "id": "ioc:account:b78f6a77-d4e5-46fb-87e5-d1648bd02519",
     "type": "ioc",
-    "label": "Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "label": "b78f6a77-d4e5-46fb-87e5-d1648bd02519",
     "ioc_type": "account"
    },
    {
-    "id": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+    "id": "ioc:account:c921256f-04a7-44e8-9b2a-69c33929ba19",
     "type": "ioc",
-    "label": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
-    "type": "ioc",
-    "label": "Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-    "type": "ioc",
-    "label": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
-    "type": "ioc",
-    "label": "Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
-    "type": "ioc",
-    "label": "Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
-    "type": "ioc",
-    "label": "Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
-    "ioc_type": "account"
-   },
-   {
-    "id": "ioc:account:Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
-    "type": "ioc",
-    "label": "Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "label": "c921256f-04a7-44e8-9b2a-69c33929ba19",
     "ioc_type": "account"
    },
    {
@@ -20520,47 +20520,47 @@
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "target": "ioc:account:0de14c77-b9b0-4137-9360-34878a929827",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id 2399d300-6fca-4e6a-a686-399fefe75b83",
+    "target": "ioc:account:2399d300-6fca-4e6a-a686-399fefe75b83",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+    "target": "ioc:account:24205314-2b89-4e07-a2a4-579e898a5640",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id 412dcf96-176d-4b3a-a1b0-4981ad66971e",
+    "target": "ioc:account:3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "target": "ioc:account:412dcf96-176d-4b3a-a1b0-4981ad66971e",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
+    "target": "ioc:account:506e08f9-6e9a-4da4-942b-a099a03644ae",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id b78f6a77-d4e5-46fb-87e5-d1648bd02519",
+    "target": "ioc:account:b2b55f5b-7758-4719-8d8f-88ae172e6bdb",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Application id c921256f-04a7-44e8-9b2a-69c33929ba19",
+    "target": "ioc:account:b78f6a77-d4e5-46fb-87e5-d1648bd02519",
     "rel": "indicator"
    },
    {
     "source": "case:AIRT-CS-0024",
-    "target": "ioc:account:Home tenant id 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7",
+    "target": "ioc:account:c921256f-04a7-44e8-9b2a-69c33929ba19",
     "rel": "indicator"
    },
    {

@@ -35,6 +35,7 @@ import intel_graph  # noqa: E402
 import site_intel  # noqa: E402
 import site_scripts  # noqa: E402
 import triage_spec  # noqa: E402
+import hunts  # noqa: E402
 
 VENDOR = Path(__file__).resolve().parent / "vendor"
 
@@ -800,6 +801,43 @@ th .pick.all{vertical-align:middle}
   color:var(--ink);font-size:12px;cursor:pointer}
 .srcjump:hover{border-color:var(--accent);background:var(--accent-soft-2)}
 /* --- data sources view --- */
+.hard{margin:14px 0 18px}
+.hardtiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.hardtile{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+  color:inherit;text-decoration:none;min-width:0}
+.hardtile:hover{border-color:var(--accent)}
+.hardtile b{display:block;font-size:22px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.hardtile span{display:block;margin-top:5px;font-size:12.5px;color:var(--muted)}
+.hardnote{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.hardcases{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.hardcases li{padding:11px 13px;border:1px solid var(--line-soft);border-radius:9px;background:var(--panel-2)}
+.hardcases li>a{font-weight:600;font-size:13px;color:var(--ink);text-decoration:none}
+.hardcases li>a:hover{color:var(--accent);text-decoration:underline}
+.hardcases li p{margin:5px 0 0;font-size:12.5px;color:var(--muted);max-width:none}
+.huntbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 4px}
+.huntbar input{flex:1 1 260px;max-width:420px;min-width:0;padding:8px 11px;font:inherit;font-size:13px;
+  color:var(--ink);background:var(--panel);border:1px solid var(--field-line);border-radius:8px}
+.huntbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.huntn{font-size:12px;color:var(--muted)}
+.huntsec{margin-top:22px}
+.huntsec>h3{margin:0;font-size:14.5px}
+.huntnote{margin:4px 0 12px;font-size:12.5px;color:var(--muted);max-width:84ch}
+.huntgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.hunt,.huntcase{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px;min-width:0}
+.huntcase{margin-bottom:12px}
+.hunthead{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.hunthead h4{margin:0;font-size:13.5px;line-height:1.35;min-width:0}
+.hunthead .cardbtn:hover{color:var(--accent)}
+.huntlook{margin:9px 0 0;font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-box-orient:vertical;
+  -webkit-line-clamp:6;overflow:hidden}
+.huntk{font-size:11.5px;color:var(--faint)}
+.huntlist{list-style:none;margin:11px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.huntlist li{padding:9px 11px;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel-2);
+  font-size:12.5px;scroll-margin-top:calc(var(--hdrh,120px) + 12px)}
+.huntlist li b{display:block;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.huntlist li span{display:block;margin-top:3px;color:var(--muted)}
+.hunt{scroll-margin-top:calc(var(--hdrh,120px) + 12px)}
+.hunt:target,.huntlist li:target,.hunt.hit,.huntlist li.hit{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 .srcintro{margin:0;font-size:13.5px;color:var(--muted);max-width:70ch}
 .vollegend{display:grid;gap:7px;margin-top:12px}
 .vollegend>div{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:start;font-size:12.5px}
@@ -1233,6 +1271,13 @@ button.istat:hover{background:var(--hover)}
 .csbody h5{margin:0 0 9px;display:flex;align-items:center;gap:7px}
 .csbody h5 .n{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
   background:var(--line-soft);border-radius:20px;padding:1px 7px;color:var(--muted)}
+.iocacts{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:0 0 12px}
+.iocacts .btn{padding:5px 10px;font-size:11.5px}
+.iocacts a{font-size:11.5px}
+.ioc{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;user-select:text}
+.ioccp{flex:none;font:inherit;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:10px;
+  padding:0 5px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--muted);cursor:pointer}
+.ioccp:hover,.ioccp:focus-visible{border-color:var(--accent);color:var(--accent)}
 .iocgrp{margin:0 0 11px}
 .iockind{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted);margin:0 0 4px}
@@ -1714,7 +1759,7 @@ const ROPTIONS={
    route back was to work out which filters had been set and undo them by hand.
    A jump now pushes the state it left, restores it on popstate, and shows where
    Back goes so the affordance is not just a browser gesture people may not try. */
-const VIEW_LABEL={catalog:'Catalog',tools:'Tools',rules:'Detections',
+const VIEW_LABEL={catalog:'Catalog',tools:'Tools',rules:'Detections',hunts:'Hunts',
   mappings:'Mappings',sources:'Data sources',cases:'Case studies',
   plan:'Collection plan',guide:'Investigation guide',intel:'Threat intel',graph:'Graph'};
 let navStack=[];
@@ -2159,6 +2204,67 @@ function toolsHTML(){
 // Every count below is derived at build time by scripts/data_sources.py, and
 // its audit fails the build if a source claims coverage the corpus does not
 // supply, or if a rule or a row maps to no source. Nothing here is typed twice.
+/* ---------- hunts ---------- */
+// Derived in hunts.py from the rules and the case studies. No queries: a
+// hunting rule is Sigma and converts to any backend, and a behaviour is prose.
+let huntQ='';
+function huntsShown(){
+  const m=hay=>qMatch(hay,huntQ);
+  const rules=HUNTS.rules.filter(h=>m([h.title,h.file,h.look_for,h.logsource,h.category,
+    h.sources.map(s=>s.name).join(' '),h.cases.join(' ')].join(' ')));
+  const groups=HUNTS.behaviours.map(g=>{
+    const head=m([g.case,g.title].join(' '));
+    return {...g,items:g.items.filter(i=>head||m([i.look_for,i.why].join(' ')))};
+  }).filter(g=>g.items.length);
+  return {rules,groups,n:rules.length+groups.reduce((a,g)=>a+g.items.length,0)};
+}
+function huntChecklist(){
+  const {rules,groups}=huntsShown(), out=[`# Hunts - AI DFIR Toolkit, ${stamp()}`,''];
+  if(rules.length){out.push('## Hunting rules','');
+    for(const h of rules)out.push(`- [ ] ${h.title} (${h.file}) - reads ${h.logsource||'see the rule'}`);
+    out.push('')}
+  if(groups.length){out.push('## Behaviours reported in case studies','');
+    for(const g of groups){out.push(`### ${g.case} ${g.title}`,'');
+      for(const i of g.items)out.push(`- [ ] ${i.look_for}`);
+      out.push('')}}
+  return out.join('\n');
+}
+function huntsHTML(){
+  const S=HUNTS.stats, {rules,groups,n}=huntsShown();
+  const ruleBtn=f=>RULEFILE[f]?`<button class="tchip" data-rule="${esc(RULEFILE[f].path)}" title="Open this rule">${esc(f)}</button>`
+    :`<span class="tchip">${esc(f)}</span>`;
+  return `<div class="gtop"><div><h2>Hunts</h2>
+    <p>What to go looking for where an alert would be wrong, or where nobody has
+    written a rule. Nothing here is a query in one vendor's language: a hunting
+    rule is Sigma and converts to any backend, and a behaviour is a description
+    to turn into a search of your own logs.</p>
+    <p class="csconf">${S.rule_hunts} hunting rules &middot; ${S.behaviours} behaviours from ${S.cases} case studies</p></div>
+    <button class="btn" id="huntCopy" title="Copy the hunts shown as a Markdown checklist">Copy as checklist</button></div>
+  <div class="huntbar"><input id="huntQ" type="search" placeholder="Filter hunts: a log source, a tool, a case id..."
+    aria-label="Filter hunts" value="${esc(huntQ)}"><span class="huntn" role="status">${n} of ${S.total} shown</span></div>
+  ${!n?`<div class="empty">No hunt matches that filter.</div>`:''}
+  ${rules.length?`<section class="huntsec"><h3>Hunting rules</h3>
+    <p class="huntnote">Sigma rules whose own level is low. That is the author saying a match is not
+    an alert: baseline it first, then run it on a schedule and read the results.</p>
+    <div class="huntgrid">${rules.map(h=>`<article class="hunt" id="${esc(h.anchor)}">
+      <div class="hunthead"><h4><button type="button" class="cardbtn" data-rule="${esc(h.path)}">${esc(h.title)}</button></h4>${badge(h.level)}</div>
+      <div class="rfile">${esc(h.file)}</div>
+      <p class="huntlook">${esc(h.look_for)}</p>
+      <div class="srcfoot">${h.logsource?`<span class="huntk">reads</span><span class="srcstat flat">${esc(h.logsource)}</span>`:''}
+        ${h.sources.map(s=>`<button class="srcstat" data-src="${esc(s.id)}" title="How to switch this source on">${esc(s.name)}</button>`).join('')}
+        ${h.cases.map(c=>`<button class="srcstat" data-case="${esc(c)}" title="The case study this rule came from">${esc(c)}</button>`).join('')}
+      </div></article>`).join('')}</div></section>`:''}
+  ${groups.length?`<section class="huntsec"><h3>Behaviours reported in case studies</h3>
+    <p class="huntnote">What the activity looked like, in the words of the case, newest first. Each
+    case lists its rules, but nothing here says a given rule matches a given behaviour, so read the
+    rule before relying on it.</p>
+    ${groups.map(g=>`<article class="huntcase">
+      <div class="hunthead"><h4><button type="button" class="cardbtn" data-case="${esc(g.case)}">${esc(g.title)}</button></h4>${confBadge(g.confidence)}</div>
+      <div class="srcfoot"><span class="huntk">${esc(g.case)} &middot; disclosed ${esc(g.disclosed)} &middot; ${g.rules.length?'rules for this case':'no rule in this repository'}</span>
+        ${g.rules.map(ruleBtn).join('')}</div>
+      <ul class="huntlist">${g.items.map(i=>`<li id="${esc(i.anchor)}"><b>${esc(i.look_for)}</b>${i.why?`<span>${esc(i.why)}</span>`:''}</li>`).join('')}</ul>
+    </article>`).join('')}</section>`:''}`;
+}
 function sourcesHTML(){
   const list=[...SOURCES].sort((a,b)=>
     (VOL_ORDER[a.volatility]-VOL_ORDER[b.volatility])||b.n_rows-a.n_rows);
@@ -3157,6 +3263,15 @@ function coverageCSV(){
 // a scanner, commits in version control, network indicators in a proxy log - so a
 // flat list of mixed strings makes them do the sorting themselves.
 const IOC_ORDER=['file','directory','binary','process','commit','domain','ip','url','hash','other'];
+// The same substitutions intel_graph._refang makes, so a copied value equals
+// the one in the published feed.
+const refang=v=>String(v).split('[.]').join('.').split('[:]').join(':').split('hxxps').join('https').split('hxxp').join('http');
+function caseIocCSV(c){
+  const q=v=>'"'+String(v==null?'':v).split(/\s+/).join(' ').trim().split('"').join('""')+'"';
+  return ['case_id,type,atomic,value,value_defanged,description']
+    .concat((c.iocs||[]).map(i=>[c.id,i.type,INTEL.atomic_types.includes(i.type)?'yes':'no',
+      refang(i.value),i.value,i.description].map(q).join(','))).join('\n')+'\n';
+}
 function iocGroups(iocs){
   const by={};
   for(const i of iocs){const k=(i.type||'other').toLowerCase(); (by[k]=by[k]||[]).push(i)}
@@ -3238,10 +3353,21 @@ function caseStudiesHTML(){
       <div class="csbody">
         <div class="cscol">
           <h4>Indicators <span class="n">${n}</span></h4>
+          ${n?`<div class="iocacts">
+            ${c.ioc_txt?`<button type="button" class="btn" data-ioc="copy" data-id="${esc(c.id)}"
+              title="Copy the searchable values, refanged, one per line">Copy values</button>
+            <button type="button" class="btn" data-ioc="txt" data-id="${esc(c.id)}"
+              title="The same values as a text file">Download .txt</button>`:''}
+            <button type="button" class="btn" data-ioc="csv" data-id="${esc(c.id)}"
+              title="Every indicator with its description, behaviours included">Download .csv</button>
+            ${c.ioc_txt?`<a href="${REPO_URL}/blob/main/artifacts/docs/api/iocs/${esc(c.id.toLowerCase())}.txt"
+              target="_blank" rel="noopener">Text file on GitHub &#8599;</a>`:''}
+          </div>`:''}
           ${n?groups.map(g=>`<div class="iocgrp">
             <div class="iockind">${esc(g.kind)}</div>
             <div class="iocs">${g.items.map(i=>
-              `<span class="ioc" title="${esc(i.description||'')}">${esc(i.value)}${
+              `<span class="ioc" title="${esc(i.description||'')}"><span>${esc(i.value)}</span><button type="button"
+                class="ioccp" data-cv="${esc(refang(i.value))}" aria-label="Copy ${esc(i.value)}">copy</button>${
                 i.description?`<em>${esc(i.description)}</em>`:''}</span>`).join('')}</div>
           </div>`).join(''):`<p class="muted">None published.</p>`}
         </div>
@@ -3297,7 +3423,7 @@ const CLS_NAME={disk:'Files and folders',credential:'Credentials and tokens',
 // Count pills that double as navigation, after the edge toolkit's start page.
 function orientKpisHTML(){
   const k=[[ROWS.length,'artifact locations','catalog'],[TOOLS.length,'tools','tools'],
-    [RULES.length,'detections','rules'],[SOURCES.length,'telemetry sources','sources'],
+    [RULES.length,'detections','rules'],[HUNTS.stats.total,'hunts','hunts'],[SOURCES.length,'telemetry sources','sources'],
     [CASES.length,'case studies','cases'],[INTEL.actors.length,'actors','intel']];
   return `<nav class="okpis" aria-label="What is here">${k.map(([n,t,v])=>
     `<button type="button" class="okpi" data-goto="${v}"><b>${n}</b> ${t}</button>`).join('')}</nav>`;
@@ -3341,6 +3467,29 @@ function orientVisHTML(){
 }
 // Cumulative documented incidents by disclosure quarter, and the same cases as a
 // table. Both are derived from the case studies, so neither can drift from them.
+// The guide's hardening section: prose in the guide, numbers from the catalog,
+// steps from the cases. Links are plain hash links so they work wherever the
+// guide's own links do.
+function hardeningHTML(){
+  const H=HARDEN, pct=H.cred_total?Math.round(100*H.cred_plain/H.cred_total):0;
+  const tiles=[
+    [H.cred_plain,`of ${H.cred_total} catalogued credential locations are plaintext, across ${H.cred_plain_tools} tools`,'#catalog?cls=credential','Open the credential rows'],
+    [H.mcp_files,`MCP config files across ${H.mcp_tools} tools, each naming what the host may launch`,'#catalog?cls=mcp-config','Open the MCP config rows'],
+    [H.listeners_noauth,`of ${H.listeners} catalogued listeners are documented with no authentication`,'#catalog?cls=network','Open the network rows'],
+    [H.sources,'telemetry sources, each with its default state and how to switch it on','#sources','Open Data sources'],
+    [HUNTS.stats.total,'hunts that need a baseline you can only record beforehand','#hunts','Open Hunts']];
+  const steps=CASES.map(c=>({c,a:(c.response_actions||[]).filter(a=>a.phase==='harden').map(a=>a.action)}))
+    .filter(x=>x.a.length)
+    .sort((x,y)=>(y.c.disclosed||'').localeCompare(x.c.disclosed||'')||y.c.id.localeCompare(x.c.id));
+  return `<div class="hard" role="group" aria-label="Hardening figures from the catalog and steps from the case studies">
+    <div class="hardtiles">${tiles.map(([n,t,href,label])=>
+      `<a class="hardtile" href="${href}" aria-label="${esc(label)}: ${n} ${esc(t)}"><b>${n}</b><span>${esc(t)}</span></a>`).join('')}</div>
+    <p class="hardnote">${pct}% of catalogued credential locations are plaintext. That is a count of documented
+    locations, not of hosts or of risk.</p>
+    ${steps.length?`<ul class="hardcases">${steps.map(({c,a})=>
+      `<li><a href="#cs-${esc(c.id)}"><span class="mono">${esc(c.id)}</span> ${esc(c.title)}</a>${a.map(x=>`<p>${esc(x)}</p>`).join('')}</li>`).join('')}</ul>`:''}
+  </div>`;
+}
 function timelineHTML(){
   const cs=CASES.map(c=>({c,d:csDate(c)})).filter(x=>x.d)
     .sort((a,b)=>a.d[0]-b.d[0]||a.d[1]-b.d[1]||a.c.id.localeCompare(b.c.id));
@@ -3562,7 +3711,7 @@ function guideHTML(){
   </section>
   <div class="guidewrap">
     <nav class="gtoc"><h4>Contents</h4>${toc}</nav>
-    <div class="gbody">${GUIDE.html.replace('<!-- site:incident-timeline -->',timelineHTML())}</div>
+    <div class="gbody">${GUIDE.html.replace('<!-- site:incident-timeline -->',timelineHTML()).replace('<!-- site:hardening -->',hardeningHTML())}</div>
   </div>`;
 }
 
@@ -3715,6 +3864,22 @@ function renderMain(){
     });
     renderTabs();renderToast();renderBack();return;
   }
+  if(view==='hunts'){
+    main.innerHTML=huntsHTML();
+    const hq=$('#huntQ');
+    if(hq)hq.oninput=()=>{huntQ=hq.value;const pos=hq.selectionStart;renderMain();
+      const n=$('#huntQ');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}};
+    $$('#main [data-rule]').forEach(b=>b.onclick=()=>{
+      pushNav();resetRuleFilters();view='rules';update();openRuleDrawer(b.dataset.rule,null)});
+    $$('#main [data-src]').forEach(b=>b.onclick=()=>{
+      pushNav();view='sources';update();
+      const el=document.getElementById('src-'+b.dataset.src);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
+    $$('#main [data-case]').forEach(b=>b.onclick=()=>{
+      pushNav();caseOnly=null;view='cases';update();
+      const el=document.getElementById('cs-'+b.dataset.case);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
+    const hc=$('#huntCopy');if(hc)hc.onclick=()=>copy(huntChecklist(),hc);
+    renderTabs();renderToast();renderBack();return;
+  }
   if(view==='sources'){
     main.innerHTML=sourcesHTML();
     // Every stat on a source card is a way into the rows or the rules it
@@ -3798,6 +3963,13 @@ function renderMain(){
     main.innerHTML=caseStudiesHTML();
     $$('#main .csactor').forEach(b=>b.onclick=e=>{e.preventDefault();openActorDrawer(b.dataset.actor,b)});
     const co=$('#csOnly');if(co)co.onclick=()=>{caseOnly=null;renderMain()};
+    $$('#main .ioccp').forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();copy(b.dataset.cv,b)});
+    $$('#main [data-ioc]').forEach(b=>b.onclick=()=>{
+      const c=CASES.find(x=>x.id===b.dataset.id);if(!c)return;
+      if(b.dataset.ioc==='copy')copy(c.ioc_txt,b);
+      else if(b.dataset.ioc==='txt')download(c.id.toLowerCase()+'-indicators.txt',c.ioc_txt,'text/plain');
+      else download(c.id.toLowerCase()+'-indicators.csv',caseIocCSV(c),'text/csv');
+    });
     $$('#main .cscopy').forEach(b=>b.onclick=()=>{
       const base=location.origin==='null'?'':location.origin+location.pathname;
       copy(base+'#cs-'+b.dataset.cs,b)});
@@ -3962,7 +4134,7 @@ function deadLink(h){
   const b=$('#deadTool');
   if(b)b.onclick=()=>{box.hidden=true;resetFilters();filters.tool=[t.tool];view='catalog';update()};
 }
-const VIEW_NAMES=['guide','catalog','tools','rules','mappings','sources','cases','intel','graph','plan'];
+const VIEW_NAMES=['guide','catalog','tools','rules','hunts','mappings','sources','cases','intel','graph','plan'];
 // '#catalog?tool=Cursor&os=windows&q=...' - the same keys as `filters`, values
 // comma-separated, plus q and unv=1; '#rules?...' likewise. A view with
 // filters is something a responder sends to a colleague.
@@ -3979,7 +4151,7 @@ function viewHash(){
 }
 // In-page anchors that belong to the current view are left alone. Rule and
 // actor links are drawer links: once the drawer closes they are replaced.
-const DEEP={'g-':'guide','cs-':'cases','src-':'sources','graph':'graph'};
+const DEEP={'g-':'guide','cs-':'cases','src-':'sources','hunt-':'hunts','graph':'graph'};
 function writeHash(){
   if(routing||!$('#drawer').hidden)return;
   const cur=location.hash.slice(1);
@@ -4025,6 +4197,10 @@ function applyHash0(){
     if(el){el.open=true;el.scrollIntoView({block:'start'})}else deadLink(h);
     return}
   if(h==='sources'){view='sources';update();return}
+  if(h.startsWith('hunt-')){view='hunts';huntQ='';update();
+    const el=document.getElementById(h);
+    if(el){el.classList.add('hit');el.scrollIntoView({block:'center'})}else deadLink(h);
+    return}
   if(h==='mappings'){view='mappings';update();return}
   if(h==='plan'){view='plan';update();return}
   if(h.startsWith('src-')){view='sources';update();
@@ -4045,7 +4221,7 @@ function applyHash0(){
 // One box over every corpus on the page, after edge-dfir-toolkit's palette:
 // results grouped by kind, five per group, and a jump to the full filtered
 // list where one exists. The index is built on first open, not at load.
-const PAL_GROUPS=['Tools','Artifacts','Detections','Case studies','Actors','Data sources','Investigation guide'];
+const PAL_GROUPS=['Tools','Artifacts','Detections','Hunts','Case studies','Actors','Data sources','Investigation guide'];
 const PAL_SUGGEST=['~/.claude','oauth_creds','mcp.json','CVE-2025-3248','AML.T0053','APT28','Sysmon','Langflow'];
 let PAL=null, palFlat=[], palSel=0;
 function palIndex(){
@@ -4061,6 +4237,10 @@ function palIndex(){
   RULES.forEach(r=>add('Detections',r.title,`${r.file} · ${r.format}`,
     [r.file,r.description,r.format,r.category,(r.atlas||[]).join(' '),(r.attack||[]).join(' '),(r.owasp||[]).join(' ')].join(' '),
     ()=>{view='rules';update();openRuleDrawer(r.path,null)}));
+  HUNTS.behaviours.forEach(g=>g.items.forEach(i=>add('Hunts',i.look_for,`${g.case} · behaviour`,
+    [g.case,g.title,i.why].join(' '),
+    ()=>{huntQ='';view='hunts';update();const el=document.getElementById(i.anchor);
+      if(el){el.classList.add('hit');el.scrollIntoView({block:'center'})}})));
   CASES.forEach(c=>add('Case studies',c.title,`${c.id} · disclosed ${c.disclosed}`,
     [c.id,c.summary,c.affects,(c.iocs||[]).map(i=>i.value).join(' '),JSON.stringify(c.external_ids||{})].join(' '),
     ()=>{view='cases';update();const el=document.getElementById('cs-'+c.id);if(el){el.open=true;el.scrollIntoView({block:'start'})}}));
@@ -4286,7 +4466,10 @@ window.addEventListener('scroll',()=>{const c=window.scrollY>0, h=$('.hdr');
 window.addEventListener('resize',syncHdr);
 $('.tabs').addEventListener('scroll',syncTabFade,{passive:true});
 window.addEventListener('resize',syncTabFade);
-setThemeBtn();update();applyHash();
+// The first render must not write the address bar. writeHash() would replace a
+// permalink with the guide's empty hash before applyHash() had read it, which
+// sent every shared link to the guide on a fresh load.
+setThemeBtn();routing=true;try{update()}finally{routing=false}applyHash();
 """
 
 THEME_BOOT = (
@@ -4300,6 +4483,37 @@ THEME_BOOT = (
     "||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');"
     "document.documentElement.dataset.theme=t}catch(e){}})();"
 )
+
+
+def build_hardening(entries, sources):
+    """Counts for the guide's hardening section, from the catalog and nothing else.
+
+    The section's prose is authored in the guide. Every number beside it is
+    computed here, so a figure cannot outlive the rows it counted.
+    """
+    creds = [(e["id"], c) for e in entries for c in (e.get("credentials") or [])]
+    plain = [(i, c) for i, c in creds if c.get("storage") == "plaintext"]
+    mcp = [(e["id"], m) for e in entries for m in (e.get("mcp") or [])
+           if m.get("mechanism") == "config-file"]
+    listeners = [(e["id"], n) for e in entries
+                 for n in ((e.get("artifacts") or {}).get("network") or [])
+                 if n.get("direction") == "listener"]
+    # Free text in the catalog, so only the unambiguous prefix is counted. A row
+    # that says "Optional API key" is not counted as unauthenticated.
+    noauth = [(i, n) for i, n in listeners
+              if str(n.get("authentication") or "").strip().lower().startswith("none")]
+    return {
+        "cred_total": len(creds),
+        "cred_plain": len(plain),
+        "cred_plain_tools": len({i for i, _ in plain}),
+        "cred_keyring": sum(1 for _, c in creds if c.get("storage") == "os-keyring"),
+        "mcp_files": len(mcp),
+        "mcp_tools": len({i for i, _ in mcp}),
+        "listeners": len(listeners),
+        "listener_tools": len({i for i, _ in listeners}),
+        "listeners_noauth": len(noauth),
+        "sources": len(sources),
+    }
 
 
 def check_cases(cases, tools, rules=()):
@@ -4507,10 +4721,19 @@ def main():
     cov = data_sources.coverage(data_sources.load_sources(), entries)
     sources = cov["sources"]
     cls_count = cov["per_class"]
+    # Derived from the rules, cases and sources above, so the Hunts tab cannot
+    # list a rule or a case the page does not also show.
+    hunt_data = hunts.build(rules, cases, sources)
+    # The indicator text a case offers for copying is the published feed file,
+    # byte for byte, so the page and docs/api/iocs/ cannot disagree.
+    for c in cases:
+        c["ioc_txt"] = intel_graph.ioc_text(c)
+    harden = build_hardening(entries, sources)
 
     if "--check" in sys.argv:
         return 1 if check(rows, tools, rules, guide, cases,
-                          data_sources.audit(cov) + intel_problems + vendor_problems) else 0
+                          data_sources.audit(cov) + intel_problems + vendor_problems
+                          + hunts.check(hunt_data, rules, cases)) else 0
 
     n_cred = sum(1 for r in rows if r["cls"] == "credential")
     n_mcp = sum(1 for r in rows if r["cls"] == "mcp-config")
@@ -4566,6 +4789,7 @@ def main():
     <button role="tab" data-v="catalog">Catalog <span class="n" title="{len(rows)} artifact rows">{len(rows)}<span class="sr"> artifact rows</span></span></button>
     <button role="tab" data-v="tools">Tools <span class="n" title="{len(tools)} tools">{len(tools)}<span class="sr"> tools</span></span></button>
     <button role="tab" data-v="rules">Detections <span class="n" title="{len(rules)} detection rules">{len(rules)}<span class="sr"> detection rules</span></span></button>
+    <button role="tab" data-v="hunts">Hunts <span class="n" title="{hunt_data["stats"]["total"]} hunts">{hunt_data["stats"]["total"]}<span class="sr"> hunts</span></span></button>
     <button role="tab" data-v="mappings">Mappings <span class="n" title="{len(atlas_index) + len(owasp_index)} framework entries">{len(atlas_index) + len(owasp_index)}<span class="sr"> framework entries</span></span></button>
     <button role="tab" data-v="sources">Data sources <span class="n" title="{len(sources)} telemetry sources">{len(sources)}<span class="sr"> telemetry sources</span></span></button>
     <button role="tab" data-v="cases">Case studies <span class="n" title="{len(cases)} case studies">{len(cases)}<span class="sr"> case studies</span></span></button>
@@ -4662,6 +4886,8 @@ const ATLAS_INDEX={js_data(atlas_index)};
 const OWASP_INDEX={js_data(owasp_index)};
 const CASES={js_data(cases)};
 const SOURCES={js_data(sources)};
+const HUNTS={js_data(hunt_data)};
+const HARDEN={js_data(harden)};
 const VOL_MEANING={js_data(data_sources.VOLATILITY_MEANING)};
 const VOL_TIERS={js_data(data_sources.VOLATILITY_ORDER)};
 const CLS_COUNT={js_data(cls_count)};

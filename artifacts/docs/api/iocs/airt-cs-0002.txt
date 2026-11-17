@@ -1,0 +1,15 @@
+# AIRT-CS-0002 - postmark-mcp npm Backdoor - First In-the-Wild Malicious MCP Server
+# Disclosed 2025-09; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0002.yml
+
+# account
+phanpak
+
+# email
+phan@giftshop.club
+
+# package
+postmark-mcp@1.0.16

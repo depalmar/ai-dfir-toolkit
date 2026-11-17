@@ -1120,6 +1120,29 @@ The containment instinct is to act at once: kill it, roll it back, rotate the ke
 
 The way through is the same move as containment: pause, capture, then act. Pausing preserves; it does not alter. Decide in the IR plan who calls the authority and when the clock starts, not in the middle of the incident.
 
+### Before the next one: prevent it, or make it investigable
+
+This guide is about responding, and a general hardening benchmark for AI systems is outside it. Two kinds of hardening belong here anyway, because each decides what the next investigation can answer: reducing what an intruder finds on a host that runs AI tools, and making sure the evidence exists on the day you need it. Everything below follows from a catalog row, a rule or a case study in this repository, and nothing here has been measured for how much risk it removes.
+
+**Reduce what is lying on the host.**
+
+- **Credentials.** Most of the tools catalogued here keep an API key or an OAuth token in a file in the user's profile, readable by anything running as that user. Treat a host that runs them as holding those credentials. Where a tool offers the operating system's keychain, use it; prefer short-lived tokens to long-lived keys; scope a key to one project. The catalog's credential rows are also the rotation list after an incident, so know which of them exist on your estate before you need to.
+- **MCP configuration, hooks and rules files.** Each names commands or instructions the agent acts on with the user's privileges every time it starts. Manage them as you would autostart entries: inventory them, review changes, and remember that the project-scoped copies travel with a clone. The rules `ai_agent_mcp_config_modification.yml` and `ai_agent_hook_config_modification.yml` report a write to one; they are change tracking, not alerts.
+- **Local inference servers.** Bind them to loopback and put authentication in front of anything that must be reachable. Several runtimes listen without authentication, and some bind every interface in their documented container setup. `local_llm_listener_non_loopback.yml` finds the ones that are exposed.
+- **Approval prompts.** An agent started with its approval-bypass flag will run what it is told without asking. Decide where that is allowed; `ai_cli_permission_bypass_invocation.yml` reports it being set by a package manager or a runtime, which is how one supply-chain compromise used it.
+- **Extensions and marketplaces.** An editor's extension channel is a software supply chain. Allow-list extensions on managed hosts, and where the editor supports a delay before a new version installs, use it: the tampered build in AIRT-CS-0023 was served for about eleven hours.
+
+**Make the next one investigable.**
+
+- **Switch the logging on first.** The Data sources tab lists each source, what state it ships in, and what you cannot answer without it. Two that are off or unexported by default and that the recent cases turned on: process creation with the command line, and the identity provider's log of application sign-ins.
+- **Know your retention.** Agent transcripts rotate, and provider-side logs age out in days to weeks. The catalog marks which rows are live, rotating or stable, and the collection plan orders them that way. A retention period you have not checked is one you will discover during an incident.
+- **Keep all four logs.** Section 1.5 names them. An incident reconstructed from three is an incident with a gap, and the gap is usually the one that says what the agent was told.
+- **Baseline before you hunt.** Every hunt on the Hunts tab that reads agent behaviour is only as good as your knowledge of which agents run where, and which applications sign in from where. That is cheap to record now and impossible to recover afterwards.
+
+**What the cases changed afterwards.** The site inserts two things here at build time: counts from the catalog, each of which opens the rows it counts, and the hardening step from every case study that records one, in the case's own words. Read from the repository, the same steps are the `harden` entries under `response_actions` in `artifacts/case-studies/`.
+
+<!-- site:hardening -->
+
 ---
 
 # Part V: Appendices

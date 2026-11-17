@@ -1,0 +1,10 @@
+# AIRT-CS-0010 - SpAIware - Prompt Injection That Persists in Assistant Memory
+# Disclosed 2024-09-24; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0010.yml
+
+# file
+Agent instruction files re-read every session (CLAUDE.md, AGENTS.md, .cursorrules)
+Framework checkpoint stores (LangGraph SQLite and equivalents)

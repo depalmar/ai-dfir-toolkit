@@ -82,6 +82,8 @@ format can change without breaking you:
 | `docs/api/intel.json` | Actors with derived TTPs, victims, detections and collect rows; cases; the entity graph; stats and analytics |
 | `docs/api/stix/ai-dfir-intel.json` | STIX 2.1 bundle - intrusion sets, reports, indicators, attack patterns, relationships (deterministic ids) |
 | `docs/api/graph/maltego-*.csv` | Entity and link tables for Maltego's table import |
+| `docs/api/iocs.csv` | Every case-study indicator with its case, type and description, refanged and as published |
+| `docs/api/iocs/<case-id>.txt` | One case's atomic indicators as plain text, refanged, one per line - for pasting into a search |
 
 ## Detections
 

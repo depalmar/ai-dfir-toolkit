@@ -1,0 +1,35 @@
+# AIRT-CS-0014 - ShadowRay - AI Compute Clusters Exploited in the Wild
+# Disclosed 2024-03-26; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0014.yml
+
+# domain
+masscan.cloud
+pool.supportxmr.com
+
+# file
+/usr/lib/dev/systemdev/dns-filter
+/var/tmp/.ddns.sh
+/etc/init.d/dns-filter
+
+# hash
+1f6c69403678646a60925dcffe8509d22bb570c611324b93bec9aea72024ef6b
+
+# ip
+18.228.3.224
+18.230.118.147
+67.217.57.240
+103.127.134.124
+45.61.150.83
+45.95.168.100
+185.215.180.70
+162.248.53.119
+
+# process
+XMRig or equivalent miner on a GPU host
+kworker/0:0 or [kworker/0:0] as the name of a userland process
+
+# url
+http://45.61.150.83/1mmy/xd.sh

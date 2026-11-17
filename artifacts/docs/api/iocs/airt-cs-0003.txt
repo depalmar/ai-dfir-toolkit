@@ -1,0 +1,23 @@
+# AIRT-CS-0003 - Langflow CVE-2025-3248 Mass Exploitation and Flodrix Botnet Deployment
+# Disclosed 2025-04-09; sourcing confidence high.
+# Atomic indicators only, refanged for searching. Do not browse to them.
+# Read the case study before acting on a value: some are legitimate services
+# or ordinary strings that matter only in context, and behaviours are not here.
+# https://github.com/depalmar/ai-dfir-toolkit/blob/main/artifacts/case-studies/airt-cs-0003.yml
+
+# file
+.system_idle
+
+# hash
+ec0f2960164cdcf265ed78e66476459337c03acb469b6b302e1e8ae01c35d7ec
+64927195d388bf6a1042c4d689bcb2c218320e2fa93a2dcc065571ade3bb3bd3
+912573354e6ed5d744f490847b66cb63654d037ef595c147fc5a4369fef3bfee
+
+# ip
+80.66.75.121
+45.61.137.226
+206.71.149.179
+188.166.68.21
+
+# url
+http://80.66.75.121:25565/docker
