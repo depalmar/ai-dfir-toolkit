@@ -370,6 +370,14 @@ itself a button, a press inside the menu also opened the card, so the menu
 stops its own clicks; and with chips now outside the drawer, a press anywhere
 else closes an open menu.
 
+**H08 has a cost the ticket did not weigh.** A chip that carries the
+technique's name is wider than one that carries its id, and a Detections card
+holds ATLAS, OWASP, Agentic and ATT&CK chips together. At 1280 the median card
+went from 194px to 255px and the unfiltered Detections view from 7,665px to
+10,349px. It shipped as approved. If the length is a problem, the fix that
+keeps the finding's point is an id-only button on Detections cards with the
+name as its accessible name, not a return to a span.
+
 The acceptance figures were measured with this repository's own Playwright
 script, using the selectors `tests/measure.html` uses. The handoff's harness
 page was read, not run.
