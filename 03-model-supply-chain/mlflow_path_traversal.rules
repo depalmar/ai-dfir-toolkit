@@ -85,13 +85,14 @@ alert http any any -> any 5000 (msg:"AI-DFIR Unauthenticated MLflow tracking API
     metadata:atlas AML.T0010; \
     sid:9000105; rev:1;)
 
-alert http any any -> any 5000 (msg:"AI-DFIR MLflow UI default deployment exposed"; \
+# A response travels FROM port 5000; rev 1 named it as the destination and
+# could not alert.
+alert http any 5000 -> any any (msg:"AI-DFIR MLflow UI default deployment exposed"; \
     flow:established,from_server; \
-    http.response_body; content:"MLflow"; nocase; \
     http.response_body; content:"<title>MLflow</title>"; nocase; \
     classtype:misc-activity; \
     metadata:atlas AML.T0010; \
-    sid:9000106; rev:1;)
+    sid:9000106; rev:2;)
 
 # ==========================================================================
 # Generic deserialization-triggering content type on MLflow endpoint

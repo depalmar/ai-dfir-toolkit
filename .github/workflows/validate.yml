@@ -157,3 +157,10 @@ jobs:
           cp $(find . -name '*.rules') /tmp/suricata-rules/
           cat /tmp/suricata-rules/*.rules > /tmp/combined.rules
           suricata -T -S /tmp/combined.rules -l /tmp/
+
+      - name: Replay traffic and check the rules that should fire do
+        run: |
+          # -T above only proves a rule parses. Five rules parsed for months and
+          # could not alert: a response rule that names the service port as the
+          # destination, or a port looked for in http.host, is valid syntax.
+          python3 tests/suricata_replay.py

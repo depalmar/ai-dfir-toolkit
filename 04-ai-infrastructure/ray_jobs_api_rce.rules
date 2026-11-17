@@ -90,10 +90,11 @@ alert http any any -> any any (msg:"AI-DFIR Ray Job entrypoint contains XMRig cr
 # ==========================================================================
 # Generic suspicious Ray cluster behaviour
 # ==========================================================================
-alert http $EXTERNAL_NET any -> any any (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
+# The port is matched in the header. rev 1 looked for it in http.host, which
+# Suricata normalises without the port, so the rule could not alert.
+alert http $EXTERNAL_NET any -> any [8265,10001,6379] (msg:"AI-DFIR Ray cluster contacted from non-private IP address"; \
     flow:established,to_server; \
     http.uri; content:"/api/"; nocase; \
-    http.host; pcre:"/:(8265|10001|6379)$/"; \
     classtype:misc-attack; \
     metadata:atlas AML.T0011; \
-    sid:9000206; rev:1;)
+    sid:9000206; rev:2;)

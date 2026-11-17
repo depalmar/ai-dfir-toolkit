@@ -39,13 +39,15 @@ alert http any any -> any 6274 (msg:"AI-DFIR MCP Inspector default port access";
 # ==========================================================================
 # Exposed MCP Inspector (alternative ports often seen in dev environments)
 # ==========================================================================
-alert http any any -> any [3000,5173,6274,8080] (msg:"AI-DFIR MCP Inspector UI fingerprint"; \
+# A response travels FROM the Inspector's port; rev 1 named the ports as the
+# destination and could not alert.
+alert http any [3000,5173,6274,8080] -> any any (msg:"AI-DFIR MCP Inspector UI fingerprint"; \
     flow:established,from_server; \
     http.response_body; content:"@modelcontextprotocol/inspector"; nocase; \
     classtype:misc-activity; \
     reference:cve,2025-49596; \
     metadata:atlas AML.T0011; \
-    sid:9000003; rev:1;)
+    sid:9000003; rev:2;)
 
 # ==========================================================================
 # CVE-2025-6514 - mcp-remote OAuth proxy command injection

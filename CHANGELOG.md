@@ -47,6 +47,37 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **Five Suricata rules parsed and could never alert.** Four match a server
+  response (`flow:from_server`) and named the service port as the packet's
+  destination, when a response travels from it: the Ray dashboard fingerprint
+  (9000210), the MLflow UI (9000106), the MCP Inspector UI (9000003) and the
+  SesameOp response verb (9000801). The fifth (9000206, Ray reached from an
+  external address) looked for the port in `http.host`, which Suricata
+  normalises without it; the port is matched in the header now. All five are
+  rev 2. `tests/suricata_replay.py` replays one synthetic exchange per case and
+  asserts the expected SIDs fire and two controls stay quiet; it failed six of
+  eight cases before the fix and CI runs it after the syntax check, which is
+  the gate that could not see this.
+- **`mcp_credential_access.yml` described a read and matched file creation.**
+  It was a `file_event` rule keyed on `ParentImage`, which a file-creation
+  event does not carry. It is `file_access` now, and matches the MCP server
+  process itself or a child it spawned.
+- **Project-scope `.mcp.json` matched neither MCP config rule.** `endswith
+  '/mcp.json'` does not match `/.mcp.json`. Added to `mcp_config_tampering.yml`
+  and the endpoint rule.
+- **`gpu_unexpected_high_utilization.yml` cancelled its own `.python`
+  masquerade branch**, because the known-ML filter contains `python` and was
+  applied to the named-miner selection. The filter now applies only to the
+  unknown-process branch, and the threshold is 40%, the figure the guide gives,
+  not the 60% attackers are reported to cap at.
+- **The guide claimed more than the pack holds.** It said the repository has
+  deployable rules for everything in the guide and listed four of the nine
+  categories; that the trace analyser scores a tool call with no user turn,
+  when it scores actions per human turn over at least five actions; and that
+  the credential rule covers the assistant applications, when it covers MCP
+  server processes. Each now says what the rule does. A stale SID in a comment
+  (`91008003`) and the signature-count footnote are corrected too.
+
 - **The collector opened an unset environment variable as a literal folder.**
   Its guard knew four names (`$APPDATA`, `$LOCALAPPDATA`, `$USERPROFILE`,
   `$XDG`), so with `CLAUDE_CONFIG_DIR` unset the generated target

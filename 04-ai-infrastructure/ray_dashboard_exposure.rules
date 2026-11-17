@@ -14,12 +14,14 @@
 #
 # SID range: 9000210-9000219
 
-alert http any any -> any 8265 (msg:"AI-DFIR Ray dashboard fingerprint observed"; \
+# A response travels FROM the service port, so the port is on the source side.
+# rev 1 named it as the destination and could not alert.
+alert http any 8265 -> any any (msg:"AI-DFIR Ray dashboard fingerprint observed"; \
     flow:established,from_server; \
     http.response_body; content:"Ray Dashboard"; nocase; \
     classtype:misc-activity; \
     metadata:atlas AML.T0011; \
-    sid:9000210; rev:1;)
+    sid:9000210; rev:2;)
 
 alert http any any -> any 8265 (msg:"AI-DFIR Ray /api/cluster_status enumeration"; \
     flow:established,to_server; \
