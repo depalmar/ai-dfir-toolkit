@@ -16,6 +16,13 @@ contested: >-
   submission is intended behaviour for a framework meant to run inside a trusted
   network, so the CVE was never directly fixed. That disagreement is why exposure
   persists and why this is an exposure-management finding rather than a patching one.
+atlas:
+  - AML.T0006
+  - AML.T0049
+  - AML.T0055
+  - AML.T0035
+  - AML.T0025
+  - AML.T0048.000
 summary: >-
   Ray's Jobs API accepts job submissions without authentication. Internet-exposed
   clusters therefore give an attacker code execution on machines holding models,

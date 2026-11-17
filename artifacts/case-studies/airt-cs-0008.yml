@@ -66,5 +66,7 @@ references:
 owasp_agentic:
   - ASI01
 external_ids:
+  atlas_case_study:
+    - AML.CS0059
   cve:
     - CVE-2025-32711

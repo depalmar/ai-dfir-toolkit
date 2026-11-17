@@ -5,9 +5,9 @@
   "cases": 26,
   "iocs": 267,
   "atomic_iocs": 195,
-  "techniques_observed": 34,
-  "techniques_covered": 16,
-  "techniques_off_host": 13,
+  "techniques_observed": 39,
+  "techniques_covered": 17,
+  "techniques_off_host": 14,
   "by_kind": {
    "state-nexus": 14,
    "criminal": 6,
@@ -115,6 +115,13 @@
    "medium": 11
   },
   "technique_use": {
+   "AML.T0006": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
    "AML.T0008": {
     "actors": [
      "AIRT-TA-0014"
@@ -158,6 +165,26 @@
     "actors": [],
     "cases": [
      "AIRT-CS-0023"
+    ],
+    "rules": [
+     "claude_desktop_config_modify.yml",
+     "copilot_rules_file_backdoor.yar",
+     "cursor_settings_db_modification.yml",
+     "github_copilot_yolo_mode_enabled.yml",
+     "huggingface_cache_unexpected_writer.yml",
+     "mcp_config_tampering.yml",
+     "mlflow_path_traversal.rules",
+     "model_file_hash_mismatch.yml",
+     "ollama_vllm_unauth_exposure.rules",
+     "pip_install_typosquat.yml",
+     "torchserve_shelltorch.rules",
+     "triton_inference_server_exploit.rules"
+    ]
+   },
+   "AML.T0010.005": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0009"
     ],
     "rules": [
      "claude_desktop_config_modify.yml",
@@ -285,6 +312,7 @@
    "AML.T0025": {
     "actors": [],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0025"
     ],
     "rules": []
@@ -299,12 +327,27 @@
     ],
     "rules": []
    },
+   "AML.T0035": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
+   "AML.T0048.000": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0014"
+    ],
+    "rules": []
+   },
    "AML.T0049": {
     "actors": [
      "AIRT-TA-0017",
      "AIRT-TA-0018"
     ],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0020",
      "AIRT-CS-0021"
     ],
@@ -368,6 +411,7 @@
      "AIRT-TA-0019"
     ],
     "cases": [
+     "AIRT-CS-0014",
      "AIRT-CS-0015",
      "AIRT-CS-0016",
      "AIRT-CS-0019",
@@ -406,6 +450,7 @@
      "AIRT-TA-0005"
     ],
     "cases": [
+     "AIRT-CS-0009",
      "AIRT-CS-0016",
      "AIRT-CS-0017"
     ],
@@ -511,6 +556,13 @@
     ],
     "rules": []
    },
+   "AML.T0109": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0009"
+    ],
+    "rules": []
+   },
    "AML.T0115.002": {
     "actors": [
      "AIRT-TA-0005"
@@ -582,7 +634,7 @@
   "method": {
    "similarity": "IDF-weighted Jaccard over techniques (0.4), tools (0.2), sectors (0.2), ai_services (0.1), motivation (0.1); facets neither side reports are skipped",
    "clusters": "average-linkage agglomerative, stopped below similarity 0.3",
-   "cooccurrence": "44 observations (case studies and sightings); pairs seen at least twice",
+   "cooccurrence": "46 observations (case studies and sightings); pairs seen at least twice",
    "backlog": "score = 2 x actors + cases using the technique, rule-less techniques only"
   },
   "similarity": {
@@ -2271,7 +2323,7 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 1.0,
-    "lift": 11.0
+    "lift": 11.5
    },
    {
     "a": "AML.T0010",
@@ -2279,7 +2331,7 @@
     "support": 2,
     "confidence_ab": 0.4,
     "confidence_ba": 1.0,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0012",
@@ -2287,7 +2339,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0016.001",
@@ -2295,7 +2347,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0017.001",
@@ -2303,7 +2355,7 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.4,
-    "lift": 8.8
+    "lift": 9.2
    },
    {
     "a": "AML.T0016.001",
@@ -2311,7 +2363,15 @@
     "support": 2,
     "confidence_ab": 1.0,
     "confidence_ba": 0.333,
-    "lift": 7.33
+    "lift": 7.67
+   },
+   {
+    "a": "AML.T0025",
+    "b": "AML.T0055",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.222,
+    "lift": 5.11
    },
    {
     "a": "AML.T0116",
@@ -2319,7 +2379,7 @@
     "support": 2,
     "confidence_ab": 0.333,
     "confidence_ba": 0.667,
-    "lift": 4.89
+    "lift": 5.11
    },
    {
     "a": "AML.T0116",
@@ -2327,7 +2387,7 @@
     "support": 3,
     "confidence_ab": 0.5,
     "confidence_ba": 0.6,
-    "lift": 4.4
+    "lift": 4.6
    },
    {
     "a": "AML.T0103",
@@ -2335,15 +2395,15 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.333,
-    "lift": 3.67
+    "lift": 3.83
    },
    {
-    "a": "AML.T0010",
+    "a": "AML.T0049",
     "b": "AML.T0055",
-    "support": 3,
-    "confidence_ab": 0.6,
-    "confidence_ba": 0.375,
-    "lift": 3.3
+    "support": 2,
+    "confidence_ab": 0.667,
+    "confidence_ba": 0.222,
+    "lift": 3.41
    },
    {
     "a": "AML.T0054",
@@ -2351,15 +2411,23 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.286,
-    "lift": 3.14
+    "lift": 3.29
+   },
+   {
+    "a": "AML.T0010",
+    "b": "AML.T0055",
+    "support": 3,
+    "confidence_ab": 0.6,
+    "confidence_ba": 0.333,
+    "lift": 3.07
    },
    {
     "a": "AML.T0055",
     "b": "AML.T0103",
     "support": 2,
-    "confidence_ab": 0.25,
+    "confidence_ab": 0.222,
     "confidence_ba": 0.5,
-    "lift": 2.75
+    "lift": 2.56
    }
   ],
   "events": [
@@ -2386,7 +2454,14 @@
     "actor": "",
     "kind": "case",
     "ref": "AIRT-CS-0014",
-    "techniques": []
+    "techniques": [
+     "AML.T0006",
+     "AML.T0049",
+     "AML.T0055",
+     "AML.T0035",
+     "AML.T0025",
+     "AML.T0048.000"
+    ]
    },
    {
     "date": "2024-09-24",
@@ -2433,7 +2508,11 @@
     "actor": "",
     "kind": "case",
     "ref": "AIRT-CS-0009",
-    "techniques": []
+    "techniques": [
+     "AML.T0010.005",
+     "AML.T0109",
+     "AML.T0081"
+    ]
    },
    {
     "date": "2025-07-17",
@@ -2965,6 +3044,22 @@
     "technique": "AML.T0025",
     "name": "Exfiltration via Cyber Means",
     "actors": 0,
+    "cases": 2,
+    "score": 2,
+    "off_host": false
+   },
+   {
+    "technique": "AML.T0035",
+    "name": "AI Artifact Collection",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": false
+   },
+   {
+    "technique": "AML.T0048.000",
+    "name": "Financial Harm",
+    "actors": 0,
     "cases": 1,
     "score": 1,
     "off_host": false
@@ -2972,6 +3067,14 @@
    {
     "technique": "AML.T0082",
     "name": "RAG Credential Harvesting",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": false
+   },
+   {
+    "technique": "AML.T0109",
+    "name": "AI Supply Chain Rug Pull",
     "actors": 0,
     "cases": 1,
     "score": 1,
@@ -3074,6 +3177,14 @@
     "off_host": true
    },
    {
+    "technique": "AML.T0006",
+    "name": "Active Scanning",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": true
+   },
+   {
     "technique": "AML.T0095.000",
     "name": "Code Repositories",
     "actors": 0,
@@ -3083,22 +3194,22 @@
    }
   ],
   "tactic_observations": {
-   "AML.TA0004": 10,
+   "AML.TA0004": 12,
    "AML.TA0003": 23,
    "AML.TA0005": 9,
    "AML.TA0001": 8,
-   "AML.TA0002": 8,
-   "AML.TA0007": 7,
+   "AML.TA0002": 9,
+   "AML.TA0007": 8,
    "AML.TA0012": 7,
    "AML.TA0014": 7,
    "AML.TA0015": 4,
-   "AML.TA0010": 3,
-   "AML.TA0006": 5,
-   "AML.TA0013": 9,
-   "AML.TA0009": 2,
-   "AML.TA0011": 2
+   "AML.TA0010": 4,
+   "AML.TA0006": 6,
+   "AML.TA0013": 10,
+   "AML.TA0009": 3,
+   "AML.TA0011": 3
   },
-  "observations": 44
+  "observations": 46
  },
  "actors": [
   {
@@ -9512,6 +9623,11 @@
    "owasp_agentic": [
     "ASI04"
    ],
+   "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0053"
+    ]
+   },
    "affects_ids": []
   },
   {
@@ -9979,6 +10095,11 @@
     ],
     "basis": "CERT-UA and GTIG both describe targeting of Ukraine's security and defence sector."
    },
+   "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0044"
+    ]
+   },
    "affects_ids": []
   },
   {
@@ -10048,6 +10169,9 @@
     "ASI01"
    ],
    "external_ids": {
+    "atlas_case_study": [
+     "AML.CS0059"
+    ],
     "cve": [
      "CVE-2025-32711"
     ]
@@ -10067,6 +10191,11 @@
    ],
    "confidence": "high",
    "basis": "Three assigned CVEs with published advisories, named discovering parties and shipped fixes. Recorded from the CVE records rather than from aggregate counts.",
+   "atlas": [
+    "AML.T0010.005",
+    "AML.T0109",
+    "AML.T0081"
+   ],
    "summary": "Model Context Protocol went from novelty to default integration layer, and a vulnerability class followed it. mcp-remote (CVE-2025-6514, CVSS 9.6, JFrog) achieved OS command injection on the client merely by connecting to a malicious server, in versions 0.0.5 to 0.1.15 and with over 437,000 downloads at disclosure. MCP Inspector (CVE-2025-49596, CVSS 9.4, Oligo) allowed unauthenticated RCE between client and proxy, fixed in 0.14.1. MCPoison (CVE-2025-54136, CVSS 7.2, Check Point) allowed an approved MCP server configuration in Cursor to be silently redefined after approval and never re-validated - the rug-pull - fixed in Cursor 1.3.",
    "iocs": [
     {
@@ -10452,6 +10581,14 @@
    "confidence": "high",
    "basis": "Vendor research by Oligo Security with in-the-wild exploitation observed across two campaigns, widely corroborated in trade press. CVE-2023-48022 is a published CVE record.",
    "contested": "CVE-2023-48022 is disputed. Anyscale's position is that unauthenticated job submission is intended behaviour for a framework meant to run inside a trusted network, so the CVE was never directly fixed. That disagreement is why exposure persists and why this is an exposure-management finding rather than a patching one.",
+   "atlas": [
+    "AML.T0006",
+    "AML.T0049",
+    "AML.T0055",
+    "AML.T0035",
+    "AML.T0025",
+    "AML.T0048.000"
+   ],
    "summary": "Ray's Jobs API accepts job submissions without authentication. Internet-exposed clusters therefore give an attacker code execution on machines holding models, training data and cloud credentials. Oligo disclosed ShadowRay in March 2024 as the first known attack campaign against AI workloads in the wild, with thousands of exposed servers already compromised. In November 2025 Oligo documented ShadowRay 2.0, a global campaign turning exposed clusters into a self-propagating cryptomining botnet - multi-stage Bash and Python payloads that abuse Ray's own orchestration to deploy across every node and to spread cluster to cluster, running XMRig.",
    "iocs": [
     {
@@ -14069,6 +14206,12 @@
     "label": "ASI06 Memory and Context Poisoning"
    },
    {
+    "id": "atlas:AML.T0006",
+    "type": "technique",
+    "label": "AML.T0006 Active Scanning",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0008",
     "type": "technique",
     "label": "AML.T0008 Acquire Infrastructure",
@@ -14090,6 +14233,12 @@
     "id": "atlas:AML.T0010.001",
     "type": "technique",
     "label": "AML.T0010.001 Software",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0010.005",
+    "type": "technique",
+    "label": "AML.T0010.005 AI Agent Tool",
     "framework": "ATLAS"
    },
    {
@@ -14150,6 +14299,18 @@
     "id": "atlas:AML.T0034",
     "type": "technique",
     "label": "AML.T0034 Cost Harvesting",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0035",
+    "type": "technique",
+    "label": "AML.T0035 AI Artifact Collection",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0048.000",
+    "type": "technique",
+    "label": "AML.T0048.000 Financial Harm",
     "framework": "ATLAS"
    },
    {
@@ -14240,6 +14401,12 @@
     "id": "atlas:AML.T0103",
     "type": "technique",
     "label": "AML.T0103 Deploy AI Agent",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0109",
+    "type": "technique",
+    "label": "AML.T0109 AI Supply Chain Rug Pull",
     "framework": "ATLAS"
    },
    {
@@ -17012,6 +17179,11 @@
     "rel": "uses"
    },
    {
+    "source": "atlas:AML.T0006",
+    "target": "tactic:AML.TA0002",
+    "rel": "in-tactic"
+   },
+   {
     "source": "atlas:AML.T0008",
     "target": "tactic:AML.TA0003",
     "rel": "in-tactic"
@@ -17028,6 +17200,11 @@
    },
    {
     "source": "atlas:AML.T0010.001",
+    "target": "tactic:AML.TA0004",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0010.005",
     "target": "tactic:AML.TA0004",
     "rel": "in-tactic"
    },
@@ -17088,6 +17265,16 @@
    },
    {
     "source": "atlas:AML.T0034",
+    "target": "tactic:AML.TA0011",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0035",
+    "target": "tactic:AML.TA0009",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0048.000",
     "target": "tactic:AML.TA0011",
     "rel": "in-tactic"
    },
@@ -17184,6 +17371,11 @@
    {
     "source": "atlas:AML.T0103",
     "target": "tactic:AML.TA0005",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0109",
+    "target": "tactic:AML.TA0007",
     "rel": "in-tactic"
    },
    {
@@ -17628,6 +17820,21 @@
    },
    {
     "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0010.005",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0081",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
+    "target": "atlas:AML.T0109",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0009",
     "target": "rule:ai_agent_mcp_config_modification.yml",
     "rel": "detected-by"
    },
@@ -17820,6 +18027,36 @@
     "source": "case:AIRT-CS-0013",
     "target": "tool:AIRT-0001",
     "rel": "affects"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0006",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0025",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0035",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0048.000",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0049",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0014",
+    "target": "atlas:AML.T0055",
+    "rel": "uses"
    },
    {
     "source": "case:AIRT-CS-0014",
@@ -19562,6 +19799,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:claude_desktop_config_modify.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:claude_session_jsonl_unexpected_access.yml",
     "target": "atlas:AML.T0086",
     "rel": "detects"
@@ -19577,6 +19819,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:copilot_rules_file_backdoor.yar",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -19584,6 +19831,11 @@
    {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:cursor_settings_db_modification.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19613,6 +19865,11 @@
    },
    {
     "source": "rule:github_copilot_yolo_mode_enabled.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:github_copilot_yolo_mode_enabled.yml",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -19624,6 +19881,11 @@
    {
     "source": "rule:huggingface_cache_unexpected_writer.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:huggingface_cache_unexpected_writer.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19684,6 +19946,11 @@
    {
     "source": "rule:mcp_config_tampering.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mcp_config_tampering.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19753,6 +20020,11 @@
    },
    {
     "source": "rule:mlflow_path_traversal.rules",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:mlflow_path_traversal.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -19777,6 +20049,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:model_file_hash_mismatch.yml",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
     "source": "rule:ollama_vllm_unauth_exposure.rules",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -19784,6 +20061,11 @@
    {
     "source": "rule:ollama_vllm_unauth_exposure.rules",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:ollama_vllm_unauth_exposure.rules",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19809,6 +20091,11 @@
    {
     "source": "rule:pip_install_typosquat.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:pip_install_typosquat.yml",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {
@@ -19913,6 +20200,11 @@
    },
    {
     "source": "rule:torchserve_shelltorch.rules",
+    "target": "atlas:AML.T0010.005",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:torchserve_shelltorch.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
    },
@@ -19924,6 +20216,11 @@
    {
     "source": "rule:triton_inference_server_exploit.rules",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:triton_inference_server_exploit.rules",
+    "target": "atlas:AML.T0010.005",
     "rel": "detects"
    },
    {

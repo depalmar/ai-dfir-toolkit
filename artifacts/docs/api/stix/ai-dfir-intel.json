@@ -3904,6 +3904,11 @@
      "external_id": "AIRT-CS-0002"
     },
     {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.CS0053",
+     "url": "https://atlas.mitre.org/studies/AML.CS0053"
+    },
+    {
      "source_name": "The Hacker News - First Malicious MCP Server Found Stealing Emails in Rogue Postmark-MCP Package",
      "url": "https://thehackernews.com/2025/09/first-malicious-mcp-server-found.html"
     },
@@ -4387,6 +4392,11 @@
      "external_id": "AIRT-CS-0007"
     },
     {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.CS0044",
+     "url": "https://atlas.mitre.org/studies/AML.CS0044"
+    },
+    {
      "source_name": "CERT-UA #16039 - LAMEHUG (17 Jul 2025)",
      "url": "https://cert.gov.ua/article/6284730"
     },
@@ -4468,6 +4478,11 @@
      "external_id": "AIRT-CS-0008"
     },
     {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.CS0059",
+     "url": "https://atlas.mitre.org/studies/AML.CS0059"
+    },
+    {
      "source_name": "cve",
      "external_id": "CVE-2025-32711"
     },
@@ -4482,6 +4497,44 @@
     {
      "source_name": "The Hacker News - Zero-Click AI Vulnerability Exposes Microsoft 365 Copilot Data Without User Interaction",
      "url": "https://thehackernews.com/2025/06/zero-click-ai-vulnerability-exposes.html"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--f24c24ec-540c-5345-ad79-959666667f2c",
+   "created": "2025-07-09T00:00:00.000Z",
+   "modified": "2025-07-09T00:00:00.000Z",
+   "name": "AI Agent Tool",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0010.005",
+     "url": "https://atlas.mitre.org/techniques/AML.T0010.005"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--b879e231-225a-59ad-b22f-bb4b0a5161d8",
+   "created": "2025-07-09T00:00:00.000Z",
+   "modified": "2025-07-09T00:00:00.000Z",
+   "name": "AI Supply Chain Rug Pull",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0109",
+     "url": "https://atlas.mitre.org/techniques/AML.T0109"
     }
    ]
   },
@@ -4538,6 +4591,9 @@
     "threat-report"
    ],
    "object_refs": [
+    "attack-pattern--a37e2a7e-23b4-571d-afa6-73dac4590f7e",
+    "attack-pattern--b879e231-225a-59ad-b22f-bb4b0a5161d8",
+    "attack-pattern--f24c24ec-540c-5345-ad79-959666667f2c",
     "tool--1ea4a315-78e0-5add-8485-c4b1579bccd5",
     "tool--7c5faf86-889c-5d4d-9a05-fbc098d2f831",
     "tool--81278db8-20de-540c-9afc-2303c5262729",
@@ -4868,6 +4924,82 @@
    ]
   },
   {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--5c3b3c12-8a75-5adb-aeaa-118c401c1f4f",
+   "created": "2024-03-26T00:00:00.000Z",
+   "modified": "2024-03-26T00:00:00.000Z",
+   "name": "Active Scanning",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0006",
+     "url": "https://atlas.mitre.org/techniques/AML.T0006"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--6f8daddc-611f-588b-a9d9-74e6061efb01",
+   "created": "2024-03-26T00:00:00.000Z",
+   "modified": "2024-03-26T00:00:00.000Z",
+   "name": "AI Artifact Collection",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0035",
+     "url": "https://atlas.mitre.org/techniques/AML.T0035"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--19a62392-7e95-5114-9442-5a49aa30c520",
+   "created": "2024-03-26T00:00:00.000Z",
+   "modified": "2024-03-26T00:00:00.000Z",
+   "name": "Exfiltration via Cyber Means",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0025",
+     "url": "https://atlas.mitre.org/techniques/AML.T0025"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
+   "object_marking_refs": [
+    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
+   ],
+   "id": "attack-pattern--169c98bd-4e5f-5be5-9e4b-a668b2353c49",
+   "created": "2024-03-26T00:00:00.000Z",
+   "modified": "2024-03-26T00:00:00.000Z",
+   "name": "Financial Harm",
+   "external_references": [
+    {
+     "source_name": "mitre-atlas",
+     "external_id": "AML.T0048.000",
+     "url": "https://atlas.mitre.org/techniques/AML.T0048.000"
+    }
+   ]
+  },
+  {
    "type": "report",
    "spec_version": "2.1",
    "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
@@ -4884,7 +5016,12 @@
     "threat-report"
    ],
    "object_refs": [
-    "identity--cf20135e-3ab2-5072-a070-c5679b316619"
+    "attack-pattern--169c98bd-4e5f-5be5-9e4b-a668b2353c49",
+    "attack-pattern--19a62392-7e95-5114-9442-5a49aa30c520",
+    "attack-pattern--40209df8-ca30-5bac-b3ce-aa47b7c779e1",
+    "attack-pattern--5c3b3c12-8a75-5adb-aeaa-118c401c1f4f",
+    "attack-pattern--6f8daddc-611f-588b-a9d9-74e6061efb01",
+    "attack-pattern--cb69a857-3a1e-5441-ac29-f2332202c955"
    ],
    "external_references": [
     {
@@ -10426,25 +10563,6 @@
      "source_name": "mitre-atlas",
      "external_id": "AML.T0095.000",
      "url": "https://atlas.mitre.org/techniques/AML.T0095.000"
-    }
-   ]
-  },
-  {
-   "type": "attack-pattern",
-   "spec_version": "2.1",
-   "created_by_ref": "identity--cf20135e-3ab2-5072-a070-c5679b316619",
-   "object_marking_refs": [
-    "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
-   ],
-   "id": "attack-pattern--19a62392-7e95-5114-9442-5a49aa30c520",
-   "created": "2026-11-05T00:00:00.000Z",
-   "modified": "2026-11-05T00:00:00.000Z",
-   "name": "Exfiltration via Cyber Means",
-   "external_references": [
-    {
-     "source_name": "mitre-atlas",
-     "external_id": "AML.T0025",
-     "url": "https://atlas.mitre.org/techniques/AML.T0025"
     }
    ]
   },

@@ -215,10 +215,12 @@ maltego.Phrase,asi:ASI03,asi,ASI03 Identity and Privilege Abuse
 maltego.Phrase,asi:ASI04,asi,ASI04 Agentic Supply Chain Vulnerabilities
 maltego.Phrase,asi:ASI05,asi,ASI05 Unexpected Code Execution
 maltego.Phrase,asi:ASI06,asi,ASI06 Memory and Context Poisoning
+maltego.Phrase,atlas:AML.T0006,technique,AML.T0006 Active Scanning
 maltego.Phrase,atlas:AML.T0008,technique,AML.T0008 Acquire Infrastructure
 maltego.Phrase,atlas:AML.T0008.000,technique,AML.T0008.000 AI Development Workspaces
 maltego.Phrase,atlas:AML.T0010,technique,AML.T0010 Supply Chain Compromise
 maltego.Phrase,atlas:AML.T0010.001,technique,AML.T0010.001 Software
+maltego.Phrase,atlas:AML.T0010.005,technique,AML.T0010.005 AI Agent Tool
 maltego.Phrase,atlas:AML.T0011,technique,AML.T0011 User Execution
 maltego.Phrase,atlas:AML.T0012,technique,AML.T0012 Valid Accounts
 maltego.Phrase,atlas:AML.T0016.001,technique,AML.T0016.001 Software Tools
@@ -229,6 +231,8 @@ maltego.Phrase,atlas:AML.T0017.002,technique,AML.T0017.002 AI Agent Tools
 maltego.Phrase,atlas:AML.T0024,technique,AML.T0024 Exfiltration via AI Inference API
 maltego.Phrase,atlas:AML.T0025,technique,AML.T0025 Exfiltration via Cyber Means
 maltego.Phrase,atlas:AML.T0034,technique,AML.T0034 Cost Harvesting
+maltego.Phrase,atlas:AML.T0035,technique,AML.T0035 AI Artifact Collection
+maltego.Phrase,atlas:AML.T0048.000,technique,AML.T0048.000 Financial Harm
 maltego.Phrase,atlas:AML.T0049,technique,AML.T0049 Exploit Public-Facing Application
 maltego.Phrase,atlas:AML.T0051,technique,AML.T0051 LLM Prompt Injection
 maltego.Phrase,atlas:AML.T0053,technique,AML.T0053 AI Agent Tool Invocation
@@ -244,6 +248,7 @@ maltego.Phrase,atlas:AML.T0095.000,technique,AML.T0095.000 Code Repositories
 maltego.Phrase,atlas:AML.T0096,technique,AML.T0096 AI Service API
 maltego.Phrase,atlas:AML.T0102,technique,AML.T0102 Generate Malicious Commands
 maltego.Phrase,atlas:AML.T0103,technique,AML.T0103 Deploy AI Agent
+maltego.Phrase,atlas:AML.T0109,technique,AML.T0109 AI Supply Chain Rug Pull
 maltego.Phrase,atlas:AML.T0115.002,technique,AML.T0115.002 AI Agent Tools
 maltego.Phrase,atlas:AML.T0116,technique,AML.T0116 Autonomous Reconnaissance
 maltego.Phrase,atlas:AML.T0117,technique,AML.T0117 Autonomous Attack-Path Adaptation
