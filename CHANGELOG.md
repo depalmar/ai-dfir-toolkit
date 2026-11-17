@@ -58,6 +58,39 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **Two Sigma rules that could not match.**
+  `ssh_authorized_keys_injection.yml` was a file-event rule that tested
+  `ParentImage`, a field file events do not carry, and looked in it for
+  `ray::`, which is a process title and never part of an executable path. It
+  is a process-creation rule now: a command touching `authorized_keys` whose
+  parent is an AI/ML workload. `chatgpt_paste_sensitive_data.yml` tested
+  `BytesSent` on endpoint network-connection events, which do not record
+  size; it reads web proxy logs now and no longer limits itself to browsers.
+- **Rate tests that depended on a field nobody emits.**
+  `mlflow_unauth_api_access.yml` and `vector_db_bulk_exfil.yml` tested
+  `rate_per_minute`. Each now has a base rule and an `event_count` correlation
+  over one minute, grouped by source. `gpu_unexpected_high_utilization.yml`
+  still needs `duration_minutes` from the collector and its log source
+  definition now says how to compute it.
+- **`mlflow_unauth_api_access.yml` claimed to detect unauthenticated access and
+  tested nothing of the kind.** It now has a branch for a write accepted with
+  no authenticated user, which needs a log that records the user, and the
+  description says so.
+- **`shadowray_process_masquerading.yml` now matches what the guide
+  describes**: any started process whose first argument is a kernel-thread
+  name. Real kernel threads are never started by execve, so they cannot
+  appear in process-creation telemetry.
+- **Suricata 9000201 is labelled for what it reports.** It fires on any
+  dashboard API request with no Authorization header, from any source, which
+  is ordinary traffic on a default Ray cluster. The message now says use, not
+  exposure, and points at 9000206.
+- **`memory_poisoning.yml` covers `.cursor/rules/`**, Cursor's current rules
+  location, which only the legacy `.cursorrules` file was matched for.
+
+None of the Sigma rewrites has been fired against real telemetry. They were
+checked against each log source's field set and converted with pySigma.
+167 signatures.
+
 - **Five Suricata rules parsed and could never alert.** Four match a server
   response (`flow:from_server`) and named the service port as the packet's
   destination, when a response travels from it: the Ray dashboard fingerprint

@@ -11,6 +11,7 @@ references:
   - https://attack.mitre.org/campaigns/C0045/
 author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
+modified: 2026-11-17
 tags:
   - attack.defense_evasion
   - attack.t1036.005
@@ -32,6 +33,19 @@ detection:
       - '/.python3.10'
       - '/.systemd'
       - '/.kthreadd'
+  # A real kernel thread is never started by execve, so it never produces a
+  # process-creation event. Any such event whose first argument is a kernel
+  # thread name is a user process that set the name itself. This is the
+  # "named like a kworker, with arguments" check the guide describes; the
+  # selections around it need a miner argument or a listed path.
+  selection_kthread_argv0:
+    CommandLine|startswith:
+      - 'kworker/'
+      - '[kworker/'
+      - 'kthreadd'
+      - '[kthreadd'
+      - 'ksoftirqd/'
+      - '[ksoftirqd/'
   selection_kthread_with_args:
     Image|contains: 'kworker'
     CommandLine|contains:
@@ -67,6 +81,6 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate kernel threads (no command-line arguments — true kthreads have empty cmdline)
+  - None expected for the kernel-thread selections. Real kernel threads are not created by execve and do not appear in process-creation telemetry
   - Custom-named Python virtual environments matching .pythonX.Y pattern (rare)
 level: critical

@@ -20,7 +20,7 @@ Detects malicious model files (pickle exploits, backdoored weights), HuggingFace
 - `pickle_malicious_opcodes.yar` — YARA for malicious pickle bytecode
 - `huggingface_token_exposure.yml` — Sigma for leaked HF tokens in logs/code
 - `mlflow_path_traversal.rules` — Suricata for CVE-2023-6831, CVE-2024-2928
-- `mlflow_unauth_api_access.yml` — Sigma for MLflow API abuse
+- `mlflow_unauth_api_access.yml` — Sigma for MLflow API abuse: path traversal, artifact-location changes, writes accepted with no authenticated user, and a correlation rule for bulk artifact download
 - `pip_install_typosquat.yml` — Sigma for ML package typosquatting (torchtriton-style)
 - `keras_lambda_layer_rce.yar` — YARA for malicious Keras Lambda layers
 - `huggingface_cache_unexpected_writer.yml` — Sigma for ~/.cache/huggingface tampering

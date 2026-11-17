@@ -2,11 +2,20 @@ title: MLflow Tracking Server - Suspicious API Activity
 id: 6f708192-a3b4-c5d6-e7f8-091011a2b3c4
 status: experimental
 description: |
-  Detects suspicious MLflow REST API activity in application logs:
-    - Unauthenticated access to write endpoints
-    - Bulk model downloads (potential model theft)
+  Detects suspicious MLflow REST API activity in the tracking server's
+  access log:
+    - A write request accepted with no authenticated user
     - Artifact location modifications pointing to attacker-controlled storage
     - Path traversal patterns in artifact requests (CVE-2023-6831, CVE-2024-2928)
+  Bulk artifact download is the correlation rule further down this file.
+
+  The unauthenticated-write branch needs a log that records who was
+  authenticated. MLflow's own server log does not; the field comes from the
+  basic-auth app or, more often, from the reverse proxy in front of the
+  server. Where no such field exists that branch cannot match, and the rule
+  reports only traversal and artifact-location changes. Earlier versions of
+  this rule claimed to detect unauthenticated access and tested nothing of
+  the kind.
 references:
   - https://www.cve.org/CVERecord?id=CVE-2023-6831
   - https://www.cve.org/CVERecord?id=CVE-2024-0520
@@ -14,6 +23,7 @@ references:
   - https://www.cve.org/CVERecord?id=CVE-2024-37059
 author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
+modified: 2026-11-17
 tags:
   - attack.initial_access
   - attack.t1190
@@ -22,6 +32,7 @@ tags:
 logsource:
   product: mlflow
   service: tracking
+  definition: 'HTTP access log of the MLflow tracking server or the proxy in front of it, normalised to: source_ip, request_method, request_uri, request_body, response_status, user_agent, remote_user. remote_user is the authenticated identity and is "-" or empty when no credentials were presented.'
 detection:
   selection_endpoint:
     request_uri|contains:
@@ -32,18 +43,79 @@ detection:
     request_uri|re: '(\.\./|%2e%2e%2f|%2e%2e/|\.\.\\|%2e%2e%5c|#\.\.)'
   selection_external_artifact:
     request_body|re: 'artifact_location["\s:]+["\s]*(s3|gs|azure|http)://[^/]+\.(amazonaws|googleapis|azure|ngrok|trycloudflare)\.'
-  selection_bulk_download:
-    request_uri|contains: '/get-artifact'
-    rate_per_minute|gte: 100
-  condition: selection_endpoint and (selection_traversal or selection_external_artifact or selection_bulk_download)
+  selection_unauth_write:
+    request_method:
+      - 'POST'
+      - 'PATCH'
+      - 'DELETE'
+    remote_user:
+      - '-'
+      - ''
+    response_status: 200
+  condition: selection_endpoint and (selection_traversal or selection_external_artifact or selection_unauth_write)
 fields:
   - source_ip
+  - remote_user
   - user_agent
+  - request_method
   - request_uri
   - request_body
   - response_status
 falsepositives:
   - Legitimate ML platform engineers performing maintenance
   - Authorized model migration to new artifact store
-  - Backup/replication workflows
+  - A tracking server deliberately run without authentication on an isolated network, where every write matches the unauthenticated branch
+level: high
+---
+title: MLflow Artifact Download
+name: mlflow_artifact_download_base
+id: 84ba24a8-878e-4bc5-9cb4-071546af3162
+status: experimental
+description: |
+  Base rule for the correlation below. One artifact download is ordinary use
+  and is not an alert; it is counted per source.
+author: Raymond DePalma (ai-dfir-toolkit)
+date: 2026-11-17
+tags:
+  - attack.collection
+  - attack.atlas.t0011
+  - owasp.llm03
+logsource:
+  product: mlflow
+  service: tracking
+  definition: 'HTTP access log of the MLflow tracking server or the proxy in front of it, normalised to: source_ip, request_method, request_uri, request_body, response_status, user_agent, remote_user.'
+detection:
+  selection:
+    request_uri|contains: '/get-artifact'
+  condition: selection
+falsepositives:
+  - Every legitimate artifact download. Use only through the correlation rule.
+level: informational
+---
+title: MLflow Bulk Artifact Download From One Source
+id: 37eb882d-5bb5-47bb-ad52-71b68598417a
+status: experimental
+description: |
+  One source requesting 100 or more artifacts within a minute, the shape of
+  a registry being copied out. This replaces a rate_per_minute field the
+  rule used to test, which no log carries and a pipeline had to compute.
+  Tune the count to the largest legitimate batch job in the estate.
+author: Raymond DePalma (ai-dfir-toolkit)
+date: 2026-11-17
+correlation:
+  type: event_count
+  rules:
+    - mlflow_artifact_download_base
+  group-by:
+    - source_ip
+  timespan: 1m
+  condition:
+    gte: 100
+tags:
+  - attack.collection
+  - attack.atlas.t0011
+  - owasp.llm03
+falsepositives:
+  - Backup and replication workflows
+  - Authorised model migration to a new artifact store
 level: high

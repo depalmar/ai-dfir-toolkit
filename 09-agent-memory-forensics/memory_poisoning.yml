@@ -4,7 +4,7 @@ id: 6b41c07e-9a2d-4f83-b5e1-3c8d70a4f2b9
 status: experimental
 description: |
     Detects modification of the instruction and rules files that agentic coding tools load into context on
-    every session (CLAUDE.md, AGENTS.md, MEMORY.md, .cursorrules, .windsurfrules, .clinerules, GEMINI.md).
+    every session (CLAUDE.md, AGENTS.md, MEMORY.md, .cursorrules, .cursor/rules/, .windsurfrules, .clinerules, GEMINI.md).
     These files are re-read at each invocation, so an attacker-controlled line persists across sessions,
     process restarts and conversation resets. This is the file-backed form of MITRE ATLAS AML.T0080
     (AI Agent Context Poisoning) and is the mechanism behind Rules-File-Backdoor style attacks.
@@ -37,6 +37,12 @@ detection:
             - '/MEMORY.md'
             - '/.cursorrules'
             - '/.windsurfrules'
+    # Cursor's current rules location is a directory of .md and .mdc files, one
+    # rule per file, so it is matched by path and not by file name.
+    selection_rules_dir:
+        TargetFilename|contains:
+            - '\.cursor\rules\'
+            - '/.cursor/rules/'
     filter_editors:
         # Interactive edits by a developer are expected; tune to your estate.
         Image|endswith:
@@ -47,10 +53,11 @@ detection:
             - '/vim'
             - '/nvim'
             - '/emacs'
-    condition: selection_name and not filter_editors
+    condition: (selection_name or selection_rules_dir) and not filter_editors
 falsepositives:
     - Legitimate repository updates via git checkout, pull, or merge - correlate with VCS activity.
     - Project scaffolding tools that generate agent instruction files.
+    - A developer editing rules inside Cursor. The write comes from the same process as an agent's edit, so it cannot be filtered by image.
 level: medium
 ---
 title: Agent Memory Store Written by Unexpected Process

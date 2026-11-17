@@ -19,9 +19,9 @@ Detects exploitation of AI/ML serving infrastructure: Ray clusters (ShadowRay), 
 
 - `ray_dashboard_exposure.rules` — Suricata for exposed Ray dashboard (port 8265)
 - `ray_jobs_api_rce.rules` — Suricata for CVE-2023-48022 exploitation
-- `shadowray_process_masquerading.yml` — Sigma for kworker/dns-filter masquerading
+- `shadowray_process_masquerading.yml` — Sigma for kworker/dns-filter masquerading, including any started process that names itself after a kernel thread
 - `gpu_unexpected_high_utilization.yml` — Sigma for cryptomining-pattern GPU usage
-- `ssh_authorized_keys_injection.yml` — Sigma for SSH key injection (ShadowRay persistence)
+- `ssh_authorized_keys_injection.yml` — Sigma for a command touching `authorized_keys` whose parent is an AI/ML workload process (ShadowRay persistence)
 - `triton_inference_server_exploit.rules` — Suricata for CVE-2025-23319/23320/23334
 - `torchserve_shelltorch.rules` — Suricata for CVE-2023-43654
 - `nvidia_container_escape.yml` — Sigma for CVE-2024-0132 / CVE-2025-23266 patterns

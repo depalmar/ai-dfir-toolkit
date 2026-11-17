@@ -1,39 +1,47 @@
-title: SSH authorized_keys File Modified by AI/ML Process
+title: SSH authorized_keys Touched by a Command From an AI/ML Workload
 id: b4c5d6e7-f809-1011-a2b3-c4d5e6f70809
 status: experimental
 description: |
-  Detects modifications to ~/.ssh/authorized_keys initiated by ML/AI
-  workload processes. ShadowRay attackers inject SSH keys for persistence
-  on compromised Ray clusters and AI inference hosts. Any modification
-  by a non-administrative process or by an LLM/agent process is
-  high-confidence malicious.
+  Detects a command that touches ~/.ssh/authorized_keys and was started by
+  an ML or AI workload process: a Ray worker or job supervisor, a Jupyter
+  kernel, an inference server. ShadowRay attackers injected SSH keys this
+  way for persistence on compromised Ray clusters, by submitting a job
+  whose entrypoint is a shell command.
+
+  This is a process-creation rule. It was a file-event rule that tested
+  ParentImage, a field file events do not carry, and looked in it for
+  "ray::", which is a process title and never part of an executable path,
+  so it could not match. Parent context exists on process creation, and
+  the process title is visible there in ParentCommandLine.
+
+  What it does not see: a key written by the workload's own code without
+  starting a shell, and a key written by a script the shell downloaded, whose
+  parent is no longer the workload. Pair it with file-integrity monitoring on
+  authorized_keys.
 references:
   - https://www.oligo.security/blog/shadowray-2-0-attackers-turn-ai-against-itself-in-global-campaign-that-hijacks-ai-into-self-propagating-botnet
   - https://attack.mitre.org/techniques/T1098/004/
 author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
+modified: 2026-11-17
 tags:
   - attack.persistence
   - attack.t1098.004
   - attack.atlas.t0011
 logsource:
-  category: file_event
+  category: process_creation
   product: linux
 detection:
   selection_target:
-    TargetFilename|endswith:
-      - '/.ssh/authorized_keys'
-      - '/.ssh/authorized_keys2'
-  selection_suspicious_writer:
-    Image|endswith:
-      - '/python'
-      - '/python3'
-      - '/node'
-      - '/java'
-      - '/ray'
-      - '/jupyter'
-    ParentImage|contains:
+    CommandLine|contains:
+      - '.ssh/authorized_keys'
+      - '.ssh/authorized_keys2'
+  selection_parent_title:
+    ParentCommandLine|contains:
       - 'ray::'
+      - 'default_worker.py'
+      - 'raylet'
+      - 'ipykernel'
       - 'jupyter'
       - 'mlflow'
       - 'tritonserver'
@@ -41,27 +49,24 @@ detection:
       - 'vllm'
       - 'ollama'
       - 'mcp-server'
-  selection_curl_wget_writer:
-    Image|endswith:
-      - '/curl'
-      - '/wget'
-      - '/sh'
-      - '/bash'
-    ParentImage|contains:
-      - 'ray::'
-      - 'jupyter'
-      - 'tritonserver'
-      - 'torchserve'
-      - 'vllm'
-      - 'ollama'
-  condition: selection_target and 1 of selection_*_writer
+  selection_parent_image:
+    ParentImage|endswith:
+      - '/raylet'
+      - '/jupyter'
+      - '/jupyter-lab'
+      - '/jupyter-notebook'
+      - '/mlflow'
+      - '/tritonserver'
+      - '/vllm'
+      - '/ollama'
+  condition: selection_target and 1 of selection_parent_*
 fields:
   - User
   - Image
+  - CommandLine
   - ParentImage
   - ParentCommandLine
-  - TargetFilename
 falsepositives:
-  - Legitimate cloud-init / configuration management adding keys at boot
-  - Approved DevOps tooling for key rotation
+  - A notebook user managing their own keys from a terminal inside Jupyter
+  - Approved DevOps tooling for key rotation that runs as a job on the cluster
 level: critical
