@@ -1,0 +1,31 @@
+# AI DFIR threat actor profile
+# AIRT-TA-0022 - Storm-3358
+# Schema: ../../schema/actor.schema.json
+# Techniques, victims, IOCs and detections are derived by scripts/intel_graph.py.
+
+id: AIRT-TA-0022
+name: Storm-3358
+kind: criminal
+nexus: KH
+motivation:
+- financial
+summary: Microsoft's designation for a financially motivated, Cambodia-based intrusion cluster
+  that mainly targets financial organisations in Southeast Asia and a smaller number of large
+  ones elsewhere. In October 2026 Microsoft reported it using the agentic offensive framework
+  ARTEX, alongside conventional automated tools, to scan and exploit internet-facing systems
+  before installing open-source remote-access tools.
+confidence: medium
+basis: One reporting party and one report. Microsoft gives no aliases and no confidence level,
+  and does not say whether the cluster is connected to the other actor it reports using the
+  same framework.
+external_ids:
+  vendor_cluster:
+  - Storm-3358
+malware:
+- WISP
+- vshell
+- AdaptixC2
+references:
+- title: Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial
+    sector (6 Nov 2026)
+  url: https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/

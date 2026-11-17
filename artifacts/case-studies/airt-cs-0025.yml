@@ -1,0 +1,95 @@
+# AI agent artifact case study
+# AIRT-CS-0025 - ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application
+
+id: AIRT-CS-0025
+title: "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application"
+date_range: Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026
+disclosed: "2026-11-05"
+affects: Application secrets and AI service keys exposed in public repositories, and the Entra ID and Azure resources they unlock - no catalogued endpoint tool
+confidence: medium
+basis: >-
+  One reporting party, read from the page itself. Microsoft attributes the
+  activity to no one: it calls the network indicators unattributed and two of
+  the addresses only "potentially associated" with the campaign, and one of
+  the four is a Tor exit node. The post gives no victim count, sector or
+  country, names no model and does not say where the framework ran. It
+  credits one other vendor with reporting a similar campaign from the same
+  addresses; that report was not read for this entry.
+atlas:
+  - AML.T0095.000
+  - AML.T0055
+  - AML.T0012
+  - AML.T0117
+  - AML.T0124
+  - AML.T0025
+attack:
+  - T1593.003
+  - T1552.001
+  - T1078.004
+  - T1555.006
+  - T1530
+  - T1651
+  - T1580
+summary: >-
+  Microsoft reports that from August 2026 an agentic offensive framework,
+  ARTEX, sent large volumes of searches to GitHub for secrets, combining a
+  target organisation's name with secret, cloud-service and AI-provider
+  keywords. It looked for application credentials and for API keys to AI
+  services, which the post says the agents sought out repeatedly. From 28
+  October the harvested application credentials were used for service
+  principal sign-ins to Entra ID across dozens of applications in several
+  tenants, followed by discovery of subscriptions, permissions and AI model
+  deployments, reads of storage keys, connection strings and Key Vault
+  secrets, searches of Azure DevOps, SharePoint and mailbox access, and
+  scripts run on virtual machines through Run Command. In one tenant a
+  vendor-owned multitenant application's credential, compromised at the
+  vendor, gave access to downstream tenants. Microsoft describes one run that
+  went from searching GitHub for a client secret to exfiltrating from a Key
+  Vault in five minutes, and requests that failed and were reissued against a
+  different API version within about half a minute.
+iocs:
+  - type: ip
+    value: 199.19.77[.]84
+    description: Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026
+  - type: ip
+    value: 199.19.77[.]18
+    description: A Tor exit node, which the post warns may carry unrelated activity from unrelated sources. Use to pivot, not to conclude
+  - type: ip
+    value: 65.87.223[.]26
+    description: Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent. One of two addresses the post calls potentially associated
+  - type: ip
+    value: 157.22.126[.]128
+    description: Reconnaissance against AI workloads the victims run on Azure AI services
+  - type: behavior
+    value: Application sign-in failures with error AADSTS7000215 or AADSTS7000222, then a success for the same application
+    description: An invalid or expired client secret means somebody holds a credential for the application. A failure followed by a success is the urgent case
+  - type: behavior
+    value: One address authenticating to three or more service principals with mixed success, or one application requesting tokens for Resource Manager, Key Vault, Storage and Graph in a short window
+    description: The breadth pattern the post tells defenders to hunt for
+  - type: behavior
+    value: A management-plane request that fails with HTTP 400 and succeeds within 30 to 80 seconds against a different API version or with corrected parameters
+    description: Reported for Key Vault, Azure SQL firewall and Application Insights calls. A script repeats the same failing call; this corrects itself
+response_actions:
+  - phase: contain
+    action: Export service principal and non-interactive sign-in logs, the Entra audit log, Azure Activity, Key Vault and Storage diagnostics, Azure DevOps audit and the Microsoft 365 unified audit log before they age out. Block the published address for workload identities where the licence allows, knowing the policy covers only single-tenant applications in the tenant and that already-issued tokens stay valid until they expire.
+  - phase: eradicate
+    action: For every application that signed in from those addresses or logged the two secret errors, remove all client secrets, certificates and federated credentials, including any the actor added, and disable the service principal if it cannot be re-credentialed at once. Revoke sessions, Azure DevOps personal access tokens and SSH keys for affected users.
+  - phase: recover
+    action: Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Managed service providers should also review partner access and customer tenants.
+  - phase: harden
+    action: Treat any secret that was ever in a public repository as compromised - removing the commit does not invalidate it. Turn on secret scanning and push protection, set maximum lifetimes for application passwords, and move applications from client secrets to managed identities or federated credentials.
+lesson: >-
+  The catalog lists where AI tools keep API keys on a host because those files
+  are what gets copied into a repository. This case is the other end of that:
+  an agent that searches public code for exactly those keys and for
+  application secrets, and uses one within minutes. No catalogued tool ran on
+  the victim's side, so the evidence is the provider's sign-in and resource
+  logs, and the AI is visible only in the speed and in the way failed requests
+  were corrected.
+detections:
+  - entra_app_signin_invalid_or_expired_secret.yml
+  - entra_app_signin_scripted_client.yml
+references:
+  - title: "Microsoft Threat Intelligence and Microsoft Security Research - Threat actors use agentic AI tooling to find and abuse exposed secrets (5 Nov 2026)"
+    url: https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/
+    accessed: "2026-11-17"

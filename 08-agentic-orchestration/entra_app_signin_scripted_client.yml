@@ -1,0 +1,54 @@
+title: Entra ID - Application Sign-In From a Scripted HTTP Client
+name: entra_app_signin_scripted_client
+id: f3ab9c5b-4255-43e0-b282-cd11da041d67
+status: experimental
+description: |
+    Detects a successful application (service principal) sign-in to Microsoft Entra ID whose user agent is
+    a bare scripting client: python-requests, Python-urllib, curl, or the azure-toolkit string. These are
+    the user agents Microsoft published for the October 2026 campaign in which an agentic offensive
+    framework authenticated to customer tenants with a vendor's stolen application credentials.
+    This is a hunting rule, not an alert. Scripts that call the token endpoint directly, and some
+    authentication libraries, present the same strings, so it will match legitimate automation until the
+    estate is baselined. What narrows it is the application: a vendor's multitenant application, or one
+    that has only ever signed in from the vendor's own address range, has no reason to appear here.
+    Microsoft notes that operators of these frameworks change user agents readily, so absence of a match
+    proves nothing.
+    Reads the service principal sign-in log (Azure Monitor table AADServicePrincipalSignInLogs, diagnostic
+    category ServicePrincipalSignInLogs), which is not exported unless that category is selected.
+references:
+    - https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/
+    - https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadserviceprincipalsigninlogs
+    - https://atlas.mitre.org/techniques/AML.T0012
+author: Raymond DePalma (@depalmar)
+date: 2026-11-17
+tags:
+    - attack.initial-access
+    - attack.t1078.004      # Valid Accounts: Cloud Accounts
+    - attack.t1199          # Trusted Relationship
+    - atlas.aml-t0012
+logsource:
+    product: azure
+    service: signinlogs
+    definition: 'Microsoft Entra service principal sign-in logs (AADServicePrincipalSignInLogs). Requires the ServicePrincipalSignInLogs diagnostic category to be exported.'
+detection:
+    selection_success:
+        ResultType: '0'
+    selection_service_principal:
+        ServicePrincipalId|exists: true
+    selection_client:
+        UserAgent|startswith:
+            - 'python-requests/'
+            - 'Python-urllib/'
+            - 'curl/'
+            - 'azure-toolkit/'
+    condition: all of selection_*
+fields:
+    - AppId
+    - ServicePrincipalId
+    - ServicePrincipalName
+    - IPAddress
+    - UserAgent
+    - ResourceDisplayName
+falsepositives:
+    - Automation that requests tokens with a plain HTTP client. Baseline per application before treating a match as a finding.
+level: low

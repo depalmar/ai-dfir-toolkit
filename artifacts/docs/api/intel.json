@@ -1,48 +1,50 @@
 {
  "atlas_release": "2026.10",
  "stats": {
-  "actors": 20,
-  "cases": 23,
-  "iocs": 234,
-  "atomic_iocs": 173,
-  "techniques_observed": 30,
-  "techniques_covered": 15,
-  "techniques_off_host": 11,
+  "actors": 22,
+  "cases": 26,
+  "iocs": 267,
+  "atomic_iocs": 195,
+  "techniques_observed": 34,
+  "techniques_covered": 16,
+  "techniques_off_host": 13,
   "by_kind": {
-   "state-nexus": 13,
-   "criminal": 5,
+   "state-nexus": 14,
+   "criminal": 6,
    "unattributed-cluster": 2
   },
   "by_nexus": {
    "unstated": 7,
-   "CN": 5,
+   "CN": 6,
    "KP": 3,
    "RU": 3,
-   "IR": 2
+   "IR": 2,
+   "KH": 1
   },
   "by_motivation": {
-   "espionage": 12,
-   "financial": 8,
+   "espionage": 13,
+   "financial": 9,
    "destruction": 1,
    "hacktivism": 1
   },
   "by_sector": {
-   "government": 7,
-   "information-technology": 6,
-   "defense-industrial-base": 3,
+   "government": 8,
+   "information-technology": 7,
+   "defense-industrial-base": 4,
+   "financial-services": 4,
+   "ngo-think-tank": 4,
    "education": 3,
+   "energy": 3,
    "healthcare": 3,
-   "ngo-think-tank": 3,
-   "energy": 2,
-   "financial-services": 2,
+   "chemical": 2,
+   "critical-manufacturing": 2,
+   "media-entertainment": 2,
    "retail": 2,
-   "chemical": 1,
    "commercial-facilities": 1,
    "consumers": 1,
-   "critical-manufacturing": 1,
    "cryptocurrency": 1,
    "emergency-services": 1,
-   "media-entertainment": 1,
+   "legal-professional-services": 1,
    "religious-institutions": 1,
    "research": 1,
    "software-supply-chain": 1,
@@ -60,35 +62,37 @@
    "Americas": 2
   },
   "case_sectors": {
-   "government": 5,
-   "information-technology": 5,
+   "government": 6,
+   "information-technology": 6,
+   "defense-industrial-base": 3,
+   "financial-services": 3,
+   "ngo-think-tank": 3,
+   "chemical": 2,
    "consumers": 2,
-   "defense-industrial-base": 2,
-   "ngo-think-tank": 2,
-   "chemical": 1,
+   "energy": 2,
+   "media-entertainment": 2,
    "commercial-facilities": 1,
+   "critical-manufacturing": 1,
    "cryptocurrency": 1,
-   "energy": 1,
-   "financial-services": 1,
-   "media-entertainment": 1,
+   "legal-professional-services": 1,
    "retail": 1,
    "software-supply-chain": 1,
    "telecommunications": 1,
    "transportation": 1
   },
   "by_ioc_type": {
+   "ip": 73,
    "domain": 64,
-   "ip": 54,
-   "behavior": 29,
+   "behavior": 36,
    "file": 22,
-   "pattern": 20,
-   "account": 9,
+   "pattern": 21,
+   "account": 12,
    "config": 7,
+   "malware": 6,
    "hash": 4,
    "package": 4,
    "directory": 3,
    "email": 3,
-   "malware": 3,
    "process": 3,
    "url": 3,
    "endpoint": 2,
@@ -105,10 +109,10 @@
    "2026-Q1": 2,
    "2026-Q2": 1,
    "2026-Q3": 7,
-   "2026-Q4": 1
+   "2026-Q4": 4
   },
   "link_confidence": {
-   "medium": 9
+   "medium": 11
   },
   "technique_use": {
    "AML.T0008": {
@@ -194,6 +198,30 @@
      "vector_db_unauth_exposure.rules"
     ]
    },
+   "AML.T0012": {
+    "actors": [
+     "AIRT-TA-0021"
+    ],
+    "cases": [
+     "AIRT-CS-0024",
+     "AIRT-CS-0025"
+    ],
+    "rules": [
+     "entra_app_signin_invalid_or_expired_secret.yml",
+     "entra_app_signin_scripted_client.yml"
+    ]
+   },
+   "AML.T0016.001": {
+    "actors": [
+     "AIRT-TA-0021",
+     "AIRT-TA-0022"
+    ],
+    "cases": [
+     "AIRT-CS-0024",
+     "AIRT-CS-0026"
+    ],
+    "rules": []
+   },
    "AML.T0016.002": {
     "actors": [
      "AIRT-TA-0001",
@@ -253,6 +281,13 @@
      "vector_db_query_anomaly.yml",
      "vector_db_unauth_exposure.rules"
     ]
+   },
+   "AML.T0025": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0025"
+    ],
+    "rules": []
    },
    "AML.T0034": {
     "actors": [
@@ -337,10 +372,12 @@
      "AIRT-CS-0016",
      "AIRT-CS-0019",
      "AIRT-CS-0021",
-     "AIRT-CS-0022"
+     "AIRT-CS-0022",
+     "AIRT-CS-0025"
     ],
     "rules": [
-     "ai_agent_credential_file_access.yml"
+     "ai_agent_credential_file_access.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml"
     ]
    },
    "AML.T0080": {
@@ -421,6 +458,13 @@
     "cases": [],
     "rules": []
    },
+   "AML.T0095.000": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0025"
+    ],
+    "rules": []
+   },
    "AML.T0096": {
     "actors": [
      "AIRT-TA-0001",
@@ -484,11 +528,15 @@
      "AIRT-TA-0002",
      "AIRT-TA-0003",
      "AIRT-TA-0016",
-     "AIRT-TA-0020"
+     "AIRT-TA-0020",
+     "AIRT-TA-0021",
+     "AIRT-TA-0022"
     ],
     "cases": [
      "AIRT-CS-0004",
-     "AIRT-CS-0018"
+     "AIRT-CS-0018",
+     "AIRT-CS-0024",
+     "AIRT-CS-0026"
     ],
     "rules": []
    },
@@ -499,17 +547,23 @@
     ],
     "cases": [
      "AIRT-CS-0004",
-     "AIRT-CS-0018"
+     "AIRT-CS-0018",
+     "AIRT-CS-0025"
     ],
     "rules": []
    },
    "AML.T0124": {
     "actors": [
      "AIRT-TA-0017",
-     "AIRT-TA-0020"
+     "AIRT-TA-0020",
+     "AIRT-TA-0021",
+     "AIRT-TA-0022"
     ],
     "cases": [
-     "AIRT-CS-0020"
+     "AIRT-CS-0020",
+     "AIRT-CS-0024",
+     "AIRT-CS-0025",
+     "AIRT-CS-0026"
     ],
     "rules": []
    },
@@ -528,7 +582,7 @@
   "method": {
    "similarity": "IDF-weighted Jaccard over techniques (0.4), tools (0.2), sectors (0.2), ai_services (0.1), motivation (0.1); facets neither side reports are skipped",
    "clusters": "average-linkage agglomerative, stopped below similarity 0.3",
-   "cooccurrence": "41 observations (case studies and sightings); pairs seen at least twice",
+   "cooccurrence": "44 observations (case studies and sightings); pairs seen at least twice",
    "backlog": "score = 2 x actors + cases using the technique, rule-less techniques only"
   },
   "similarity": {
@@ -552,60 +606,66 @@
     "AIRT-TA-0017",
     "AIRT-TA-0018",
     "AIRT-TA-0019",
-    "AIRT-TA-0020"
+    "AIRT-TA-0020",
+    "AIRT-TA-0021",
+    "AIRT-TA-0022"
    ],
    "matrix": [
     [
      1.0,
-     0.176,
+     0.181,
      0.023,
-     0.064,
+     0.063,
      0.0,
      0.0,
-     0.191,
-     0.197,
-     0.316,
-     0.165,
-     0.235,
-     0.142,
-     0.322,
-     0.331,
-     0.173,
-     0.357,
+     0.19,
+     0.196,
+     0.315,
+     0.163,
+     0.233,
+     0.14,
+     0.32,
+     0.333,
+     0.169,
+     0.359,
      0.0,
-     0.125,
+     0.126,
      0.0,
-     0.143
+     0.144,
+     0.192,
+     0.036
     ],
     [
-     0.176,
+     0.181,
      1.0,
-     0.264,
+     0.258,
      0.2,
-     0.072,
-     0.215,
+     0.073,
+     0.216,
      0.1,
      0.044,
-     0.086,
-     0.153,
-     0.161,
+     0.087,
+     0.155,
+     0.163,
      0.0,
      0.1,
-     0.133,
+     0.137,
      0.1,
-     0.257,
-     0.029,
-     0.047,
-     0.101,
-     0.191
+     0.253,
+     0.031,
+     0.053,
+     0.104,
+     0.185,
+     0.221,
+     0.1
     ],
     [
      0.023,
-     0.264,
+     0.258,
      1.0,
      0.332,
-     0.203,
-     0.512,
+     0.205,
+     0.52,
      0.0,
      0.056,
      0.0,
@@ -613,43 +673,47 @@
      0.0,
      0.1,
      0.0,
-     0.028,
+     0.027,
      0.025,
-     0.175,
+     0.168,
      0.1,
-     0.082,
-     0.247,
-     0.088
+     0.085,
+     0.252,
+     0.083,
+     0.054,
+     0.158
     ],
     [
-     0.064,
+     0.063,
      0.2,
      0.332,
      1.0,
-     0.218,
-     0.321,
-     0.073,
-     0.185,
-     0.085,
-     0.046,
-     0.106,
-     0.229,
-     0.108,
-     0.093,
+     0.219,
+     0.322,
+     0.072,
+     0.183,
+     0.084,
+     0.044,
+     0.105,
+     0.228,
+     0.107,
+     0.092,
      0.0,
      0.059,
      0.1,
-     0.07,
-     0.165,
-     0.0
+     0.069,
+     0.166,
+     0.0,
+     0.023,
+     0.128
     ],
     [
      0.0,
-     0.072,
-     0.203,
-     0.218,
+     0.073,
+     0.205,
+     0.219,
      1.0,
-     0.2,
+     0.202,
      0.0,
      0.056,
      0.0,
@@ -662,15 +726,17 @@
      0.0,
      0.111,
      0.041,
-     0.2,
-     0.0
+     0.202,
+     0.0,
+     0.0,
+     0.111
     ],
     [
      0.0,
-     0.215,
-     0.512,
-     0.321,
-     0.2,
+     0.216,
+     0.52,
+     0.322,
+     0.202,
      1.0,
      0.0,
      0.056,
@@ -681,241 +747,263 @@
      0.0,
      0.0,
      0.0,
-     0.063,
-     0.119,
-     0.074,
-     0.255,
-     0.054
+     0.065,
+     0.118,
+     0.075,
+     0.256,
+     0.054,
+     0.024,
+     0.1
     ],
     [
-     0.191,
+     0.19,
      0.1,
      0.0,
-     0.073,
+     0.072,
      0.0,
      0.0,
      1.0,
-     0.372,
-     0.151,
-     0.261,
-     0.444,
-     0.299,
-     0.224,
-     0.23,
+     0.371,
+     0.148,
+     0.259,
+     0.442,
+     0.297,
+     0.223,
+     0.229,
      0.125,
      0.187,
-     0.059,
-     0.071,
+     0.061,
+     0.07,
      0.0,
-     0.186
+     0.19,
+     0.149,
+     0.029
     ],
     [
-     0.197,
+     0.196,
      0.044,
      0.056,
-     0.185,
+     0.183,
      0.056,
      0.056,
-     0.372,
+     0.371,
      1.0,
-     0.363,
-     0.217,
-     0.572,
-     0.927,
-     0.555,
-     0.308,
-     0.055,
-     0.177,
-     0.07,
-     0.167,
+     0.358,
+     0.212,
+     0.568,
+     0.926,
+     0.556,
+     0.306,
      0.056,
-     0.055
+     0.18,
+     0.069,
+     0.164,
+     0.056,
+     0.056,
+     0.098,
+     0.129
     ],
     [
-     0.316,
-     0.086,
+     0.315,
+     0.087,
      0.0,
-     0.085,
+     0.084,
      0.0,
      0.0,
-     0.151,
-     0.363,
+     0.148,
+     0.358,
      1.0,
-     0.112,
-     0.261,
-     0.332,
-     0.279,
-     0.187,
+     0.107,
+     0.257,
+     0.327,
+     0.275,
+     0.184,
      0.03,
      0.129,
      0.0,
-     0.125,
+     0.123,
      0.0,
-     0.03
+     0.03,
+     0.066,
+     0.047
     ],
     [
-     0.165,
-     0.153,
-     0.0,
-     0.046,
-     0.0,
-     0.0,
-     0.261,
-     0.217,
-     0.112,
-     1.0,
-     0.501,
-     0.143,
-     0.194,
-     0.194,
-     0.125,
-     0.162,
+     0.163,
+     0.155,
      0.0,
      0.044,
      0.0,
-     0.125
-    ],
-    [
-     0.235,
-     0.161,
      0.0,
-     0.106,
-     0.0,
-     0.0,
-     0.444,
-     0.572,
-     0.261,
-     0.501,
+     0.259,
+     0.212,
+     0.107,
      1.0,
-     0.498,
-     0.374,
-     0.306,
+     0.499,
+     0.138,
+     0.19,
+     0.191,
      0.125,
-     0.223,
+     0.16,
+     0.0,
+     0.041,
      0.0,
      0.125,
-     0.0,
-     0.125
+     0.156,
+     0.039
     ],
     [
-     0.142,
+     0.233,
+     0.163,
      0.0,
-     0.1,
-     0.229,
-     0.1,
-     0.1,
-     0.299,
-     0.927,
-     0.332,
-     0.143,
-     0.498,
+     0.105,
+     0.0,
+     0.0,
+     0.442,
+     0.568,
+     0.257,
+     0.499,
      1.0,
-     0.5,
-     0.253,
-     0.0,
-     0.122,
+     0.494,
+     0.37,
+     0.304,
      0.125,
-     0.167,
-     0.1,
-     0.0
-    ],
-    [
-     0.322,
-     0.1,
-     0.0,
-     0.108,
-     0.0,
-     0.0,
      0.224,
-     0.555,
-     0.279,
-     0.194,
-     0.374,
-     0.5,
-     1.0,
-     0.353,
-     0.17,
-     0.316,
      0.0,
-     0.219,
+     0.123,
      0.0,
-     0.152
+     0.125,
+     0.161,
+     0.047
     ],
     [
-     0.331,
-     0.133,
-     0.028,
-     0.093,
+     0.14,
+     0.0,
+     0.1,
+     0.228,
+     0.1,
+     0.1,
+     0.297,
+     0.926,
+     0.327,
+     0.138,
+     0.494,
+     1.0,
+     0.5,
+     0.251,
+     0.0,
+     0.125,
+     0.125,
+     0.164,
+     0.1,
+     0.0,
+     0.043,
+     0.184
+    ],
+    [
+     0.32,
+     0.1,
+     0.0,
+     0.107,
      0.0,
      0.0,
-     0.23,
-     0.308,
-     0.187,
-     0.194,
+     0.223,
+     0.556,
+     0.275,
+     0.19,
+     0.37,
+     0.5,
+     1.0,
+     0.351,
+     0.173,
+     0.315,
+     0.0,
+     0.215,
+     0.0,
+     0.155,
+     0.188,
+     0.059
+    ],
+    [
+     0.333,
+     0.137,
+     0.027,
+     0.092,
+     0.0,
+     0.0,
+     0.229,
      0.306,
-     0.253,
-     0.353,
+     0.184,
+     0.191,
+     0.304,
+     0.251,
+     0.351,
      1.0,
      0.247,
-     0.282,
+     0.286,
      0.0,
-     0.162,
+     0.164,
      0.0,
-     0.189
+     0.19,
+     0.176,
+     0.045
     ],
     [
-     0.173,
+     0.169,
      0.1,
      0.025,
      0.0,
      0.0,
      0.0,
      0.125,
-     0.055,
+     0.056,
      0.03,
      0.125,
      0.125,
      0.0,
-     0.17,
+     0.173,
      0.247,
      1.0,
-     0.166,
+     0.163,
      0.0,
      0.0,
      0.102,
-     0.171
+     0.176,
+     0.141,
+     0.0
     ],
     [
-     0.357,
-     0.257,
-     0.175,
+     0.359,
+     0.253,
+     0.168,
      0.059,
      0.0,
-     0.063,
+     0.065,
      0.187,
-     0.177,
+     0.18,
      0.129,
-     0.162,
-     0.223,
-     0.122,
-     0.316,
-     0.282,
-     0.166,
+     0.16,
+     0.224,
+     0.125,
+     0.315,
+     0.286,
+     0.163,
      1.0,
      0.0,
-     0.191,
+     0.196,
      0.0,
-     0.2
+     0.194,
+     0.302,
+     0.113
     ],
     [
      0.0,
-     0.029,
+     0.031,
      0.1,
      0.1,
      0.111,
-     0.119,
-     0.059,
-     0.07,
+     0.118,
+     0.061,
+     0.069,
      0.0,
      0.0,
      0.0,
@@ -925,39 +1013,43 @@
      0.0,
      0.0,
      1.0,
-     0.145,
-     0.154,
-     0.328
+     0.152,
+     0.152,
+     0.327,
+     0.079,
+     0.22
     ],
     [
-     0.125,
-     0.047,
-     0.082,
-     0.07,
+     0.126,
+     0.053,
+     0.085,
+     0.069,
      0.041,
-     0.074,
-     0.071,
-     0.167,
-     0.125,
-     0.044,
-     0.125,
-     0.167,
-     0.219,
-     0.162,
+     0.075,
+     0.07,
+     0.164,
+     0.123,
+     0.041,
+     0.123,
+     0.164,
+     0.215,
+     0.164,
      0.0,
-     0.191,
-     0.145,
+     0.196,
+     0.152,
      1.0,
-     0.115,
-     0.032
+     0.117,
+     0.034,
+     0.132,
+     0.045
     ],
     [
      0.0,
-     0.101,
-     0.247,
-     0.165,
-     0.2,
-     0.255,
+     0.104,
+     0.252,
+     0.166,
+     0.202,
+     0.256,
      0.0,
      0.056,
      0.0,
@@ -968,31 +1060,83 @@
      0.0,
      0.102,
      0.0,
-     0.154,
-     0.115,
+     0.152,
+     0.117,
      1.0,
-     0.015
+     0.015,
+     0.013,
+     0.111
     ],
     [
-     0.143,
-     0.191,
-     0.088,
+     0.144,
+     0.185,
+     0.083,
      0.0,
      0.0,
      0.054,
-     0.186,
-     0.055,
+     0.19,
+     0.056,
      0.03,
      0.125,
      0.125,
      0.0,
-     0.152,
-     0.189,
-     0.171,
-     0.2,
-     0.328,
-     0.032,
+     0.155,
+     0.19,
+     0.176,
+     0.194,
+     0.327,
+     0.034,
      0.015,
+     1.0,
+     0.325,
+     0.178
+    ],
+    [
+     0.192,
+     0.221,
+     0.054,
+     0.023,
+     0.0,
+     0.024,
+     0.149,
+     0.098,
+     0.066,
+     0.156,
+     0.161,
+     0.043,
+     0.188,
+     0.176,
+     0.141,
+     0.302,
+     0.079,
+     0.132,
+     0.013,
+     0.325,
+     1.0,
+     0.417
+    ],
+    [
+     0.036,
+     0.1,
+     0.158,
+     0.128,
+     0.111,
+     0.1,
+     0.029,
+     0.129,
+     0.047,
+     0.039,
+     0.047,
+     0.184,
+     0.059,
+     0.045,
+     0.0,
+     0.113,
+     0.22,
+     0.045,
+     0.111,
+     0.178,
+     0.417,
      1.0
     ]
    ]
@@ -1001,7 +1145,7 @@
    "AIRT-TA-0001": [
     {
      "actor": "AIRT-TA-0016",
-     "score": 0.357,
+     "score": 0.359,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1018,7 +1162,7 @@
     },
     {
      "actor": "AIRT-TA-0014",
-     "score": 0.331,
+     "score": 0.333,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1034,7 +1178,7 @@
     },
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.322,
+     "score": 0.32,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1052,7 +1196,7 @@
    "AIRT-TA-0002": [
     {
      "actor": "AIRT-TA-0003",
-     "score": 0.264,
+     "score": 0.258,
      "shared": {
       "techniques": [
        "AML.T0116"
@@ -1067,7 +1211,7 @@
     },
     {
      "actor": "AIRT-TA-0016",
-     "score": 0.257,
+     "score": 0.253,
      "shared": {
       "techniques": [
        "AML.T0116",
@@ -1082,14 +1226,20 @@
      }
     },
     {
-     "actor": "AIRT-TA-0006",
-     "score": 0.215,
+     "actor": "AIRT-TA-0021",
+     "score": 0.221,
      "shared": {
-      "tools": [
-       "AIRT-0001"
+      "techniques": [
+       "AML.T0116"
       ],
       "sectors": [
+       "chemical",
+       "financial-services",
+       "government",
        "information-technology"
+      ],
+      "motivation": [
+       "espionage"
       ]
      }
     }
@@ -1097,7 +1247,7 @@
    "AIRT-TA-0003": [
     {
      "actor": "AIRT-TA-0006",
-     "score": 0.512,
+     "score": 0.52,
      "shared": {
       "techniques": [
        "AML.T0055",
@@ -1131,7 +1281,7 @@
     },
     {
      "actor": "AIRT-TA-0002",
-     "score": 0.264,
+     "score": 0.258,
      "shared": {
       "techniques": [
        "AML.T0116"
@@ -1163,7 +1313,7 @@
     },
     {
      "actor": "AIRT-TA-0006",
-     "score": 0.321,
+     "score": 0.322,
      "shared": {
       "tools": [
        "AIRT-0001"
@@ -1178,7 +1328,7 @@
     },
     {
      "actor": "AIRT-TA-0012",
-     "score": 0.229,
+     "score": 0.228,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1196,7 +1346,7 @@
    "AIRT-TA-0005": [
     {
      "actor": "AIRT-TA-0004",
-     "score": 0.218,
+     "score": 0.219,
      "shared": {
       "techniques": [
        "AML.T0081"
@@ -1211,7 +1361,7 @@
     },
     {
      "actor": "AIRT-TA-0003",
-     "score": 0.203,
+     "score": 0.205,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1226,7 +1376,7 @@
     },
     {
      "actor": "AIRT-TA-0006",
-     "score": 0.2,
+     "score": 0.202,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1243,7 +1393,7 @@
    "AIRT-TA-0006": [
     {
      "actor": "AIRT-TA-0003",
-     "score": 0.512,
+     "score": 0.52,
      "shared": {
       "techniques": [
        "AML.T0055",
@@ -1262,7 +1412,7 @@
     },
     {
      "actor": "AIRT-TA-0004",
-     "score": 0.321,
+     "score": 0.322,
      "shared": {
       "tools": [
        "AIRT-0001"
@@ -1277,7 +1427,7 @@
     },
     {
      "actor": "AIRT-TA-0019",
-     "score": 0.255,
+     "score": 0.256,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1297,7 +1447,7 @@
    "AIRT-TA-0007": [
     {
      "actor": "AIRT-TA-0011",
-     "score": 0.444,
+     "score": 0.442,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1313,7 +1463,7 @@
     },
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.372,
+     "score": 0.371,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1329,7 +1479,7 @@
     },
     {
      "actor": "AIRT-TA-0012",
-     "score": 0.299,
+     "score": 0.297,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1344,7 +1494,7 @@
    "AIRT-TA-0008": [
     {
      "actor": "AIRT-TA-0012",
-     "score": 0.927,
+     "score": 0.926,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1360,7 +1510,7 @@
     },
     {
      "actor": "AIRT-TA-0011",
-     "score": 0.572,
+     "score": 0.568,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1376,7 +1526,7 @@
     },
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.555,
+     "score": 0.556,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1391,7 +1541,7 @@
    "AIRT-TA-0009": [
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.363,
+     "score": 0.358,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1404,7 +1554,7 @@
     },
     {
      "actor": "AIRT-TA-0012",
-     "score": 0.332,
+     "score": 0.327,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1414,7 +1564,7 @@
     },
     {
      "actor": "AIRT-TA-0001",
-     "score": 0.316,
+     "score": 0.315,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1430,7 +1580,7 @@
    "AIRT-TA-0010": [
     {
      "actor": "AIRT-TA-0011",
-     "score": 0.501,
+     "score": 0.499,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1446,7 +1596,7 @@
     },
     {
      "actor": "AIRT-TA-0007",
-     "score": 0.261,
+     "score": 0.259,
      "shared": {
       "techniques": [
        "AML.T0016"
@@ -1461,7 +1611,7 @@
     },
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.217,
+     "score": 0.212,
      "shared": {
       "techniques": [
        "AML.T0016"
@@ -1478,7 +1628,7 @@
    "AIRT-TA-0011": [
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.572,
+     "score": 0.568,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1494,7 +1644,7 @@
     },
     {
      "actor": "AIRT-TA-0010",
-     "score": 0.501,
+     "score": 0.499,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1510,7 +1660,7 @@
     },
     {
      "actor": "AIRT-TA-0012",
-     "score": 0.498,
+     "score": 0.494,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1525,7 +1675,7 @@
    "AIRT-TA-0012": [
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.927,
+     "score": 0.926,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1551,7 +1701,7 @@
     },
     {
      "actor": "AIRT-TA-0011",
-     "score": 0.498,
+     "score": 0.494,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1566,7 +1716,7 @@
    "AIRT-TA-0013": [
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.555,
+     "score": 0.556,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1589,7 +1739,7 @@
     },
     {
      "actor": "AIRT-TA-0011",
-     "score": 0.374,
+     "score": 0.37,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1604,7 +1754,7 @@
    "AIRT-TA-0014": [
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.353,
+     "score": 0.351,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1617,7 +1767,7 @@
     },
     {
      "actor": "AIRT-TA-0001",
-     "score": 0.331,
+     "score": 0.333,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1633,7 +1783,7 @@
     },
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.308,
+     "score": 0.306,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1662,11 +1812,12 @@
      }
     },
     {
-     "actor": "AIRT-TA-0001",
-     "score": 0.173,
+     "actor": "AIRT-TA-0020",
+     "score": 0.176,
      "shared": {
       "sectors": [
-       "defense-industrial-base"
+       "education",
+       "healthcare"
       ],
       "motivation": [
        "espionage"
@@ -1674,12 +1825,11 @@
      }
     },
     {
-     "actor": "AIRT-TA-0020",
-     "score": 0.171,
+     "actor": "AIRT-TA-0013",
+     "score": 0.173,
      "shared": {
       "sectors": [
-       "education",
-       "healthcare"
+       "education"
       ],
       "motivation": [
        "espionage"
@@ -1690,7 +1840,7 @@
    "AIRT-TA-0016": [
     {
      "actor": "AIRT-TA-0001",
-     "score": 0.357,
+     "score": 0.359,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1707,7 +1857,7 @@
     },
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.316,
+     "score": 0.315,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1722,15 +1872,17 @@
      }
     },
     {
-     "actor": "AIRT-TA-0014",
-     "score": 0.282,
+     "actor": "AIRT-TA-0021",
+     "score": 0.302,
      "shared": {
       "techniques": [
        "AML.T0016",
-       "AML.T0016.002"
+       "AML.T0116"
       ],
       "sectors": [
-       "government"
+       "defense-industrial-base",
+       "government",
+       "ngo-think-tank"
       ],
       "motivation": [
        "espionage"
@@ -1741,7 +1893,7 @@
    "AIRT-TA-0017": [
     {
      "actor": "AIRT-TA-0020",
-     "score": 0.328,
+     "score": 0.327,
      "shared": {
       "techniques": [
        "AML.T0017",
@@ -1754,11 +1906,11 @@
      }
     },
     {
-     "actor": "AIRT-TA-0019",
-     "score": 0.154,
+     "actor": "AIRT-TA-0022",
+     "score": 0.22,
      "shared": {
-      "sectors": [
-       "information-technology"
+      "techniques": [
+       "AML.T0124"
       ],
       "motivation": [
        "financial"
@@ -1767,7 +1919,7 @@
     },
     {
      "actor": "AIRT-TA-0018",
-     "score": 0.145,
+     "score": 0.152,
      "shared": {
       "techniques": [
        "AML.T0049"
@@ -1781,7 +1933,7 @@
    "AIRT-TA-0018": [
     {
      "actor": "AIRT-TA-0013",
-     "score": 0.219,
+     "score": 0.215,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1794,7 +1946,7 @@
     },
     {
      "actor": "AIRT-TA-0016",
-     "score": 0.191,
+     "score": 0.196,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1808,7 +1960,7 @@
     },
     {
      "actor": "AIRT-TA-0008",
-     "score": 0.167,
+     "score": 0.164,
      "shared": {
       "techniques": [
        "AML.T0016",
@@ -1820,7 +1972,7 @@
    "AIRT-TA-0019": [
     {
      "actor": "AIRT-TA-0006",
-     "score": 0.255,
+     "score": 0.256,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1838,7 +1990,7 @@
     },
     {
      "actor": "AIRT-TA-0003",
-     "score": 0.247,
+     "score": 0.252,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1853,7 +2005,7 @@
     },
     {
      "actor": "AIRT-TA-0005",
-     "score": 0.2,
+     "score": 0.202,
      "shared": {
       "techniques": [
        "AML.T0055"
@@ -1870,7 +2022,7 @@
    "AIRT-TA-0020": [
     {
      "actor": "AIRT-TA-0017",
-     "score": 0.328,
+     "score": 0.327,
      "shared": {
       "techniques": [
        "AML.T0017",
@@ -1883,8 +2035,28 @@
      }
     },
     {
+     "actor": "AIRT-TA-0021",
+     "score": 0.325,
+     "shared": {
+      "techniques": [
+       "AML.T0116",
+       "AML.T0124"
+      ],
+      "sectors": [
+       "critical-manufacturing",
+       "energy",
+       "financial-services",
+       "government",
+       "information-technology"
+      ],
+      "motivation": [
+       "espionage"
+      ]
+     }
+    },
+    {
      "actor": "AIRT-TA-0016",
-     "score": 0.2,
+     "score": 0.194,
      "shared": {
       "techniques": [
        "AML.T0116"
@@ -1896,21 +2068,100 @@
        "espionage"
       ]
      }
-    },
+    }
+   ],
+   "AIRT-TA-0021": [
     {
-     "actor": "AIRT-TA-0002",
-     "score": 0.191,
+     "actor": "AIRT-TA-0022",
+     "score": 0.417,
      "shared": {
       "techniques": [
-       "AML.T0116"
+       "AML.T0016",
+       "AML.T0016.001",
+       "AML.T0116",
+       "AML.T0124"
       ],
       "sectors": [
+       "financial-services"
+      ]
+     }
+    },
+    {
+     "actor": "AIRT-TA-0020",
+     "score": 0.325,
+     "shared": {
+      "techniques": [
+       "AML.T0116",
+       "AML.T0124"
+      ],
+      "sectors": [
+       "critical-manufacturing",
+       "energy",
        "financial-services",
        "government",
        "information-technology"
       ],
       "motivation": [
        "espionage"
+      ]
+     }
+    },
+    {
+     "actor": "AIRT-TA-0016",
+     "score": 0.302,
+     "shared": {
+      "techniques": [
+       "AML.T0016",
+       "AML.T0116"
+      ],
+      "sectors": [
+       "defense-industrial-base",
+       "government",
+       "ngo-think-tank"
+      ],
+      "motivation": [
+       "espionage"
+      ]
+     }
+    }
+   ],
+   "AIRT-TA-0022": [
+    {
+     "actor": "AIRT-TA-0021",
+     "score": 0.417,
+     "shared": {
+      "techniques": [
+       "AML.T0016",
+       "AML.T0016.001",
+       "AML.T0116",
+       "AML.T0124"
+      ],
+      "sectors": [
+       "financial-services"
+      ]
+     }
+    },
+    {
+     "actor": "AIRT-TA-0017",
+     "score": 0.22,
+     "shared": {
+      "techniques": [
+       "AML.T0124"
+      ],
+      "motivation": [
+       "financial"
+      ]
+     }
+    },
+    {
+     "actor": "AIRT-TA-0012",
+     "score": 0.184,
+     "shared": {
+      "techniques": [
+       "AML.T0016"
+      ],
+      "motivation": [
+       "financial"
       ]
      }
     }
@@ -1926,7 +2177,7 @@
      "AIRT-TA-0013"
     ],
     "thin": true,
-    "cohesion": 0.476,
+    "cohesion": 0.475,
     "shared": {
      "techniques": [
       "AML.T0016",
@@ -1941,7 +2192,7 @@
      "AIRT-TA-0016"
     ],
     "thin": false,
-    "cohesion": 0.323,
+    "cohesion": 0.326,
     "shared": {
      "techniques": [
       "AML.T0016",
@@ -1962,7 +2213,7 @@
      "AIRT-TA-0006"
     ],
     "thin": false,
-    "cohesion": 0.388,
+    "cohesion": 0.391,
     "shared": {
      "tools": [
       "AIRT-0001"
@@ -1981,7 +2232,7 @@
      "AIRT-TA-0020"
     ],
     "thin": false,
-    "cohesion": 0.328,
+    "cohesion": 0.327,
     "shared": {
      "techniques": [
       "AML.T0017",
@@ -1992,32 +2243,35 @@
       "information-technology"
      ]
     }
+   },
+   {
+    "actors": [
+     "AIRT-TA-0021",
+     "AIRT-TA-0022"
+    ],
+    "thin": false,
+    "cohesion": 0.417,
+    "shared": {
+     "techniques": [
+      "AML.T0016",
+      "AML.T0016.001",
+      "AML.T0116",
+      "AML.T0124"
+     ],
+     "sectors": [
+      "financial-services"
+     ]
+    }
    }
   ],
   "cooccurrence": [
-   {
-    "a": "AML.T0017.001",
-    "b": "AML.T0124",
-    "support": 2,
-    "confidence_ab": 1.0,
-    "confidence_ba": 1.0,
-    "lift": 20.5
-   },
    {
     "a": "AML.T0103",
     "b": "AML.T0126",
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 1.0,
-    "lift": 10.25
-   },
-   {
-    "a": "AML.T0116",
-    "b": "AML.T0117",
-    "support": 2,
-    "confidence_ab": 0.5,
-    "confidence_ba": 1.0,
-    "lift": 10.25
+    "lift": 11.0
    },
    {
     "a": "AML.T0010",
@@ -2025,23 +2279,71 @@
     "support": 2,
     "confidence_ab": 0.4,
     "confidence_ba": 1.0,
-    "lift": 8.2
+    "lift": 8.8
+   },
+   {
+    "a": "AML.T0012",
+    "b": "AML.T0124",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.4,
+    "lift": 8.8
+   },
+   {
+    "a": "AML.T0016.001",
+    "b": "AML.T0124",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.4,
+    "lift": 8.8
+   },
+   {
+    "a": "AML.T0017.001",
+    "b": "AML.T0124",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.4,
+    "lift": 8.8
+   },
+   {
+    "a": "AML.T0016.001",
+    "b": "AML.T0116",
+    "support": 2,
+    "confidence_ab": 1.0,
+    "confidence_ba": 0.333,
+    "lift": 7.33
+   },
+   {
+    "a": "AML.T0116",
+    "b": "AML.T0117",
+    "support": 2,
+    "confidence_ab": 0.333,
+    "confidence_ba": 0.667,
+    "lift": 4.89
+   },
+   {
+    "a": "AML.T0116",
+    "b": "AML.T0124",
+    "support": 3,
+    "confidence_ab": 0.5,
+    "confidence_ba": 0.6,
+    "lift": 4.4
    },
    {
     "a": "AML.T0103",
     "b": "AML.T0116",
     "support": 2,
     "confidence_ab": 0.5,
-    "confidence_ba": 0.5,
-    "lift": 5.12
+    "confidence_ba": 0.333,
+    "lift": 3.67
    },
    {
     "a": "AML.T0010",
     "b": "AML.T0055",
     "support": 3,
     "confidence_ab": 0.6,
-    "confidence_ba": 0.429,
-    "lift": 3.51
+    "confidence_ba": 0.375,
+    "lift": 3.3
    },
    {
     "a": "AML.T0054",
@@ -2049,15 +2351,15 @@
     "support": 2,
     "confidence_ab": 0.5,
     "confidence_ba": 0.286,
-    "lift": 2.93
+    "lift": 3.14
    },
    {
     "a": "AML.T0055",
     "b": "AML.T0103",
     "support": 2,
-    "confidence_ab": 0.286,
+    "confidence_ab": 0.25,
     "confidence_ba": 0.5,
-    "lift": 2.93
+    "lift": 2.75
    }
   ],
   "events": [
@@ -2476,12 +2778,49 @@
     ]
    },
    {
+    "date": "2026-10-21",
+    "actor": "AIRT-TA-0021",
+    "kind": "case",
+    "ref": "AIRT-CS-0024",
+    "techniques": [
+     "AML.T0124",
+     "AML.T0116",
+     "AML.T0016.001",
+     "AML.T0012"
+    ]
+   },
+   {
     "date": "2026-10-30",
     "actor": "",
     "kind": "case",
     "ref": "AIRT-CS-0023",
     "techniques": [
      "AML.T0010.001"
+    ]
+   },
+   {
+    "date": "2026-11-05",
+    "actor": "",
+    "kind": "case",
+    "ref": "AIRT-CS-0025",
+    "techniques": [
+     "AML.T0095.000",
+     "AML.T0055",
+     "AML.T0012",
+     "AML.T0117",
+     "AML.T0124",
+     "AML.T0025"
+    ]
+   },
+   {
+    "date": "2026-11-06",
+    "actor": "AIRT-TA-0022",
+    "kind": "case",
+    "ref": "AIRT-CS-0026",
+    "techniques": [
+     "AML.T0116",
+     "AML.T0124",
+     "AML.T0016.001"
     ]
    }
   ],
@@ -2585,6 +2924,16 @@
     "events": 1,
     "span_days": 0,
     "median_gap_days": null
+   },
+   "AIRT-TA-0021": {
+    "events": 1,
+    "span_days": 0,
+    "median_gap_days": null
+   },
+   "AIRT-TA-0022": {
+    "events": 1,
+    "span_days": 0,
+    "median_gap_days": null
    }
   },
   "backlog": [
@@ -2613,6 +2962,14 @@
     "off_host": false
    },
    {
+    "technique": "AML.T0025",
+    "name": "Exfiltration via Cyber Means",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": false
+   },
+   {
     "technique": "AML.T0082",
     "name": "RAG Credential Harvesting",
     "actors": 0,
@@ -2631,14 +2988,30 @@
    {
     "technique": "AML.T0116",
     "name": "Autonomous Reconnaissance",
+    "actors": 6,
+    "cases": 4,
+    "score": 16,
+    "off_host": true
+   },
+   {
+    "technique": "AML.T0124",
+    "name": "Autonomous Attack Orchestration",
     "actors": 4,
-    "cases": 2,
-    "score": 10,
+    "cases": 4,
+    "score": 12,
     "off_host": true
    },
    {
     "technique": "AML.T0117",
     "name": "Autonomous Attack-Path Adaptation",
+    "actors": 2,
+    "cases": 3,
+    "score": 7,
+    "off_host": true
+   },
+   {
+    "technique": "AML.T0016.001",
+    "name": "Software Tools",
     "actors": 2,
     "cases": 2,
     "score": 6,
@@ -2647,14 +3020,6 @@
    {
     "technique": "AML.T0017.001",
     "name": "Autonomous Exploit Development",
-    "actors": 2,
-    "cases": 1,
-    "score": 5,
-    "off_host": true
-   },
-   {
-    "technique": "AML.T0124",
-    "name": "Autonomous Attack Orchestration",
     "actors": 2,
     "cases": 1,
     "score": 5,
@@ -2707,25 +3072,33 @@
     "cases": 0,
     "score": 2,
     "off_host": true
+   },
+   {
+    "technique": "AML.T0095.000",
+    "name": "Code Repositories",
+    "actors": 0,
+    "cases": 1,
+    "score": 1,
+    "off_host": true
    }
   ],
   "tactic_observations": {
-   "AML.TA0004": 8,
-   "AML.TA0003": 21,
+   "AML.TA0004": 10,
+   "AML.TA0003": 23,
    "AML.TA0005": 9,
-   "AML.TA0001": 5,
-   "AML.TA0002": 5,
+   "AML.TA0001": 8,
+   "AML.TA0002": 8,
    "AML.TA0007": 7,
-   "AML.TA0012": 5,
+   "AML.TA0012": 7,
    "AML.TA0014": 7,
-   "AML.TA0015": 2,
-   "AML.TA0010": 2,
+   "AML.TA0015": 4,
+   "AML.TA0010": 3,
    "AML.TA0006": 5,
-   "AML.TA0013": 8,
+   "AML.TA0013": 9,
    "AML.TA0009": 2,
    "AML.TA0011": 2
   },
-  "observations": 41
+  "observations": 44
  },
  "actors": [
   {
@@ -3596,7 +3969,8 @@
     "iocs": [],
     "detections_cited": [],
     "detections_by_technique": [
-     "ai_agent_credential_file_access.yml"
+     "ai_agent_credential_file_access.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml"
     ],
     "gaps": [
      "AML.T0103"
@@ -3612,7 +3986,8 @@
        "AML.TA0013"
       ],
       "rules": [
-       "ai_agent_credential_file_access.yml"
+       "ai_agent_credential_file_access.yml",
+       "entra_app_signin_invalid_or_expired_secret.yml"
       ],
       "off_host": false
      },
@@ -4582,6 +4957,7 @@
      "claude_desktop_config_modify.yml",
      "copilot_rules_file_backdoor.yar",
      "cursor_settings_db_modification.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml",
      "github_copilot_yolo_mode_enabled.yml",
      "huggingface_cache_unexpected_writer.yml",
      "mcp_config_tampering.yml",
@@ -4626,7 +5002,8 @@
        "AML.TA0013"
       ],
       "rules": [
-       "ai_agent_credential_file_access.yml"
+       "ai_agent_credential_file_access.yml",
+       "entra_app_signin_invalid_or_expired_secret.yml"
       ],
       "off_host": false
      },
@@ -5561,7 +5938,8 @@
     ],
     "detections_cited": [],
     "detections_by_technique": [
-     "ai_agent_credential_file_access.yml"
+     "ai_agent_credential_file_access.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml"
     ],
     "gaps": [
      "AML.T0103",
@@ -5576,7 +5954,8 @@
        "AML.TA0013"
       ],
       "rules": [
-       "ai_agent_credential_file_access.yml"
+       "ai_agent_credential_file_access.yml",
+       "entra_app_signin_invalid_or_expired_secret.yml"
       ],
       "off_host": false
      },
@@ -7722,6 +8101,7 @@
     "detections_cited": [],
     "detections_by_technique": [
      "ai_agent_credential_file_access.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml",
      "ray_jobs_api_rce.rules"
     ],
     "gaps": [],
@@ -7756,7 +8136,8 @@
        "AML.TA0013"
       ],
       "rules": [
-       "ai_agent_credential_file_access.yml"
+       "ai_agent_credential_file_access.yml",
+       "entra_app_signin_invalid_or_expired_secret.yml"
       ],
       "off_host": false
      }
@@ -7888,7 +8269,8 @@
      "ai_inference_endpoint_redirection.yml"
     ],
     "detections_by_technique": [
-     "ai_agent_credential_file_access.yml"
+     "ai_agent_credential_file_access.yml",
+     "entra_app_signin_invalid_or_expired_secret.yml"
     ],
     "gaps": [
      "AML.T0034"
@@ -7911,7 +8293,8 @@
        "AML.TA0013"
       ],
       "rules": [
-       "ai_agent_credential_file_access.yml"
+       "ai_agent_credential_file_access.yml",
+       "entra_app_signin_invalid_or_expired_secret.yml"
       ],
       "off_host": false
      }
@@ -8484,6 +8867,457 @@
     ],
     "collect": [],
     "recovery": []
+   }
+  },
+  {
+   "id": "AIRT-TA-0021",
+   "name": "Storm-0940",
+   "kind": "state-nexus",
+   "nexus": "CN",
+   "motivation": [
+    "espionage"
+   ],
+   "summary": "Microsoft's designation for a China-state aligned actor, active since 2021, that targets organisations across many industries for data theft and historically gained access by password spraying and by exploiting internet-facing applications. In 2026 Microsoft reported it using ARTEX, an open-source multi-agent penetration-testing framework, to automate attacks on hundreds of organisations, and assessed it responsible for the compromise of a software vendor's multitenant applications that was then used against the vendor's customers.",
+   "confidence": "medium",
+   "basis": "One reporting party. Microsoft says the actor has no known industry aliases, so no second vendor's tracking can be lined up against it.",
+   "external_ids": {
+    "vendor_cluster": [
+     "Storm-0940"
+    ]
+   },
+   "references": [
+    {
+     "title": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+    }
+   ],
+   "cases": [
+    "AIRT-CS-0024"
+   ],
+   "links": [
+    {
+     "case": "AIRT-CS-0024",
+     "ref": "AIRT-TA-0021",
+     "role": "operator",
+     "link_confidence": "medium",
+     "attributed_by": "Microsoft Threat Intelligence",
+     "stated_confidence": "\"Microsoft assesses that Storm-0940 was responsible\"; no confidence level is given",
+     "reference": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+    }
+   ],
+   "derived": {
+    "techniques": [
+     "AML.T0012",
+     "AML.T0016.001",
+     "AML.T0116",
+     "AML.T0124"
+    ],
+    "attack": [
+     "T1078.004",
+     "T1087.004",
+     "T1098.001",
+     "T1098.003",
+     "T1110.003",
+     "T1195",
+     "T1199",
+     "T1528",
+     "T1555.006",
+     "T1580",
+     "T1595"
+    ],
+    "owasp_agentic": [],
+    "tactics": [
+     "AML.TA0001",
+     "AML.TA0002",
+     "AML.TA0003",
+     "AML.TA0004",
+     "AML.TA0012",
+     "AML.TA0015"
+    ],
+    "sectors": [
+     "chemical",
+     "critical-manufacturing",
+     "defense-industrial-base",
+     "energy",
+     "financial-services",
+     "government",
+     "information-technology",
+     "legal-professional-services",
+     "media-entertainment",
+     "ngo-think-tank"
+    ],
+    "countries": [],
+    "regions": [],
+    "first_seen": "2026-10-21",
+    "last_seen": "2026-10-21",
+    "tools": [],
+    "iocs": [
+     {
+      "type": "ip",
+      "value": "144.172.64[.]128",
+      "description": "Sign-ins and Graph API activity in customer tenants through the vendor's applications",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "144.172.64[.]99",
+      "description": "Same activity, and the source of the 10 to 14 October password spray",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "144.172.64[.]60",
+      "description": "Same activity",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "187.15.88[.]186",
+      "description": "Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "187.15.90[.]217",
+      "description": "As above; VPN address, 15 and 16 October only",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "ip",
+      "value": "187.15.89[.]186",
+      "description": "As above; VPN address, 15 and 16 October only",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+      "description": "Labelled ConnectWise Cloud Backup in the post. Search by application id, not display name, and record the local service principal object id in each tenant",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+      "description": "Labelled ConnectWise - MS Teams in the post",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "account",
+      "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
+      "description": "Labelled ConnectWise - MS Graph in the post",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "pattern",
+      "value": "User agents Python-urllib/3.12, python-requests/2.31.0, python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0 on application sign-ins and Graph requests",
+      "description": "Published as seen with the vendor's applications. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "behavior",
+      "value": "One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults",
+      "description": "The shape of the bulk secret reads, as the post's own hunting guidance frames it",
+      "case": "AIRT-CS-0024"
+     },
+     {
+      "type": "behavior",
+      "value": "An application adding a credential to itself or assigning itself a directory role after signing in from an unfamiliar address",
+      "description": "The persistence and privilege steps reported after a successful sign-in",
+      "case": "AIRT-CS-0024"
+     }
+    ],
+    "detections_cited": [
+     "entra_app_signin_scripted_client.yml"
+    ],
+    "detections_by_technique": [
+     "entra_app_signin_invalid_or_expired_secret.yml",
+     "entra_app_signin_scripted_client.yml"
+    ],
+    "gaps": [],
+    "off_host": [
+     "AML.T0016.001",
+     "AML.T0116",
+     "AML.T0124"
+    ],
+    "hunt": [
+     {
+      "technique": "AML.T0012",
+      "name": "Valid Accounts",
+      "tactics": [
+       "AML.TA0004",
+       "AML.TA0012",
+       "AML.TA0015"
+      ],
+      "rules": [
+       "entra_app_signin_invalid_or_expired_secret.yml",
+       "entra_app_signin_scripted_client.yml"
+      ],
+      "off_host": false
+     },
+     {
+      "technique": "AML.T0016.001",
+      "name": "Software Tools",
+      "tactics": [
+       "AML.TA0003"
+      ],
+      "rules": [],
+      "off_host": true
+     },
+     {
+      "technique": "AML.T0116",
+      "name": "Autonomous Reconnaissance",
+      "tactics": [
+       "AML.TA0002"
+      ],
+      "rules": [],
+      "off_host": true
+     },
+     {
+      "technique": "AML.T0124",
+      "name": "Autonomous Attack Orchestration",
+      "tactics": [
+       "AML.TA0001"
+      ],
+      "rules": [],
+      "off_host": true
+     }
+    ],
+    "collect": [],
+    "recovery": [
+     {
+      "case": "AIRT-CS-0024",
+      "phase": "contain",
+      "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications first - deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory the application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
+     },
+     {
+      "case": "AIRT-CS-0024",
+      "phase": "eradicate",
+      "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and remove the ones nobody can account for once they are recorded."
+     },
+     {
+      "case": "AIRT-CS-0024",
+      "phase": "recover",
+      "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that rotation removed the old credentials before re-enabling the connection, and check that backup and restore still work."
+     },
+     {
+      "case": "AIRT-CS-0024",
+      "phase": "harden",
+      "action": "Review what each multitenant vendor application is permitted to do in the tenant and reduce it, alert on credential additions and role assignments made by applications, and restrict application sign-ins by location where the licence allows."
+     }
+    ]
+   }
+  },
+  {
+   "id": "AIRT-TA-0022",
+   "name": "Storm-3358",
+   "kind": "criminal",
+   "nexus": "KH",
+   "motivation": [
+    "financial"
+   ],
+   "summary": "Microsoft's designation for a financially motivated, Cambodia-based intrusion cluster that mainly targets financial organisations in Southeast Asia and a smaller number of large ones elsewhere. In October 2026 Microsoft reported it using the agentic offensive framework ARTEX, alongside conventional automated tools, to scan and exploit internet-facing systems before installing open-source remote-access tools.",
+   "confidence": "medium",
+   "basis": "One reporting party and one report. Microsoft gives no aliases and no confidence level, and does not say whether the cluster is connected to the other actor it reports using the same framework.",
+   "external_ids": {
+    "vendor_cluster": [
+     "Storm-3358"
+    ]
+   },
+   "malware": [
+    "WISP",
+    "vshell",
+    "AdaptixC2"
+   ],
+   "references": [
+    {
+     "title": "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/"
+    }
+   ],
+   "cases": [
+    "AIRT-CS-0026"
+   ],
+   "links": [
+    {
+     "case": "AIRT-CS-0026",
+     "ref": "AIRT-TA-0022",
+     "role": "operator",
+     "link_confidence": "medium",
+     "attributed_by": "Microsoft Threat Intelligence",
+     "stated_confidence": "\"the financially motivated threat actor Storm-3358\"; no confidence level is given",
+     "reference": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/"
+    }
+   ],
+   "derived": {
+    "techniques": [
+     "AML.T0016.001",
+     "AML.T0116",
+     "AML.T0124"
+    ],
+    "attack": [
+     "T1105",
+     "T1190",
+     "T1595.002"
+    ],
+    "owasp_agentic": [],
+    "tactics": [
+     "AML.TA0001",
+     "AML.TA0002",
+     "AML.TA0003"
+    ],
+    "sectors": [
+     "financial-services"
+    ],
+    "countries": [],
+    "regions": [],
+    "first_seen": "2026-11-06",
+    "last_seen": "2026-11-06",
+    "tools": [],
+    "iocs": [
+     {
+      "type": "ip",
+      "value": "199.19.95[.]66",
+      "description": "WISP command-and-control node, first seen 2 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "199.19.95[.]67",
+      "description": "WISP command-and-control node, first seen 2 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "199.19.95[.]68",
+      "description": "WISP command-and-control node, first seen 2 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "91.92.240[.]238",
+      "description": "ARTEX server, first seen 4 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "85.11.168[.]45",
+      "description": "ARTEX server, first seen 4 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "85.11.167[.]52",
+      "description": "Command-and-control server, first seen 4 Nov 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "178.16.54[.]129",
+      "description": "ARTEX server, first seen 19 Oct 2026, as the indicator table prints it. The post's hunting query prints 178.15.54[.]129 for the same row",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "178.15.54[.]129",
+      "description": "The same row as the post's hunting query prints it. One of the two is a typographical error in the source; search for both",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "ip",
+      "value": "31.77.229[.]35",
+      "description": "ARTEX server, first seen 28 Oct 2026",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "malware",
+      "value": "WISP",
+      "description": "Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "malware",
+      "value": "vshell",
+      "description": "As above",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "malware",
+      "value": "AdaptixC2",
+      "description": "As above",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "behavior",
+      "value": "A web server or application process running netcat or curl to fetch a file from an address it has not contacted before",
+      "description": "How the remote-access tools arrived. The post's own hunt baselines curl targets over a week and reports new ones, and notes curl has legitimate uses",
+      "case": "AIRT-CS-0026"
+     },
+     {
+      "type": "behavior",
+      "value": "Many varied requests to one internet-facing application in a short time, with failures retried or abandoned at machine tempo, from Nmap, curl, wget, Python or headless Chromium user agents",
+      "description": "The scanning signature the post attributes to agentic tooling. Operators change user agents readily, so it identifies and does not block",
+      "case": "AIRT-CS-0026"
+     }
+    ],
+    "detections_cited": [],
+    "detections_by_technique": [],
+    "gaps": [],
+    "off_host": [
+     "AML.T0016.001",
+     "AML.T0116",
+     "AML.T0124"
+    ],
+    "hunt": [
+     {
+      "technique": "AML.T0016.001",
+      "name": "Software Tools",
+      "tactics": [
+       "AML.TA0003"
+      ],
+      "rules": [],
+      "off_host": true
+     },
+     {
+      "technique": "AML.T0116",
+      "name": "Autonomous Reconnaissance",
+      "tactics": [
+       "AML.TA0002"
+      ],
+      "rules": [],
+      "off_host": true
+     },
+     {
+      "technique": "AML.T0124",
+      "name": "Autonomous Attack Orchestration",
+      "tactics": [
+       "AML.TA0001"
+      ],
+      "rules": [],
+      "off_host": true
+     }
+    ],
+    "collect": [],
+    "recovery": [
+     {
+      "case": "AIRT-CS-0026",
+      "phase": "contain",
+      "action": "Search proxy, firewall and web server logs for all nine addresses, including both forms of the disputed one, across at least the period since 19 October 2026. On any server that contacted them, capture memory and the process tree before restarting anything, since none of the three tools has a published on-disk indicator."
+     },
+     {
+      "case": "AIRT-CS-0026",
+      "phase": "eradicate",
+      "action": "On affected web servers, list files created by the web server's account in the upload and temporary directories, cron entries and services added since the first contact, and outbound connections that persist. Remove what is found and close the upload or request-forgery flaw that let it in."
+     },
+     {
+      "case": "AIRT-CS-0026",
+      "phase": "recover",
+      "action": "Rotate credentials stored on or reachable from the compromised servers, including database and cloud credentials in application configuration, and review authentication from those servers to internal systems for the lateral movement the post reports."
+     },
+     {
+      "case": "AIRT-CS-0026",
+      "phase": "harden",
+      "action": "Require authentication on file upload endpoints, restrict what internet-facing applications may request on the server's behalf, and alert when a web server process starts a download tool or a shell."
+     }
+    ]
    }
   }
  ],
@@ -11099,6 +11933,395 @@
    "affects_ids": [
     "AIRT-0002"
    ]
+  },
+  {
+   "id": "AIRT-CS-0024",
+   "title": "Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants",
+   "date_range": "Sep 2026 (first ARTEX use Microsoft reports) to 16 Oct 2026; password spray 10 to 14 Oct 2026",
+   "disclosed": "2026-10-21",
+   "affects": "Microsoft Entra ID tenants reached through a vendor's multitenant applications - no catalogued endpoint tool",
+   "confidence": "medium",
+   "basis": "One reporting party, read from the page itself. Every figure is Microsoft's own telemetry. The post cites ConnectWise's advisories and one third-party write-up, none of which was read for this entry, so nothing here corroborates Microsoft independently, and those sources would bear on the application compromise, not on the AI. The post names no model, does not say where the framework ran, and describes the split between agent and operator only as \"little needed human interaction\". The AI ran on the actor's side, so a victim tenant holds sign-in and audit records and nothing that shows a model was involved.",
+   "contested": "The post is careful about outcome and the reader should be too. It says most of the targeting failed, that the password spray produced no successful authentication, and that a successful application sign-in \"does not necessarily indicate that customer data was accessed or exfiltrated\". Count attempted tenants, authenticated tenants and tenants with post-sign-in activity as three different numbers. The post is also inconsistent with itself on one point - its text and infographic refer to four application credentials and it lists three application ids - so the published list may be incomplete.",
+   "atlas": [
+    "AML.T0124",
+    "AML.T0116",
+    "AML.T0016.001",
+    "AML.T0012"
+   ],
+   "attack": [
+    "T1595",
+    "T1078.004",
+    "T1195",
+    "T1199",
+    "T1098.003",
+    "T1098.001",
+    "T1528",
+    "T1555.006",
+    "T1087.004",
+    "T1580",
+    "T1110.003"
+   ],
+   "actors": [
+    {
+     "ref": "AIRT-TA-0021",
+     "role": "operator",
+     "link_confidence": "medium",
+     "attributed_by": "Microsoft Threat Intelligence",
+     "stated_confidence": "\"Microsoft assesses that Storm-0940 was responsible\"; no confidence level is given",
+     "reference": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+    }
+   ],
+   "victims": {
+    "sectors": [
+     "defense-industrial-base",
+     "chemical",
+     "energy",
+     "financial-services",
+     "government",
+     "legal-professional-services",
+     "critical-manufacturing",
+     "media-entertainment",
+     "information-technology",
+     "ngo-think-tank"
+    ],
+    "basis": "Microsoft lists the industries the actor targets and counts \"hundreds of organizations globally\" for the ARTEX-driven activity, more than 2,250 tenants for sign-in attempts through the vendor's applications, and 327 accounts in eight organisations for the password spray. It names no country and gives no count of organisations compromised."
+   },
+   "summary": "Microsoft reports that Storm-0940, which it describes as a China-state aligned actor, has used ARTEX since at least September 2026 to automate attacks on hundreds of organisations. ARTEX is described as an open-source, multi-agent penetration-testing framework that can drive any model and runs a test from reconnaissance to exfiltration with little human input. In October the actor took control of the identities of several ConnectWise cloud applications, among them Cloud Backup, and used the trust customers had already granted those applications to attempt sign-ins to more than 2,250 tenants. Where a sign-in succeeded, the reported follow-on was reconnaissance through Microsoft Graph, credentials added to applications for persistence, changes to roles and groups including an application assigning itself Global Administrator, bulk reads of Key Vault secrets and mail access. A password spray from one of the same addresses on 10 to 14 October hit 327 accounts in eight organisations and, by Microsoft's account, authenticated to none. Microsoft says some intrusions went from first targeting to privileged access in under three hours.",
+   "iocs": [
+    {
+     "type": "ip",
+     "value": "144.172.64[.]128",
+     "description": "Sign-ins and Graph API activity in customer tenants through the vendor's applications"
+    },
+    {
+     "type": "ip",
+     "value": "144.172.64[.]99",
+     "description": "Same activity, and the source of the 10 to 14 October password spray"
+    },
+    {
+     "type": "ip",
+     "value": "144.172.64[.]60",
+     "description": "Same activity"
+    },
+    {
+     "type": "ip",
+     "value": "187.15.88[.]186",
+     "description": "Graph API access through the compromised applications. A VPN address the post calls transient and relevant only for 15 and 16 October"
+    },
+    {
+     "type": "ip",
+     "value": "187.15.90[.]217",
+     "description": "As above; VPN address, 15 and 16 October only"
+    },
+    {
+     "type": "ip",
+     "value": "187.15.89[.]186",
+     "description": "As above; VPN address, 15 and 16 October only"
+    },
+    {
+     "type": "account",
+     "value": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+     "description": "Labelled ConnectWise Cloud Backup in the post. Search by application id, not display name, and record the local service principal object id in each tenant"
+    },
+    {
+     "type": "account",
+     "value": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+     "description": "Labelled ConnectWise - MS Teams in the post"
+    },
+    {
+     "type": "account",
+     "value": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
+     "description": "Labelled ConnectWise - MS Graph in the post"
+    },
+    {
+     "type": "pattern",
+     "value": "User agents Python-urllib/3.12, python-requests/2.31.0, python-requests/2.34.2, curl/7.88.1 and azure-toolkit/1.0 on application sign-ins and Graph requests",
+     "description": "Published as seen with the vendor's applications. Ordinary strings that legitimate automation also sends, so they narrow a search and prove nothing alone"
+    },
+    {
+     "type": "behavior",
+     "value": "One identity making twenty or more successful Key Vault secret reads within fifteen minutes across three or more vaults",
+     "description": "The shape of the bulk secret reads, as the post's own hunting guidance frames it"
+    },
+    {
+     "type": "behavior",
+     "value": "An application adding a credential to itself or assigning itself a directory role after signing in from an unfamiliar address",
+     "description": "The persistence and privilege steps reported after a successful sign-in"
+    }
+   ],
+   "response_actions": [
+    {
+     "phase": "contain",
+     "action": "Keep the affected vendor connections disabled, and do not delete the enterprise applications first - deletion removes the configuration and the service principal the evidence is keyed to. Export Entra sign-in and audit logs, Microsoft 365 audit records and Graph activity logs now, because the default retention is days to weeks. Inventory the application ids in every tenant where they were ever consented to, including tenants that no longer use the product."
+    },
+    {
+     "phase": "eradicate",
+     "action": "Review service principal sign-ins for those applications from at least 1 October, successful and failed separately, and do not limit the review to the published addresses. In the audit log, look for credentials, owners, role assignments and consent grants added by or to those applications, and remove the ones nobody can account for once they are recorded."
+    },
+    {
+     "phase": "recover",
+     "action": "Rotate every secret in any Key Vault the applications could read and treat mail and files the applications could reach as exposed where post-sign-in activity is found. Confirm with the vendor that rotation removed the old credentials before re-enabling the connection, and check that backup and restore still work."
+    },
+    {
+     "phase": "harden",
+     "action": "Review what each multitenant vendor application is permitted to do in the tenant and reduce it, alert on credential additions and role assignments made by applications, and restrict application sign-ins by location where the licence allows."
+    }
+   ],
+   "lesson": "The AI in this case ran on the actor's infrastructure, so there is no agent transcript, config file or token on a victim host to collect, and the catalog has no row for it. What the victim holds is identity-provider logging with a short retention clock, which is why the telemetry tab lists it as a source of its own. The agentic part shows only as tempo and breadth: thousands of tenants tried through one trusted identity, and privileged access inside three hours where it worked.",
+   "detections": [
+    "entra_app_signin_scripted_client.yml"
+   ],
+   "references": [
+    {
+     "title": "Microsoft Security Research and Microsoft Threat Intelligence - AI-driven, large-scale nation-state campaign using ARTEX enables supply chain compromise (21 Oct 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/",
+     "accessed": "2026-11-17"
+    }
+   ],
+   "external_ids": {
+    "vendor_cluster": [
+     "Storm-0940"
+    ]
+   },
+   "affects_ids": []
+  },
+  {
+   "id": "AIRT-CS-0025",
+   "title": "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application",
+   "date_range": "Aug 2026 (repository searches first observed) onward; application sign-ins from 28 Oct 2026",
+   "disclosed": "2026-11-05",
+   "affects": "Application secrets and AI service keys exposed in public repositories, and the Entra ID and Azure resources they unlock - no catalogued endpoint tool",
+   "confidence": "medium",
+   "basis": "One reporting party, read from the page itself. Microsoft attributes the activity to no one: it calls the network indicators unattributed and two of the addresses only \"potentially associated\" with the campaign, and one of the four is a Tor exit node. The post gives no victim count, sector or country, names no model and does not say where the framework ran. It credits one other vendor with reporting a similar campaign from the same addresses; that report was not read for this entry.",
+   "atlas": [
+    "AML.T0095.000",
+    "AML.T0055",
+    "AML.T0012",
+    "AML.T0117",
+    "AML.T0124",
+    "AML.T0025"
+   ],
+   "attack": [
+    "T1593.003",
+    "T1552.001",
+    "T1078.004",
+    "T1555.006",
+    "T1530",
+    "T1651",
+    "T1580"
+   ],
+   "summary": "Microsoft reports that from August 2026 an agentic offensive framework, ARTEX, sent large volumes of searches to GitHub for secrets, combining a target organisation's name with secret, cloud-service and AI-provider keywords. It looked for application credentials and for API keys to AI services, which the post says the agents sought out repeatedly. From 28 October the harvested application credentials were used for service principal sign-ins to Entra ID across dozens of applications in several tenants, followed by discovery of subscriptions, permissions and AI model deployments, reads of storage keys, connection strings and Key Vault secrets, searches of Azure DevOps, SharePoint and mailbox access, and scripts run on virtual machines through Run Command. In one tenant a vendor-owned multitenant application's credential, compromised at the vendor, gave access to downstream tenants. Microsoft describes one run that went from searching GitHub for a client secret to exfiltrating from a Key Vault in five minutes, and requests that failed and were reissued against a different API version within about half a minute.",
+   "iocs": [
+    {
+     "type": "ip",
+     "value": "199.19.77[.]84",
+     "description": "Service principal sign-ins across several application ids and the Azure Resource Manager calls that followed, from 28 October 2026"
+    },
+    {
+     "type": "ip",
+     "value": "199.19.77[.]18",
+     "description": "A Tor exit node, which the post warns may carry unrelated activity from unrelated sources. Use to pivot, not to conclude"
+    },
+    {
+     "type": "ip",
+     "value": "65.87.223[.]26",
+     "description": "Attempts to obtain App Service authentication tokens and shell commands embedded in a user agent. One of two addresses the post calls potentially associated"
+    },
+    {
+     "type": "ip",
+     "value": "157.22.126[.]128",
+     "description": "Reconnaissance against AI workloads the victims run on Azure AI services"
+    },
+    {
+     "type": "behavior",
+     "value": "Application sign-in failures with error AADSTS7000215 or AADSTS7000222, then a success for the same application",
+     "description": "An invalid or expired client secret means somebody holds a credential for the application. A failure followed by a success is the urgent case"
+    },
+    {
+     "type": "behavior",
+     "value": "One address authenticating to three or more service principals with mixed success, or one application requesting tokens for Resource Manager, Key Vault, Storage and Graph in a short window",
+     "description": "The breadth pattern the post tells defenders to hunt for"
+    },
+    {
+     "type": "behavior",
+     "value": "A management-plane request that fails with HTTP 400 and succeeds within 30 to 80 seconds against a different API version or with corrected parameters",
+     "description": "Reported for Key Vault, Azure SQL firewall and Application Insights calls. A script repeats the same failing call; this corrects itself"
+    }
+   ],
+   "response_actions": [
+    {
+     "phase": "contain",
+     "action": "Export service principal and non-interactive sign-in logs, the Entra audit log, Azure Activity, Key Vault and Storage diagnostics, Azure DevOps audit and the Microsoft 365 unified audit log before they age out. Block the published address for workload identities where the licence allows, knowing the policy covers only single-tenant applications in the tenant and that already-issued tokens stay valid until they expire."
+    },
+    {
+     "phase": "eradicate",
+     "action": "For every application that signed in from those addresses or logged the two secret errors, remove all client secrets, certificates and federated credentials, including any the actor added, and disable the service principal if it cannot be re-credentialed at once. Revoke sessions, Azure DevOps personal access tokens and SSH keys for affected users."
+    },
+    {
+     "phase": "recover",
+     "action": "Rotate everything in any Key Vault the application could read, every storage key and connection string it could list, and any AI service key it could reach, then review Run Command history on virtual machines the application had rights over. Managed service providers should also review partner access and customer tenants."
+    },
+    {
+     "phase": "harden",
+     "action": "Treat any secret that was ever in a public repository as compromised - removing the commit does not invalidate it. Turn on secret scanning and push protection, set maximum lifetimes for application passwords, and move applications from client secrets to managed identities or federated credentials."
+    }
+   ],
+   "lesson": "The catalog lists where AI tools keep API keys on a host because those files are what gets copied into a repository. This case is the other end of that: an agent that searches public code for exactly those keys and for application secrets, and uses one within minutes. No catalogued tool ran on the victim's side, so the evidence is the provider's sign-in and resource logs, and the AI is visible only in the speed and in the way failed requests were corrected.",
+   "detections": [
+    "entra_app_signin_invalid_or_expired_secret.yml",
+    "entra_app_signin_scripted_client.yml"
+   ],
+   "references": [
+    {
+     "title": "Microsoft Threat Intelligence and Microsoft Security Research - Threat actors use agentic AI tooling to find and abuse exposed secrets (5 Nov 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/05/threat-actors-use-agentic-ai-tooling-to-find-and-abuse-exposed-secrets/",
+     "accessed": "2026-11-17"
+    }
+   ],
+   "affects_ids": []
+  },
+  {
+   "id": "AIRT-CS-0026",
+   "title": "Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations",
+   "date_range": "Oct 2026 to at least 6 Nov 2026, when every published indicator was still active",
+   "disclosed": "2026-11-06",
+   "affects": "Internet-facing web applications of the targeted organisations - no catalogued endpoint tool",
+   "confidence": "medium",
+   "basis": "One reporting party, read from the page itself, and a short account. The post gives no victim count, no outcome, no vulnerability identifier and no host artifact for any of the three remote-access tools it names. It names no model and says only that some published addresses are ARTEX servers. Its figure showing the download commands is an image whose text could not be read for this entry. Several of its statements describe ARTEX-related attacks in general, not this actor, and are kept out of the indicators for that reason.",
+   "contested": "The post's indicator table and its own hunting query disagree on one address: the table lists 178.16.54[.]129 and the query lists 178.15.54[.]129. Nothing in the post says which is right, so both are recorded here and neither should be dropped from a search. The post does not say whether Storm-3358 is connected to Storm-0940, the other actor Microsoft reports using the same framework.",
+   "atlas": [
+    "AML.T0116",
+    "AML.T0124",
+    "AML.T0016.001"
+   ],
+   "attack": [
+    "T1595.002",
+    "T1190",
+    "T1105"
+   ],
+   "actors": [
+    {
+     "ref": "AIRT-TA-0022",
+     "role": "operator",
+     "link_confidence": "medium",
+     "attributed_by": "Microsoft Threat Intelligence",
+     "stated_confidence": "\"the financially motivated threat actor Storm-3358\"; no confidence level is given",
+     "reference": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/"
+    }
+   ],
+   "victims": {
+    "sectors": [
+     "financial-services"
+    ],
+    "basis": "Microsoft says the cluster primarily targets financial organisations in Southeast Asia and a smaller number of large financial organisations globally. It names no country and gives no count."
+   },
+   "summary": "Microsoft reports that in October 2026 Storm-3358, which it describes as a financially motivated, Cambodia-based intrusion cluster, began using the agentic offensive framework ARTEX against financial organisations. The actor runs ARTEX alongside conventional automated tools to scan internet-facing systems and exploit flaws that include anonymous file upload and server-side request forgery. ARTEX agents were then seen using netcat and curl to fetch remote-access tools onto the compromised systems, and the actor used three open-source ones - WISP, vshell and AdaptixC2 - for persistence and lateral movement. The post lists ARTEX's default tools as Nmap, curl, wget, Python HTTP clients, a web-fetch SDK and headless Chromium driven by Playwright, and says their default user agents and signatures can help identify the traffic.",
+   "iocs": [
+    {
+     "type": "ip",
+     "value": "199.19.95[.]66",
+     "description": "WISP command-and-control node, first seen 2 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "199.19.95[.]67",
+     "description": "WISP command-and-control node, first seen 2 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "199.19.95[.]68",
+     "description": "WISP command-and-control node, first seen 2 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "91.92.240[.]238",
+     "description": "ARTEX server, first seen 4 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "85.11.168[.]45",
+     "description": "ARTEX server, first seen 4 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "85.11.167[.]52",
+     "description": "Command-and-control server, first seen 4 Nov 2026"
+    },
+    {
+     "type": "ip",
+     "value": "178.16.54[.]129",
+     "description": "ARTEX server, first seen 19 Oct 2026, as the indicator table prints it. The post's hunting query prints 178.15.54[.]129 for the same row"
+    },
+    {
+     "type": "ip",
+     "value": "178.15.54[.]129",
+     "description": "The same row as the post's hunting query prints it. One of the two is a typographical error in the source; search for both"
+    },
+    {
+     "type": "ip",
+     "value": "31.77.229[.]35",
+     "description": "ARTEX server, first seen 28 Oct 2026"
+    },
+    {
+     "type": "malware",
+     "value": "WISP",
+     "description": "Open-source remote-access tool used for persistence and lateral movement. The post gives no file name, path or hash"
+    },
+    {
+     "type": "malware",
+     "value": "vshell",
+     "description": "As above"
+    },
+    {
+     "type": "malware",
+     "value": "AdaptixC2",
+     "description": "As above"
+    },
+    {
+     "type": "behavior",
+     "value": "A web server or application process running netcat or curl to fetch a file from an address it has not contacted before",
+     "description": "How the remote-access tools arrived. The post's own hunt baselines curl targets over a week and reports new ones, and notes curl has legitimate uses"
+    },
+    {
+     "type": "behavior",
+     "value": "Many varied requests to one internet-facing application in a short time, with failures retried or abandoned at machine tempo, from Nmap, curl, wget, Python or headless Chromium user agents",
+     "description": "The scanning signature the post attributes to agentic tooling. Operators change user agents readily, so it identifies and does not block"
+    }
+   ],
+   "response_actions": [
+    {
+     "phase": "contain",
+     "action": "Search proxy, firewall and web server logs for all nine addresses, including both forms of the disputed one, across at least the period since 19 October 2026. On any server that contacted them, capture memory and the process tree before restarting anything, since none of the three tools has a published on-disk indicator."
+    },
+    {
+     "phase": "eradicate",
+     "action": "On affected web servers, list files created by the web server's account in the upload and temporary directories, cron entries and services added since the first contact, and outbound connections that persist. Remove what is found and close the upload or request-forgery flaw that let it in."
+    },
+    {
+     "phase": "recover",
+     "action": "Rotate credentials stored on or reachable from the compromised servers, including database and cloud credentials in application configuration, and review authentication from those servers to internal systems for the lateral movement the post reports."
+    },
+    {
+     "phase": "harden",
+     "action": "Require authentication on file upload endpoints, restrict what internet-facing applications may request on the server's behalf, and alert when a web server process starts a download tool or a shell."
+    }
+   ],
+   "lesson": "This is the case the guide's \"where did the AI run\" section exists for. The agent was on the actor's server and what reached the victim was scanning, an exploited web application and a conventional remote-access tool, so the catalog has no row and the investigation is an ordinary web server compromise run faster. The published indicators are all network addresses with a short life, and one of them is printed two ways in the source.",
+   "detections": [],
+   "references": [
+    {
+     "title": "Microsoft Threat Intelligence - ARTEX abuse expands as cybercriminals target financial sector (6 Nov 2026)",
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/",
+     "accessed": "2026-11-17"
+    }
+   ],
+   "external_ids": {
+    "vendor_cluster": [
+     "Storm-3358"
+    ]
+   },
+   "affects_ids": []
   }
  ],
  "graph": {
@@ -11242,6 +12465,20 @@
     "label": "GTG-10007",
     "actor_id": "AIRT-TA-0020",
     "actor_kind": "unattributed-cluster"
+   },
+   {
+    "id": "actor:AIRT-TA-0021",
+    "type": "actor",
+    "label": "Storm-0940",
+    "actor_id": "AIRT-TA-0021",
+    "actor_kind": "state-nexus"
+   },
+   {
+    "id": "actor:AIRT-TA-0022",
+    "type": "actor",
+    "label": "Storm-3358",
+    "actor_id": "AIRT-TA-0022",
+    "actor_kind": "criminal"
    },
    {
     "id": "artifact:AIRT-0001/credential/anthropic-api-key",
@@ -12736,6 +13973,18 @@
     "framework": "ATLAS"
    },
    {
+    "id": "atlas:AML.T0012",
+    "type": "technique",
+    "label": "AML.T0012 Valid Accounts",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0016.001",
+    "type": "technique",
+    "label": "AML.T0016.001 Software Tools",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0016.002",
     "type": "technique",
     "label": "AML.T0016.002 Generative AI",
@@ -12763,6 +14012,12 @@
     "id": "atlas:AML.T0024",
     "type": "technique",
     "label": "AML.T0024 Exfiltration via AI Inference API",
+    "framework": "ATLAS"
+   },
+   {
+    "id": "atlas:AML.T0025",
+    "type": "technique",
+    "label": "AML.T0025 Exfiltration via Cyber Means",
     "framework": "ATLAS"
    },
    {
@@ -12838,6 +14093,12 @@
     "framework": "ATLAS"
    },
    {
+    "id": "atlas:AML.T0095.000",
+    "type": "technique",
+    "label": "AML.T0095.000 Code Repositories",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0096",
     "type": "technique",
     "label": "AML.T0096 AI Service API",
@@ -12910,9 +14171,45 @@
     "framework": "ATT&CK"
    },
    {
+    "id": "attack:T1078.004",
+    "type": "technique",
+    "label": "T1078.004 Cloud Accounts",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1087.004",
+    "type": "technique",
+    "label": "T1087.004 Cloud Account",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1098.001",
+    "type": "technique",
+    "label": "T1098.001 Additional Cloud Credentials",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1098.003",
+    "type": "technique",
+    "label": "T1098.003 Additional Cloud Roles",
+    "framework": "ATT&CK"
+   },
+   {
     "id": "attack:T1098.004",
     "type": "technique",
     "label": "T1098.004 SSH Authorized Keys",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1105",
+    "type": "technique",
+    "label": "T1105 Ingress Tool Transfer",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1110.003",
+    "type": "technique",
+    "label": "T1110.003 Password Spraying",
     "framework": "ATT&CK"
    },
    {
@@ -12922,9 +14219,21 @@
     "framework": "ATT&CK"
    },
    {
+    "id": "attack:T1195",
+    "type": "technique",
+    "label": "T1195 Supply Chain Compromise",
+    "framework": "ATT&CK"
+   },
+   {
     "id": "attack:T1195.002",
     "type": "technique",
     "label": "T1195.002 Compromise Software Supply Chain",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1199",
+    "type": "technique",
+    "label": "T1199 Trusted Relationship",
     "framework": "ATT&CK"
    },
    {
@@ -12940,6 +14249,12 @@
     "framework": "ATT&CK"
    },
    {
+    "id": "attack:T1530",
+    "type": "technique",
+    "label": "T1530 Data from Cloud Storage",
+    "framework": "ATT&CK"
+   },
+   {
     "id": "attack:T1546",
     "type": "technique",
     "label": "T1546 Event Triggered Execution",
@@ -12949,6 +14264,12 @@
     "id": "attack:T1552.001",
     "type": "technique",
     "label": "T1552.001 Credentials In Files",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1555.006",
+    "type": "technique",
+    "label": "T1555.006 Cloud Secrets Management Stores",
     "framework": "ATT&CK"
    },
    {
@@ -12973,6 +14294,36 @@
     "id": "attack:T1572",
     "type": "technique",
     "label": "T1572 Protocol Tunneling",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1580",
+    "type": "technique",
+    "label": "T1580 Cloud Infrastructure Discovery",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1593.003",
+    "type": "technique",
+    "label": "T1593.003 Code Repositories",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1595",
+    "type": "technique",
+    "label": "T1595 Active Scanning",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1595.002",
+    "type": "technique",
+    "label": "T1595.002 Vulnerability Scanning",
+    "framework": "ATT&CK"
+   },
+   {
+    "id": "attack:T1651",
+    "type": "technique",
+    "label": "T1651 Cloud Administration Command",
     "framework": "ATT&CK"
    },
    {
@@ -13147,6 +14498,27 @@
     "confidence": "medium"
    },
    {
+    "id": "case:AIRT-CS-0024",
+    "type": "case",
+    "label": "Storm-0940 and ARTEX - A Vendor's Application Identities Used Against Its Customers' Tenants",
+    "case_id": "AIRT-CS-0024",
+    "confidence": "medium"
+   },
+   {
+    "id": "case:AIRT-CS-0025",
+    "type": "case",
+    "label": "ARTEX Harvests Exposed Secrets From Public Repositories and Signs In as the Application",
+    "case_id": "AIRT-CS-0025",
+    "confidence": "medium"
+   },
+   {
+    "id": "case:AIRT-CS-0026",
+    "type": "case",
+    "label": "Storm-3358 and ARTEX - Agent-Driven Scanning and Exploitation of Financial Organisations",
+    "case_id": "AIRT-CS-0026",
+    "confidence": "medium"
+   },
+   {
     "id": "country:CA",
     "type": "country",
     "label": "CA"
@@ -13251,6 +14623,24 @@
     "id": "ioc:account:8709258476",
     "type": "ioc",
     "label": "8709258476",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "type": "ioc",
+    "label": "Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+    "type": "ioc",
+    "label": "Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+    "ioc_type": "account"
+   },
+   {
+    "id": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "type": "ioc",
+    "label": "Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
     "ioc_type": "account"
    },
    {
@@ -13950,6 +15340,24 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:144.172.64[.]128",
+    "type": "ioc",
+    "label": "144.172.64[.]128",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:144.172.64[.]60",
+    "type": "ioc",
+    "label": "144.172.64[.]60",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:144.172.64[.]99",
+    "type": "ioc",
+    "label": "144.172.64[.]99",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:146.103.101[.]253",
     "type": "ioc",
     "label": "146.103.101[.]253",
@@ -13986,6 +15394,12 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:157.22.126[.]128",
+    "type": "ioc",
+    "label": "157.22.126[.]128",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:158.173.46[.]118",
     "type": "ioc",
     "label": "158.173.46[.]118",
@@ -14013,6 +15427,18 @@
     "id": "ioc:ip:176.177.12[.]62",
     "type": "ioc",
     "label": "176.177.12[.]62",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:178.15.54[.]129",
+    "type": "ioc",
+    "label": "178.15.54[.]129",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:178.16.54[.]129",
+    "type": "ioc",
+    "label": "178.16.54[.]129",
     "ioc_type": "ip"
    },
    {
@@ -14046,6 +15472,24 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:187.15.88[.]186",
+    "type": "ioc",
+    "label": "187.15.88[.]186",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:187.15.89[.]186",
+    "type": "ioc",
+    "label": "187.15.89[.]186",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:187.15.90[.]217",
+    "type": "ioc",
+    "label": "187.15.90[.]217",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:193.32.249[.]161",
     "type": "ioc",
     "label": "193.32.249[.]161",
@@ -14073,6 +15517,36 @@
     "id": "ioc:ip:195.178.110[.]131",
     "type": "ioc",
     "label": "195.178.110[.]131",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:199.19.77[.]18",
+    "type": "ioc",
+    "label": "199.19.77[.]18",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:199.19.77[.]84",
+    "type": "ioc",
+    "label": "199.19.77[.]84",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:199.19.95[.]66",
+    "type": "ioc",
+    "label": "199.19.95[.]66",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:199.19.95[.]67",
+    "type": "ioc",
+    "label": "199.19.95[.]67",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:199.19.95[.]68",
+    "type": "ioc",
+    "label": "199.19.95[.]68",
     "ioc_type": "ip"
    },
    {
@@ -14130,6 +15604,12 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:31.77.229[.]35",
+    "type": "ioc",
+    "label": "31.77.229[.]35",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:34.156.199[.]132",
     "type": "ioc",
     "label": "34.156.199[.]132",
@@ -14166,9 +15646,33 @@
     "ioc_type": "ip"
    },
    {
+    "id": "ioc:ip:65.87.223[.]26",
+    "type": "ioc",
+    "label": "65.87.223[.]26",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:85.11.167[.]52",
+    "type": "ioc",
+    "label": "85.11.167[.]52",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:85.11.168[.]45",
+    "type": "ioc",
+    "label": "85.11.168[.]45",
+    "ioc_type": "ip"
+   },
+   {
     "id": "ioc:ip:91.171.138[.]169",
     "type": "ioc",
     "label": "91.171.138[.]169",
+    "ioc_type": "ip"
+   },
+   {
+    "id": "ioc:ip:91.92.240[.]238",
+    "type": "ioc",
+    "label": "91.92.240[.]238",
     "ioc_type": "ip"
    },
    {
@@ -14250,6 +15754,11 @@
     "ioc_type": "url"
    },
    {
+    "id": "malware:adaptixc2",
+    "type": "malware",
+    "label": "AdaptixC2"
+   },
+   {
     "id": "malware:dustmaker",
     "type": "malware",
     "label": "DUSTMAKER"
@@ -14278,6 +15787,16 @@
     "id": "malware:sombermeme",
     "type": "malware",
     "label": "SOMBERMEME"
+   },
+   {
+    "id": "malware:vshell",
+    "type": "malware",
+    "label": "vshell"
+   },
+   {
+    "id": "malware:wisp",
+    "type": "malware",
+    "label": "WISP"
    },
    {
     "id": "region:Americas",
@@ -14393,6 +15912,16 @@
     "id": "rule:cursor_settings_db_modification.yml",
     "type": "rule",
     "label": "cursor_settings_db_modification.yml"
+   },
+   {
+    "id": "rule:entra_app_signin_invalid_or_expired_secret.yml",
+    "type": "rule",
+    "label": "entra_app_signin_invalid_or_expired_secret.yml"
+   },
+   {
+    "id": "rule:entra_app_signin_scripted_client.yml",
+    "type": "rule",
+    "label": "entra_app_signin_scripted_client.yml"
    },
    {
     "id": "rule:github_copilot_yolo_mode_enabled.yml",
@@ -14683,6 +16212,11 @@
     "id": "sector:information-technology",
     "type": "sector",
     "label": "information-technology"
+   },
+   {
+    "id": "sector:legal-professional-services",
+    "type": "sector",
+    "label": "legal-professional-services"
    },
    {
     "id": "sector:media-entertainment",
@@ -15325,6 +16859,33 @@
     "rel": "targets"
    },
    {
+    "source": "actor:AIRT-TA-0021",
+    "target": "case:AIRT-CS-0024",
+    "rel": "attributed-to",
+    "confidence": "medium"
+   },
+   {
+    "source": "actor:AIRT-TA-0022",
+    "target": "case:AIRT-CS-0026",
+    "rel": "attributed-to",
+    "confidence": "medium"
+   },
+   {
+    "source": "actor:AIRT-TA-0022",
+    "target": "malware:adaptixc2",
+    "rel": "uses"
+   },
+   {
+    "source": "actor:AIRT-TA-0022",
+    "target": "malware:vshell",
+    "rel": "uses"
+   },
+   {
+    "source": "actor:AIRT-TA-0022",
+    "target": "malware:wisp",
+    "rel": "uses"
+   },
+   {
     "source": "atlas:AML.T0008",
     "target": "tactic:AML.TA0003",
     "rel": "in-tactic"
@@ -15350,6 +16911,26 @@
     "rel": "in-tactic"
    },
    {
+    "source": "atlas:AML.T0012",
+    "target": "tactic:AML.TA0004",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0012",
+    "target": "tactic:AML.TA0012",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0012",
+    "target": "tactic:AML.TA0015",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0016.001",
+    "target": "tactic:AML.TA0003",
+    "rel": "in-tactic"
+   },
+   {
     "source": "atlas:AML.T0016.002",
     "target": "tactic:AML.TA0003",
     "rel": "in-tactic"
@@ -15371,6 +16952,11 @@
    },
    {
     "source": "atlas:AML.T0024",
+    "target": "tactic:AML.TA0010",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0025",
     "target": "tactic:AML.TA0010",
     "rel": "in-tactic"
    },
@@ -15451,6 +17037,11 @@
    },
    {
     "source": "atlas:AML.T0087",
+    "target": "tactic:AML.TA0002",
+    "rel": "in-tactic"
+   },
+   {
+    "source": "atlas:AML.T0095.000",
     "target": "tactic:AML.TA0002",
     "rel": "in-tactic"
    },
@@ -17335,6 +18926,371 @@
     "rel": "affects"
    },
    {
+    "source": "case:AIRT-CS-0024",
+    "target": "atlas:AML.T0012",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "atlas:AML.T0016.001",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "atlas:AML.T0116",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "atlas:AML.T0124",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1078.004",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1087.004",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1098.001",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1098.003",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1110.003",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1195",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1199",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1528",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1555.006",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1580",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "attack:T1595",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id 0de14c77-b9b0-4137-9360-34878a929827",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id 24205314-2b89-4e07-a2a4-579e898a5640",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:account:Application id 506e08f9-6e9a-4da4-942b-a099a03644ae",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:144.172.64[.]128",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:144.172.64[.]60",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:144.172.64[.]99",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:187.15.88[.]186",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:187.15.89[.]186",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "ioc:ip:187.15.90[.]217",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "rule:entra_app_signin_scripted_client.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:chemical",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:critical-manufacturing",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:defense-industrial-base",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:energy",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:financial-services",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:government",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:information-technology",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:legal-professional-services",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:media-entertainment",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0024",
+    "target": "sector:ngo-think-tank",
+    "rel": "targets"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0012",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0025",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0055",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0095.000",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0117",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "atlas:AML.T0124",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1078.004",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1530",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1552.001",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1555.006",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1580",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1593.003",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "attack:T1651",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "ioc:ip:157.22.126[.]128",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "ioc:ip:199.19.77[.]18",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "ioc:ip:199.19.77[.]84",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "ioc:ip:65.87.223[.]26",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "rule:entra_app_signin_invalid_or_expired_secret.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0025",
+    "target": "rule:entra_app_signin_scripted_client.yml",
+    "rel": "detected-by"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "atlas:AML.T0016.001",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "atlas:AML.T0116",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "atlas:AML.T0124",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "attack:T1105",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "attack:T1190",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "attack:T1595.002",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:178.15.54[.]129",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:178.16.54[.]129",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:199.19.95[.]66",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:199.19.95[.]67",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:199.19.95[.]68",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:31.77.229[.]35",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:85.11.167[.]52",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:85.11.168[.]45",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "ioc:ip:91.92.240[.]238",
+    "rel": "indicator"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "malware:adaptixc2",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "malware:vshell",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "malware:wisp",
+    "rel": "uses"
+   },
+   {
+    "source": "case:AIRT-CS-0026",
+    "target": "sector:financial-services",
+    "rel": "targets"
+   },
+   {
     "source": "country:CA",
     "target": "region:Americas",
     "rel": "in-region"
@@ -17502,6 +19458,21 @@
    {
     "source": "rule:cursor_settings_db_modification.yml",
     "target": "atlas:AML.T0010.001",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:entra_app_signin_invalid_or_expired_secret.yml",
+    "target": "atlas:AML.T0012",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:entra_app_signin_invalid_or_expired_secret.yml",
+    "target": "atlas:AML.T0055",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:entra_app_signin_scripted_client.yml",
+    "target": "atlas:AML.T0012",
     "rel": "detects"
    },
    {
