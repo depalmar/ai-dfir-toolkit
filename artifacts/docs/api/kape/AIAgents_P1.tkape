@@ -37,6 +37,10 @@ Targets:
         Category: AIAgents
         Path: 'GitHubCopilot.tkape'
     -
+        Name: 'GoogleAntigravityCLI'
+        Category: AIAgents
+        Path: 'GoogleAntigravityCLI.tkape'
+    -
         Name: 'GoogleGeminiCLI'
         Category: AIAgents
         Path: 'GoogleGeminiCLI.tkape'

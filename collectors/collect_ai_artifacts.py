@@ -32,6 +32,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import socket
 import sys
@@ -77,10 +78,22 @@ def self_hash() -> str:
         return "unavailable"
 
 
+# An environment variable that is not set on this host. Opening the literal
+# string would resolve "$CLAUDE_CONFIG_DIR/.credentials.json" against the
+# current directory.
+UNEXPANDED_VAR = re.compile(r"\$\{?[A-Za-z_]")
+
+
 def expand_tokens(raw: str, scope: str, home: Path, project_dir: Path | None) -> str:
-    """Expand ~, environment tokens, and choose the base directory for project-scoped globs."""
+    """Expand ~, environment tokens, and choose the base directory for project-scoped globs.
+
+    Returns '' when a variable the path needs is not set on this host - $APPDATA
+    off Windows, an override such as $CLAUDE_CONFIG_DIR that was never exported.
+    """
     p = os.path.expanduser(raw)
     p = os.path.expandvars(p)  # $APPDATA etc. (no-op if unset on this OS)
+    if UNEXPANDED_VAR.search(p):
+        return ""  # checked before the join, so a '$' in --project-dir is not mistaken for one
     if scope == "project" and project_dir is not None and not os.path.isabs(p):
         p = str(project_dir / p)
     return p
@@ -92,8 +105,8 @@ def resolve_paths(target: dict[str, Any], home: Path, project_dir: Path | None) 
     out: list[Path] = []
     for raw in target.get("paths", []):
         expanded = expand_tokens(raw, scope, home, project_dir)
-        if "$" in expanded and any(tok in expanded for tok in ("$APPDATA", "$LOCALAPPDATA", "$USERPROFILE", "$XDG")):
-            continue  # unexpanded env var on this OS -> path not applicable
+        if not expanded:
+            continue  # env var not set on this host -> path not applicable
         if ttype == "glob" or any(ch in expanded for ch in "*?[]"):
             for hit in _glob.glob(expanded, recursive=True):
                 out.append(Path(hit))

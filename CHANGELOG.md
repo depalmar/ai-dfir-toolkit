@@ -47,6 +47,14 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **The collector opened an unset environment variable as a literal folder.**
+  Its guard knew four names (`$APPDATA`, `$LOCALAPPDATA`, `$USERPROFILE`,
+  `$XDG`), so with `CLAUDE_CONFIG_DIR` unset the generated target
+  `$CLAUDE_CONFIG_DIR/.credentials.json` was looked up relative to the working
+  directory, and a file planted under a folder of that name was recorded as
+  Claude Code's credential. Any path whose variable is not set on the host is
+  now skipped. Carried over from #216, which #228 otherwise superseded.
+
 - **The native collector searched for folders named `<repo>`.** 38 generated
   targets in `collectors/targets.yaml` kept catalog placeholders verbatim, and
   `collect_ai_artifacts.py` only expands `~` and environment variables, so

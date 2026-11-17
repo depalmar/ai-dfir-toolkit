@@ -1,0 +1,237 @@
+# AI agent artifact catalog entry
+# AIRT-0052 - Google Antigravity CLI
+# Schema: ../schema/artifact.schema.json
+# Defensive reference. Artifact locations for IR collection and analysis.
+
+id: AIRT-0052
+name: Google Antigravity CLI
+aliases:
+  - agy
+  - antigravity-cli
+  - Antigravity CLI
+vendor: Google
+category: coding-agent-cli
+description: "Terminal coding agent, binary `agy`. Google moved free, Google AI Pro and Ultra users of Gemini CLI (AIRT-0037) to it on 18 June 2026, so a host that had Gemini CLI may now carry both. It shares `~/.gemini/config/` with the Antigravity App and the IDE extensions, and keeps its own state under `~/.gemini/antigravity-cli/`. Sign-in goes to the OS keyring; a Gemini API key comes only from the environment."
+website: https://antigravity.google/product/antigravity-cli/
+status: active
+supported_os:
+  - windows
+  - macos
+  - linux
+execution_model: Cloud inference + local tool exec
+capabilities:
+  local_code_execution: true
+  local_listener: false
+  plaintext_credentials: true
+  mcp_capable: true
+risk: high
+confidence: high
+abuse_potential: Hooks in ~/.gemini/config/hooks.json run scripts at points in the agent loop, and skills under ~/.gemini/antigravity-cli/skills/ take priority over every other skill and ignore exclude lists. Both are durable, user-writable ways to change what every future session does. MCP server definitions in mcp_config.json carry bearer tokens and env values in plaintext.
+artifacts:
+  disk:
+    - path: ~/.gemini/antigravity-cli/brain/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: One folder per conversation, named by conversation ID, holding its artifacts and screenshots. The persistent transcript is <conversationId>/.system_generated/logs/transcript.jsonl, the file hooks receive as transcriptPath. CLI-specific; the Antigravity App writes the same layout under ~/.gemini/antigravity/ and the IDE under ~/.gemini/antigravity-ide/.
+      forensic_value: high
+      evidence_type:
+        - execution
+        - user-activity
+        - timeline
+      install_method: n/a
+      confidence: high
+      last_verified: "2026-11-10"
+    - path: ~/.gemini/antigravity-cli/settings.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: CLI settings. Records the permission allow, deny and ask lists, sandbox mode, and modelProvider gemini when the CLI runs on an API key instead of a signed-in account.
+      forensic_value: high
+      evidence_type:
+        - configuration
+      install_method: n/a
+      confidence: high
+      last_verified: "2026-11-10"
+    - path: ~/.gemini/antigravity-cli/cache/projects.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: session-artifact
+      description: Workspace-to-project map, so it lists the directories the CLI was used in. Documented in the 1.0.4 release notes; replaced per-repository .antigravitycli/ folders, which older installs may still have.
+      forensic_value: high
+      evidence_type:
+        - user-activity
+        - data-access
+      install_method: n/a
+      confidence: high
+    - path: ~/.gemini/antigravity-cli/skills/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: agent-definition
+      description: CLI-only skills that outrank workspace and personal skills and cannot be hidden by a manifest exclude list. The CLI also reads ~/.gemini/skills/ with the same priority.
+      forensic_value: high
+      evidence_type:
+        - persistence
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+      last_verified: "2026-11-10"
+    - path: ~/.gemini/config/hooks.json
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-file
+      description: Global lifecycle hooks that run shell commands at session start, before and after tool use, around each model call, and at stop. A PreToolUse hook can rewrite tool arguments and override permissions. Shared with the Antigravity App and IDE, so its presence alone does not prove the CLI; workspace hooks live in <repo>/.agents/hooks.json, and hooks placed in settings.json are not loaded.
+      forensic_value: high
+      evidence_type:
+        - persistence
+        - execution
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: ~/.gemini/config/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: config-dir
+      description: Personal customization scope shared by the Antigravity App and CLI - rules/, skills/, agents/, plugins/, config.json and the skills/rules/agents/plugins discovery manifests. ~/.gemini/GEMINI.md and ~/.gemini/AGENTS.md are read as global rules too, and Gemini CLI also reads ~/.gemini/GEMINI.md
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - persistence
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+    - path: ~/.gemini/config/plugins/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: extension-bundle
+      description: Installed plugins. Each can bundle MCP servers, hooks, skills and a bin/ folder of executables the agent runs by name, plus a per-plugin data folder.
+      forensic_value: high
+      evidence_type:
+        - persistence
+        - program-presence
+        - configuration
+      install_method: n/a
+      confidence: high
+    - path: <repo>/.agents/
+      os:
+        - windows
+        - macos
+        - linux
+      artifact_type: project-artifact
+      description: Workspace customization scope, same layout as ~/.gemini/config/, read from the working folder and each parent up to the repository root. Travels with the repository, alongside AGENTS.md and GEMINI.md.
+      forensic_value: high
+      evidence_type:
+        - configuration
+        - prompt-injection-surface
+      install_method: n/a
+      confidence: high
+  process:
+    - name: agy
+      os:
+        - windows
+        - macos
+        - linux
+      typical_parent: shell
+      typical_children: shell commands, MCP servers, plugin bin/ tools, hook scripts
+      service_or_daemon: "No"
+      persistence: None
+      confidence: high
+credentials:
+  - location: 'OS keyring: macOS Keychain, Windows Credential Manager, Linux Secret Service (dbus)'
+    os:
+      - windows
+      - macos
+      - linux
+    storage: os-keyring
+    secret_type: oauth-token
+    description: >-
+      Signed-in token profile, shared with the Antigravity App, IDE extensions and SDK on the same
+      account. Plugin and MCP server OAuth sign-ins too large for the keychain go to a
+      private secrets file the vendor does not name. /logout purges the keyring profile.
+    confidence: high
+  - location: 'GEMINI_API_KEY in the environment, usually exported from a shell profile (~/.zshrc, ~/.bashrc)'
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: api-key
+    description: >-
+      Used only when settings.json sets modelProvider to gemini. The CLI does not read .env files or
+      GOOGLE_API_KEY, so look in the shell profile and the process environment.
+    confidence: high
+  - location: '~/.gemini/config/mcp_config.json -> mcpServers.<name>.headers / .env'
+    os:
+      - windows
+      - macos
+      - linux
+    storage: plaintext
+    secret_type: embedded-credentials
+    description: >-
+      Authorization headers and env values for MCP servers, in plaintext. Same for the workspace
+      file <repo>/.agents/mcp_config.json and each plugin's own mcp_config.json.
+    confidence: high
+mcp:
+  - mechanism: config-file
+    config_path: "~/.gemini/config/mcp_config.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process (stdio) or HTTP connection when a session starts
+    secrets_location: mcpServers.<name>.headers and .env
+    persistence_trigger: Every session, in the CLI and the Antigravity App
+    triage_priority: p1
+    notes: Personal scope, shared with the Antigravity App. Accepts comments and trailing commas, so parse it leniently.
+  - mechanism: config-file
+    config_path: "<repo>/.agents/mcp_config.json"
+    config_key: mcpServers
+    spawn_mechanism: Child process (stdio) or HTTP connection when a session starts in the workspace
+    secrets_location: mcpServers.<name>.headers and .env
+    persistence_trigger: Every session in the workspace
+    triage_priority: p1
+    notes: Workspace scope. Travels with the repository.
+collection:
+  triage_priority: p1
+  guidance: Collect ~/.gemini/antigravity-cli/ (transcripts and settings) and ~/.gemini/config/ (hooks, plugins, MCP config) before remediation. Transcripts are the only local record of what each conversation did. The sign-in token is in the OS keyring, not on disk, so acquire the keychain or credential store separately.
+  kape_target: GoogleAntigravityCLI
+  velociraptor_artifact: Custom.AIAgents.GoogleAntigravityCLI
+atlas_techniques:
+  - AML.T0051
+  - AML.T0053
+  - AML.T0081
+attack_techniques:
+  - T1059
+  - T1552.001
+references:
+  - title: "Customization discovery - Google Antigravity Docs"
+    url: https://antigravity.google/docs/customization-discovery/
+    accessed: "2026-11-10"
+  - title: "Hooks - Google Antigravity Docs (transcriptPath)"
+    url: https://antigravity.google/docs/hooks/
+    accessed: "2026-11-10"
+  - title: "CLI settings and tips - Google Antigravity Docs"
+    url: https://antigravity.google/docs/cli/using/
+    accessed: "2026-11-10"
+  - title: "Authenticate - Google Antigravity Docs"
+    url: https://antigravity.google/docs/install/
+    accessed: "2026-11-10"
+  - title: "MCP - Google Antigravity Docs"
+    url: https://antigravity.google/docs/mcp/
+    accessed: "2026-11-10"
+  - title: "google-antigravity/antigravity-cli CHANGELOG.md (vendor release notes, through 1.5.5)"
+    url: https://github.com/google-antigravity/antigravity-cli/blob/main/CHANGELOG.md
+    accessed: "2026-11-10"
+last_verified: "2026-11-10"
+last_modified: "2026-11-10"

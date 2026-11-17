@@ -73,6 +73,8 @@ $XDG_RUNTIME_DIR/qlog/cli.log
 <project>/.supermaven/config.json
 <project>/config.toml  ([llm] api_key)
 <project>/langgraph.json
+<repo>/.agents/
+<repo>/.agents/mcp_config.json
 <repo>/.aider.chat.history.md
 <repo>/.aider.input.history
 <repo>/.amazonq/cli-agents/*.json
@@ -108,6 +110,7 @@ Client-side MCP in the LocalAI WebUI - the browser connects to the MCP server di
 Custom MCP node configuration embedded in flow definitions, stored in database.sqlite under DATABASE_PATH (default ~/.flowise/)
 FLOWISE_SECRETKEY_OVERWRITE
 Framework-specific MCP imports in project source - langchain_mcp_adapters, autogen_ext.tools.mcp, crewai_tools.MCPServerAdapter, semantic_kernel MCP plugins, and the mcp package itself
+GEMINI_API_KEY in the environment, usually exported from a shell profile (~/.zshrc, ~/.bashrc)
 GOOGLE_APPLICATION_CREDENTIALS
 Goose session logs
 HF_TOKEN
@@ -145,6 +148,7 @@ OPENAI_API_KEY / AZURE_OPENAI_API_KEY / ANTHROPIC_API_KEY
 OPENAI_API_KEY | ANTHROPIC_API_KEY | GOOGLE_API_KEY | HF_TOKEN | AWS credentials
 OP_SERVICE_ACCOUNT_TOKEN
 OS keychain, via the editor's own credential storage
+OS keyring: macOS Keychain, Windows Credential Manager, Linux Secret Service (dbus)
 OS keyring: service "Codex Auth", account "cli|<first 16 hex of SHA-256 of the resolved home path>"
 OS keyring: service `copilot-cli` (macOS Keychain, Windows Credential Manager, Linux libsecret/GNOME Keyring/KWallet)
 OS keyring: service `goose`, username `secrets` (single JSON blob)
@@ -237,6 +241,15 @@ webui.db (user and API key tables)
 ~/.flowise/database.sqlite
 ~/.flowise/encryption.key
 ~/.gemini/.env
+~/.gemini/antigravity-cli/brain/
+~/.gemini/antigravity-cli/cache/projects.json
+~/.gemini/antigravity-cli/settings.json
+~/.gemini/antigravity-cli/skills/
+~/.gemini/config/
+~/.gemini/config/hooks.json
+~/.gemini/config/mcp_config.json
+~/.gemini/config/mcp_config.json -> mcpServers.<name>.headers / .env
+~/.gemini/config/plugins/
 ~/.gemini/google_accounts.json
 ~/.gemini/oauth_creds.json
 ~/.gemini/settings.json

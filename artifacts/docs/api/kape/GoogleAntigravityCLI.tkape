@@ -1,0 +1,52 @@
+Description: 'Google Antigravity CLI - AI agent artifacts'
+Author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+Version: 1.0
+Id: cdfec5a2-fefd-5e5c-82cd-8beb8e13155c
+RecreateDirectories: true
+Targets:
+    -
+        Name: 'One folder per conversation, named by conversation ID, holding its...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\antigravity-cli\brain\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0052 | One folder per conversation, named by conversation ID, holding its artifacts and screenshots. The persistent transcript is <conversationId>/.system_generated/logs/transcript.jsonl,'
+    -
+        Name: 'CLI settings. Records the permission allow, deny and ask lists, sandbox...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\antigravity-cli\'
+        FileMask: 'settings.json'
+        Comment: 'AIRT-0052 | CLI settings. Records the permission allow, deny and ask lists, sandbox mode, and modelProvider gemini when the CLI runs on an API key instead of a signed-in account.'
+    -
+        Name: 'Workspace-to-project map, so it lists the directories the CLI was used in....'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\antigravity-cli\cache\'
+        FileMask: 'projects.json'
+        Comment: 'AIRT-0052 | Workspace-to-project map, so it lists the directories the CLI was used in. Documented in the 1.0.4 release notes; replaced per-repository .antigravitycli/ folders, which older inst'
+    -
+        Name: 'CLI-only skills that outrank workspace and personal skills and cannot be...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\antigravity-cli\skills\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0052 | CLI-only skills that outrank workspace and personal skills and cannot be hidden by a manifest exclude list. The CLI also reads ~/.gemini/skills/ with the same priority.'
+    -
+        Name: 'Global lifecycle hooks that run shell commands at session start, before and...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\config\'
+        FileMask: 'hooks.json'
+        Comment: 'AIRT-0052 | Global lifecycle hooks that run shell commands at session start, before and after tool use, around each model call, and at stop. A PreToolUse hook can rewrite tool arguments and ov'
+    -
+        Name: 'Personal customization scope shared by the Antigravity App and CLI...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\config\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0052 | Personal customization scope shared by the Antigravity App and CLI - rules/, skills/, agents/, plugins/, config.json and the skills/rules/agents/plugins discovery manifests. ~/.gem'
+    -
+        Name: 'Installed plugins. Each can bundle MCP servers, hooks, skills and a bin/...'
+        Category: AIAgents
+        Path: 'C:\Users\%user%\.gemini\config\plugins\'
+        FileMask: '*'
+        Recursive: true
+        Comment: 'AIRT-0052 | Installed plugins. Each can bundle MCP servers, hooks, skills and a bin/ folder of executables the agent runs by name, plus a per-plugin data folder.'

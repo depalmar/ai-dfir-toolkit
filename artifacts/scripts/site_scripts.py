@@ -162,8 +162,11 @@ Get-NetTCPConnection -ErrorAction SilentlyContinue |
   Export-Csv -NoTypeInformation -Encoding UTF8 (Join-Path $live "tcp.csv")
 Get-DnsClientCache -ErrorAction SilentlyContinue | Select-Object Entry, Data, TimeToLive |
   Export-Csv -NoTypeInformation -Encoding UTF8 (Join-Path $live "dns_cache.csv")
-$tcp = @(Import-Csv (Join-Path $live "tcp.csv") -ErrorAction SilentlyContinue)
-$dns = @(Import-Csv (Join-Path $live "dns_cache.csv") -ErrorAction SilentlyContinue)
+# Export-Csv writes no file for empty input (an empty DNS cache, no TCP state),
+# so read back only what was written instead of erroring on a missing file.
+$tcpCsv = Join-Path $live "tcp.csv"; $dnsCsv = Join-Path $live "dns_cache.csv"
+$tcp = @(if (Test-Path $tcpCsv) { Import-Csv $tcpCsv })
+$dns = @(if (Test-Path $dnsCsv) { Import-Csv $dnsCsv })
 foreach ($t in $targets | Where-Object { $_.k -eq "process" }) {
   $hit = @($procs | Where-Object { $n = $_.Name; @($t.n) | Where-Object { $n -like ($_ + "*") } })
   Add-Row $t ($t.n -join ", ") ($(if ($hit) { "running" } else { "not-running" })) ("pids " + (($hit | ForEach-Object ProcessId) -join " ")) "" "" "" "live\processes.csv"

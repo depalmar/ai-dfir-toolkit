@@ -1,0 +1,44 @@
+name: Custom.AIAgents.GoogleAntigravityCLI
+description: |
+  Terminal coding agent, binary `agy`. Google moved free, Google AI Pro and Ultra users of Gemini CLI (AIRT-0037) to it on 18 June 2026, so a host that had Gemini
+
+  Generated from the AI agent artifact catalog (AIRT-0052). Every glob below is
+  derived from a location the catalog has already verified.
+author: AI Agent Artifact Catalog (ai-dfir-toolkit)
+type: CLIENT
+parameters:
+  - name: Upload
+    description: Upload matching files rather than only recording their metadata.
+    type: bool
+    default: "N"
+sources:
+  - name: Windows
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'windows'
+    query: |
+      LET Globs = ['C:\Users\*\.gemini\antigravity-cli\brain\**', 'C:\Users\*\.gemini\antigravity-cli\settings.json', 'C:\Users\*\.gemini\antigravity-cli\cache\projects.json', 'C:\Users\*\.gemini\antigravity-cli\skills\**', 'C:\Users\*\.gemini\config\hooks.json', 'C:\Users\*\.gemini\config\**', 'C:\Users\*\.gemini\config\plugins\**', 'C:\Users\*\.gemini\config\mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Macos
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'darwin'
+    query: |
+      LET Globs = ['/Users/*/.gemini/antigravity-cli/brain/**', '/Users/*/.gemini/antigravity-cli/settings.json', '/Users/*/.gemini/antigravity-cli/cache/projects.json', '/Users/*/.gemini/antigravity-cli/skills/**', '/Users/*/.gemini/config/hooks.json', '/Users/*/.gemini/config/**', '/Users/*/.gemini/config/plugins/**', '/Users/*/.gemini/config/mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
+  - name: Linux
+    precondition: |
+      SELECT OS FROM info() WHERE OS = 'linux'
+    query: |
+      LET Globs = ['/home/*/.gemini/antigravity-cli/brain/**', '/home/*/.gemini/antigravity-cli/settings.json', '/home/*/.gemini/antigravity-cli/cache/projects.json', '/home/*/.gemini/antigravity-cli/skills/**', '/home/*/.gemini/config/hooks.json', '/home/*/.gemini/config/**', '/home/*/.gemini/config/plugins/**', '/home/*/.gemini/config/mcp_config.json']
+      LET Hits = SELECT OSPath, Size, Mode.String AS Mode, Mtime, Btime, Ctime
+        FROM glob(globs=Globs)
+        WHERE NOT IsDir
+      SELECT *, if(condition=Upload, then=upload(file=OSPath)) AS Upload
+      FROM Hits
