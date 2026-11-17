@@ -498,8 +498,18 @@ resolved by whoever picks this up next without asking.
      from vendor documentation only (see `docs/VERIFICATION.md`, 2026-11-10).
      Install it on a host and confirm the `brain/` transcripts and
      `cache/projects.json`, which rests on one early release note.
-   - Set up auto-merge: an `AUTOMATION_TOKEN` secret, branch protection on
-     `main`, and "Allow auto-merge". Without them the refresh PR opens but waits.
+   - **The weekly framework refresh has never opened a PR.** Every run fails
+     with "GitHub Actions is not permitted to create or approve pull requests".
+     Until the owner turns that setting on (Settings > Actions > General >
+     Workflow permissions) or adds an `AUTOMATION_TOKEN` secret, the ATLAS,
+     ATT&CK and KEV pins only move when a session runs `--refresh` by hand.
+     Auto-merge then also needs branch protection on `main` and "Allow
+     auto-merge".
+   - **Nobody triages `intel-candidate` issues.** The watcher runs weekly and
+     works; 133 issues were open on 2026-11-17, none closed. Closing one as not
+     planned is how the watcher learns to stop raising it. `tool-releases`
+     candidates ask for a re-verification of one entry and are the quickest to
+     act on.
    - Run the generated PowerShell triage script on a Windows host, under
      Windows PowerShell 5.1 as the usage line says. It has been run end to end
      under PowerShell 7.6 on Linux against a fixture (credentials hashed, not

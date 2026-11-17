@@ -206,12 +206,19 @@ def src_feed(cfg, ctx):
                (e.find("a:link", ns).get("href") if e.find("a:link", ns) is not None else ""),
                e.findtext("a:updated", namespaces=ns) or "", e.findtext("a:summary", namespaces=ns) or "")
               for e in root.iter("{http://www.w3.org/2005/Atom}entry")]
+    # A vendor's general news feed matches "agent" and "Codex" on every customer
+    # story. `require` adds a second condition for those feeds: the item must
+    # also carry a security word, matched as a stem ("vulnerab", "exploit").
+    require = [t.lower() for t in cfg.get("require") or []]
     out = []
     for title, link, when, desc in items:
         d = _date(when)
         if d and d < ctx["since"]:
             continue
-        h = hits(title + " " + re.sub(r"<[^>]+>", " ", desc), ctx["catalog_terms"] | ctx["match"])
+        text = title + " " + re.sub(r"<[^>]+>", " ", desc)
+        if require and not any(t in text.lower() for t in require):
+            continue
+        h = hits(text, ctx["catalog_terms"] | ctx["match"])
         if h:
             out.append({"key": re.sub(r"[^a-z0-9]+", "-", link.lower())[-80:] or title[:60],
                         "title": title[:140], "date": d or when, "url": link,
@@ -235,6 +242,84 @@ def src_ghsa(cfg, ctx):
     return out
 
 
+NOT_A_TOOL_REPO = re.compile(r"(^|[-_.])docs?$|bug-tracker|quickstarts|-legacy$", re.I)
+RETIRED = {"legacy", "unmaintained", "eol", "dormant"}
+
+
+def tool_repos(entries: dict, cfg: dict) -> dict[str, list[str]]:
+    """GitHub repositories of catalogued tools, derived from each entry's references.
+
+    Nothing is authored here: an entry that cites its source repository is
+    watched from the day it is catalogued, and a retired tool stops being
+    watched when its status says so.
+    """
+    skip = {r.lower() for r in cfg.get("skip") or []}
+    repos: dict[str, list[str]] = {}
+    for eid, e in sorted(entries.items()):
+        if e.get("status") in RETIRED:
+            continue
+        for ref in e.get("references") or []:
+            u = urllib.parse.urlparse(str(ref.get("url", "")))
+            parts = [p for p in u.path.split("/") if p]
+            if u.netloc.lower() != "github.com" or len(parts) < 2:
+                continue
+            repo = f"{parts[0]}/{parts[1]}"
+            if NOT_A_TOOL_REPO.search(parts[1]) or repo.lower() in skip:
+                continue
+            repos.setdefault(repo, [])
+            if eid not in repos[repo]:
+                repos[repo].append(eid)
+    for repo, eid in (cfg.get("extra") or {}).items():
+        repos.setdefault(repo, []).append(eid)
+    return repos
+
+
+def src_releases(cfg, ctx):
+    """Releases of catalogued tools whose notes mention a path or storage change.
+
+    A catalogued path goes stale when a release moves it, and nothing else in
+    the repository notices: the staleness gate only knows how old a check is.
+    One candidate per tool per run, keyed on the newest matching release, so a
+    tool that ships daily raises one issue and not twenty.
+    """
+    signals = [t.lower() for t in cfg.get("signals") or []]
+    token = os.environ.get("GITHUB_TOKEN", "")
+    headers = {"Accept": "application/vnd.github+json", **({"Authorization": f"Bearer {token}"} if token else {})}
+    out = []
+    for repo, eids in tool_repos(ctx["entries"], cfg).items():
+        try:
+            if ctx.get("releases_dir"):
+                f = Path(ctx["releases_dir"]) / (repo.replace("/", "__") + ".json")
+                releases = json.loads(f.read_text(encoding="utf-8")) if f.exists() else []
+            else:
+                releases = json.loads(fetch(f"https://api.github.com/repos/{repo}/releases?per_page=30",
+                                            headers=headers))
+        except Exception as exc:  # a renamed or private repository must not stop the others
+            print(f"::warning::{cfg['id']}: {repo}: {type(exc).__name__}: {str(exc)[:120]}")
+            continue
+        matched = []
+        for r in releases:
+            when = str(r.get("published_at") or "")[:10]
+            if r.get("draft") or r.get("prerelease") or not when or when < ctx["since"]:
+                continue
+            body = (r.get("body") or "").lower()
+            found = sorted({t for t in signals if t in body})
+            if found:
+                matched.append((when, r.get("tag_name", ""), r.get("html_url", ""), found))
+        if not matched:
+            continue
+        matched.sort(reverse=True)
+        when, tag, url, _ = matched[0]
+        names = ", ".join(f"{e} {ctx['entries'][e]['name']}" if e in ctx["entries"] else e for e in eids)
+        out.append({"key": f"{repo.replace('/', '-')}@{tag}",
+                    "title": f"Re-verify {names}: {len(matched)} release(s) of {repo} mention a path or storage change",
+                    "date": when, "url": url,
+                    "facts": {"entry": ", ".join(eids),
+                              "releases": ", ".join(m[1] for m in matched[:8]),
+                              "matched": ", ".join(sorted({t for m in matched for t in m[3]})[:8])}})
+    return out
+
+
 def _date(s: str) -> str:
     for fmt in ("%a, %d %b %Y %H:%M:%S %z", "%a, %d %b %Y %H:%M:%S %Z", "%Y-%m-%dT%H:%M:%S%z",
                 "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%d"):
@@ -247,7 +332,8 @@ def _date(s: str) -> str:
 
 
 SOURCES = {"kev": src_kev, "atlas": src_atlas, "avid": src_avid, "aiid": src_aiid,
-           "markdown-table": src_markdown_table, "feed": src_feed, "ghsa": src_ghsa}
+           "markdown-table": src_markdown_table, "feed": src_feed, "ghsa": src_ghsa,
+           "releases": src_releases}
 
 
 # ------------------------------------------------------------------------ issues
@@ -301,15 +387,17 @@ def main() -> int:
     ap.add_argument("--kev-file")
     ap.add_argument("--atlas-dir")
     ap.add_argument("--avid-dir")
+    ap.add_argument("--releases-dir", help="directory of <owner>__<repo>.json release listings, for offline runs")
     ap.add_argument("--max-issues", type=int, default=25,
                     help="cap per run, so a first run or a noisy source cannot flood the tracker")
     args = ap.parse_args()
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
-    terms, _ = catalog_terms()
+    terms, entries = catalog_terms()
     since = args.since or (date.today() - timedelta(days=int(cfg.get("lookback_days", 21)))).isoformat()
     ctx = {"since": since, "catalog_terms": terms,
            "match": {m.lower() for m in cfg.get("match") or []},
-           "kev_file": args.kev_file, "atlas_dir": args.atlas_dir, "avid_dir": args.avid_dir}
+           "kev_file": args.kev_file, "atlas_dir": args.atlas_dir, "avid_dir": args.avid_dir,
+           "entries": entries, "releases_dir": args.releases_dir}
     found, warnings = [], []
     for src in cfg["sources"]:
         if args.only and src["id"] not in args.only:

@@ -5,6 +5,13 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
 ## [Unreleased] - 2026-11-02
 
 ### Added
+- **The intel watcher follows the catalogued tools' releases.** A new
+  `tool-releases` source derives each active entry's GitHub repository from
+  its references - 37 repositories, none listed by hand - and raises one
+  `intel-candidate` issue per tool per run when release notes mention a path
+  or storage change ("moved to", "now stored", "keychain", "migrat"). A
+  catalogued path goes stale when a release moves it, and until now nothing
+  noticed except the 90-day staleness gate. `--releases-dir` runs it offline.
 - **Supported by SANS Institute.** SANS cleared its standard logo for the
   project. The wordmark sits in the site header and footer, in its blue on the
   light theme and white on the dark one, and at the top of the README, with
@@ -161,6 +168,17 @@ Format based on Keep a Changelog. Entry IDs are permanent and never renumbered.
   Supply Chain Compromise. MAPPINGS index titles follow.
 
 ### Fixed
+- **The weekly framework refresh had failed on every run** since it was
+  added, because the repository does not allow GitHub Actions to open pull
+  requests, and it reported each failure as a broken gate in a new issue. The
+  pins were never refreshed by it. The workflow now names the real cause in
+  one issue that it comments on while open. The fix itself is a repository
+  setting or an `AUTOMATION_TOKEN` secret.
+- **The intel watcher raised vendor marketing as threat intel.** General news
+  feeds matched "agent" and "Codex" on every customer story: of 133 open
+  `intel-candidate` issues, about a third came from one vendor's news feed.
+  Those feeds now take a `require` list, so an item must also carry a
+  security word.
 - **PowerShell triage script read back CSVs it had not written.** Export-Csv
   writes no file for empty input, so a host with an empty DNS cache logged an
   Import-Csv error for `dns_cache.csv`. The script now reads back only files

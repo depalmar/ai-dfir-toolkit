@@ -66,16 +66,31 @@ sources:
   - id: microsoft-security
     kind: feed
     url: https://www.microsoft.com/en-us/security/blog/feed/
+    # A general news feed: an item must also carry one of these stems, or every
+    # customer story that says "agent" becomes a candidate.
+    require: [threat, malicious, disrupt, abuse, attack, exploit, vulnerab, campaign, backdoor,
+              malware, espionage, compromis, breach, phishing, ransom, exfiltrat, injection,
+              hijack, poison, "state-sponsored", "nation-state", intrusion]
     note: Microsoft Threat Intelligence posts.
 
   - id: openai-global-affairs
     kind: feed
     url: https://openai.com/news/rss.xml
+    # A general news feed: an item must also carry one of these stems, or every
+    # customer story that says "agent" becomes a candidate.
+    require: [threat, malicious, disrupt, abuse, attack, exploit, vulnerab, campaign, backdoor,
+              malware, espionage, compromis, breach, phishing, ransom, exfiltrat, injection,
+              hijack, poison, "state-sponsored", "nation-state", intrusion]
     note: OpenAI threat reports ("Disrupting malicious uses of AI").
 
   - id: anthropic-news
     kind: feed
     url: https://www.anthropic.com/rss.xml
+    # A general news feed: an item must also carry one of these stems, or every
+    # customer story that says "agent" becomes a candidate.
+    require: [threat, malicious, disrupt, abuse, attack, exploit, vulnerab, campaign, backdoor,
+              malware, espionage, compromis, breach, phishing, ransom, exfiltrat, injection,
+              hijack, poison, "state-sponsored", "nation-state", intrusion]
     note: Anthropic threat intelligence reports. The feed URL is a best guess - if it 404s the run logs a warning and continues.
 
   - id: cert-ua
@@ -93,3 +108,15 @@ sources:
       pip: ["langflow", "litellm", "open-webui", "vllm", "mcp", "crewai", "autogen-agentchat",
             "langchain", "aider-chat", "open-interpreter", "letta"]
     note: Reviewed GitHub advisories for catalogued packages.
+
+  - id: tool-releases
+    kind: releases
+    # Repositories are not listed here. They are derived from each active
+    # catalog entry's references, so a tool is watched from the day its entry
+    # cites its source repository. `skip` drops one, `extra` adds one that no
+    # reference names (repo: entry id).
+    signals: ["moved to", renamed, migrat, "now stored", "now lives", "new location", deprecat,
+              keychain, "credential", "no longer read", "config director", "data director",
+              "mcp_config", "settings.json"]
+    skip: []
+    note: A release of a catalogued tool whose notes mention a path or storage change. Re-verify the entry's rows.
