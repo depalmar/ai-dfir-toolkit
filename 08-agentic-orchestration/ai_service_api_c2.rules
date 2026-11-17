@@ -9,13 +9,14 @@
 # is weak; the high-value signals are (a) NON-inference API paths and (b) regular polling cadence.
 #
 # DEPRECATION NOTE: OpenAI retires the Assistants API in August 2026 in favour of the Responses API.
-# Expect migration of this tradecraft - keep sid:91008003 (generic beacon cadence) and add Responses paths.
+# Expect migration of this tradecraft - keep sid:9000802 (generic beacon cadence) and add Responses paths.
 #
-# SID range 91008001-91008020 is arbitrary - renumber to avoid collisions.
+# SID range 9000800-9000819.
 
 # --- Non-inference Assistants/Threads API paths (requires TLS interception) ---
 alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"AI-DFIR SesameOp - OpenAI Assistants API accessed (non-inference C2 relay path)"; flow:established,to_server; http.host; content:"api.openai.com"; http.uri; content:"/v1/assistants"; nocase; classtype:trojan-activity; metadata:atlas AML.T0096, malware SesameOp, category agentic-orchestration, confidence medium, tlp clear; sid:9000800; rev:1;)
-alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"AI-DFIR SesameOp - Assistants API response carries C2 verb in description field (intercepted)"; flow:established,from_server; http.response_body; content:"description"; nocase; http.response_body; content:"Payload"; nocase; distance:0; within:200; classtype:trojan-activity; metadata:atlas AML.T0096, malware SesameOp, category agentic-orchestration, confidence medium, tlp clear; sid:9000801; rev:1;)
+# The response comes back FROM the provider, so the external side is the source. rev 1 had the request's direction and could not alert.
+alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"AI-DFIR SesameOp - Assistants API response carries C2 verb in description field (intercepted)"; flow:established,from_server; http.response_body; content:"description"; nocase; http.response_body; content:"Payload"; nocase; distance:0; within:200; classtype:trojan-activity; metadata:atlas AML.T0096, malware SesameOp, category agentic-orchestration, confidence medium, tlp clear; sid:9000801; rev:2;)
 
 # --- Beacon cadence to an LLM provider from a server segment (provider-agnostic; survives API migration) ---
 # Tune $AI_C2_SEGMENT to hosts with NO legitimate interactive AI usage (servers, DMZ, jump boxes).

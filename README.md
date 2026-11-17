@@ -210,7 +210,7 @@ scoped to agent behaviour on a host rather than to one attack class, so it appli
 across every tool in the artifact catalog. An osquery pack there answers the
 inventory question ("which hosts have this") that the Sigma rules cannot.
 
-*Signature count includes multi-document Sigma YAML, multiple `rule` blocks inside a single YARA file, and multiple `alert` lines inside a single Suricata `.rules` file. One file often covers several related variants.*
+*Signature count includes multi-document Sigma YAML, multiple `rule` blocks inside a single YARA file, and multiple `alert` lines inside a single Suricata `.rules` file, except one `flowbits:noalert` helper that only sets state for the rule after it. One file often covers several related variants.*
 
 See [MAPPINGS.md](./MAPPINGS.md) for per-rule mappings.
 

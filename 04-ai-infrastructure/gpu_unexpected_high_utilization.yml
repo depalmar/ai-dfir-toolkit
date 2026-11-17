@@ -5,7 +5,8 @@ description: |
   Detects GPU usage by processes that are not recognized ML training/
   inference workloads. Pattern matches cryptominer behaviour (sustained
   high utilization, often capped at 60-100% to avoid detection) and
-  unauthorized model exfiltration via long-running inference.
+  unauthorized model exfiltration via long-running inference. The threshold
+  is 40% so that a miner capped just under 60% does not sit below it.
 
   Requires GPU telemetry from DCGM exporter, nvidia-smi pmon output
   shipped via Telegraf/Fluent Bit, or equivalent.
@@ -23,7 +24,7 @@ logsource:
   service: gpu_telemetry
 detection:
   selection_high_util:
-    gpu_utilization_pct|gte: 60
+    gpu_utilization_pct|gte: 40
     duration_minutes|gte: 30
   selection_suspicious_process:
     process_name|contains:
@@ -55,7 +56,9 @@ detection:
       - 'ollama'
       - 'triton'
       - 'tensorrt'
-  condition: selection_high_util and (selection_suspicious_process or selection_unknown_process) and not filter_known_ml
+  # The known-ML filter applies only to the unknown-process branch. Applied to
+  # the named-miner branch it cancelled '.python', which contains 'python'.
+  condition: selection_high_util and (selection_suspicious_process or (selection_unknown_process and not filter_known_ml))
 fields:
   - hostname
   - gpu_id

@@ -45,6 +45,8 @@ sigma convert -t lucene --without-pipeline ../02-mcp-attacks/mcp_config_tamperin
 ### Suricata rules
 Replay the captured request via curl against a Suricata sensor with the rules loaded, or use `suricata -r` against a pcap.
 
+`python tests/suricata_replay.py` does the second for you and is run in CI. It writes a small synthetic pcap, runs Suricata over it with every rule in the pack loaded, and fails unless the expected SIDs alert and the control traffic stays quiet. `suricata -T` only proves a rule parses; this is what proves it can fire. Add a case to `CASES` when you add a rule that matches a server response or depends on direction or ports.
+
 ### Cloud log samples (Sigma rules)
 Ingest the JSON sample into any SIEM as a test event, then convert the Sigma rule to the target backend and replay the detection against the ingested sample.
 

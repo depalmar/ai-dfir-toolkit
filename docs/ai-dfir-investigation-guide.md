@@ -492,7 +492,7 @@ Had the gateway log been on, it would read:
 
 One human turn, then eleven seconds. There is no `role=user` turn between the ticket arriving and the export call: nobody asked for what came next.
 
-- **Read it as a sequence.** No single line is malicious. The tell is a tool call with no human turn before it. `08-agentic-orchestration/analyze_agent_traces.py` scores the same thing across a whole session as its autonomy signal, agent actions per human turn.
+- **Read it as a sequence.** No single line is malicious. The tell is a tool call with no human turn before it. `08-agentic-orchestration/analyze_agent_traces.py` scores a related signal across a whole session, agent actions per human turn. It needs at least five actions before it scores at all, so it flags a long autonomous run and not a two-call exchange like this one; that you find by reading the sequence.
 - **Keyword rules will not catch it.** "Disregard prior instructions" is one phrasing of thousands. Hunt for the shape, not the string: untrusted content in, a tool call with no user turn, an outbound URL to a new domain, all in one session.
 - **You need what the model read, not just what it said.** The transcript shows the answer; the retrieved context shows why.
 
@@ -971,12 +971,12 @@ There is no single scanner that catches all AI/ML attacks. Defense requires laye
 
 ### 6.3 XDR/SIEM detection coverage
 
-This repository provides deployable rules for everything in this guide. It contains **70 rule files / 161 individual signatures** across three open formats: Sigma, YARA, and Suricata. Categories mirror this guide's sections 1 to 4 plus dedicated RAG/vector DB coverage, and a cross-tool endpoint set scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends.
+This repository provides rules for most of what this guide describes; where it has none, the guide says so and gives the hunt to run by hand. It contains **70 rule files / 161 individual signatures** across three open formats: Sigma, YARA, and Suricata. Nine category directories cover this guide's sections 1 to 4, RAG and vector databases, runtime AI malware, agentic orchestration and agent memory, and a cross-tool endpoint set is scoped to agent behaviour on a host rather than to one attack class. Sigma rules convert to any modern SIEM via pySigma backends. The rules that read application telemetry - an LLM gateway's logs, GPU metrics, an MLflow access log - name log sources and fields no standard pipeline defines, so map them to your own field names before converting.
 
 Recommended ingestion priorities for any SIEM/XDR program, ordered by signal-to-noise:
 
 1. **MCP configuration file changes** (lowest FP; legitimate changes are rare and predictable)
-2. **Credential file access by AI-assistant processes** (Claude, Cursor, VS Code, npx/uvx contexts)
+2. **Credential file access by MCP server processes** (node, npx, python and uv processes started as MCP servers, and what they spawn; needs file-read telemetry, which Sysmon alone does not give you)
 3. **Ray / Triton / MLflow unauthenticated access** (external exposure is almost never legitimate)
 4. **YARA scanning of all ingested models** (pre-deployment gate)
 5. **M365 Copilot access to sensitivity-labeled content** (highest-value insider signal)
