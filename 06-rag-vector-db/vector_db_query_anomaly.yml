@@ -8,7 +8,7 @@ description: |
   application runtimes. Catches unauthorized vector DB access from
   compromised endpoints or misused service accounts.
 references:
-  - https://atlas.mitre.org/techniques/AML.T0020
+  - https://atlas.mitre.org/techniques/AML.T0070
   - https://atlas.mitre.org/techniques/AML.T0024
   - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
 author: Raymond DePalma (ai-dfir-toolkit)
@@ -72,14 +72,14 @@ description: |
   Adjust the logsource and field mappings to match your ingestion
   framework (LangChain, LlamaIndex, Haystack, custom).
 references:
-  - https://atlas.mitre.org/techniques/AML.T0020
+  - https://atlas.mitre.org/techniques/AML.T0070
   - https://atlas.mitre.org/techniques/AML.T0051.001
   - https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
 author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.initial_access
-  - attack.atlas.t0020
+  - attack.atlas.t0070
   - attack.atlas.t0051
   - owasp.llm01
   - owasp.llm08
