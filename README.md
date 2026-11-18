@@ -7,7 +7,7 @@
   <img src="docs/brand/sans-logo.svg" alt="SANS Institute" height="40">
 </picture></a>
 
-Developed with support from [SANS Institute](https://www.sans.org/). The project stays independent and vendor-neutral; see the disclaimer below.
+Supported by [SANS Institute](https://www.sans.org/). The project stays independent and vendor-neutral; see the disclaimer below.
 
 A vendor-neutral collection of Sigma, YARA, and Suricata rules for detecting compromise of LLM applications, MCP servers, ML supply chains, AI infrastructure, AI-powered insider threats, and RAG/vector database attacks.
 
@@ -36,7 +36,7 @@ License: Apache 2.0.
 
 ## Disclaimer
 
-This is an independent personal project. It is not affiliated with, endorsed by, or produced on behalf of any employer. All research is based on public sources — published CVEs, vendor advisories, academic papers, and vendor-neutral security research. Contributions are welcome from the community.
+This is an independent personal project. It is not affiliated with, endorsed by, or produced on behalf of any employer. SANS Institute supports the project and has cleared its logo for use here; that support does not change the project's independence, and the content remains the maintainer's own. All research is based on public sources — published CVEs, vendor advisories, academic papers, and vendor-neutral security research. Contributions are welcome from the community.
 
 ---
 
@@ -307,4 +307,4 @@ Apache-2.0 licence.
 ---
 
 **Maintainer:** Raymond DePalma — independent security researcher.
-This is a personal project and is not affiliated with any employer.
+This is a personal project and is not affiliated with any employer. SANS Institute's support is described in the [disclaimer](#disclaimer).
