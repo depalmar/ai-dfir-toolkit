@@ -126,11 +126,11 @@ maltego.Phrase,atlas:AML.T0053,maltego.Phrase,tactic:AML.TA0015,in-tactic
 maltego.Phrase,atlas:AML.T0054,maltego.Phrase,tactic:AML.TA0007,in-tactic
 maltego.Phrase,atlas:AML.T0054,maltego.Phrase,tactic:AML.TA0012,in-tactic
 maltego.Phrase,atlas:AML.T0055,maltego.Phrase,tactic:AML.TA0013,in-tactic
+maltego.Phrase,atlas:AML.T0070,maltego.Phrase,tactic:AML.TA0006,in-tactic
 maltego.Phrase,atlas:AML.T0080,maltego.Phrase,tactic:AML.TA0006,in-tactic
 maltego.Phrase,atlas:AML.T0080.000,maltego.Phrase,tactic:AML.TA0006,in-tactic
 maltego.Phrase,atlas:AML.T0081,maltego.Phrase,tactic:AML.TA0006,in-tactic
 maltego.Phrase,atlas:AML.T0081,maltego.Phrase,tactic:AML.TA0007,in-tactic
-maltego.Phrase,atlas:AML.T0082,maltego.Phrase,tactic:AML.TA0013,in-tactic
 maltego.Phrase,atlas:AML.T0086,maltego.Phrase,tactic:AML.TA0010,in-tactic
 maltego.Phrase,atlas:AML.T0087,maltego.Phrase,tactic:AML.TA0002,in-tactic
 maltego.Phrase,atlas:AML.T0095.000,maltego.Phrase,tactic:AML.TA0002,in-tactic
@@ -265,7 +265,7 @@ maltego.Phrase,case:AIRT-CS-0011,maltego.File,rule:memory_poisoning.yml,detected
 maltego.Phrase,case:AIRT-CS-0011,maltego.File,rule:memory_poisoning_indicators.yar,detected-by
 maltego.Phrase,case:AIRT-CS-0011,maltego.Phrase,sector:consumers,targets
 maltego.Phrase,case:AIRT-CS-0012,maltego.Phrase,asi:ASI06,maps-to
-maltego.Phrase,case:AIRT-CS-0012,maltego.Phrase,atlas:AML.T0082,uses
+maltego.Phrase,case:AIRT-CS-0012,maltego.Phrase,atlas:AML.T0070,uses
 maltego.Phrase,case:AIRT-CS-0012,maltego.File,rule:chroma_sqlite_unexpected_writer.yml,detected-by
 maltego.Phrase,case:AIRT-CS-0012,maltego.File,rule:rag_document_hidden_text.yar,detected-by
 maltego.Phrase,case:AIRT-CS-0012,maltego.File,rule:vector_db_bulk_exfil.yml,detected-by

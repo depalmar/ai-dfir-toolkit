@@ -438,6 +438,13 @@
      "entra_app_signin_invalid_or_expired_secret.yml"
     ]
    },
+   "AML.T0070": {
+    "actors": [],
+    "cases": [
+     "AIRT-CS-0012"
+    ],
+    "rules": []
+   },
    "AML.T0080": {
     "actors": [],
     "cases": [
@@ -474,13 +481,6 @@
      "ai_agent_mcp_config_modification.yml",
      "memory_poisoning.yml"
     ]
-   },
-   "AML.T0082": {
-    "actors": [],
-    "cases": [
-     "AIRT-CS-0012"
-    ],
-    "rules": []
    },
    "AML.T0086": {
     "actors": [],
@@ -2554,7 +2554,7 @@
     "kind": "case",
     "ref": "AIRT-CS-0012",
     "techniques": [
-     "AML.T0082"
+     "AML.T0070"
     ]
    },
    {
@@ -3081,8 +3081,8 @@
     "off_host": false
    },
    {
-    "technique": "AML.T0082",
-    "name": "RAG Credential Harvesting",
+    "technique": "AML.T0070",
+    "name": "RAG Poisoning",
     "actors": 0,
     "cases": 1,
     "score": 1,
@@ -3212,10 +3212,10 @@
    "AML.TA0014": 7,
    "AML.TA0015": 4,
    "AML.TA0010": 4,
-   "AML.TA0006": 6,
-   "AML.TA0013": 10,
+   "AML.TA0006": 7,
    "AML.TA0009": 3,
-   "AML.TA0011": 3
+   "AML.TA0011": 3,
+   "AML.TA0013": 9
   },
   "observations": 46
  },
@@ -10872,7 +10872,7 @@
    "confidence": "high",
    "basis": "Peer-reviewed and presented at USENIX Security 2025, with published code. This is demonstrated research rather than an observed intrusion, and is recorded as such - the artifact list describes where the evidence would live, not what was recovered from a victim.",
    "atlas": [
-    "AML.T0082"
+    "AML.T0070"
    ],
    "summary": "The first knowledge poisoning attack against retrieval-augmented generation. Zou et al. formulate knowledge corruption as an optimisation problem, with black-box and white-box variants, and show that injecting five adversarial texts per target question into a knowledge base of millions reliably causes the system to return an attacker-chosen answer, at around a 90% success rate. Several defences were evaluated and none were sufficient. There is no malicious code anywhere in the attack - nothing to detonate and nothing to sandbox.",
    "iocs": [
@@ -15090,6 +15090,12 @@
     "framework": "ATLAS"
    },
    {
+    "id": "atlas:AML.T0070",
+    "type": "technique",
+    "label": "AML.T0070 RAG Poisoning",
+    "framework": "ATLAS"
+   },
+   {
     "id": "atlas:AML.T0080",
     "type": "technique",
     "label": "AML.T0080 AI Agent Context Poisoning",
@@ -15105,12 +15111,6 @@
     "id": "atlas:AML.T0081",
     "type": "technique",
     "label": "AML.T0081 Modify AI Agent Configuration",
-    "framework": "ATLAS"
-   },
-   {
-    "id": "atlas:AML.T0082",
-    "type": "technique",
-    "label": "AML.T0082 RAG Credential Harvesting",
     "framework": "ATLAS"
    },
    {
@@ -18324,6 +18324,11 @@
     "rel": "in-tactic"
    },
    {
+    "source": "atlas:AML.T0070",
+    "target": "tactic:AML.TA0006",
+    "rel": "in-tactic"
+   },
+   {
     "source": "atlas:AML.T0080",
     "target": "tactic:AML.TA0006",
     "rel": "in-tactic"
@@ -18341,11 +18346,6 @@
    {
     "source": "atlas:AML.T0081",
     "target": "tactic:AML.TA0007",
-    "rel": "in-tactic"
-   },
-   {
-    "source": "atlas:AML.T0082",
-    "target": "tactic:AML.TA0013",
     "rel": "in-tactic"
    },
    {
@@ -19020,7 +19020,7 @@
    },
    {
     "source": "case:AIRT-CS-0012",
-    "target": "atlas:AML.T0082",
+    "target": "atlas:AML.T0070",
     "rel": "uses"
    },
    {

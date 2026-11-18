@@ -342,7 +342,11 @@ Volatility across the 667 site rows: live 117 · rotating 57 · stable 493
 
 Do not hand-maintain the numbers above. `scripts/readme_counts.py` generates the
 same figures into `artifacts/README.md` and CI gates that block, so it is the
-authority; this paragraph is a convenience copy and has drifted before.
+authority; this paragraph is a convenience copy and has drifted before. The
+same script generates the actor, case and indicator counts in the root README's
+threat-intel paragraph, which had drifted too. That block carries no framework
+versions: they change in the weekly refresh, which may only touch the pins and
+what is generated from them.
 
 Detection content maps to the OWASP LLM Top 10 **2026** list. Eight of the ten
 IDs changed meaning between 2025 and 2026, so an ID quoted from an older report
