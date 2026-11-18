@@ -13,7 +13,7 @@ basis: >-
   the artifact list describes where the evidence would live, not what was recovered
   from a victim.
 atlas:
-  - AML.T0082
+  - AML.T0070
 summary: >-
   The first knowledge poisoning attack against retrieval-augmented generation. Zou
   et al. formulate knowledge corruption as an optimisation problem, with black-box

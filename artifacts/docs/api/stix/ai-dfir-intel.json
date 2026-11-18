@@ -5187,15 +5187,15 @@
    "object_marking_refs": [
     "marking-definition--7f16ab7e-802f-5eec-bdda-a44d842cb3e6"
    ],
-   "id": "attack-pattern--4638b49d-d89c-5187-ad13-b1d50d35ab79",
+   "id": "attack-pattern--b02b262b-b008-5261-83c2-f004860b2c03",
    "created": "2025-08-13T00:00:00.000Z",
    "modified": "2025-08-13T00:00:00.000Z",
-   "name": "RAG Credential Harvesting",
+   "name": "RAG Poisoning",
    "external_references": [
     {
      "source_name": "mitre-atlas",
-     "external_id": "AML.T0082",
-     "url": "https://atlas.mitre.org/techniques/AML.T0082"
+     "external_id": "AML.T0070",
+     "url": "https://atlas.mitre.org/techniques/AML.T0070"
     }
    ]
   },
@@ -5216,7 +5216,7 @@
     "threat-report"
    ],
    "object_refs": [
-    "attack-pattern--4638b49d-d89c-5187-ad13-b1d50d35ab79"
+    "attack-pattern--b02b262b-b008-5261-83c2-f004860b2c03"
    ],
    "external_references": [
     {

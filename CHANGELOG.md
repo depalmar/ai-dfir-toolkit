@@ -151,6 +151,18 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Fixed
 
+- **AIRT-CS-0012 (PoisonedRAG) was mapped to the wrong ATLAS technique.** It
+  carried `AML.T0082`, RAG Credential Harvesting. The case is knowledge-base
+  poisoning, which is `AML.T0070`, RAG Poisoning. No rule or actor profile
+  depended on the old id.
+
+- **The root README's threat-intel counts had drifted** to 20 actor profiles
+  and 22 case studies with 221 indicators, against 22, 26 and 316 in the data.
+  `readme_counts.py` now generates that block as well and CI gates it. The
+  same paragraph gave ATT&CK as 20.0 when the pin is 20.1; it no longer quotes
+  framework versions, which change in the weekly refresh, and points at the
+  pins instead.
+
 - **Every permalink opened the guide on a fresh page load.** The first render
   wrote the address bar before the link had been read, replacing `#cases`,
   `#catalog?tool=Cursor`, a case anchor or a rule link with the guide's empty

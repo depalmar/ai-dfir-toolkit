@@ -238,10 +238,10 @@ maltego.Phrase,atlas:AML.T0051,technique,AML.T0051 LLM Prompt Injection
 maltego.Phrase,atlas:AML.T0053,technique,AML.T0053 AI Agent Tool Invocation
 maltego.Phrase,atlas:AML.T0054,technique,AML.T0054 LLM Jailbreak
 maltego.Phrase,atlas:AML.T0055,technique,AML.T0055 Unsecured Credentials
+maltego.Phrase,atlas:AML.T0070,technique,AML.T0070 RAG Poisoning
 maltego.Phrase,atlas:AML.T0080,technique,AML.T0080 AI Agent Context Poisoning
 maltego.Phrase,atlas:AML.T0080.000,technique,AML.T0080.000 Memory
 maltego.Phrase,atlas:AML.T0081,technique,AML.T0081 Modify AI Agent Configuration
-maltego.Phrase,atlas:AML.T0082,technique,AML.T0082 RAG Credential Harvesting
 maltego.Phrase,atlas:AML.T0086,technique,AML.T0086 Exfiltration via AI Agent Tool Invocation
 maltego.Phrase,atlas:AML.T0087,technique,AML.T0087 Gather Victim Identity Information
 maltego.Phrase,atlas:AML.T0095.000,technique,AML.T0095.000 Code Repositories
