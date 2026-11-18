@@ -1,6 +1,6 @@
-# AI/ML DFIR Detection Pack
+# AI DFIR Toolkit
 
-**Open-source detection signatures for AI/ML attacks and breaches.**
+**Detection rules, an endpoint artifact catalog and an investigation guide for incidents that involve AI.**
 
 <a href="https://www.sans.org/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/brand/sans-logo-white.svg">
@@ -9,7 +9,11 @@
 
 Supported by [SANS Institute](https://www.sans.org/). The project stays independent and vendor-neutral; see the disclaimer below.
 
-A vendor-neutral collection of Sigma, YARA, and Suricata rules for detecting compromise of LLM applications, MCP servers, ML supply chains, AI infrastructure, AI-powered insider threats, and RAG/vector database attacks.
+Three things, built to be used together and all vendor-neutral:
+
+- **[Detection rules](#coverage-overview)**: Sigma, YARA and Suricata rules for compromise of LLM applications, MCP servers, ML supply chains, AI infrastructure, assistants, and RAG / vector databases.
+- **[Artifact catalog](#artifact-catalog)**: what AI coding agents, local model runtimes and MCP components leave on a host, what each trace proves, and the order to collect it in.
+- **[Investigation guide](./docs/ai-dfir-investigation-guide.md) and [threat intel](#threat-intel)**: how to tell whether an incident involves AI at all, with case studies, actor profiles and hunts drawn from them.
 
 **Browse it at [depalmar.github.io/ai-dfir-toolkit](https://depalmar.github.io/ai-dfir-toolkit/)** — the
 artifact catalog, the detection rules, the ATLAS/OWASP mappings, the case
@@ -28,9 +32,7 @@ push so the page cannot drift from the content.
 
 Full-size video: [start from the alert](docs/media/start-from-the-alert.mp4) · [collection plan](docs/media/collection-plan.mp4). How they were recorded: [`docs/media/`](docs/media/README.md).
 
-For the companion investigation guide with attack background, forensic artifacts, Mermaid attack-chain diagrams, and hands-on investigation procedures, see [`docs/ai-dfir-investigation-guide.md`](./docs/ai-dfir-investigation-guide.md).
-
-License: Apache 2.0.
+The [investigation guide](./docs/ai-dfir-investigation-guide.md) carries the attack background, the forensic artifacts, attack-chain diagrams and hands-on procedures. The latest tagged release is on the [Releases](https://github.com/depalmar/ai-dfir-toolkit/releases) page.
 
 ---
 
@@ -49,7 +51,9 @@ Most existing detection content is either locked behind vendor SIEMs or scattere
 - **Network** (vector DB exfil, model exfil, ShadowRay C2)
 - **File artifacts** (poisoned pickle models, malicious MCP configs)
 
-This pack uses **open standards only** so the rules can be deployed in any modern detection stack via open Sigma/YARA/Suricata tooling.
+The rules use **open standards only**, so they deploy in any detection stack through open Sigma, YARA and Suricata tooling.
+
+Detection is half of it. When one of these rules fires, the responder still has to know what the tool left behind and what to collect before it is gone, which most IR playbooks do not cover. That is what the artifact catalog and the guide are for.
 
 ---
 
@@ -70,7 +74,7 @@ ai-dfir-toolkit/
 ├── playbooks/                     # CACAO v2.0 response playbooks
 ├── artifacts/                     # Machine-readable AI agent artifact catalog
 ├── skills/                        # Agent skills for maintaining the catalog
-├── docs/                          # Investigation guide
+├── docs/                          # Investigation guide, demo clips
 ├── tests/                         # Sample events / test files
 ├── MAPPINGS.md                    # ATLAS + OWASP cross-reference
 └── README.md
@@ -94,42 +98,60 @@ Each category directory contains a `README.md` describing the threats covered an
 
 ## Quick start
 
-### Elastic / Kibana
+Run these from the repository root.
+
+### Sigma, for any SIEM
 
 ```bash
-pip install sigma-cli pysigma-backend-elasticsearch
-sigma convert -t lucene --without-pipeline ai-dfir-toolkit/**/*.yml > ai-dfir-toolkit.lucene
+pip install sigma-cli
+sigma plugin list                   # find the backend for your platform
+sigma plugin install NAME_FROM_THAT_LIST
+sigma list targets                  # the target id that backend provides
+TARGET=id_from_that_list
+sigma convert -t "$TARGET" --without-pipeline 0[1-9]-*/ artifacts/detections/sigma/ > ai-dfir-rules.txt
 ```
 
-The rules are vendor-neutral Sigma — see the [pySigma backends](https://github.com/SigmaHQ/pySigma) list to convert to any other SIEM query language.
+`--without-pipeline` converts without mapping field names. Replace it with
+`-p` and a pipeline name to map them to your data model.
+
+Four files hold Sigma correlation rules: `mlflow_unauth_api_access.yml`,
+`vector_db_bulk_exfil.yml`, `runtime_ai_malware_correlation.yml` and
+`agentic_orchestration_behavior.yml`. A backend that cannot express correlation
+stops on them. Convert file by file to keep the rest:
+
+```bash
+for f in 0[1-9]-*/*.yml artifacts/detections/sigma/*.yml; do
+  sigma convert -t "$TARGET" --without-pipeline "$f" || echo "skipped: $f" >&2
+done > ai-dfir-rules.txt
+```
 
 > **Case sensitivity:** the keyword-based rules (prompt injection, jailbreak,
 > system-prompt extraction, etc.) follow the Sigma convention that `contains`
-> matching is case-insensitive — attacker text varies in case, so the rules are
-> written in lowercase and rely on the backend to fold case. On **Elastic**,
-> ensure the matched content fields are mapped as analyzed `text` (the default
-> for string fields), not `keyword`: a `keyword` mapping matches
-> case-sensitively and will miss capitalized input. Do **not** try to force this
-> with the `re|i` modifier — Lucene's regex engine does not support the `(?i)`
-> flag and the resulting query is invalid.
+> matching is case-insensitive. Attacker text varies in case, so the rules are
+> written in lowercase and rely on the backend to fold case. Check that your
+> backend does. On Elasticsearch, for one, the matched fields must be mapped as
+> analyzed `text` and not `keyword`: a `keyword` field matches case-sensitively
+> and misses capitalized input. Do **not** try to force it with the `re|i`
+> modifier there. Lucene's regex engine does not support the `(?i)` flag and
+> the resulting query is invalid.
 
 ### YARA scanning
 
 ```bash
 # Scan a model directory
-yara -r ai-dfir-toolkit/03-model-supply-chain/*.yar /path/to/models/
+yara -r 03-model-supply-chain/*.yar /path/to/models/
 
 # Scan an MCP config
-yara ai-dfir-toolkit/02-mcp-attacks/mcp_tool_poisoning.yar \
+yara 02-mcp-attacks/mcp_tool_poisoning.yar \
   ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
 ### Suricata
 
 ```bash
-cp ai-dfir-toolkit/**/*.rules /etc/suricata/rules/
-echo 'rule-files: [ai-dfir.rules]' >> /etc/suricata/suricata.yaml
-suricata -T -c /etc/suricata/suricata.yaml  # validate
+cat 0[1-9]-*/*.rules > /etc/suricata/rules/ai-dfir.rules
+# Add "- ai-dfir.rules" under the existing rule-files: list in /etc/suricata/suricata.yaml
+suricata -T -c /etc/suricata/suricata.yaml   # validate before reloading
 systemctl reload suricata
 ```
 
@@ -175,8 +197,7 @@ On top of the catalog sits a threat-intel layer:
 
 Technique and vulnerability ids are checked against pinned releases of MITRE
 ATLAS, MITRE ATT&CK, the CISA KEV catalog, and the OWASP LLM and Agentic 2026
-lists. The pins are recorded in [`artifacts/schema/`](artifacts/schema/) and a
-weekly workflow proposes updates.
+lists. The pins are recorded in [`artifacts/schema/`](artifacts/schema/).
 
 Each profile is derived from the cases and reported sightings that cite it. It
 gives the techniques the actor uses, the rule in this repository that detects
@@ -185,6 +206,9 @@ artifacts to collect first. The site adds:
 - a cross-filtering Threat intel view: ATLAS matrix with coverage gaps,
   victimology, timeline, technique heatmap, detection backlog, actor similarity
   and clusters
+- a Hunts view: the rules whose own level says a match is not an alert, and the
+  behaviours case studies describe in words, each with its detection logic and
+  tuning notes
 - a Maltego-style graph workbench
 - a collection plan that generates a self-contained triage script (PowerShell or
   bash) or the equivalent Velociraptor / KAPE command
@@ -193,8 +217,8 @@ Feeds: [`intel.json`](artifacts/docs/api/intel.json), a
 [STIX 2.1 bundle](artifacts/docs/api/stix/ai-dfir-intel.json) for OpenCTI or
 MISP, and [Maltego import CSVs](artifacts/docs/api/graph/). Two scheduled
 workflows keep it current:
-- the framework pins refresh weekly and auto-merge when only reference data
-  changed
+- the framework pins are refreshed weekly and opened as a pull request for a
+  person to check and merge
 - new public reporting arrives as `intel-candidate` issues for a person to
   research
 
@@ -241,7 +265,7 @@ See [MAPPINGS.md](./MAPPINGS.md) for per-rule mappings.
 These rules are written to err toward signal over noise, but every environment is different. Each rule includes:
 
 - `falsepositives:` section listing known FP scenarios
-- `level:` field (`low` / `medium` / `high` / `critical`) — start with `high`+ in production
+- `level:` field (`low` / `medium` / `high` / `critical`) — start with `high`+ in production. A `low` rule is a hunt, not an alert: baseline it first. The site's Hunts view lists them
 - Tunable selectors so you can scope to specific orgs/users/namespaces
 
 Recommended rollout:
@@ -260,17 +284,27 @@ cd tests/
 ./validate.sh
 ```
 
-Expected result: 15 passes, 0 failures.
+Expected result: every line reads `PASS` and the summary ends with `FAIL: 0`.
 
 The suite hard-exits if the `yara` binary is missing rather than reporting a
 clean run — absent tooling would otherwise score every "expect no matches"
 assertion as a pass and the suite would look healthy while testing nothing.
 
+What is and is not tested:
+
+- **YARA** rules are run against malicious and benign fixtures by `validate.sh`.
+- **Suricata** rules are syntax-checked, and `python3 tests/suricata_replay.py`
+  replays synthetic traffic through the rules that depend on direction or ports.
+- **Sigma** rules are parsed and converted in CI. They are not replayed against
+  recorded events, so treat a Sigma rule as untested on your data until you
+  have run it there.
+
 ---
 
 ## Contributing
 
-PRs welcome. Rule submission requirements:
+PRs welcome. [CONTRIBUTING.md](./CONTRIBUTING.md) has the full rules for
+detections, catalog entries and case studies. For a rule, in short:
 
 1. Reference an attack technique — ATLAS ID, CVE, or published research
 2. Include test data in `tests/` — sample log line, file, or PCAP

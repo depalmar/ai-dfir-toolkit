@@ -504,7 +504,12 @@ opened the guide on a fresh load for as long as filters lived in the URL. Test a
 link by loading it in a new page, not by clicking it inside an open one.
 
 The demo clips in the root README live in `docs/media/` with the script that
-records them. Re-record when the page's layout changes.
+records them. Re-record when the page's layout changes. The script captures
+screenshots at twice the layout size rather than using Playwright's video
+recording, which is fixed at layout size and a low bitrate and made the first
+clips fuzzy once GitHub scaled them up. A screenshot clip is in page
+coordinates, so the capture follows the scroll position; without that a
+scrolled page is recorded as blank frames.
 
 Four things worth not relearning:
 

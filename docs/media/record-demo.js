@@ -3,9 +3,10 @@
 //   python3 artifacts/scripts/build_site.py
 //   node docs/media/record-demo.js [path/to/index.html] [output dir]
 //
-// Needs Playwright with Chromium. Writes <name>.webm and a 2x still <name>.png
-// for each scene; README.md in this folder has the ffmpeg lines that turn them
-// into the committed GIF and MP4. Re-record when the page's layout changes:
+// Needs Playwright with Chromium. Writes a folder of frames, <name>/, with a
+// frames.txt that ffmpeg reads, and a 2x still <name>.png for each scene;
+// README.md in this folder has the ffmpeg lines that turn them into the
+// committed GIF and MP4. Re-record when the page's layout changes:
 // a demo that shows a tab the site no longer has is worse than no demo.
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -68,18 +69,61 @@ const scenes = {
     await p.waitForTimeout(1400);
   },
 };
+// The clip is captured as lossless screenshots at twice the layout size, not
+// with Playwright's recordVideo. recordVideo encodes at the layout size and a
+// low fixed bitrate, and the first clips made from it were visibly soft: text
+// went fuzzy once GitHub scaled an 800px GIF up on a high-density screen. The
+// browser's own screencast has the same limit - it sends layout-size frames
+// whatever the device scale - so this polls for screenshots while the scene
+// runs. A frame identical to the one before it is dropped, and each kept frame
+// is written with how long it was on screen, which is what ffmpeg reads.
+async function capture(ctx, page, dir, run) {
+  fs.mkdirSync(dir, { recursive: true });
+  const cdp = await ctx.newCDPSession(page);
+  const frames = [];
+  let on = true, last = '';
+  const loop = (async () => {
+    while (on) {
+      const t = Date.now() / 1000;
+      // The clip's scale is what makes the frame 2x: without it this call
+      // returns layout-size pixels whatever the context's device scale. A clip
+      // is in page coordinates, so it has to follow the scroll position, or a
+      // scrolled page is captured as the blank area above the viewport.
+      const { cssVisualViewport: vv } = await cdp.send('Page.getLayoutMetrics');
+      const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true,
+        clip: { x: vv.pageX, y: vv.pageY, width: W, height: H, scale: 2 } });
+      if (data !== last) {
+        const file = String(frames.length).padStart(5, '0') + '.png';
+        fs.writeFileSync(path.join(dir, file), Buffer.from(data, 'base64'));
+        frames.push({ file, t });
+        last = data;
+      }
+    }
+  })();
+  const t0 = Date.now() / 1000;
+  await run();
+  on = false;
+  await loop;
+  const end = Date.now() / 1000;
+  const lines = ['ffconcat version 1.0'];
+  frames.forEach((f, i) => {
+    const next = i + 1 < frames.length ? frames[i + 1].t : Math.max(end, f.t + 0.2);
+    lines.push(`file '${f.file}'`, `duration ${Math.max(0.02, next - f.t).toFixed(3)}`);
+  });
+  if (frames.length) lines.push(`file '${frames[frames.length - 1].file}'`);
+  fs.writeFileSync(path.join(dir, 'frames.txt'), lines.join('\n') + '\n');
+  return { frames: frames.length, seconds: +(end - t0).toFixed(1) };
+}
 (async () => {
   const b = await chromium.launch();
   for (const name of Object.keys(scenes)) {
     // the clip
-    let ctx = await b.newContext({ viewport: { width: W, height: H }, colorScheme: 'light', recordVideo: { dir: path.join(OUT, name), size: { width: W, height: H } } });
+    let ctx = await b.newContext({ viewport: { width: W, height: H }, colorScheme: 'light', deviceScaleFactor: 2 });
     await ctx.addInitScript(CURSOR);
     let p = await ctx.newPage();
     await p.goto(SITE);
-    await scenes[name](p, false);
-    const v = p.video();
+    const got = await capture(ctx, p, path.join(OUT, name), () => scenes[name](p, false));
     await ctx.close();
-    fs.renameSync(await v.path(), path.join(OUT, name + '.webm'));
     // the still, at 2x, without the pointer
     ctx = await b.newContext({ viewport: { width: W, height: H }, colorScheme: 'light', deviceScaleFactor: 2 });
     p = await ctx.newPage();
@@ -89,7 +133,7 @@ const scenes = {
     await p.waitForTimeout(300);
     await p.screenshot({ path: path.join(OUT, name + '.png') });
     await ctx.close();
-    console.log(name, fs.statSync(path.join(OUT, name + '.webm')).size, fs.statSync(path.join(OUT, name + '.png')).size);
+    console.log(name, got.frames + ' frames', got.seconds + 's');
   }
   await b.close();
 })().catch(e => { console.error(e); process.exit(1); });

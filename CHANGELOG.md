@@ -8,7 +8,39 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 Merged after the `artifacts-v1.2.0` tag, which points at `5185b1e`.
 
+### Changed
+
+- **The root README describes the whole toolkit.** Its title and opening still
+  presented a detection-rule pack, with the artifact catalog introduced half
+  way down and the demo clips showing features the introduction never
+  mentioned. It is now titled "AI DFIR Toolkit", as the site and the repository
+  are, and opens on the three parts: detection rules, the artifact catalog, and
+  the investigation guide with its threat intel. It also says what is and is
+  not tested: Sigma rules are parsed and converted, not replayed against
+  recorded events.
+
+- **The README demo clips are sharp.** They were recorded with Playwright's
+  video capture at 1280 wide and reduced to 800px, 64-colour GIFs, which GitHub
+  then scaled up. `docs/media/record-demo.js` now captures lossless screenshots
+  at twice the layout size, and the GIFs are 1600 and 1440 wide. The alert clip
+  is smaller than before (0.65 MB from 1.5 MB); the plan clip is 3.6 MB.
+
 ### Fixed
+
+- **The README's Sigma and Suricata quick starts did not work as written.** The
+  Sigma command globbed every `.yml` in the repository, including catalog
+  entries and workflows, and exited with an error; it was also headed with one
+  vendor's name. It now converts the rule directories for whichever backend is
+  installed, and gives the per-file loop for backends that cannot express the
+  four correlation files. The Suricata steps copied rule files under their own
+  names and then loaded an `ai-dfir.rules` that was never created, by appending
+  a second `rule-files:` key. They now build that one file and say where to
+  list it.
+
+- **Two stale statements in the README.** The test suite's expected result
+  said 15 passes; it reports 13, and the text no longer quotes a count. The
+  framework refresh was described as merging itself; it opens a pull request
+  that a person merges.
 
 - **Three RAG rules were mapped to training-data poisoning.**
   `rag_document_hidden_text.yar`, `chroma_sqlite_unexpected_writer.yml` and the
