@@ -6,7 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
+Nothing merged since the `artifacts-v1.2.0` tag yet.
+
+## [1.2.0] - 2026-11-18
+
+Everything merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
 
 ### Added
 
@@ -89,6 +93,13 @@ Merged after the `artifacts-v1.1.0` tag, which points at `a1aa3f9`.
   homepage.
 
 ### Changed
+
+- **The README says how the SANS Institute credit and the independence
+  disclaimer fit together.** The credit sat two lines above a disclaimer that
+  the project is not affiliated with or endorsed by any employer, with nothing
+  connecting them. The credit now reads "Supported by", as the site does, and
+  the disclaimer names the support and says it does not change the project's
+  independence.
 
 - **The Hunts tab and the tab strip were reworked from a second design
   assessment** (15 findings, four pull requests; `artifacts/docs/HANDOFF_REVIEW.md`,
