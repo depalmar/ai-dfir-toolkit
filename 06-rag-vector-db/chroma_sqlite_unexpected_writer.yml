@@ -10,12 +10,12 @@ description: |
     - Tamper with collection-level metadata
 references:
   - https://docs.trychroma.com/docs/cli/db
-  - https://atlas.mitre.org/techniques/AML.T0020
+  - https://atlas.mitre.org/techniques/AML.T0070
 author: Raymond DePalma (ai-dfir-toolkit)
 date: 2026-04-15
 tags:
   - attack.persistence
-  - attack.atlas.t0020
+  - attack.atlas.t0070
   - owasp.llm08
 logsource:
   category: file_event

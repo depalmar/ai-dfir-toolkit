@@ -6,7 +6,7 @@
   "iocs": 316,
   "atomic_iocs": 233,
   "techniques_observed": 39,
-  "techniques_covered": 18,
+  "techniques_covered": 19,
   "techniques_off_host": 13,
   "by_kind": {
    "state-nexus": 14,
@@ -443,7 +443,11 @@
     "cases": [
      "AIRT-CS-0012"
     ],
-    "rules": []
+    "rules": [
+     "chroma_sqlite_unexpected_writer.yml",
+     "rag_document_hidden_text.yar",
+     "vector_db_query_anomaly.yml"
+    ]
    },
    "AML.T0080": {
     "actors": [],
@@ -3078,14 +3082,6 @@
     "actors": 1,
     "cases": 1,
     "score": 3,
-    "off_host": false
-   },
-   {
-    "technique": "AML.T0070",
-    "name": "RAG Poisoning",
-    "actors": 0,
-    "cases": 1,
-    "score": 1,
     "off_host": false
    },
    {
@@ -21049,6 +21045,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:chroma_sqlite_unexpected_writer.yml",
+    "target": "atlas:AML.T0070",
+    "rel": "detects"
+   },
+   {
     "source": "rule:claude_desktop_config_modify.yml",
     "target": "atlas:AML.T0010",
     "rel": "detects"
@@ -21394,6 +21395,11 @@
     "rel": "detects"
    },
    {
+    "source": "rule:rag_document_hidden_text.yar",
+    "target": "atlas:AML.T0070",
+    "rel": "detects"
+   },
+   {
     "source": "rule:ray_dashboard_exposure.rules",
     "target": "atlas:AML.T0011",
     "rel": "detects"
@@ -21521,6 +21527,11 @@
    {
     "source": "rule:vector_db_query_anomaly.yml",
     "target": "atlas:AML.T0051",
+    "rel": "detects"
+   },
+   {
+    "source": "rule:vector_db_query_anomaly.yml",
+    "target": "atlas:AML.T0070",
     "rel": "detects"
    },
    {

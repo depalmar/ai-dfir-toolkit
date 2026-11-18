@@ -6,7 +6,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-Nothing merged since the `artifacts-v1.2.0` tag yet.
+Merged after the `artifacts-v1.2.0` tag, which points at `5185b1e`.
+
+### Fixed
+
+- **Three RAG rules were mapped to training-data poisoning.**
+  `rag_document_hidden_text.yar`, `chroma_sqlite_unexpected_writer.yml` and the
+  ingestion rule in `vector_db_query_anomaly.yml` carried `AML.T0020`, Training
+  Data Poisoning. They watch the retrieval corpus, not a training set, which
+  ATLAS names `AML.T0070`, RAG Poisoning. Both sit under Persistence, so no
+  tactic tag changes, and the detection logic is untouched. `AML.T0020` now has
+  no rule, which is accurate: the pack has no training-data-poisoning
+  detection. The PoisonedRAG case (AIRT-CS-0012) gains the three rules, and
+  techniques with a rule go from 18 to 19. The root README's per-category
+  technique lists for Model Supply Chain and RAG / Vector DB are corrected to
+  what those rules map to; the supply-chain row listed `T0020`, which no rule
+  there carried.
 
 ## [1.2.0] - 2026-11-18
 

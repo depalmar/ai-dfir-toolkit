@@ -361,7 +361,7 @@ content. Frameworks pinned: ATLAS 2026.10, ATT&CK 20.1, CISA KEV 2026.11.17,
 OWASP LLM 2026 and Agentic 2026 (`schema/owasp.json`).
 
 Threat intel: 22 actor profiles, 26 case studies (316 indicators, 233 atomic),
-39 ATLAS techniques observed. 18 have a rule, 13 are off-host by nature, and the
+39 ATLAS techniques observed. 19 have a rule, 13 are off-host by nature, and the
 detection backlog (`intel_graph.py` prints it as `[GAP]`) is the rest. Case
 confidence: 12 high, 14 medium.
 

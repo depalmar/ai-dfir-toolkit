@@ -895,7 +895,7 @@ Recent high-relevance changes to track:
 | Training data poisoning | T0020 | LLM05 | - |
 | Model supply chain compromise | T0010 | LLM04 | ASI04 |
 | Backdoored models | T0018 | LLM05 | ASI04 |
-| RAG poisoning | T0020 + RAG-specific | LLM09 | ASI06 |
+| RAG poisoning | T0070 | LLM09 | ASI06 |
 | Model extraction | T0024, T0005 | LLM06 | - |
 | Tool poisoning (MCP-style) | T0115.002, T0110 | LLM04 | ASI04 |
 | Hidden context / system prompt extraction | T0056 | LLM08 | - |

@@ -5,7 +5,7 @@
    Reference: Greshake et al. 2023 — "Not what you've signed up for"
               https://arxiv.org/abs/2302.12173
               PoisonedRAG (USENIX Security 2025)
-   ATLAS: AML.T0020, AML.T0051.001
+   ATLAS: AML.T0070, AML.T0051.001
    OWASP: LLM01:2026, LLM09:2026
 
    Detects steganographic and visually-hidden instructions embedded in
@@ -22,7 +22,7 @@ rule RAG_Document_Bidi_Override
         description = "Document contains Unicode bidirectional override (Trojan Source style)"
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
-        atlas       = "AML.T0020"
+        atlas       = "AML.T0070"
         owasp       = "LLM01:2026"
         reference   = "https://trojansource.codes/"
         severity    = "high"
@@ -67,7 +67,7 @@ rule RAG_Document_HTML_Hidden_Instructions
         description = "HTML/Markdown with CSS-hidden text containing prompt-injection patterns"
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
-        atlas       = "AML.T0020"
+        atlas       = "AML.T0070"
         owasp       = "LLM01:2026"
         severity    = "high"
 
@@ -102,7 +102,7 @@ rule RAG_Document_Whitespace_Smuggling
         description = "Document contains long runs of whitespace possibly hiding instructions"
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
-        atlas       = "AML.T0020"
+        atlas       = "AML.T0070"
         severity    = "medium"
 
     strings:
@@ -122,7 +122,7 @@ rule RAG_Document_PDF_Whitetext_Injection
         description = "PDF containing white-on-white text with injection markers"
         author      = "Raymond DePalma (ai-dfir-toolkit)"
         date        = "2026-04-15"
-        atlas       = "AML.T0020"
+        atlas       = "AML.T0070"
         severity    = "medium"
 
     strings:

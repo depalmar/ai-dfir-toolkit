@@ -6,8 +6,8 @@ Detects attacks against retrieval-augmented generation pipelines and vector data
 
 | Threat | ATLAS | OWASP | Reference |
 |--------|-------|-------|-----------|
-| RAG document poisoning | T0020 | LLM09 | PoisonedRAG (USENIX 2025) |
-| AgentPoison (RAG-based agent poisoning) | T0020, T0051 | LLM09 | NeurIPS 2024 |
+| RAG document poisoning | T0070 | LLM09 | PoisonedRAG (USENIX 2025) |
+| AgentPoison (RAG-based agent poisoning) | T0070, T0051 | LLM09 | NeurIPS 2024 |
 | Unauthenticated vector DB exposure | T0011 | LLM09 | Shodan 2024 (12K+ exposed) |
 | Embedding inversion attacks | T0024 | LLM09 | Princeton research |
 | Indirect prompt injection via RAG | T0051.001 | LLM01 | Greshake et al. |

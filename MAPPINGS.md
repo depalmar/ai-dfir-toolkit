@@ -77,9 +77,9 @@ All rules are in open formats (Sigma / YARA / Suricata). Convert Sigma to any SI
 |------|--------|-------|-------|-----|-----------|
 | `vector_db_unauth_exposure.rules` | Suricata | T0011, T0024 | LLM02, LLM09 | — | Shodan 2024 |
 | `vector_db_bulk_exfil.yml` | Sigma | T0024 | LLM02, LLM09 | — | Princeton embedding-inversion |
-| `rag_document_hidden_text.yar` | YARA | T0020, T0051.001 | LLM01, LLM09 | ASI06, ASI01 | Greshake 2023, PoisonedRAG 2025 |
-| `chroma_sqlite_unexpected_writer.yml` | Sigma | T0020 | LLM09 | ASI06 | ChromaDB architecture |
-| `vector_db_query_anomaly.yml` | Sigma | T0020, T0024, T0051 | LLM02, LLM09 | ASI06 | — |
+| `rag_document_hidden_text.yar` | YARA | T0070, T0051.001 | LLM01, LLM09 | ASI06, ASI01 | Greshake 2023, PoisonedRAG 2025 |
+| `chroma_sqlite_unexpected_writer.yml` | Sigma | T0070 | LLM09 | ASI06 | ChromaDB architecture |
+| `vector_db_query_anomaly.yml` | Sigma | T0070, T0024, T0051 | LLM02, LLM09 | ASI06 | — |
 
 ## 07 — Runtime AI-Malware
 
@@ -191,7 +191,6 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | T0011    | User Execution | Execution | 13 |
 | T0012    | Valid Accounts | Initial Access, Privilege Escalation, Lateral Movement | 4 |
 | T0018    | Manipulate AI Model | AI Attack Adaptation, Persistence | 5 |
-| T0020    | Training Data Poisoning | Persistence | 3 |
 | T0024    | Exfiltration via AI Inference API | Exfiltration | 8 |
 | T0029    | Denial of AI Service | Impact | 7 |
 | T0049    | Exploit Public-Facing Application | Initial Access | 1 |
@@ -201,6 +200,7 @@ Titles are ATLAS 2026.10 names, generated from `artifacts/schema/technique-ids.j
 | T0053    | AI Agent Tool Invocation | Execution, Privilege Escalation, Lateral Movement | 6 |
 | T0054    | LLM Jailbreak | Defense Evasion, Privilege Escalation | 5 |
 | T0055    | Unsecured Credentials | Credential Access | 2 |
+| T0070    | RAG Poisoning | Persistence | 3 |
 | T0080    | AI Agent Context Poisoning | Persistence | 1 |
 | T0080.000 | AI Agent Context Poisoning: Memory | Persistence | 2 |
 | T0081    | Modify AI Agent Configuration | Persistence, Defense Evasion | 4 |

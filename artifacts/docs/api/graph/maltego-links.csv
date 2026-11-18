@@ -671,6 +671,7 @@ maltego.File,rule:bedrock_high_token_usage.yml,maltego.Phrase,atlas:AML.T0051,de
 maltego.File,rule:bedrock_high_token_usage.yml,maltego.Phrase,atlas:AML.T0054,detects
 maltego.File,rule:browser_agent_session_state_capture.yml,maltego.Phrase,atlas:AML.T0086,detects
 maltego.File,rule:chatgpt_paste_sensitive_data.yml,maltego.Phrase,atlas:AML.T0086,detects
+maltego.File,rule:chroma_sqlite_unexpected_writer.yml,maltego.Phrase,atlas:AML.T0070,detects
 maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010,detects
 maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010.001,detects
 maltego.File,rule:claude_desktop_config_modify.yml,maltego.Phrase,atlas:AML.T0010.005,detects
@@ -740,6 +741,7 @@ maltego.File,rule:prompt_injection_keywords.yml,maltego.Phrase,atlas:AML.T0051,d
 maltego.File,rule:promptflux_artifacts_fileevent.yml,maltego.Phrase,atlas:AML.T0096,detects
 maltego.File,rule:promptflux_thinking_robot.yar,maltego.Phrase,atlas:AML.T0096,detects
 maltego.File,rule:promptsteal_lamehug.yar,maltego.Phrase,atlas:AML.T0096,detects
+maltego.File,rule:rag_document_hidden_text.yar,maltego.Phrase,atlas:AML.T0070,detects
 maltego.File,rule:ray_dashboard_exposure.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:ray_jobs_api_rce.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:ray_jobs_api_rce.rules,maltego.Phrase,atlas:AML.T0049,detects
@@ -766,6 +768,7 @@ maltego.File,rule:triton_inference_server_exploit.rules,maltego.Phrase,atlas:AML
 maltego.File,rule:vector_db_bulk_exfil.yml,maltego.Phrase,atlas:AML.T0024,detects
 maltego.File,rule:vector_db_query_anomaly.yml,maltego.Phrase,atlas:AML.T0024,detects
 maltego.File,rule:vector_db_query_anomaly.yml,maltego.Phrase,atlas:AML.T0051,detects
+maltego.File,rule:vector_db_query_anomaly.yml,maltego.Phrase,atlas:AML.T0070,detects
 maltego.File,rule:vector_db_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0011,detects
 maltego.File,rule:vector_db_unauth_exposure.rules,maltego.Phrase,atlas:AML.T0024,detects
 maltego.Phrase,tool:AIRT-0001,maltego.File,artifact:AIRT-0001/credential/anthropic-api-key,leaves
